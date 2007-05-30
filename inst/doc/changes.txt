@@ -1,0 +1,35 @@
+
+             *************************************
+
+                Changes To TIMSAC For R Package
+
+             *************************************
+
+
+  timsac_1.1.2
+ ==============
+ * Added function tsmooth().
+
+
+  timsac_1.1.1
+ ==============
+ * Change the type of argument 'smt' in ngsmth() from "double" to "single".
+ * Change the function name "arma()" to "armaimp()".
+
+
+  timsac_1.1.0
+ ==============
+ * Added functions arma(), tvvar(), tvar() and ngsmth().
+
+
+  timsac_1.0.1
+ ==============
+ * Fixed bug in decomp() where both seasonal component and trading day effect
+    are no consideration. The following example demonstrates the problem:
+
+        data(Blsallfood)
+        decomp(Blsallfood, seasonal.order=0)   # trade=FALSE (default)
+
+    (privately reported by Makoto Kodama)
+
+

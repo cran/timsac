@@ -1,0 +1,46 @@
+\name{sglfre}
+\alias{sglfre}
+\title{Frequency Response Function (Single Channel)}
+\description{
+  Compute 1-input,1-output frequency response function, gain, phase, coherency and relative error statistics.
+}
+\usage{
+  sglfre(y, lag=NULL, invar, outvar)
+}
+\arguments{
+  \item{y}{a multivariate time series.}
+  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{invar}{within d variables of the spectrum, invar-th variable is taken as an input variable.}
+  \item{outvar}{within d variables of the spectrum, outvar-th variable is taken as an output variable .}
+}
+\value{
+  \item{inspec}{power spectrum (input).}
+  \item{outspec}{power spectrum (output).}
+  \item{cspec}{co-spectrum.}
+  \item{qspec}{quad-spectrum.}
+  \item{gain}{gain.}
+  \item{coh}{coherncy.}
+  \item{freqr}{frequency response function : real part.}
+  \item{freqi}{frequency response function : imaginary part.}
+  \item{errstat}{relative error statistics.}
+  \item{phase}{phase.}
+}
+
+\references{
+  H.Akaike and T.Nakagawa (1988) \emph{Statistical Analysis and Control
+    of Dynamic Systems.} Kluwer Academic publishers.
+}
+\examples{
+  ar <- array(0,dim=c(3,3,2))
+  ar[,,1] <- matrix(c(0.4,  0,   0.3,
+                      0.2, -0.1, -0.5,
+                      0.3,  0.1, 0),3,3,byrow=TRUE)
+  ar[,,2] <- matrix(c(0,  -0.3,  0.5,
+                      0.7, -0.4,  1,
+                      0,   -0.5,  0.3),3,3,byrow=TRUE)
+  x <- matrix(rnorm(200*3),200,3)
+  y <- mfilter(x,ar,"recursive")
+  sglfre(y, lag=20, invar=1, outvar=2)
+}
+
+\keyword{ts}

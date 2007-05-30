@@ -1,0 +1,269 @@
+Entry: armafit
+Aliases: armafit
+Keywords: timsac
+Description: ARMA Model Fitting; Scalar Case
+URL: ../../../library/timsac/html/armafit.html
+
+Entry: armaimp
+Aliases: armaimp
+Keywords: timsac
+Description: Characteristics of Scalar ARMA Model
+URL: ../../../library/timsac/html/armaimp.html
+
+Entry: auspec
+Aliases: auspec
+Keywords: timsac
+Description: Power Spectrum
+URL: ../../../library/timsac/html/auspec.html
+
+Entry: autcor
+Aliases: autcor
+Keywords: timsac
+Description: Auto Correlation
+URL: ../../../library/timsac/html/autcor.html
+
+Entry: autoarmafit
+Aliases: autoarmafit, print.autoarmafit
+Keywords: timsac
+Description: Automatic ARMA Model Fitting; Scalar Case
+URL: ../../../library/timsac/html/autoarmafit.html
+
+Entry: bispec
+Aliases: bispec
+Keywords: timsac
+Description: Bispectrum Computation
+URL: ../../../library/timsac/html/bispec.html
+
+Entry: blocar
+Aliases: blocar
+Keywords: timsac
+Description: Bayesian Method of Locally Stationary AR Model Fitting; Scalar Case
+URL: ../../../library/timsac/html/blocar.html
+
+Entry: blomar
+Aliases: blomar, print.blomar
+Keywords: timsac
+Description: Bayesian Method of Locally Stationary Multivariate AR Model Fitting
+URL: ../../../library/timsac/html/blomar.html
+
+Entry: bsubst
+Aliases: bsubst
+Keywords: timsac
+Description: Bayesian Type All Subset Analysis of Time Series by a Model Linear
+URL: ../../../library/timsac/html/bsubst.html
+
+Entry: canarm
+Aliases: canarm
+Keywords: timsac
+Description: Canonical Correlation Analysis of Scalar Time Series
+URL: ../../../library/timsac/html/canarm.html
+
+Entry: canoca
+Aliases: canoca
+Keywords: timsac
+Description: Canonical Correlation Analysis of Vector Time Series
+URL: ../../../library/timsac/html/canoca.html
+
+Entry: covgen
+Aliases: covgen
+Keywords: timsac
+Description: Covariance Generation from Gain Function
+URL: ../../../library/timsac/html/covgen.html
+
+Entry: decomp
+Aliases: decomp
+Keywords: timsac
+Description: Time Series Decomposition by Square-Root Filter
+URL: ../../../library/timsac/html/decomp.html
+
+Entry: exsar
+Aliases: exsar
+Keywords: timsac
+Description: Exact Maximum Likelihood Method of Scalar AR Model Fitting
+URL: ../../../library/timsac/html/exsar.html
+
+Entry: fftcor
+Aliases: fftcor
+Keywords: timsac
+Description: Auto And/Or Cross Correlations via FFT
+URL: ../../../library/timsac/html/fftcor.html
+
+Entry: fpeaut
+Aliases: fpeaut
+Keywords: timsac
+Description: FPE Auto
+URL: ../../../library/timsac/html/fpeaut.html
+
+Entry: fpec
+Aliases: fpec, print.fpec
+Keywords: timsac
+Description: AR model Fitting for Control
+URL: ../../../library/timsac/html/fpec.html
+
+Entry: markov
+Aliases: markov
+Keywords: timsac
+Description: Maximum Likelihood Computation of Markovian Model
+URL: ../../../library/timsac/html/markov.html
+
+Entry: mfilter
+Aliases: mfilter
+Keywords: timsac
+Description: Linear Filtering on a Multivariate Time Series
+URL: ../../../library/timsac/html/mfilter.html
+
+Entry: mlocar
+Aliases: mlocar
+Keywords: timsac
+Description: Minimum AIC Method of Locally Stationary AR Model Fitting; Scalar Case
+URL: ../../../library/timsac/html/mlocar.html
+
+Entry: mlomar
+Aliases: mlomar, print.mlomar
+Keywords: timsac
+Description: Minimum AIC Method of Locally Stationary Multivariate AR Model Fitting
+URL: ../../../library/timsac/html/mlomar.html
+
+Entry: mulbar
+Aliases: mulbar
+Keywords: timsac
+Description: Multivariate Bayesian Method of AR Model Fitting
+URL: ../../../library/timsac/html/mulbar.html
+
+Entry: mulcor
+Aliases: mulcor, print.mulcor
+Keywords: timsac
+Description: Multiple Correlation
+URL: ../../../library/timsac/html/mulcor.html
+
+Entry: mulfrf
+Aliases: mulfrf
+Keywords: timsac
+Description: Frequency Response Function (Multiple Channel)
+URL: ../../../library/timsac/html/mulfrf.html
+
+Entry: mulmar
+Aliases: mulmar
+Keywords: timsac
+Description: Multivariate Case of Muinimum AIC Method of AR Model Fitting
+URL: ../../../library/timsac/html/mulmar.html
+
+Entry: mulnos
+Aliases: mulnos
+Keywords: timsac
+Description: Multiple Unoise
+URL: ../../../library/timsac/html/mulnos.html
+
+Entry: mulrsp
+Aliases: mulrsp
+Keywords: timsac
+Description: Multiple Rational Spectrum
+URL: ../../../library/timsac/html/mulrsp.html
+
+Entry: mulspe
+Aliases: mulspe, print.mulspe
+Keywords: timsac
+Description: Multiple Spectrum
+URL: ../../../library/timsac/html/mulspe.html
+
+Entry: ngsmth
+Aliases: ngsmth
+Keywords: timsac
+Description: Non-Gaussian Smoothing
+URL: ../../../library/timsac/html/ngsmth.html
+
+Entry: nonst
+Aliases: nonst
+Keywords: timsac
+Description: Non-Stationary Power Spectrum Analysis
+URL: ../../../library/timsac/html/nonst.html
+
+Entry: optdes
+Aliases: optdes
+Keywords: timsac
+Description: OptimalL Controller Design
+URL: ../../../library/timsac/html/optdes.html
+
+Entry: optsim
+Aliases: optsim
+Keywords: timsac
+Description: Optimal Control Simulation
+URL: ../../../library/timsac/html/optsim.html
+
+Entry: perars
+Aliases: perars, print.perars
+Keywords: timsac
+Description: Periodic Autoregression for a Scalar Time Series
+URL: ../../../library/timsac/html/perars.html
+
+Entry: prdctr
+Aliases: prdctr, print.prdctr
+Keywords: timsac
+Description: Prediction Program
+URL: ../../../library/timsac/html/prdctr.html
+
+Entry: raspec
+Aliases: raspec
+Keywords: timsac
+Description: Rational Spectrum
+URL: ../../../library/timsac/html/raspec.html
+
+Entry: sglfre
+Aliases: sglfre
+Keywords: timsac
+Description: Frequency Response Function (Single Channel)
+URL: ../../../library/timsac/html/sglfre.html
+
+Entry: simcon
+Aliases: simcon
+Keywords: timsac
+Description: Optimal Controller Design and Simulation
+URL: ../../../library/timsac/html/simcon.html
+
+Entry: thirmo
+Aliases: thirmo
+Keywords: timsac
+Description: Third Order Moments Computation
+URL: ../../../library/timsac/html/thirmo.html
+
+Entry: tsmooth
+Aliases: tsmooth
+Keywords: timsac
+Description: Kalman Filter
+URL: ../../../library/timsac/html/tsmooth.html
+
+Entry: tvar
+Aliases: tvar, tvspec
+Keywords: timsac
+Description: Time Varying Coefficients AR Model
+URL: ../../../library/timsac/html/tvar.html
+
+Entry: tvvar
+Aliases: tvvar
+Keywords: timsac
+Description: Time Varying Variance
+URL: ../../../library/timsac/html/tvvar.html
+
+Entry: unibar
+Aliases: unibar
+Keywords: timsac
+Description: Univariate Bayesian Method of AR Model Fitting
+URL: ../../../library/timsac/html/unibar.html
+
+Entry: unimar
+Aliases: unimar
+Keywords: timsac
+Description: Univariate Case of Minimum AIC Method of AR Model Fitting
+URL: ../../../library/timsac/html/unimar.html
+
+Entry: wnoise
+Aliases: wnoise
+Keywords: timsac
+Description: White Noise Generator
+URL: ../../../library/timsac/html/wnoise.html
+
+Entry: xsarma
+Aliases: xsarma
+Keywords: timsac
+Description: Exact Maximum Likelihood Method of Scalar ARMA Model Fitting
+URL: ../../../library/timsac/html/xsarma.html

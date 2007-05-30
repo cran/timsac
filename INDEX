@@ -1,0 +1,66 @@
+Airpolution             Airpolution Data
+Amerikamaru             Amerikamaru Data
+armaimp                 A Time Series Analysis via ARMA Modeling
+armafit                 ARMA Model Fitting
+auspec                  Power Spectrum
+autcor                  Autocorrelation
+autoarmafit             Automatic ARMA Model Fitting
+bispec                  Bispectrum
+bispecData              Test Data
+blocar                  Bayesian Method of Locally Stationary AR Model
+                        Fitting; Scalar Case
+blomar                  Bayesian Method of Locally Stationary
+                        Multivariate AR Model Fitting
+Blsallfood              Blsallfood data
+bsubst                  Bayesian Type All Subset Analysis
+Canadianlynx            Test Data from canadianlynxes
+canarm                  Canonical Correlation
+canoca                  Canonical Correlation Analysis of Vector Time
+                        Series
+covgen                  Covariance Generation
+decomp                  Time Series Decomposition (Seasonal
+                        Adjustment)
+exsar                   Exact Maximum Likelihood Method of Scalar AR
+                        Model Fitting
+fftcor                  Auto And/Or Cross Correlations via FFT
+fpeaut                  FPE Auto
+fpec                    AR model Fitting for Control
+locarData               Non-stationary Test Data
+markov                  Maximum Likelihood Computation of Markovian
+                        Model
+mfilter                 Linear Filtering on a Multivariate Time Series
+mlocar                  Minimum AIC Method of Locally Stationary AR
+                        Model Fitting; Scalar Case
+mlomar                  Minimum AIC Method of Loccally Stationary
+                        Multivariate AR Model Fitting
+mulbar                  Multivariate Bayesian Method of AR Model
+                        Fitting
+mulcor                  Multiple Correlation
+mulfrf                  Frequency Response Function (Multiple Channel)
+mulmar                  Multivariate Case of Minimum AIC Method of AR
+                        Model Fitting
+mulnos                  Multiple Unoise
+mulrsp                  Multiple Rational Spectrum
+mulspe                  Multiple Spectrum
+ngsmth                  Non-Gaussian Smoothing
+nonst                   Non-stationary Power Spectrum Analysis
+nonstData               Non-stationary Test Data
+optdes                  Optimal Controller Design
+optsim                  Optimal Control Simulation
+perars                  Periodic Autoregression for a Scalar Time
+                        Series
+Powerplant              Power Plant Data
+prdctr                  Prediction Program
+raspec                  Rational Spectrum
+sglfre                  Frequency Response Function (Single Channel)
+simcon                  Optimal Controller Design and Simulation
+thirmo                  Third Order Monents
+tsmooth                 Kalman Filter
+tvar                    Time Varying Coefficients AR model
+tvvar                   Time Varying Variance
+unibar                  Univariate Bayesian Method of AR Model Fitting
+unimar                  Univariate Case of Minimum AIC Method of AR
+                        Model fitting
+wnoise                  White Noise Generator
+xsarma                  Exact Maximum Likelihood Method of Scalar ARMA
+                        Model Fitting

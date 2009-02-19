@@ -1326,7 +1326,7 @@ C
 cc      IF( JJ-L )     40,40,10                                           
       IF( JJ-L .LT. 0 )  GO TO 40
       IF( JJ-L .EQ. 0 )  GO TO 40
-      IF( JJ-L .GT. 0 )  GO TO 10                                           
+      IF( JJ-L .GT. 0 )  GO TO 10
    10 II1 = L + 1                                                       
       DO  20     I=II1,JJ                                               
       I1 = JJ+L-I                                                       
@@ -1445,7 +1445,7 @@ C         ! PARTIAL AUTOCORRELATION ESTIMATION (BAYESIAN MODEL) !
 C         +-----------------------------------------------------+       
 C                                                                       
 cc      CALL  BAYSPC( X,C,N,K,ISW,MJ1,B,D )                               
-      CALL  BAYSPC( X,C,N,K,ISW,MJ1,B1,B,D )                               
+      CALL  BAYSPC( X,C,N,K,ISW,MJ1,B1,B,D )
 C                                                                       
 C         +-----------------------------------------+                   
 C         ! AUTOREGRESSIVE COEFFICIENTS COMPUTATION !                   
@@ -1591,7 +1591,7 @@ C          ! AIC DISPLAY !                                            !
 C          +-------------+                                            +-
 C                                                                       
 cc      CALL  MAICE( AIC,SD,K,ISW,AICM,SDMIN,IMIN )                       
-      CALL  MAICE( AIC,SD,K,ISW,AICM,SDMIN,IMIN,DIC )                       
+      CALL  MAICE( AIC,SD,K,ISW,AICM,SDMIN,IMIN,DIC )
 C                                                                       
 C          +-----------------------------------------+                +-
 C          ! AUTOREGRESSIVE COEFFICIENTS COMPUTATION !                ! 
@@ -1712,7 +1712,7 @@ C
   100 CONTINUE                                                          
       DO  110     I=1,K                                                 
 cc  110 B(I) = B(I) * D(I)                                                
-  110 B1(I) = B(I) * D(I)                                                
+  110 B1(I) = B(I) * D(I)
 C                                                                       
       RETURN                                                            
 C                                                                       
@@ -1949,7 +1949,7 @@ C
 cc      IF( II-L )     10,30,40                                           
       IF( II-L .LT. 0 )  GO TO 10
       IF( II-L .EQ. 0 )  GO TO 30
-      IF( II-L .GT. 0 )  GO TO 40                                           
+      IF( II-L .GT. 0 )  GO TO 40
    10 I1 = II + 1                                                       
       DO  20     I=I1,L                                                 
    20 JND(I-1) = JND(I)                                                 
@@ -2144,7 +2144,7 @@ C
 
 C
 cc      SUBROUTINE  MAICE( AIC,SD,K,ISW,AICM,SDM,IMIN )                   
-      SUBROUTINE  MAICE( AIC,SD,K,ISW,AICM,SDM,IMIN,DIC )                   
+      SUBROUTINE  MAICE( AIC,SD,K,ISW,AICM,SDM,IMIN,DIC )
 C                                                                       
 C             +-------------+                                           
 C             ! AIC DISPLAY !                                           
@@ -2208,13 +2208,13 @@ cc      WRITE( 6,7 )     AICM , IMIN , SDM
 C                                                                       
       RETURN                                                            
 C                                                                       
-    5 FORMAT( /1H ,70X,'AIC(M)-AICMIN (TRUNCATED AT 40.0)',/,2X,'ORDER', 
+    5 FORMAT( /1H ,70X,'AIC(M)-AICMIN (TRUNCATED AT 40.0)',/,2X,'ORDER',
      1 2X,'INNOVATION VARIANCE',40X,'0',8X,'10',8X,'20',8X,'30',8X,'40',
      2/,5X,'M',10X,'SD(M)',14X,'AIC(M)',7X,'AIC(M)-AICMIN',7X,'+',4(10H-
      3--------+) )                                                      
     6 FORMAT( 1H ,I5,D20.10,2F16.3,10X,41A1 )                           
     7 FORMAT( /1H ,'*****  MINIMUM AIC =',D17.10,3X,'ATTAINED AT M =',
-     1I3,5X,'SD(M) =',D17.10,'  *****' )                                   
+     1I3,5X,'SD(M) =',D17.10,'  *****' )
 C                                                                       
       E N D                                                             
 C
@@ -2324,7 +2324,7 @@ cc      DIMENSION  C(1) , A(100) , AIC(51) , SD(51) , EX(1)
 cc      DIMENSION  IND(100) , JND(100) , KND(100)                         
       DIMENSION  X(MJ1,1), Y(MJ4,MJ4), E(ID,ID), B(ID,ID,M) 
       DIMENSION  C(1), A(MJ4)
-      DIMENSION  AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID), EX(ID)               
+      DIMENSION  AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID), EX(ID)
       DIMENSION  AICM(ID), SDM(ID), IM(ID)
       DIMENSION  IND(MJ4) , JND(MJ4) , KND(MJ4)                         
       DIMENSION  EI(ID,ID) , BI(ID,ID,M)
@@ -2647,7 +2647,7 @@ C
       IF( ISW .EQ. 1 )   RETURN                                         
 cc      IF(IPR.GE.1)  WRITE( 6,3 )                                        
 cc      CALL  MCOEF( B,C,E,EX,ID,LMAX,NSW,IPR,MJ2,MJ3 )                   
-      CALL  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,NSW,IPR,MJ2,MJ3 )                   
+      CALL  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,NSW,IPR,MJ2,MJ3 )
 cc      IF(IPR.GE.1)  WRITE( 6,611 )  AICSUM                              
 C                                                                       
       AICS = AICSUM                                                     
@@ -2656,25 +2656,25 @@ C
       RETURN                                                            
     3 FORMAT( 1H ,132(1H-) )                                            
 cc    4 FORMAT( ' *****  INITIAL ESTIMATE *****' )                        
-    4 FORMAT( /,' *****  INITIAL ESTIMATE *****' )                        
+    4 FORMAT( /,' *****  INITIAL ESTIMATE *****' )
     5 FORMAT( ' ADD',4X ,I3,5X,'AIC =',F15.3,17X,'REGRESSOR',I4,
-     *' ( LAG =',I2,' , I=',I2,' ) ' )                                          
+     *' ( LAG =',I2,' , I=',I2,' ) ' )
     6 FORMAT( 1H+,45X,'-----',36X,'ADDED    -----' )                    
    56 FORMAT( ' ADD',4X ,I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,
      *' ( LAG =',I2,' , I=',I2,' )  ADDED    -----' )
     7 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,17X,'REGRESSOR',I4,
-     *' ( LAG =',I2,' , I=',I2,' ) ' )                                          
+     *' ( LAG =',I2,' , I=',I2,' ) ' )
     8 FORMAT( 1H+,45X,'-----',36X,'DELETED  -----' )                    
    78 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,
      *' ( LAG =',I2,' , I=',I2,' )  DELETED  -----' )
     9 FORMAT( 1H+,86X,'NOT ADDED' )                                     
    59 FORMAT( ' ADD',4X ,I3,5X,'AIC =',F15.3,17X,'REGRESSOR',I4,
-     *' ( LAG =',I2,' , I=',I2,' )  NOT ADDED' )                                          
+     *' ( LAG =',I2,' , I=',I2,' )  NOT ADDED' )
 cc   11 FORMAT( 1H ,10X,'--------  CHECK',I3,'-TH  VARIABLE  --------' )  
 cc   12 FORMAT( 1H ,10X,'<<<  AIC =',F15.3,'  >>>   .....TEMPORARY MINIMUM
    11 FORMAT( /10X,' --------  CHECK',I3,'-TH  VARIABLE  --------' )  
    12 FORMAT( /10X,' <<<  AIC =',F15.3,'  >>>   .....TEMPORARY MINIMUM',
-     1' AIC.....   ( NUMBER OF PARAMETERS=',I3,' )' )                    
+     1' AIC.....   ( NUMBER OF PARAMETERS=',I3,' )' )
 cc   13 FORMAT( 1H ,15X,'AIC =',F15.3 )                                   
 cc   14 FORMAT( 1H ,'*****  SECONDARY ESTIMATE  *****' )                  
 cc   15 FORMAT( 1H ,'*****  FINAL ESTIMATE  *****' )                      
@@ -2683,7 +2683,7 @@ cc   16 FORMAT( 1H ,11X,'<<< MINIMUM AIC =',F15.3,' >>>    ( NUMBER OF PAR
    14 FORMAT( /' *****  SECONDARY ESTIMATE  *****' )                  
    15 FORMAT( /' *****  FINAL ESTIMATE  *****' )                      
    16 FORMAT( /11X,' <<< MINIMUM AIC =',F15.3,' >>>    ( NUMBER OF ',
-     *'PARAMETERS =',I3,' )' )                                              
+     *'PARAMETERS =',I3,' )' )
    17 FORMAT( 1H+,22X,'<<< MAICE >>>' )                                 
    18 FORMAT( 1H+,86X,'NOT DELETED' )                                   
   718 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,17X,'REGRESSOR',I4,
@@ -2692,10 +2692,10 @@ cc   19 FORMAT( 1H ,10X,'--------  CHECK CONSTANT VECTOR  --------' )
    19 FORMAT( /10X,' --------  CHECK CONSTANT VECTOR  --------' )     
    21 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,17X,'REGRESSOR',I4,        
      * ' (CONSTANT  VECTOR)')                                           
-  218 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,        
-     * ' (CONSTANT  VECTOR)  DELETED  -----')                                           
- 2118 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,        
-     * ' (CONSTANT  VECTOR)  DELETED  -----')                                           
+  218 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,
+     * ' (CONSTANT  VECTOR)  DELETED  -----')
+ 2118 FORMAT( ' DELETE ',I3,5X,'AIC =',F15.3,10X,'-----  REGRESSOR',I4,
+     * ' (CONSTANT  VECTOR)  DELETED  -----')
 cc  600 FORMAT( 1H ,'-----  X  -----' )                                   
 cc  602 FORMAT( 1H ,'AICMIN =',D13.5,5X,'AIC1 =',D13.5,5X,'AIC2 =',D13.5, 
   600 FORMAT( /' -----  X  -----' )                                   
@@ -2725,13 +2725,13 @@ cc  615 FORMAT( 1H ,'--  DELETE VARIABLES     MDEL =',I5,5X,'J1 =',I5,5X,
   640 FORMAT( 1H ,4X,'I',10X,'AIC ' )                                   
   641 FORMAT( 1H ,'OAIC =',F15.3,5X,'AICMIN =',F15.3 )                  
 cc  642 FORMAT( 1H ,30(1H-),/,1H ,'FIRST STEP OF AIC MINIMIZATION',/,1H , 
-  642 FORMAT( /1H ,30(1H-),/,1H ,'FIRST STEP OF AIC MINIMIZATION',/,1H , 
+  642 FORMAT( /1H ,30(1H-),/,1H ,'FIRST STEP OF AIC MINIMIZATION',/,1H ,
      1 30(1H-) )                                                        
 cc  643 FORMAT( 1H ,31(1H-),/,1H ,'SECOND STEP OF AIC MINIMIZATION',/,1H ,
   643 FORMAT(/1H ,31(1H-),/,1H ,'SECOND STEP OF AIC MINIMIZATION',/,1H ,
      1  31(1H-) )                                                       
 cc  644 FORMAT( 1H ,30(1H-),/,1H ,'FINAL STEP OF AIC MINIMIZATION',/,1H , 
-  644 FORMAT( /1H ,30(1H-),/,1H ,'FINAL STEP OF AIC MINIMIZATION',/,1H , 
+  644 FORMAT( /1H ,30(1H-),/,1H ,'FINAL STEP OF AIC MINIMIZATION',/,1H ,
      1 30(1H-) )                                                        
 cc  645 FORMAT( 1H ,23X,10(1H.),'REGRESSION MODEL FOR THE REGRESSAND  II =
   645 FORMAT( /24X,10(1H.),'REGRESSION MODEL FOR THE REGRESSAND  II =
@@ -3031,7 +3031,7 @@ C
 C
 C
 cc      SUBROUTINE  MCOEF( B,C,E,EX,ID,LMAX,KSW,IPR,MJ2,MJ3 )             
-      SUBROUTINE  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,KSW,IPR,MJ2,MJ3 )             
+      SUBROUTINE  MCOEF( BI,B,C,EI,E,EX,ID,LMAX,KSW,IPR,MJ2,MJ3 )
 C                                                                       
 C     THIS SUBROUTINE COMPUTES AND PRINTS OUT THE COEFFICIENT MATRICES O
 C     MULTI-VARIATE AUTOREGRESSIVE MODEL FROM THE COEFFICIENT MATRICES O
@@ -3504,7 +3504,7 @@ cc      WRITE( 6,5 )
 cc      DO 180  I=1,ID                                                    
 cc  180 WRITE( 6,6 )   (E(I,J),J=1,ID)                                    
       RETURN                                                            
-    5 FORMAT( /,1H ,'*  INNOVATION VARIANCE MATRIX  *' )                  
+    5 FORMAT( /,1H ,'*  INNOVATION VARIANCE MATRIX  *' )
     6 FORMAT( 1H ,5D20.10 )                                             
       E N D                                                             
 C

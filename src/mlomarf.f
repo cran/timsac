@@ -76,10 +76,12 @@ cc      DIMENSION  X(200,100) , U(100,100) , D(200)
 cc      DIMENSION  A(5,5,50) , B(5,5,50) , E(5,5)                         
       DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
       DIMENSION  ZMEAN(ID), ZVARI(ID)
-      DIMENSION  A(ID,ID,LAG,K) , B(ID,ID,LAG) , E(ID,ID,K)                         
+      DIMENSION  A(ID,ID,LAG,K) , B(ID,ID,LAG) , E(ID,ID,K)             
       DIMENSION  NF(K), NS(K), MS(K), MP(K), MF(K)
       DIMENSION  AIC(K), AICP(K), AICF(K)
       DIMENSION  LK0(K), LKE(K)
+      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
+      DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -105,6 +107,15 @@ cc      MJ3 = 5
       MJ1 = MJ2*2
       MJ3 = ID
 C                                                                       
+      DO 102 J = 1,MJ2
+         DO 100 I = 1,MJ1
+            X(I,J) = 0.0D0
+  100    CONTINUE
+         DO 101 I = 1,MJ2
+            U(I,J) = 0.0D0
+  101   CONTINUE
+  102 CONTINUE
+C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
 cc      OPEN( MT,FILE=IFLNAM,ERR=910,IOSTAT=IVAR,STATUS='OLD' )
@@ -144,7 +155,7 @@ cc      IF( N-LK1-NS .LT. MX )     NS = N - LK
 C                                                                       
 cc      CALL  MNONST( Z,X,U,D,KSW,LAG,L,NS,ID,IF,MJ,MJ1,MJ2,MJ3,A,B,E,MF, 
 cc     *              AIC )                                               
-      CALL  MNONST( Z,KSW,LAG,L,NNF,NF(M),NS(M),ID,IF,MJ,MJ1,MJ2,MJ3,
+      CALL MNONST( Z,X,U,KSW,LAG,L,NNF,NF(M),NS(M),ID,IF,MJ,MJ1,MJ2,MJ3,
      * A(1,1,1,M),B,E(1,1,M),MS(M),AIC(M),MP(M),AICP(M),MF(M),AICF(M) )
 C                                                                      
 cc      L = L + NS                                                        
@@ -195,6 +206,7 @@ cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C
 cc  999 CONTINUE
 cc      STOP                                                              
+      close(3)
       RETURN
     1 FORMAT( 16I5 )                                                    
     2 FORMAT( ///1H ,'PROGRAM TIMSAC 78.3.3',/,'   LOCALLY STATIONARY MU
@@ -221,8 +233,8 @@ cc      STOP
       END                                                               
 cc      SUBROUTINE  MNONST( Z,X,U,D,KSW,LAG,N0,NS,ID,IF,MJ,MJ1,MJ2,MJ3,   
 cc     1                    A,B,E,MF,AICF )                               
-      SUBROUTINE  MNONST( Z,KSW,LAG,N0,NNF,NF,NS,ID,IF,MJ,MJ1,MJ2,MJ3,A,
-     *                    B,E,MS,AICFS,MP,AICP,MF,AICF )
+      SUBROUTINE  MNONST( Z,X,U,KSW,LAG,N0,NNF,NF,NS,ID,IF,MJ,MJ1,MJ2,
+     *                    MJ3,A,B,E,MS,AICFS,MP,AICP,MF,AICF )
 C                                                                       
 C     IN THIS SUBROUTINE THE FOLLOWING TWO MODELS ARE COMPARED AND      
 C     THE MODEL WITH THE SMALLER AIC IS ACCEPTED AS THE CURRENT MODEL.  
@@ -317,7 +329,7 @@ C
 cc      CALL  MARFIT( X,Y,D,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,B,E,EX,C, 
 cc     *             MS,AICS )                                            
       CALL  MARFIT( X,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC,
-     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC,IFG,LU )                                            
+     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC,IFG,LU )       
 C                                                                       
       IF( IF .NE. 0 )     GO TO 10                                      
 C                                                                       
@@ -328,7 +340,7 @@ cc      WRITE( 6,5 )     NS , MS , AICS
 C                                                                       
 C                                                                       
 cc   10 AIC = AICF + AICS                                                 
-   10 AICFS = AICF + AICS                                                 
+   10 AICFS = AICF + AICS                                               
 C                                                                       
 cc      WRITE( 6,4 )                                                      
 cc      WRITE( 6,6 )     NF , NS , MS , AIC                               
@@ -346,7 +358,7 @@ C
 C                                                                       
 C       ---  AR-MODEL FITTING FOR POOLED DATA  ---                      
 C                                                                       
-      NP = NNF + NS                                                      
+      NP = NNF + NS                                                     
 cc      CALL  MARFIT( X,Y,D,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,A,E,EX,C, 
 cc     *              MP,AICP )                                           
       CALL  MARFIT( X,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC, 
@@ -355,7 +367,7 @@ C
 cc      WRITE( 6,7 )     NP , MP , AICP                                   
 C                                                                       
 cc      IF( AIC .GE. AICP )     GO TO 40                                  
-      IF( AICFS .GE. AICP )     GO TO 40                                  
+      IF( AICFS .GE. AICP )     GO TO 40                                
 C                                                                       
 cc      WRITE( 6,8 )                                                      
 C                                                                       
@@ -363,7 +375,7 @@ C
 C                                                                       
    20 CONTINUE                                                          
       IF = 2                                                            
-      NNF = NS                                                           
+      NNF = NS                                                          
       MF = MS                                                           
       AICF = AICS                                                       
 C                                                                       
@@ -380,7 +392,7 @@ C
       CALL  COPY( X,KD1,0,0,MJ1,MJ2,U )                                 
 C                                                                       
 cc      WRITE( 6,9 )                                                      
-      NNF = NNF + NS                                                      
+      NNF = NNF + NS                                                    
       MF = MP                                                           
       AICF = AICP                                                       
 C                                                                       
@@ -409,7 +421,7 @@ C
      1EW MODEL ADOPTED     *****',/,1H ,'*****',27X,'*****',/,1H ,37(1H*
      2) )                                                               
     9 FORMAT( 1H ,'*****  CONSTANT MODEL ADOPTED  *****' )              
-   19 FORMAT( 1H ,'*****',27X,'*****' )                                  
+   19 FORMAT( 1H ,'*****',27X,'*****' )                                 
    21 FORMAT( 1H ,37(1H*) )                                             
    22 FORMAT( 1H ,// )                                                  
    24 FORMAT( 1H ,'LK1 =',I5,5X,'M =',I5,/,1H ,130(1H*) )               

@@ -70,6 +70,7 @@ cc      DIMENSION  G(10,10,50) , H(10,10,50) , E(10,10)
       DIMENSION  G(ID,ID,LAG) , H(ID,ID,LAG) , E(ID,ID,KMAX)
       DIMENSION  BW(KMAX,KMAX), AIC(KMAX,KMAX)
       DIMENSION  AICB(KMAX), LKS(KMAX), LKE(KMAX)
+      DIMENSION  F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX)
 C
 C       PARAMETERS:                                                     
 C          MJ:    ABSOLUTE DIMENSION FOR SUBROUTINE CALL                
@@ -95,6 +96,13 @@ cc      KMAX = 10
       MJ3 = ID
       KSW = 0                                                           
 C                                                                       
+      DO 100 I = 1,LAG*ID
+      DO 100 J = 1,ID
+      DO 100 K = 1,KMAX
+         F1(I,J,K) = 0.0D0
+         F2(I,J,K) = 0.0D0
+  100 CONTINUE
+C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
 cc      OPEN( MT,FILE=IFLNAM,ERR=910,IOSTAT=IVAR,STATUS='OLD' )
@@ -126,7 +134,7 @@ C
 C                                                                       
 cc      CALL MNONSB( Z,X,D,G,H,E,KSW,LAG,L,NS,ID,KMAX,MJ,MJ1,MJ3,A,B,AIC )
       CALL MNONSB( Z,G,H,E(1,1,M),KSW,LAG,L,NS,ID,KMAX,KC,MJ,MJ1,MJ3,
-     *             BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M) )
+     *             BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M),F1,F2 )
 C                                                                       
       L = L + NS                                                        
 C                                                                       
@@ -175,7 +183,7 @@ ccC
   610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C
 cc  999 CONTINUE
-cc      STOP                                                              
+cc      STOP                    
       RETURN
     1 FORMAT( 16I5 )                                                    
     2 FORMAT( 1H ,'PROGRAM TIMSAC 78.3.4',//,'   BAYESIAN METHOD OF LOCA
@@ -203,7 +211,7 @@ cc      STOP
 cc      SUBROUTINE  MNONSB( Z,X,D,G,H,E,KSW,LAG,N0,NS,ID,KMAX,MJ,MJ1,MJ3,A
 cc     *,B,AICB )                                                         
       SUBROUTINE  MNONSB( Z,G,H,E,KSW,LAG,N0,NS,ID,KMAX1,KC,MJ,MJ1,MJ3,
-     *                    C,AIC,A,B,AICB )
+     *                    C,AIC,A,B,AICB,F1,F2 )
 C       ----------------------------------------------------------------
 C       THE FOLLOWING SUBROUTINES ARE DIRECTLY CALLED BY THIS SUBROUTINE
 C             DMIN                                                      
@@ -260,7 +268,7 @@ cc      MJ5 = 100
 C          -----------------------------------------------              
 C          NEW DATA LOADING AND HOUSEHOLDER TRANSFORMATION              
 C          -----------------------------------------------              
-cc      CALL  MREDCT( Z,D,NS,N0,LAG,ID,MJ,MJ1,KSW,X )                     
+cc      CALL  MREDCT( Z,D,NS,N0,LAG,ID,MJ,MJ1,KSW,X )        
       CALL  MREDCT( Z,NS,N0,LAG,ID,MJ,MJ1,KSW,X )
 C                                                                       
 C          -------------------------------------                        

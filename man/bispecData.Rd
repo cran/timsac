@@ -1,6 +1,6 @@
 \name{bispecData}
 \alias{bispecData}
-\title{Test Data}
+\title{Univariate Test Data}
 \description{
   A test data for "bispec" and "thirmo".
 }

@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int nonst(long*,long*,double*,long*,long*,long*,double*,double*,double*,double*,double*,long*,long*,double*,char**);
 
 /* rtimsac74.dll subroutine */ int nonst(i1,i2,d1,i3,i4,i5,d2,d3,d4,d5,d6,i6,i7,d7,c1)
@@ -8,12 +10,12 @@ extern int nonst(long*,long*,double*,long*,long*,long*,double*,double*,double*,d
 	char **c1;
 
 {
-	extern int nonstf_(long*,long*,double*,long*,long*,long*,double*,double*,double*,double*,double*,long*,long*,double*,long*);
+	extern int F77_NAME(nonstf) (long*,long*,double*,long*,long*,long*,double*,double*,double*,double*,double*,long*,long*,double*,long*);
 
 	long *i8;
 	i8 = (long*)*c1;
 
-	nonstf_(i1,i2,d1,i3,i4,i5,d2,d3,d4,d5,d6,i6,i7,d7,i8);
+	F77_CALL(nonstf) (i1,i2,d1,i3,i4,i5,d2,d3,d4,d5,d6,i6,i7,d7,i8);
 
 	return 0;
 }

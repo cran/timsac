@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int mulcor(double*, long*, long*, long*, double* ,double*, double*);
 
 /* rtimsac72.dll subroutine */ int mulcor (d1,i1,i2,i3,d2,d3,d4)
@@ -7,9 +9,9 @@ extern int mulcor(double*, long*, long*, long*, double* ,double*, double*);
 	long *i1,*i2,*i3;
 
 {
-	extern int mulcorf_(double*, long*, long*, long*, double*, double*, double*);
+	extern int F77_NAME(mulcorf) (double*, long*, long*, long*, double*, double*, double*);
 
-	mulcorf_(d1,i1,i2,i3,d2,d3,d4);
+	F77_CALL(mulcorf) (d1,i1,i2,i3,d2,d3,d4);
 
 	return 0;
 }

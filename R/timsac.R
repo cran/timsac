@@ -86,12 +86,12 @@ autcor <- function (y, lag=NULL, plot=TRUE, lag_axis=TRUE)
     mean <- 0            # mean of y
 
     z <- .C("autcor",
-	     as.double(y),
-	     as.integer(n),
-	     acov = as.double(acov),
-	     acor = as.double(acor),
-	     as.integer(lag1),
-	     mean = as.double(mean))
+             as.double(y),
+             as.integer(n),
+             acov = as.double(acov),
+             acor = as.double(acor),
+             as.integer(lag1),
+             mean = as.double(mean))
 
     if( plot == TRUE ) {
       plot((0:lag), z$acor, type="h", ylab="Autocorrelation", xlab="Lag")
@@ -552,7 +552,7 @@ function (y, max.order=NULL, ncon=NULL, nman=0, inw=NULL)
     cov <- array(z$ccv, dim=c(morder1,ip,ip))
     cov <- aperm(cov, c(2,3,1))
     arcoef <- array(z$arcoef,dim=c(morder,ncon,ip))
-    arcoef <- arcoef[1:z$ordermin,,]
+    arcoef <- arcoef[1:z$ordermin,,,drop=F]
     arcoef <- aperm(arcoef, c(2,3,1))
 
     fpec.out  <- list( cov=cov, fpec=z$fpec, rfpec=z$rfpec, aic=z$aic, ordermin=z$ordermin,
@@ -1015,12 +1015,12 @@ function (y, model.order, tmp.file=NULL)
 	b = as.double(b),
 	std = as.double(std),
 	v = as.double(v),
-        gr = as.double(gr),
+	gr = as.double(gr),
 	aic = as.double(aic),
-        aicm = as.double(aicm),
+	aicm = as.double(aicm),
 	pbest = as.integer(pbest),
 	qbest = as.integer(qbest),
-        as.character(tmp.file),
+	as.character(tmp.file),
 	as.integer(lmax),
 	as.integer(mmax),
 	as.integer(nmax) )
@@ -1073,13 +1073,13 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
     lag1 <- lag+1
 
     z1 <- thirmo(y, lag, plot=FALSE)
-    cv <- z1$acov               # autocovariance
+    cv <- z1$acov			# autocovariance
 
     tmnt <- array(0,dim=c(lag1,lag1))
     for( i in 1:lag1 ) tmnt[i,1:i] <- z1$tmomnt[[i]]   # third order moments
 
-    pspec1 <- rep(0,lag1)	# power spectrum smoothed by window w1
-    pspec2 <- rep(0,lag1)	# power spectrum smoothed by window w2
+    pspec1 <- rep(0,lag1)		# power spectrum smoothed by window w1
+    pspec2 <- rep(0,lag1)		# power spectrum smoothed by window w2
     sig <- rep(0,lag1)		# significance
     ch <- array(0, dim=c(lag1,lag1))	# coherence
     br <- array(0, dim=c(lag1,lag1))	# real part of bispectrum
@@ -1116,20 +1116,26 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
 
 
 canarm <-
-function (y, max.order=NULL, plot=TRUE)
+function (y, lag=NULL, max.order=NULL, plot=TRUE)
 {
     n <- length(y)
-    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
-    morder <- max.order
+    if( is.null(lag) ) lag <- as.integer(2*sqrt(n))
+    morder <- lag
 
 #    mmax <- 50
 #    nmax <- 101
-    mmax <- morder
+    if( is.null(max.order) ) max.order <- morder
+    mmax <- max.order
     nmax <- 2*morder+1
 
     arcoef <- rep(0,nmax)	# AR-coefficients
     l1 <- 0			# upper limit of the model order +1
-    v <- rep(0,mmax+1)		# innovation vector
+#-----
+#    ifpl <- as.integer(3.0*sqrt(n))
+     ifpl <- min(mmax, morder)
+     l1 <- ifpl+1
+#-----
+    v <- rep(0,mmax+1)	# innovation vector
     aic <- rep(0,mmax+1)	# AIC
     oaic <- 0              	# minimum AIC
     mo <- 0                	# order of AR
@@ -1162,7 +1168,7 @@ function (y, max.order=NULL, plot=TRUE)
 	as.integer(morder+1),
 	as.double(autcv),
 	arcoef = as.double(arcoef),
-	l1 = as.integer(l1),
+	as.integer(l1),
 	v = as.double(v),
 	aic = as.double(aic),
 	oaic = as.double(oaic),
@@ -1183,11 +1189,10 @@ function (y, max.order=NULL, plot=TRUE)
 	b = as.double(b),
 	l = as.integer(l),
 	a = as.double(a),
-        as.character(tmp.file),
+	as.character(tmp.file),
 	as.integer(mmax),
 	as.integer(nmax) )
 
-    l1 <- z1$l1
     mo <- z1$mo
     parcor <- z1$parcor[1:(l1-1)]
     nc <- z1$nc
@@ -1250,7 +1255,7 @@ function (y)
     aic <- rep(0,mj0)	# AIC
     oaic <- 0		# minimum AIC
     mo <- 0		# MAICE AR-model order                 
-    v <- array(0, dim=c(d,d))		# innovation variance
+    v <- array(0, dim=c(d,d))	# innovation variance
     ac <- array(0, dim=c(mj0,d,d))	# autoregressive coefficients
     nc <- 0				# number of cases
     m1 <- rep(0,mj1)			# number of variable in the future set
@@ -1261,12 +1266,12 @@ function (y)
     chi <- array(0,dim=c(mj1,mj1))	# chi-square
     ndt <- array(0,dim=c(mj1,mj1))	# N.D.F
     dic <- array(0,dim=c(mj1,mj1))	# DIC(=CHI**2-2*D.F)
-    dicm <- rep(0,mj1)			# minimum DIC
+    dicm <- rep(0,mj1)		# minimum DIC
     po <- rep(0,mj1)			# order of minimum DIC
     f <- array(0,dim=c(mj1,mj1))	# transition matrix F
     k <- 0				# number of structual characteristic vector
     nh <- rep(0,mj1)			# structual characteristic vector
-    g <- array(0, dim=c(mj1,d))		# input matrix
+    g <- array(0, dim=c(mj1,d))	# input matrix
     ivf <- 0				# number of vector vf
     vf <- rep(0,mj1*mj1)		# F matrix in vector form
 
@@ -1471,6 +1476,7 @@ function (y, span, max.order=NULL, plot=TRUE)
     tmp.file <- " "
 
     morder <- max.order
+    if( span < 1 ) span <- n
     ns <- as.integer(n/span)
     p <- rep(0,ns)			# AR order
     coef <- array(0, dim=c(morder,ns))	# AR-coefficients
@@ -1753,6 +1759,7 @@ function (y, max.order=NULL, span, plot=TRUE)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of the order of AR model
 
     morder <- max.order
+    if( span < 0 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
     mean <- 0
     var <- 0
@@ -1821,6 +1828,7 @@ function (y, max.order=NULL, span)
     morder <- max.order
 
     calb<-rep(1,d)   # calibration constant for channel j (j=1,d)
+    if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
     mean <- rep(0,d)
     var <- rep(0,d)
@@ -2087,6 +2095,7 @@ function (y, max.order=NULL, span, const=0, plot=TRUE)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
     morder <- max.order
 
+    if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
     mean <- 0
     var <- 0
@@ -2167,6 +2176,7 @@ function (y, max.order=NULL, span, const=0)
     morder <- max.order
 
     calb <- rep(1,d)   # calibration for channel j (j=1,d)
+    if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
     mean <- rep(0,d)
     var <- rep(0,d)
@@ -2642,10 +2652,11 @@ function (y, arcoefi, macoefi)
 			grad=z$g2, alph.ar=z$alph.ar, alph.ma=z$alph.ma, lkhood=z$tl2, wnoise.var=z$sigma2)
     return( xsarma.out )
 }
-#####   DECOMP     #####
+
+#####   TIMSAC84   #####
 
 decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1, log=FALSE, trade=FALSE,
-	    idif=1, year=1980, month=1, imiss=1, omax=99999.9, plot=TRUE)
+	    diff=1, year=1980, month=1, miss=1, omax=99999.9, plot=TRUE)
 {
     m1 <- trend.order
     m2 <- ar.order
@@ -2662,7 +2673,7 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
     ipar[4] <- seasonal.order
     ipar[5] <- ilog
     ipar[6] <- itrade
-    ipar[7] <- idif
+    ipar[7] <- diff
     ipar[8] <- year
     ipar[9] <- month
 
@@ -2684,7 +2695,7 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
              trad = as.double(trad),
              noise = as.double(noise),
              para = as.double(para),
-             as.integer(imiss),
+             as.integer(miss),
              as.double(omax))	
 
     aic=z$para[1]
@@ -2720,6 +2731,421 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
                        aic=aic, lkhd=lkhd, sigma2=sigma2, tau1=tau1, tau2=tau2, tau3=tau3, arcoef=arcoef, tdf=tdf)
     return(decomp.out)
 }
+
+baysea <- function(y, period=12, span=4, shift=1, forecast=0, trend.order=2, seasonal.order=1, year=0, month=1, out=0, rigid=1, zersum=1, delta=7, alpha=0.01, beta=0.01, gamma=0.1, spec=TRUE, plot=TRUE, separate.graphics=FALSE)
+{
+    if( seasonal.order > span ) stop(" ***** ERROR : seasonal.order is smaller than or equal to spanN\n" )
+    if( span < 1 ) stop(" ***** ERROR : span is greater than or equal to 1\n" )
+    if( trend.order < 1 ) stop(" ***** ERROR : trend.order is greater than or equal to 1\n" )
+
+    ndata <- length(y)
+    npf <- ndata+forecast
+
+    ipara <- rep(0, 12)
+    ipara[1] <- period
+    ipara[2] <- span
+    ipara[3] <- shift
+    ipara[4] <- trend.order
+    ipara[5] <- seasonal.order
+    ipara[6] <- 0           # logt
+    ipara[7] <- year
+    ipara[8] <- month
+    ipara[9] <- 1                            # nday
+    if( spec == TRUE )  ipara[10] <- 1       # spectrum estimation option
+    if( spec == FALSE ) ipara[10] <- 0
+    ipara[11] <- out                        # ioutd : outlier correction option 
+
+    para <- rep(0,8)
+    para[1] <- rigid     # controls the rigidity of the seasonal component
+    para[2] <- 1         # wtrd
+    para[3] <- 1         # dd
+    para[4] <- zersum    # controls the sum of the seasonals within a period
+    para[5] <- delta     # controls the leap year effect
+    para[6] <- alpha     # controls prior variance of initial trend
+    para[7] <- beta      # controls prior variance of initial seasonal
+    para[8] <- gamma     # controls prior variance of initial sum of seasonal
+
+    arft <- rep(0, 3)
+    arfs <- rep(0, 3)
+    arfn <- rep(0, 3)
+
+#   subroutine arcoef ---> subroutine partar
+    iart <- 0
+#    for(i in 1:3) if(arft[i] != 0.0) iord <- i
+#    if(iord != 0) {
+#      arm <- matrix(0, dim=c(3,3))
+#      for( i in 1:3 ) arm[i,i] <- arft[i]
+#      arm[2,1] <- arm[1,1]-arft[2]*arm[1,1]
+#      arm[3,1] <- arm[2,1]-arft[3]*arm[2,2]
+#      arm[3,2] <- arm[2,2]-arft[3]*arm[2,1]
+#      for( i in 1:iord ) arft[i] <- arm[iord,i]
+#    }
+    iars <- 0
+    iarn <- 0
+
+    is <- period*seasonal.order
+    iprd <- 2
+    if( period == 1 ) iprd <- 1
+    lftrn <- trend.order + iart
+    lfsea <- (seasonal.order+iars)*period + iarn
+    idc <- lftrn*iprd + 1
+    idcx <- lfsea*2 + 1
+    if( period>1 && idc<idcx ) idc <- idcx
+    if( period>1 && idc<period*2-1 ) idc <- period*2-1
+    ipara[12] <- idc
+
+    outlier <- rep(0, ndata)      # outlier correction factor (ioutd=0 : without outlier detection) 
+    dmoi <- rep(0, ndata)         # missing observation interpolated data
+    trend <- rep(0, npf)          # trend
+    season <- rep(0, npf)         # seasonal
+    tdcmp <- rep(0, npf)          # trading-day component
+    irreg <- rep(0, ndata)        # irregular = data - trend - season - tdcmp - outlier
+    adjust <- rep(0, ndata)       # adjusted = trend + irregular
+    est <- rep(0, npf)            # smoothed = trend + season + tdcmp
+    psds <- rep(0,npf)            #
+    psdt <- rep(0,npf)            #
+    avabic <- 0                   # averaged ABIC
+
+    z <- .C("baysea",
+             as.double(y),
+             as.integer(ndata),
+             as.integer(forecast),
+             outlier = as.double(outlier),
+             dmoi = as.double(dmoi),
+             trend = as.double(trend),
+             season = as.double(season),
+             tdcmp = as.double(tdcmp),
+             irreg = as.double(irreg),
+             adjust = as.double(adjust),
+             est = as.double(est),
+             psds = as.double(psds),
+             psdt = as.double(psdt),
+             avabic = as.double(avabic),
+             as.integer(ipara),
+             as.double(para),
+             as.double(arft),
+             as.double(arfs),
+             as.double(arfn),
+             as.integer(iart),
+             as.integer(iars),
+             as.integer(iarn))	
+
+    tday <- NULL
+    if( year != 0 ) tday <- z$tdcmp
+    outlier <- NULL
+    if( out != 0 ) outlier <- z$outlier
+
+    baysea.out <- list(outlier=outlier, trend=z$trend, season=z$season, tday=tday, irregular=z$irreg, adjust=z$adjust, smoothed=z$est, aveABIC=z$avabic)
+
+    if( spec == TRUE ) {
+      z1 <- spec.baysea(y, period, z$trend, trend.order, z$season, seasonal.order, z$irreg, z$adjust)
+      spec1 <- z1$irregular.spec
+      spec2 <- z1$adjusted.spec
+      spec3 <- z1$differenced.trend
+      spec4 <- z1$differenced.season
+      if( plot == TRUE ) plot.baysea(y, period, outlier, z$trend, trend.order, z$season, seasonal.order, tday, z$irreg, z$adjust, z$est, z$psdt, z$psds, spec1, spec2, spec3, spec4, spec,separate.graphics )
+      ir.spec <- list(acov=spec1$acov, acor=spec1$acor, mean=spec1$mean, v=spec1$v, aic=spec1$aic, parcor=spec1$parcor, rspec=spec1$rspec) 
+      ad.spec  <- list(acov=spec2$acov, acor=spec2$acor, mean=spec2$mean, v=spec2$v, aic=spec2$aic, parcor=spec2$parcor, rspec=spec2$rspec) 
+      diff.trend <- list(acov=spec3$acov, acor=spec3$acor, mean=spec3$mean, v=spec3$v, aic=spec3$aic, parcor=spec3$parcor)
+      diff.season <- list(acov=spec4$acov, acor=spec4$acor, mean=spec4$mean, v=spec4$v, aic=spec4$aic, parcor=spec4$parcor)
+      baysea.out <- c(baysea.out, irregular.spec=ir.spec, adjusted.spec=ad.spec, differenced.trend=diff.trend, differenced.season=diff.season)
+    } else if ( plot == TRUE ) {
+      ir.spec <- NULL
+      ad.spec <- NULL
+      diff.trend <- NULL
+      diff.season <- NULL
+      plot.baysea(y, period, outlier, z$trend, trend.order, z$season, seasonal.order, tday, z$irreg, z$adjust, z$est, z$psdt, z$psds, ir.spec, ad.spec, diff.trend, diff.season, spec, separate.graphics)
+    }
+
+    return( baysea.out )
+}
+
+spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, irregular, adjust)
+{
+    ndata <- length(y)
+    npf <- length(trend)
+
+    lag <- min((ndata-1), 60)
+    lag1 <- lag+1
+#    ifpl <- min(3*sqrt(ndata), 50, lag)
+    ifpl <- min(30, ndata-1)
+    ifpl1 <- ifpl+1
+
+    cxx <- rep(0, lag1)
+    cn <- rep(0, lag1)
+    xmean <- 0
+    sd <- rep(0,ifpl1)
+    aic <- rep(0,ifpl1)
+    parcor <- rep(0,ifpl)
+    pxx <- rep(0, lag1)
+    sxx <- rep(0, lag1)
+    bmya <- 0
+    bmym <- 0
+    ier <- 0
+
+ # SPECTRUM OF IRREGULAR                               
+    mode <- 1
+    z <- .C("spgrh",
+             as.double(irregular),
+             as.integer(ndata),
+             as.integer(lag1),
+             as.integer(ifpl1),
+             as.integer(mode),
+             as.integer(period),
+             cxx = as.double(cxx),
+             cn = as.double(cn),
+             xmean = as.double(xmean),
+             sd = as.double(sd),
+             aic = as.double(aic),
+             parcor = as.double(parcor),
+             pxx = as.double(pxx),
+             sxx = as.double(sxx),
+             bmya = as.double(bmya),
+             bmym = as.double(bmym),
+             ier = as.integer(ier))
+
+    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    irregular.spec <- list(n=ndata, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor, rspec=z$pxx, rpspec=z$sxx, bmya=z$bmya, bmym=z$bmym)
+
+# SPECTRUM OF DIFFERENCED ADJUSTED SERIES
+    n1 <- ndata-1
+    dadj <- adjust
+    for( i in 1:n1 ) dadj[i] <- dadj[i+1]-dadj[i]
+    dadj <- dadj[1:n1]
+    lag <- min((n1-1), 60)
+    lag1 <- lag+1
+
+    z <- .C("spgrh",
+             as.double(dadj),
+             as.integer(n1),
+             as.integer(lag1),
+             as.integer(ifpl1),
+             as.integer(mode),
+             as.integer(period),
+             cxx = as.double(cxx),
+             cn = as.double(cn),
+             xmean = as.double(xmean),
+             sd = as.double(sd),
+             aic = as.double(aic),
+             parcor = as.double(parcor),
+             pxx = as.double(pxx),
+             sxx = as.double(sxx),
+             bmya = as.double(bmya),
+             bmym = as.double(bmym),
+             ier = as.integer(ier))
+    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    adjusted.spec <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor, rspec=z$pxx, rpspec=z$sxx, bmya=z$bmya, bmym=z$bmym)
+
+#  PARCOR OF TREND.ORDER TIME(S) DIFFERENCED TREND SERIES
+    n1 <- ndata		
+    trendd <- trend
+    for( j in 1:trend.order ) {
+      n1 <- n1-1
+      for( i in 1:n1 ) trendd[i] <- trendd[i+1] - trendd[i]
+    }
+    trendd <- trendd[1:n1]
+    lag <- min((n1-1), 60)
+    lag1 <- lag+1
+    cxx <- rep(0, lag1)
+    cn <- rep(0, lag1)
+
+    mode <- 0
+    z <- .C("spgrh",
+             as.double(trendd),
+             as.integer(n1),
+             as.integer(lag1),
+             as.integer(ifpl1),
+             as.integer(mode),
+             as.integer(period),
+             cxx = as.double(cxx),
+             cn = as.double(cn),
+             xmean = as.double(xmean),
+             sd = as.double(sd),
+             aic = as.double(aic),
+             parcor = as.double(parcor),
+             pxx = as.double(pxx),
+             sxx = as.double(sxx),
+             bmya = as.double(bmya),
+             bmym = as.double(bmym),
+             ier = as.integer(ier))
+    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    differenced.trend <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor)
+
+#  PARCOR OF SEASONAL.ORDER TIME(S) DIFFERENCED SEASONAL SERIES
+    n1 <- ndata
+    seasond <- season
+    for( j in 1:seasonal.order ) {
+      n1 <- n1-period
+      for( i in 1:n1 ) seasond[i] <- seasond[i+period] - seasond[i]
+    }
+    seasond <- seasond[1:n1]
+
+    lag <- min((n1-1), 60)
+    lag1 <- lag+1
+    cxx <- rep(0, lag1)
+    cn <- rep(0, lag1)
+
+    z <- .C("spgrh",
+             as.double(seasond),
+             as.integer(n1),
+             as.integer(lag1),
+             as.integer(ifpl1),
+             as.integer(mode),
+             as.integer(period),
+             cxx = as.double(cxx),
+             cn = as.double(cn),
+             xmean = as.double(xmean),
+             sd = as.double(sd),
+             aic = as.double(aic),
+             parcor = as.double(parcor),
+             pxx = as.double(pxx),
+             sxx = as.double(sxx),
+             bmya = as.double(bmya),
+             bmym = as.double(bmym),
+             ier = as.integer(ier))
+    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    differenced.season <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor)
+
+    spec.baysea.out <- list(irregular.spec=irregular.spec, adjusted.spec=adjusted.spec, differenced.trend=differenced.trend, differenced.season=differenced.season)
+}
+
+
+plot.baysea <- function(y, period, outlier, trend, trend.order, season, seasonal.order, tday, irregular, adjust, smoothed, psdt, psds,
+                        irregular.spec, adjusted.spec, differenced.trend, differenced.season, spec, separate.graphics)
+
+{
+    ndata <- length(y)
+    npf <- length(trend)
+
+    ymax1 <- max(y, trend, adjust, smoothed)
+    ymin1 <- min(y, trend, adjust, smoothed)
+
+    plot(y, type="l", col=1, main="Original Data", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+    nw <- 1
+
+    if( separate.graphics == TRUE ) {
+      X11()
+    } else {
+      par(ask=TRUE)
+    }
+
+    plot(trend, type="l", main="Trend and 2*(post SD)", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+    par(new=TRUE)
+    xtem <- trend + psdt
+    plot(xtem, type="l", lty=3, main="", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+    par(new=TRUE)
+    xtem <- trend - psdt
+    plot(xtem, type="l", lty=3, main="", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+
+    if( separate.graphics == TRUE )  X11()
+    plot(adjust, pch=0, type="l", main="Adjusted = Original Data - Seasonal - Trading.Day.Comp - Outlier", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+
+    if( separate.graphics == TRUE )  X11()
+    plot(smoothed, pch=0, type="l", main="Smoothed = Trend + Seasonal + Trading.Day.Comp", xlab="", ylab="", xlim=c(0,npf), ylim=c(ymin1,ymax1))
+
+    ymax2 <- max(irregular)
+    ymin2 <- min(irregular)
+    if( seasonal.order != 0 ) {
+      ymax2 <- max(season, ymax2)
+      ymin2 <- min(season, ymin2)
+    }
+    if( is.null(tday) == FALSE) {
+      ymax2 <- max(tday, ymax2)
+      ymin2 <- min(tday, ymin2)
+    }
+    my <- max(ymax2, abs(ymin2))*1.5
+    if( seasonal.order != 0 ) {
+      if( separate.graphics == TRUE )  X11()
+      plot(season, type="l", main= "Seasonal and 2*(post SD)", xlab="", ylab="", ylim=c(-my,my))
+      par(new=TRUE)
+      xtem <- season + psds
+      plot(xtem, type="l", lty=3, main="", xlab="", ylab="", ylim=c(-my,my))
+      par(new=TRUE)
+      xtem <- season - psds
+      plot(xtem, type="l", lty=3, main="", xlab="", ylab="", ylim=c(-my,my))
+    }
+
+    if( separate.graphics == TRUE )  X11()
+    par(mfrow=c(2,1))
+    plot(irregular, type="l", main="Irregular = Original Data - Trend - Seasonal - Trading.Day.Comp", xlab="", ylab="", ylim=c(-my,my))
+    vy <- sd(irregular)*5
+    plot(irregular, type="l", main="Irregular ( Scaled by the Standard Deviation)", xlab="", ylab="", ylim=c(-vy,vy))
+    par(mfrow=c(1,1))
+
+ # SPECTRUM OF IRREGULAR                               
+    if( spec == TRUE ) {
+      lag <- length(irregular.spec$acov)-1
+      n <- irregular.spec$n
+      if( separate.graphics == TRUE )  X11()
+      par(mfrow=c(3,1))
+      plot((0:lag), irregular.spec$acor, type="h", main="Autocorrelation & Parcor of Irregular", ylab="Autocorrelation", xlab="Lag", ylim=c(-1,1))
+      plot(irregular.spec$parcor, type="h", ylab="Parcor", xlab="Order", ylim=c(-1,1))
+      abline(h=0, lty=1)
+#      abline(h=1/sqrt(n), lty=3)
+#      abline(h=-1/sqrt(n), lty=3)
+      abline(h=2/sqrt(n), lty=3)
+      abline(h=-2/sqrt(n), lty=3)
+
+      it <- irregular.spec$rpspec*10.0
+      ymin <- irregular.spec$bmym*10.0
+      ymax <- irregular.spec$bmya*10.0
+      plot(it, type='l', main="High Order AR-Spectrum as an approximation to periodgram ( Order is fixed at 30 )", ylab="Rational Spectrum", xlab="Order", ylim=c(ymin,ymax))
+      par(mfrow=c(1,1))
+
+# SPECTRUM OF DIFFERENCED ADJUSTED SERIES
+      lag <- length(adjusted.spec$acov)-1
+      n <- adjusted.spec$n
+      if( separate.graphics == TRUE )  X11()
+      par(mfrow=c(3,1))
+      plot((0:lag), adjusted.spec$acor, type="h", main="Autocorrelation & Parcor of Differenced Adjusted Series", ylab="Autocorrelation", xlab="Lag", ylim=c(-1,1))
+      plot(adjusted.spec$parcor, type="h", ylab="Parcor", xlab="Order", ylim=c(-1,1))
+      abline(h=0, lty=1)
+#      abline(h=1/sqrt(n), lty=3)
+#      abline(h=-1/sqrt(n), lty=3)
+      abline(h=2/sqrt(n), lty=3)
+      abline(h=-2/sqrt(n), lty=3)
+
+      it <- adjusted.spec$rpspec*10.0
+      ymin <- adjusted.spec$bmym*10.0
+      ymax <- adjusted.spec$bmya*10.0
+      plot(it, type='l', main="High Order AR-Spectrum as an approximation to periodgram( Order is fixed at 30 )", xlab="Order", ylab="Rational Spectrum", ylim=c(ymin,ymax))
+      par(mfrow=c(1,1))
+
+#  PARCOR OF TREND.ORDER TIME(S) DIFFERENCED TREND SERIES
+      lag <- length(differenced.trend$acov)-1
+      n <- differenced.trend$n
+      if( separate.graphics == TRUE )  X11()
+      par(mfrow=c(2,1))
+      plot((0:lag), differenced.trend$acor, type="h", main=paste( trend.order, "Time(s) Differenced Trend Series" ), ylab="Autocorrelation", xlab="Lag", ylim=c(-1,1))
+      plot(differenced.trend$parcor, type="h", ylab="Parcor", xlab="Order", ylim=c(-1,1))
+      abline(h=0, lty=1)
+#      abline(h=1/sqrt(n), lty=3)
+#      abline(h=-1/sqrt(n), lty=3)
+      abline(h=2/sqrt(n), lty=3)
+      abline(h=-2/sqrt(n), lty=3)
+      par(mfrow=c(1,1))
+
+#  PARCOR OF SEASONAL.ORDER TIME(S) DIFFERENCED SEASONAL SERIES
+      lag <- length(differenced.season$acov)-1
+      n <- differenced.season$n
+      if( separate.graphics == TRUE )  X11()
+      par(mfrow=c(2,1))
+      plot((0:lag), differenced.season$acor, type="h", main=paste( seasonal.order, "time(s) Differenced Seasonal Series"), ylab="Autocorrelation", xlab="Lag", ylim=c(-1,1))
+      plot(differenced.season$parcor, type="h", ylab="Parcor", xlab="Order", ylim=c(-1,1))
+      abline(h=0, lty=1)
+#      abline(h=1/sqrt(n), lty=3)
+#      abline(h=-1/sqrt(n), lty=3)
+      abline(h=2/sqrt(n), lty=3)
+      abline(h=-2/sqrt(n), lty=3)
+      par(mfrow=c(1,1))
+    }
+    if( separate.graphics != TRUE )  par(ask=FALSE)
+}
+
 
 #####   IWANAMI     #####
 

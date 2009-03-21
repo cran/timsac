@@ -1,4 +1,5 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
 
 struct Rcomplex {
 	double r;
@@ -14,9 +15,9 @@ extern int mulrsp(long*, long*, long*, long*, double*, double*, double*, struct 
 	struct Rcomplex *d4;
 
 {
-	extern int mulrspf_(long*, long*, long*, long*, double*, double*, double*, struct Rcomplex*, double*);
+	extern int F77_NAME(mulrspf) (long*, long*, long*, long*, double*, double*, double*, struct Rcomplex*, double*);
 
-	mulrspf_(i1,i2,i3,i4,d1,d2,d3,d4,d5);
+	F77_CALL(mulrspf) (i1,i2,i3,i4,d1,d2,d3,d4,d5);
 
     return 0;
 }

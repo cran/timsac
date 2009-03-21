@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int mulspe(long*, long*, long*, long*, double*, double*, double*, double*, double*, double*);
 
 /* rtimsac72.dll subroutine */ int mulspe(i1,i2,i3,i4,d1,d2,d3,d4,d5,d6)
@@ -7,9 +9,9 @@ extern int mulspe(long*, long*, long*, long*, double*, double*, double*, double*
 	long *i1,*i2,*i3,*i4;
 
 {
-	extern int mulspef_(long*, long*, long*, long*, double*, double*, double*, double*, double*, double*);
+	extern int F77_NAME(mulspef) (long*, long*, long*, long*, double*, double*, double*, double*, double*, double*);
 
-	mulspef_(i1,i2,i3,i4,d1,d2,d3,d4,d5,d6);
+	F77_CALL(mulspef) (i1,i2,i3,i4,d1,d2,d3,d4,d5,d6);
 
 	return 0;
 }

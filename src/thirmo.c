@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int thirmo(long*,long*,double*,double*,double*,double*,double*);
 
 /* rtimsac74.dll subroutine */ int thirmo(i1,i2,d1,d2,d3,d4,d5)
@@ -7,9 +9,9 @@ extern int thirmo(long*,long*,double*,double*,double*,double*,double*);
 	long *i1,*i2;
 
 {
-	extern int thirmof_(long*,long*,double*,double*,double*,double*,double*);
+	extern int F77_NAME(thirmof) (long*,long*,double*,double*,double*,double*,double*);
 
-	thirmof_(i1,i2,d1,d2,d3,d4,d5);
+	F77_CALL(thirmof) (i1,i2,d1,d2,d3,d4,d5);
 
 	return 0;
 }

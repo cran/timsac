@@ -16,7 +16,7 @@
   \item{plot}{logical. If TRUE (default) the spectrum is plotted.}
 }
 \value{
-  \item{raspec gives the rational spectrum.}
+  \code{raspec} gives the rational spectrum.
 }
 \details{
   ARMA process :

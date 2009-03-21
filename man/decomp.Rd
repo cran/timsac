@@ -6,7 +6,7 @@
 }
 \usage{
   decomp(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
-  log=FALSE, trade=FALSE, idif=1, year=1980, month=1, imiss=1, omax=99999.9,
+  log=FALSE, trade=FALSE, diff=1, year=1980, month=1, miss=1, omax=99999.9,
   plot=TRUE)
 }
 \arguments{
@@ -15,20 +15,20 @@
   \item{ar.order}{AR order (less than 11, try 2 first).}
   \item{frequency}{number of seasons in one period.}
   \item{seasonal.order}{seasonal order (0, 1 or 2).}
-  \item{log}{log transformation of data (if ilog = TRUE).}
+  \item{log}{log transformation of data (if log = TRUE).}
   \item{trade}{trading day adjustment (if trade = TRUE).}
-  \item{idif}{numerical differencing (1 sided or 2 sided).}
+  \item{diff}{numerical differencing (1 sided or 2 sided).}
   \item{year}{the first year of the data.}
   \item{month}{the first month of the data.}
-  \item{imiss}{missing data flag.
+  \item{miss}{missing data flag.
 
     \eqn{=0} : no consideration
 
-    \eqn{>0} : omax is maximum
+    \eqn{>0} : values which are greater than omax are treated as missing data
 
-    \eqn{<0} : omax is minimum}
+    \eqn{<0} : values which are less than omax are treated as missing data}
 
-  \item{omax}{maximum or minimum data value.}
+  \item{omax}{maximum or minimum data value (if miss > 0 or miss < 0).}
   \item{plot}{logical. If TRUE (default) trend, seasonal, ar and trade are plotted.}
 }
 
@@ -97,8 +97,7 @@
 
 \examples{
   data(Blsallfood)
-  z <- decomp(Blsallfood, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
-              trade=TRUE, idif=1, year=1973, month=1, imiss=1, omax=99999.9)
+  z <- decomp(y=Blsallfood, trade=TRUE, year=1973)
   z$aic
   z$lkhd
   z$sigma2

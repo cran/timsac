@@ -1,6 +1,6 @@
 \name{mulnos}
 \alias{mulnos}
-\title{Multiple Unoise}
+\title{Relative Power Contribution}
 \description{
   Compute relative power contributions in differential and integrated form, assuming the orthogonality between noise sources.
 }

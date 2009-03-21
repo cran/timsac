@@ -6,11 +6,12 @@
   canonical correlations between the future and past sets of observations.
 }
 \usage{
-canarm(y, max.order=NULL, plot=TRUE)
+canarm(y, lag=NULL, max.order=NULL, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of AR order and MA order. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of AR order and MA order, must be less than or equal to lag. Default is lag.}
   \item{plot}{logical. If TRUE (default) parcor is plotted.}
 }
 \details{

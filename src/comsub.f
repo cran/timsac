@@ -9,7 +9,7 @@ C     ECORCO  ---  (72) mulspe
 C     FGER1	---  (72) mulnos, mulrsp
 C     FGERCO  ---  (72) auspec, mulspe
 C     INVDET  ---  (72) fpec7, optdes (74) canoca (78) mulmar, perars, mlomar, exsar
-C     INVDETC ---	 (72) mulnos, mulrsp
+C     INVDETC ---  (72) mulnos, mulrsp
 C     LTINV   ---  (72) wnoise (74) simcon
 C     LTRVEC  ---  (72) wnoise (74) simcon
 C     MATADL  ---  (72) fpec7, optdes

@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int covgen(long*, long*, double*, double*, double*, double*);
 
 /* rtimsac74.dll subroutine */ int covgen(i1, i2, d1, d2, d3, d4)
@@ -7,9 +9,9 @@ extern int covgen(long*, long*, double*, double*, double*, double*);
 	long *i1,*i2;
 
 {
-	extern int covgenf_(long*,long*,double*,double*,double*,double*);
+	extern int F77_NAME(covgenf) (long*,long*,double*,double*,double*,double*);
 
-	covgenf_(i1,i2,d1,d2,d3,d4);
+	F77_CALL(covgenf) (i1,i2,d1,d2,d3,d4);
 
 	return 0;
 }

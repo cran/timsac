@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int wnoise(long*, long*, double*, double*);
 
 /* rtimsac72.dll subroutine */	int wnoise(i1,i2,d1,d2)
@@ -7,9 +9,9 @@ extern int wnoise(long*, long*, double*, double*);
 	long *i1,*i2;
 
 {
-	extern int wnoisef_(long*, long*, double*, double*);
+	extern int F77_NAME(wnoisef) (long*, long*, double*, double*);
 
-	wnoisef_(i1,i2,d1,d2);
+	F77_CALL(wnoisef) (i1,i2,d1,d2);
 
 	return 0;
 }

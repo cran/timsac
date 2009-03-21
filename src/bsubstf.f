@@ -114,7 +114,7 @@ C
 C        PARAMETERS:                                                    
 C             MJ1:  ABSOLUTE DIMENSION FOR SUBROUTINE CALL              
 C                                                                       
-      IF ((IMODEL.LE.0) .OR. (IMODEL.GE.8)) GO TO 150                                                         
+      IF ((IMODEL.LE.0) .OR. (IMODEL.GE.8)) GO TO 150
 cc      MJ = 1000                                                         
 cc      MJ1 = 200                                                         
       NN = N
@@ -1742,7 +1742,7 @@ C
       RETURN                                                            
       E N D                                                             
 cc      SUBROUTINE  SUBSPC( B,K,N,IPR,EK )                                
-      SUBROUTINE  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )                                
+      SUBROUTINE  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )
 C                                                                       
 C       THIS SUBROUTINE PRODUCES BAYESIAN ESTIMATES OF PARTIAL CORRELATI
 C       BY CHECKING ALL SUBSET REGRESSION MODELS.                       

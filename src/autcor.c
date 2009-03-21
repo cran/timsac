@@ -1,4 +1,6 @@
+#include <R_ext/RS.h>
 #include "timsac.h"
+
 extern int autcor(double*, long*, double*, double*, long*, double*);
 
 /* rtimsac72.dll subroutine */ int autcor(d1,i1,d2,d3,i2,d4)
@@ -7,9 +9,9 @@ extern int autcor(double*, long*, double*, double*, long*, double*);
 	long *i1,*i2;
 
 {
-	extern int autcorf_(double*, long*, double*, double*, long*, double*);
+	extern int F77_NAME(autcorf) (double*, long*, double*, double*, long*, double*);
 
-	autcorf_(d1,i1,d2,d3,i2,d4);
+	F77_CALL(autcorf) (d1,i1,d2,d3,i2,d4);
 
 	return 0;
 }

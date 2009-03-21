@@ -13,7 +13,7 @@
   \item{plot}{logical. If TRUE (default) white noises are plotted.}
 }
 \value{
-  \item{wnoise gives white noises.}
+  \code{wnoise} gives white noises.
 }
 
 \references{

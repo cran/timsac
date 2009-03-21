@@ -1,4 +1,6 @@
 #include "timsac.h"
+#include <R_ext/RS.h>
+
 extern int autarm(long*,long*,double*,long*,long*,double*,long*,double*,long*,long*,double*,long*,double*,double*,double*,double*,double*,double*,long*,long*,char**,long*,long*,long*);
 
 /* rtimsac74.dll subroutine */ int autarm(i1,i2,d1,i3,i4,d2,i5,d3,i6,i7,d4,i8,d5,d6,d7,d8,d9,d10,i9,i10,c1,i11,i12,i13)
@@ -8,12 +10,12 @@ extern int autarm(long*,long*,double*,long*,long*,double*,long*,double*,long*,lo
 	char **c1;
 
 {
-	extern int autarmf_(long*,long*,double*,long*,long*,double*,long*,double*,long*,long*,double*,long*,double*,double*,double*,double*,double*,double*,long*,long*,long*,long*,long*,long*);
+	extern int F77_NAME(autarmf) (long*,long*,double*,long*,long*,double*,long*,double*,long*,long*,double*,long*,double*,double*,double*,double*,double*,double*,long*,long*,long*,long*,long*,long*);
 
 	long *ic;
 	ic = (long*)*c1;
 
-	autarmf_(i1,i2,d1,i3,i4,d2,i5,d3,i6,i7,d4,i8,d5,d6,d7,d8,d9,d10,i9,i10,ic,i11,i12,i13);
+	F77_CALL(autarmf) (i1,i2,d1,i3,i4,d2,i5,d3,i6,i7,d4,i8,d5,d6,d7,d8,d9,d10,i9,i10,ic,i11,i12,i13);
 
 	return 0;
 }

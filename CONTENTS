@@ -28,6 +28,12 @@ Keywords: timsac
 Description: Automatic ARMA Model Fitting; Scalar Case
 URL: ../../../library/timsac/html/autoarmafit.html
 
+Entry: baysea
+Aliases: baysea
+Keywords: timsac
+Description: Bayesian Seasonal Adjustment Procedure
+URL: ../../../library/timsac/html/baysea.html
+
 Entry: bispec
 Aliases: bispec
 Keywords: timsac
@@ -151,7 +157,7 @@ URL: ../../../library/timsac/html/mulmar.html
 Entry: mulnos
 Aliases: mulnos
 Keywords: timsac
-Description: Multiple Unoise
+Description: Relative Power Contribution
 URL: ../../../library/timsac/html/mulnos.html
 
 Entry: mulrsp

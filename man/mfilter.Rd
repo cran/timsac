@@ -34,7 +34,7 @@ mfilter(x, filter, method=c("convolution","recursive"), init)
      \eqn{y[i,]' = f[,,1]*x[i,]' + ... + f[,,p]*x[i-p+1,]'}
 }
 \value{
-  \item{a time series object.}
+  \code{mfilter} returns a time series object.
 }
 
 \note{

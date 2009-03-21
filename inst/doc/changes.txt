@@ -5,10 +5,27 @@
 
              *************************************
 
+  timsac_1.2.1
+ ==============
+ * In decomp() a argument 'imiss' is renamed 'miss' and given a detailed description. 
+
+
+  timsac_1.2.0
+ ==============
+ * Added function baysea().
+ * Add 'lag' to arguments of function canarm() in timsac.R.
+
+
+  timsac_1.1.4
+ ==============
+ * Use a set of macros (F77_NAME(name), F77_CALL(name)) in all C source files (arma.c, auspec.c, ..., xsarma.c) 
+ * Fixed a bug in fpec().  aperm(arcoef, c(2,3,1)) give an error if z$ordermin = 1. (Reported by Seisho Sato)
+
+
   timsac_1.1.3
  ==============
- * Fixed a bug in blomar(). Add F1 and F2 to arguments of subroutine MNONSB in blomarf.f.
- * Fixed a bug in mlomar(). Add X and U to arguments of subroutine MNONST in mlomarf.f.
+ * Fixed a bug in blomar(). Add 'F1' and 'F2' to arguments of subroutine MNONSB in blomarf.f.
+ * Fixed a bug in mlomar(). Add 'X' and 'U' to arguments of subroutine MNONST in mlomarf.f.
 
 
   timsac_1.1.2
@@ -35,6 +52,6 @@
         data(Blsallfood)
         decomp(Blsallfood, seasonal.order=0)   # trade=FALSE (default)
 
-    (privately reported by Makoto Kodama)
+    (Reported by Makoto Kodama)
 
 

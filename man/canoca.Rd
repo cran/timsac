@@ -13,8 +13,8 @@ canoca(y)
 \details{
   First AR model is fitted by the minimum AIC procedure. The results are used to ortho-normalize
   the present and past variables. The present and future variables are tested successively to
-  decide on the dependence of their predictors. When the last DIC (=chi\_square - 2.0*N.D.F.) is
-  negative the predictor of the variable is decided to be linearly dependent on the antecedents.}
+  decide on the dependence of their predictors. When the last DIC (=chi-square - 2.0*N.D.F.) is
+  negative the predictor of the variable is decided to be linearly dependent on the antecedents.
 }
 \value{
   \item{aic}{AIC.}
@@ -27,8 +27,8 @@ canoca(y)
   \item{past}{number of variables in the past set.}
   \item{cweight}{future set canonical weight.}
   \item{canocoef}{canonical R.}
-  \item{canocoef2}{R\_squared.}
-  \item{chisquar}{chi\_square.}
+  \item{canocoef2}{R-squared.}
+  \item{chisquar}{chi-square.}
   \item{ndf}{N.D.F.}
   \item{dic}{DIC.}
   \item{dicmin}{minimum DIC.}

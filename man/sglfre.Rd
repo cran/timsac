@@ -9,9 +9,9 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{invar}{within d variables of the spectrum, invar-th variable is taken as an input variable.}
-  \item{outvar}{within d variables of the spectrum, outvar-th variable is taken as an output variable .}
+  \item{lag}{maximum lag. Default \eqn{2 \sqrt(n)}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{invar}{within \eqn{d} variables of the spectrum, \code{invar}-th variable is taken as an input variable.}
+  \item{outvar}{within \eqn{d} variables of the spectrum, \code{outvar}-th variable is taken as an output variable .}
 }
 \value{
   \item{inspec}{power spectrum (input).}
@@ -19,7 +19,7 @@
   \item{cspec}{co-spectrum.}
   \item{qspec}{quad-spectrum.}
   \item{gain}{gain.}
-  \item{coh}{coherncy.}
+  \item{coh}{coherency.}
   \item{freqr}{frequency response function : real part.}
   \item{freqi}{frequency response function : imaginary part.}
   \item{errstat}{relative error statistics.}

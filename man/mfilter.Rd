@@ -8,43 +8,37 @@
 mfilter(x, filter, method=c("convolution","recursive"), init)
 }
 \arguments{
-  \item{x}{a multivariate (m-dimensinal,n length) time series x[n,m].}
-  \item{filter}{a array of filter coefficients. filter[i,j,k] shows the value of i-th row, j-th column, k-th order}
+  \item{x}{a multivariate (\eqn{m}-dimensional, \eqn{n} length) time series \eqn{x[n,m]}.}
+  \item{filter}{an array of filter coefficients. \code{filter[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order}
   \item{method}{either "convolution" or "recursive" (and can be abbreviated).
    If "convolution" a moving average is used: if "recursive" an autoregression is used.
-   For convolution filters, the filter coefficients are foe past value only.}
+   For convolution filters, the filter coefficients are for past value only.}
   \item{init}{specifies the initial values of the time series just prior to the start value,
    in reverse time order. The default is a set of zeros.}
 }
 \details{
-  This is a malutivariate version of "filter" function.
-
-  Missing values are allowed in 'x' but not in 'filter'
+  This is a multivariate version of "filter" function.
+  Missing values are allowed in '\code{x}' but not in '\code{filter}'
   (where they would lead to missing values everywhere in the output).
-
-  Note that there is an implied coefficient 1 at lag 0 in the recursive filter, which gives
-
-     \eqn{y[i,]' =x[,i]' + f[,,1]*y[i-1,]' + ... +f[,,p]*y[i-p,]'},
-
+  Note that there is an implied coefficient \eqn{1} at lag \eqn{0} in the recursive filter, which gives
+    \deqn{y[i,]' =x[,i]' + f[,,1] \times y[i-1,]' + ... +f[,,p] \times y[i-p,]',}{y[i,]' =x[,i]' + f[,,1]*y[i-1,]' + ... +f[,,p]*y[i-p,]',}
   No check is made to see if recursive filter is invertible:
-  the output maydiverge if it is not.
-
+  the output may diverge if it is not.
   The convolution filter is
-
-     \eqn{y[i,]' = f[,,1]*x[i,]' + ... + f[,,p]*x[i-p+1,]'}
+     \deqn{y[i,]' = f[,,1] \times x[i,]' + ... + f[,,p] \times x[i-p+1,]'.}{y[i,]' = f[,,1]*x[i,]' + ... + f[,,p]*x[i-p+1,]'.}
 }
 \value{
   \code{mfilter} returns a time series object.
 }
 
 \note{
-  'convolve(, type="folter")' uses the FFT for computations and so \emph{may} be faster foe long filters on 
+  '\code{convolve(, type="filter")}' uses the FFT for computations and so may be faster for long filters on 
   univariate time series (and so the time alignment is unclear), nor does it handle missing values.
   'filter' is faster for a filter of length 100 on a series 1000, for examples.
 }
 
 \seealso{
-  'convolve','arima.sim'
+  \code{\link{convolve}}, \code{\link{arima.sim}}
 }
 
 \examples{

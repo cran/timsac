@@ -9,16 +9,16 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of model order. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{ns}{number of steps of simulation.}
   \item{q}{positive definite matrix \eqn{Q}.}
   \item{r}{positive definite matrix \eqn{R}.}
-  \item{noise}{noise. If not provided, Gaussian vector white noise with the length len is generated.}
+  \item{noise}{noise. If not provided, Gaussian vector white noise with the length \code{len} is generated.}
   \item{len}{length of white noise record.}
   \item{plot}{logical. If TRUE (default) controlled variables \eqn{X} and  manipulated variables \eqn{Y} are plotted.}
 }
 \value{
-  \item{trans}{first ir columns of transition matrix, where ir is the number of controlled variables.}
+  \item{trans}{first \eqn{m} columns of transition matrix, where \eqn{m} is the number of controlled variables.}
   \item{gamma}{gamma matrix.}
   \item{gain}{gain matrix.}
   \item{convar}{controlled variables \eqn{X}.}

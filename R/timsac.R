@@ -81,24 +81,18 @@ autcor <- function (y, lag=NULL, plot=TRUE, lag_axis=TRUE)
     n <- length(y)
     if( is.null(lag) )  lag <- as.integer(2*sqrt(n))    # maximum lag
     lag1 <- lag+1
-    acov <- rep(0,lag1)  # auto covariance
-    acor <- rep(0,lag1)  # auto correlation
-    mean <- 0            # mean of y
 
-    z <- .C("autcor",
+    z <- .Call("autcor",
              as.double(y),
              as.integer(n),
-             acov = as.double(acov),
-             acor = as.double(acor),
-             as.integer(lag1),
-             mean = as.double(mean))
+             as.integer(lag1))
 
     if( plot == TRUE ) {
-      plot((0:lag), z$acor, type="h", ylab="Autocorrelation", xlab="Lag")
+      plot((0:lag), z[[1L]], type="h", ylab="Autocorrelation", xlab="Lag")
       if( lag_axis == TRUE ) abline(h=0, lty=1)
     }
 
-    autcor.out <- list( acov=z$acov, acor=z$acor, mean=z$mean )
+    autcor.out <- list( acov=z[[1L]], acor=z[[2L]], mean=z[[3L]] )
     return( autcor.out )
 }
 
@@ -130,40 +124,33 @@ fftcor <- function (y, lag=NULL, isw=4, plot=TRUE, lag_axis=TRUE)
     ccor12 <- rep(0,lag1)             # cross correlation
     mean <- rep(0,2)                  # mean
 
-    z <- .C("fftcor",
+    z <- .Call("fftcor",
 	as.integer(ld),
 	as.integer(lag1),
 	as.integer(n),
 	as.integer(n2p),
 	as.integer(isw),
 	as.double(x1),
-	as.double(y1),
-	acov = as.double(acov),
-	ccov21 = as.double(ccov21),
-	ccov12 = as.double(ccov12),
-	acor = as.double(acor),
-	ccor21 = as.double(ccor21),
-	ccor12 = as.double(ccor12),
-	mean = as.double(mean))
+	as.double(y1))
     
-    acv <- array(z$acov, dim=c(n,2))
+    acv <- array(z[[1L]], dim=c(n,2))
     acov <- array(, dim=c(lag1,2))
     for( i in 1:lag1 ) acov[i,1] <- acv[i,1]
     for( i in 1:lag1 ) acov[i,2] <- acv[i,2]
     
     if( isw == 4 ) {
-      fftcor.out  <- list( acov=acov, ccov12=z$ccov12[1:lag1], ccov21=z$ccov21[1:lag1],
-	                   acor=array(z$acor, dim=c(lag1,2)), ccor12=z$ccor12, ccor21=z$ccor21, mean=z$mean )
+      fftcor.out  <- list( acov=acov, ccov12=z[[3L]][1:lag1], ccov21=z[[2L]][1:lag1],
+	                   acor=array(z[[4L]], dim=c(lag1,2)), ccor12=z[[6L]], ccor21=z[[5L]], mean=z[[7L]] )
       if( plot == TRUE ) {
         par(mfrow=c(2,1))
-        plot((0:lag), z$ccor12, type="h", xlab="Lag", ylab="Crosscorrelation ccor12")
+        plot((0:lag), z[[6L]], type="h", xlab="Lag", ylab="Crosscorrelation ccor12")
         if( lag_axis == TRUE ) abline(h=0, lty=1)
-        plot((0:lag), z$ccor21, type="h", xlab="Lag", ylab="Crosscorrelation ccor21")
+        plot((0:lag), z[[5L]], type="h", xlab="Lag", ylab="Crosscorrelation ccor21")
         if( lag_axis == TRUE ) abline(h=0, lty=1) }
         par(mfrow=c(1,1))
     }
 
-    if( isw != 4 ) fftcor.out  <- list( acov=acov, acor=array(z$acor, dim=c(lag1,2)), mean=z$mean )
+    if( isw != 4 ) fftcor.out  <- list( acov=acov, acor=array(z[[4L]], dim=c(lag1,2)), mean=z[[7L]] )
 
     return( fftcor.out )
 }
@@ -176,20 +163,14 @@ function (y, lag=NULL, plot=TRUE, lag_axis=TRUE)
     d <- ncol(y)        # dimension of the observation vector
     if( is.null(lag) )  lag <- as.integer(2*sqrt(n))  # maximum lag
     lag1 <- lag+1
-    mean <- rep(0,d)    # mean
-    cov <- array(0,dim=c(lag1,d,d))   # covariance
-    cor <- array(0,dim=c(lag1,d,d))   # normalized covariance
 
-    z <- .C("mulcor",
+    z <- .Call("mulcor",
 	as.double(y),
 	as.integer(n),
 	as.integer(d),
-	as.integer(lag1),
-        mean = as.double(mean),
-	cov = as.double(cov),
-	cor = as.double(cor))
+	as.integer(lag1))
 
-    cor=array(z$cor,dim=c(lag1,d,d))
+    cor=array(z[[3L]],dim=c(lag1,d,d))
     if( plot == TRUE ) {
       x <- rep(0,lag1)
       for( i in 1:lag1 ) x[i] <- i-1
@@ -203,7 +184,7 @@ function (y, lag=NULL, plot=TRUE, lag_axis=TRUE)
       par(mfrow=c(1,1))
       }
 
-    mulcor.out <- list( cov=array(z$cov,dim=c(lag1,d,d)), cor=array(z$cor,dim=c(lag1,d,d)), mean=z$mean )
+    mulcor.out <- list( cov=array(z[[2L]],dim=c(lag1,d,d)), cor=array(z[[3L]],dim=c(lag1,d,d)), mean=z[[1L]])
     class( mulcor.out ) <- "mulcor"
     return( mulcor.out )
 }
@@ -238,16 +219,13 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
 
     z1 <- autcor(y, lag, plot=FALSE)
 
-    z <- .C("auspec",
+    z <- .Call("auspec",
 	     as.integer(n),
 	     as.integer(lag1),
-	     as.double(z1$acov),
-	     spec1 = as.double(spec1),
-	     spec2 = as.double(spec2),
-	     stat = as.double(stat))
+	     as.double(z1$acov))
 
-    if( window == "Akaike" ) spec <- z$spec2
-    if( window == "Hanning" ) spec <- z$spec1
+    if( window == "Akaike" ) spec <- z[[2L]]
+    if( window == "Hanning" ) spec <- z[[1L]]
 
     if( plot == TRUE ) {
       x <- rep(0,lag1)
@@ -255,7 +233,7 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
       if ( log == TRUE ) plot(x, spec, type="l", log="y", xlab="Frequency", ylab="Spectrum", )
       if ( log == FALSE ) plot(x, spec, type="l", xlab="Frequency", ylab="Spectrum", ) }
 
-    auspec.out <- list( spec=spec, stat=z$stat )
+    auspec.out <- list( spec=spec, stat=z[[3L]] )
     return( auspec.out )
 }
 
@@ -268,23 +246,19 @@ function (y, lag = NULL, window = "Akaike", plot = TRUE, plot.scale = FALSE)
     if (is.null(lag)) 
         lag <- as.integer(2 * sqrt(n))
     lag1 <- lag + 1
-    spec1 <- array(0, dim = c(lag1, d, d))
-    spec2 <- array(0, dim = c(lag1, d, d))
-    stat <- array(0, dim = c(lag1, d))
-    coh1 <- array(0, dim = c(lag1, d, d))
-    coh2 <- array(0, dim = c(lag1, d, d))
+
     z1 <- mulcor(y, lag, plot = FALSE)
-    z <- .C("mulspe", as.integer(n), as.integer(d), as.integer(lag1), 
-        as.integer(lag1), as.double(z1$cov), spec1 = as.double(spec1), 
-        spec2 = as.double(spec2), stat = as.double(stat), coh1 = as.double(coh1), 
-        coh2 = as.double(coh2))
+
+    z <- .Call("mulspe", as.integer(n), as.integer(d), as.integer(lag1), 
+        as.integer(lag1), as.double(z1$cov))
+
     if (window == "Akaike") {
-        spec <- array(z$spec2, dim = c(lag1, d, d))
-        coh <- array(z$coh2, dim = c(lag1, d, d))
+        spec <- array(z[[2L]], dim = c(lag1, d, d))
+        coh <- array(z[[5L]], dim = c(lag1, d, d))
     }
     if (window == "Hanning") {
-        spec <- array(z$spec1, dim = c(lag1, d, d))
-        coh <- array(z$coh1, dim = c(lag1, d, d))
+        spec <- array(z[[1L]], dim = c(lag1, d, d))
+        coh <- array(z[[4L]], dim = c(lag1, d, d))
     }
     cspec <- array(0, dim = c(d, d, lag1))
     if (plot == TRUE) {
@@ -298,7 +272,7 @@ function (y, lag = NULL, window = "Akaike", plot = TRUE, plot.scale = FALSE)
         }
         plot.mulspec(cspec, d, lag, plot.scale)
     }
-    mulspe.out <- list(spec = spec, stat = array(z$stat, dim = c(lag1, d)), coh = coh)
+    mulspe.out <- list(spec = spec, stat = array(z[[3L]], dim = c(lag1, d)), coh = coh)
     class(mulspe.out) <- "mulspe"
     return(mulspe.out)
 }
@@ -368,84 +342,58 @@ function (y, lag=NULL, invar, outvar)
     d <- ncol(y)        # dimension of the observation vector
     if( is.null(lag) ) lag <- as.integer(2*sqrt(n))
     lag1 <- lag+1
-
-    spec1 <- rep(0,lag1)   # power spectrum
-    spec2 <- rep(0,lag1)   # power spectrum
-    cspec <- rep(0,lag1)   # co-spectrum
-    qspec <- rep(0,lag1)   # quad-spectrum
-    gain <- rep(0,lag1)    # gain
-    coh <- rep(0,lag1)     # coherncy
-    freqr <- rep(0,lag1)   # frequency response function : real part
-    freqi <- rep(0,lag1)   # frequency response function : imaginary part
-    errstat <- rep(0,lag1) # relative error statistics
-    phase <- rep(0,lag1)   # phase
-
     z1 <- mulspe(y, lag, window="Akaike", plot=FALSE)
 
-    z <- .C("sglfre",
+    z <- .Call("sglfre",
 	     as.integer(invar),
 	     as.integer(outvar),
 	     as.integer(n),
 	     as.integer(lag1),
 	     as.integer(d),
-	     as.double(z1$spec),
-	     spec1 = as.double(spec1),
-	     spec2 = as.double(spec2),
-	     cspec = as.double(cspec),
-	     qspec = as.double(qspec),
-	     gain = as.double(gain),
-	     coh = as.double(coh),
-	     freqr = as.double(freqr),
-	     freqi = as.double(freqi),
-	     errstat = as.double(errstat),
-	     phase = as.double(phase))
+	     as.double(z1$spec))
 
-    sglfre.out <- list( inspec=z$spec1, outspec=z$spec2, cspec=z$cspec, qspec=z$qspec, gain=z$gain, coh=z$coh,
-			freqr=z$freqr, freqi=z$freqi, errstat=z$errstat, phase=z$phase )
+    sglfre.out <- list( inspec=z[[1L]], outspec=z[[2L]], cspec=z[[3L]], qspec=z[[4L]], gain=z[[5L]],
+                          coh=z[[6L]], freqr=z[[7L]], freqi=z[[8L]], errstat=z[[9L]], phase=z[[10L]] )
     return( sglfre.out )
 }
 
 
 mulfrf <-
-function (y, lag=NULL, niv, iovar=c(1:(niv+1)))
+function (y, lag=NULL, iovar=NULL)
 {
     n <- nrow(y)        # length of data
     d <- ncol(y)        # dimension of the observation vector
     if( is.null(lag) ) lag <- as.integer(2*sqrt(n))  # maximum lag
     lag1 <- lag+1
-    nv <- niv           # number of input variables
-
-    cospec <- array(complex(real=0,imag=0),dim=c(d,d,lag1))  # spectrum
-    freqr <- array(0,dim=c(nv,lag1))     # frequency response function : real part
-    freqi <- array(0,dim=c(nv,lag1))     #                             : imag. part
-    gain <- array(0,dim=c(nv,lag1))      # gain
-    phase <- array(0,dim=c(nv,lag1))     # phase
-    pcoh <- array(0,dim=c(nv,lag1))      # partial coherency
-    errstat <- array(0,dim=c(nv,lag1))   # relative error statistics
-    mcoh <- rep(0,lag1)                  # multiple coherency
+    if( is.null(iovar) ) iovar <- c(1:d)
+    nv <- length(iovar)-1          # number of input variables
+    if( nv == d || nv > d ) stop(" ***** ERROR : number of input variable is smaller than d\n") 
+    for( i in 1: (nv+1) ) {
+      if( iovar[i] < 1 ) stop(" ***** ERROR : control variable is greater than or equal to 1\n")
+      if( iovar[i] > d ) stop(" ***** ERROR : control variable is smaller than or equal to d\n")
+    }
 
     z1 <- mulspe(y, lag, plot=FALSE)
 
-    z <- .C("mulfrf",
+    z <- .Call("mulfrf",
 	as.integer(nv),
 	as.integer(iovar),
 	as.integer(n),
 	as.integer(lag1),
 	as.integer(d),
-	as.double(z1$spec),
-	cospec = as.complex(cospec),
-	freqr = as.double(freqr),
-	freqi = as.double(freqi),
-	gain = as.double(gain),
-	phase = as.double(phase),
-	pcoh = as.double(pcoh),
-	errstat = as.double(errstat),
-	mcoh = as.double(mcoh))
+	as.double(z1$spec))
 
-    mulfrf.out <- list( cospec=array(z$cospec, dim=c(d,d,lag1)), freqr=array(z$freqr, dim=c(nv,lag1)),
-			freqi=array(z$freqi, dim=c(nv,lag1)), gain=array(z$gain, dim=c(nv,lag1)),
-			phase=array(z$phase, dim=c(nv,lag1)), pcoh=array(z$pcoh, dim=c(nv,lag1)),
-			errstat=array(z$errstat, dim=c(nv,lag1)), mcoh=z$mcoh )
+    csp=array(z[[1L]], dim=c(d,d,lag1))
+    fr=array(z[[2L]], dim=c(nv,lag1))
+    fi=array(z[[3L]], dim=c(nv,lag1))
+    g=array(z[[4L]], dim=c(nv,lag1))
+    ph=array(z[[5L]], dim=c(nv,lag1))
+    pch=array(z[[6L]], dim=c(nv,lag1))
+    err=array(z[[7L]], dim=c(nv,lag1))
+    mch=z[[8L]] 
+
+    mulfrf.out <- list( cospec=csp, freqr=fr, freqi=fi, gain=g, phase=ph, pcoh=pch,
+ errstat=err, mcoh=mch )
     return( mulfrf.out )
 }
 
@@ -456,108 +404,84 @@ function (y, max.order=NULL)
     n <- length(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))   # upper limit of model order
     morder <- max.order
-    sigma2 <- rep(0,morder)            # sigma**2
-    fpe <- rep(0,morder)               # FPE (Final Prediction Error)
-    rfpe <- rep(0,morder)              # RFPE
-    parcor <- rep(0,morder)            # parcor
-    chi2 <- rep(0,morder)              # chi-squared
-    ofpe <- 0                          # ofpe
-    fpemin <- 0                        # minimum fpe
-    rfpemin <- 0                       # minimum rfpe
-    ordermin <- 0                      # order of minimum fpe
-    sigma2m <- 0                       # sigma**2 attained at m=order.fpemin
-    a <- array(0,dim=c(morder,morder)) # coefficients of ar-process
-    ao <- rep(0,morder)                # coefficients of ar-process attained at m=order.fpemin
 
     lag <- morder
     lag1 <- lag+1
     z1 <- autcor(y, lag, plot=FALSE)
 
-    z <- .C("fpeaut",
+    z <- .Call("fpeaut",
 	as.integer(morder),
 	as.integer(n),
 	as.double(z1$acov[1]),
-	as.double(z1$acov[2:(lag1)]),
-	sigma2 = as.double(sigma2),
-	fpe = as.double(fpe),
-	rfpe = as.double(rfpe),
-	parcor = as.double(parcor),
-	chi2 = as.double(chi2),
-	ofpe = as.double(ofpe),
-	fpemin = as.double(fpemin),
-	rfpemin = as.double(rfpemin),
-	ordermin = as.integer(ordermin),
-	sigma2m = as.double(sigma2m),
-	a = as.double(a),
-	ao = as.double(ao))
+	as.double(z1$acov[2:(lag1)]))
 
-    a <- array(z$a,dim=c(morder,morder))
+    a <- array(z[[11L]],dim=c(morder,morder))
     arcoef <- list()
     for( i in 1:morder ) arcoef[[i]] <- a[1:i,i]
 
-    fpeaut.out <- list( ordermin=z$ordermin, best.ar=arcoef[[z$ordermin]], sigma2m=z$sigma2m, fpemin=z$fpemin,
-                        rfpemin=z$rfpemin, ofpe=z$ofpe, arcoef=arcoef, sigma2=z$sigma2, fpe=z$fpe, rfpe=z$rfpe,
-			parcor=z$parcor, chi2=z$chi2 )
+    mo <- z[[9L]]
+    fpeaut.out <- list( ordermin=mo, best.ar=arcoef[[mo]], sigma2m=z[[10L]], fpemin=z[[7L]],
+                        rfpemin=z[[8L]], ofpe=z[[6L]], arcoef=arcoef, sigma2=z[[1L]], fpe=z[[2L]], rfpe=z[[3L]],
+			parcor=z[[4L]], chi2=z[[5L]] )
     return( fpeaut.out )
 }
 
 
 fpec <-
-function (y, max.order=NULL, ncon=NULL, nman=0, inw=NULL)
+function (y, max.order=NULL, control=NULL, manip=NULL)
 {
     n <- nrow(y)        # length of data
-    d <- ncol(y)        # dimension of the observation vector
+    d <- ncol(y)         # dimension of the observation vector
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of model order
-    if( is.null(ncon) ) ncon <- d                    # number of controlled variables
-    if( is.null(nman) ) nman <- 0                    # number of manipulated variables
+    ncon <- length(control)       # number of controlled variables
+    nman <- length(manip)         # number of manipulated variables
+    if( is.null(control) ) {
+      ncon <- d
+      control <- c(1:d)
+      inw <- control
+    } else {
+      inw <- control
+      for( i in 1:ncon ) {
+        if( inw[i] < 1 ) stop(" ***** ERROR : control variable is greater than or equal to 1\n" )
+        if( inw[i]  > d ) stop(" ***** ERROR : control variable is smaller than or equal to d\n" )
+      }
+    }
+    if( is.null(manip) ) {
+      nman <- 0
+    } else {
+      for( i in 1:nman )  {
+        if( manip[i] < 1 ) stop(" ***** ERROR : manipulate variable is greater than or equal to 1\n" )
+        if( manip[i]  > d ) stop(" ***** ERROR : manipulate variable is smaller than or equal to d\n" )
+      }
+      inw <- c(inw,manip)
+    }
     ip <- ncon+nman
-    if( is.null(inw) ) inw <- c(1:ip)                # indicator
+    if( ip > d ) stop(" ***** ERROR : length of control and manipulate variables is smaller than or equal to d\n" )
+
 
     morder <- max.order
-    morder1 <- morder+1
-    ccv <- array(0,dim=c(morder1,ip,ip))      # matrix rearrangement by inw
-    fpec <- rep(0,morder1)                    # FPEC (AR-MODEL FITTING FOR CONTROL)
-    rfpec <- rep(0,morder1)                   # RFPEC
-    aic <- rep(0,morder1)                     # aic
-    ordermin <- 0                             # order of minimum fpec
-    fpecmin <- 0                              # minimum fpec
-    rfpecmin <- 0                             # minimum rfpec
-    aicmin <- 0                               # minimum aic
-    perr <- array(0,dim=c(ncon,ncon))         # prediction error covariance matrix
-    arcoef <- array(0,dim=c(morder,ncon,ip))  # the set of coefficient matrices
-
     morder1 <- morder+1
     z1 <- mulcor(y, morder, plot=FALSE)
     cov <- z1$cov[1:morder1,,]
 
-    z <- .C("fpec7",
+    z <- .Call("fpec7",
 	as.integer(n),
 	as.integer(morder),
 	as.integer(ncon),
 	as.integer(ip),
 	as.integer(d),
 	as.integer(inw),
-	as.double(cov),
-	ccv = as.double(ccv),
-	fpec = as.double(fpec),
-	rfpec = as.double(rfpec),
-	aic = as.double(aic),
-	ordermin = as.integer(ordermin),
-	fpecmin = as.double(fpecmin),
-	rfpecmin = as.double(rfpecmin),
-	aicmin = as.double(aicmin),
-	perr = as.double(perr),
-	arcoef = as.double(arcoef))
+	as.double(cov))
 
-    cov <- array(z$ccv, dim=c(morder1,ip,ip))
+    cov <- array(z[[1L]], dim=c(morder1,ip,ip))
     cov <- aperm(cov, c(2,3,1))
-    arcoef <- array(z$arcoef,dim=c(morder,ncon,ip))
-    arcoef <- arcoef[1:z$ordermin,,,drop=F]
+    arcoef <- array(z[[10L]], dim=c(morder,ncon,ip))
+    arcoef <- arcoef[1:z[[5L]],,,drop=F]
     arcoef <- aperm(arcoef, c(2,3,1))
 
-    fpec.out  <- list( cov=cov, fpec=z$fpec, rfpec=z$rfpec, aic=z$aic, ordermin=z$ordermin,
-                       fpecmin=z$fpecmin, rfpecmin=z$rfpecmin, aicmin=z$aicmin,
-                        perr=array(z$perr,dim=c(ncon,ncon)), arcoef=arcoef )
+    fpec.out  <- list( cov=cov, fpec=z[[2L]], rfpec=z[[3L]], aic=z[[4L]], ordermin=z[[5L]],
+                       fpecmin=z[[6L]], rfpecmin=z[[7L]], aicmin=z[[8L]],
+                        perr=array(z[[9L]], dim=c(ncon,ncon)), arcoef=arcoef )
     class( fpec.out ) <- "fpec"
     return( fpec.out )
 }
@@ -574,7 +498,7 @@ print.fpec <- function(x, ...)
 
   cat("M\tFPEC\t\tRFPEC\t\tAIC\n")
   for( i in 0:lag ) cat(sprintf("%i\t%f\t%f\t%f\n",i, x$fpec[i+1],x$rfpec[i+1],x$aic[i+1]))
-  cat(sprintf("\n  MINIMUM FPEC = %f\tMINIMUM RFPEC = %f  ATTANED AT M = %i\n", x$fpecmin, x$rfpecmin,  x$ordermin))
+  cat(sprintf("\n  MINIMUM FPEC = %f\tMINIMUM RFPEC = %f  ATTAINED AT M = %i\n", x$fpecmin, x$rfpecmin,  x$ordermin))
   cat(sprintf("  MINIMUM AIC = %f\n", x$aicmin))
 
   cat("\n\n$perr\nPREDICTION ERROR COVARIANCE MATRIX\n")
@@ -586,35 +510,53 @@ print.fpec <- function(x, ...)
 }
 
 mulnos <-
-function ( y, max.order=NULL, ncon=NULL, nman=0, h, inw=NULL )
+function ( y, max.order=NULL, control=NULL, manip=NULL, h)
 {
-    n <- nrow(y)        # length of data
-    d <- ncol(y)        # dimension of the observation vector
+    n <- nrow(y)                    # length of data
+    d <- ncol(y)                     # dimension of the observation vector
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of model order
-    if( is.null(ncon) ) ncon <- d           # number of controlled variables
-    if( is.null(nman) ) nman <- 0           # number of manipulated variables
+    ncon <- length(control)       # number of controlled variables
+    nman <- length(manip)         # number of manipulated variables
+    n <- nrow(y)        # length of data
+    d <- ncol(y)         # dimension of the observation vector
+    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of model order
+    ncon <- length(control)       # number of controlled variables
+    nman <- length(manip)         # number of manipulated variables
+    if( is.null(control) ) {
+      ncon <- d
+      control <- c(1:d)
+      inw <- control
+    } else {
+      inw <- control
+      for( i in 1:ncon ) {
+        if( inw[i] < 1 ) stop(" ***** ERROR : control variable is greater than or equal to 1\n" )
+        if( inw[i]  > d ) stop(" ***** ERROR : control variable is smaller than or equal to d\n" )
+      }
+    }
+    if( is.null(manip) ) {
+      nman <- 0
+    } else {
+      for( i in 1:nman )  {
+        if( manip[i] < 1 ) stop(" ***** ERROR : manipulate variable is greater than or equal to 1\n" )
+        if( manip[i]  > d ) stop(" ***** ERROR : manipulate variable is smaller than or equal to d\n" )
+      }
+      inw <- c(inw,manip)
+    }
     ip <- ncon+nman
-    if( is.null(inw) ) inw <- c(1:ip)       # indicator
+    if( ip > d ) stop(" ***** ERROR : length of control and manipulate variables is smaller than or equal to d\n" )
 
-    nperr <- array(0,dim=c(ip,ip))          # normalized prediction error covaiance matrix
-    diffr <- array(0,dim=c(ip,ip,(h+1)))    # differential relative power contribution
-    integr <- array(0,dim=c(ip,ip,(h+1)))   # integrated relative power contribution
-
-    z1 <- fpec(y, max.order, ncon, nman, inw)
+    z1 <- fpec(y, max.order, control, manip)
     arcoef <- aperm(z1$arcoef, c(3,1,2))
 
-    z <- .C("mulnos",
+    z <- .Call("mulnos",
 	as.integer(h),
 	as.integer(z1$ordermin),
 	as.integer(ip),
 	as.double(z1$perr),
-	as.double(arcoef),
-	nperr = as.double(nperr),
-	diffr = as.double(diffr),
-	integr = as.double(integr))
+	as.double(arcoef))
 
-    mulnos.out <- list( nperr=array(z$nperr,dim=c(ip,ip)), diffr=array(z$diffr,dim=c(ip,ip,(h+1))),
-			integr=array(z$integr,dim=c(ip,ip,(h+1))) )
+    mulnos.out <- list( nperr=array(z[[1L]], dim=c(ip,ip)), diffr=array(z[[2L]], dim=c(ip,ip,(h+1))),
+			integr=array(z[[3L]], dim=c(ip,ip,(h+1))) )
     return( mulnos.out )
 }
 
@@ -627,24 +569,24 @@ function (h, var, arcoef=NULL, macoef=NULL, log = FALSE, plot=TRUE)
     if( is.null(arcoef) )  arcoef <- 0   # coefficient matrix of autoregressive model
     if( is.null(macoef) )  macoef <- 0   # coefficient matrix of moving average model
     macoef <- -macoef
-    rspec <- rep(0,(h+1))                # rational spectrum
 
-    z <- .C("raspec",
+    z <- .Call("raspec",
 	as.integer(h),
 	as.integer(l),
 	as.integer(k),
 	as.double(var),
 	as.double(arcoef),
-	as.double(macoef),
-	rspec = as.double(rspec))
+	as.double(macoef))
+
+    rspec <- z[[1L]]
 
     if( plot == TRUE ) {
       x <- rep(0,(h+1))
       for( i in 1:(h+1) ) x[i] <- (i-1)/(2*h)
-      if( log == TRUE ) plot(x, z$rspec, type="l", log="y", xlab="Frequency", ylab="Rational Spectrum")
-      if( log == FALSE ) plot(x, z$rspec, type="l", xlab="Frequency", ylab="Rational Spectrum") }
+      if( log == TRUE ) plot(x, rspec, type="l", log="y", xlab="Frequency", ylab="Rational Spectrum")
+      if( log == FALSE ) plot(x, rspec, type="l", xlab="Frequency", ylab="Rational Spectrum") }
 
-    return( raspec=z$rspec )
+    return( raspec=rspec )
 }
 
 mulrsp <-
@@ -672,14 +614,12 @@ function (h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE,
     if (k != 0) 
         macoef <- aperm(ma, c(3, 1, 2))
     macoef <- -macoef
-    rspec <- array(0, dim = c(d, d, (h + 1)))
-    spec <- array(0, dim = c(d, d, (h + 1)))
-    scoh <- array(0, dim = c(d, d, (h + 1)))
-    z <- .C("mulrsp", as.integer(h), as.integer(l), as.integer(d), 
-        as.integer(k), as.double(cov), as.double(arcoef), as.double(macoef), 
-        rspec = as.complex(rspec), scoh = as.double(scoh))
-    mulrsp.out <- list(rspec = array(z$rspec, dim = c(d, d, (h + 
-        1))), scoh = array(z$scoh, dim = c(d, d, (h + 1))))
+
+    z <- .Call( "mulrsp", as.integer(h), as.integer(l), as.integer(d), 
+        as.integer(k), as.double(cov), as.double(arcoef), as.double(macoef) )
+
+    mulrsp.out <- list(rspec = array(z[[1L]], dim = c(d,d,(h+1))), scoh = array(z[[2L]], dim = c(d,d,(h+1))))
+
     if (plot == TRUE) 
         plot.mulspec(mulrsp.out$rspec, d, h, plot.scale)
     return(mulrsp.out)
@@ -694,8 +634,9 @@ function (y, max.order=NULL, ns, q, r)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of model order
     ncon <- dim(q)[1]  # number of controlled variables
     nman <- dim(r)[1]  # number of manipulated variables
-
-    z1 <- fpec(y, max.order, ncon, nman)
+    control <- c(1:ncon)
+    manip <- c((ncon+1):(ncon+nman))
+    z1 <- fpec(y, max.order, control, manip)
     order <- z1$ordermin
     ao <- z1$arcoef
     ao <- aperm(ao, c(3,1,2))
@@ -704,9 +645,7 @@ function (y, max.order=NULL, ns, q, r)
     a <- ao[,(1:ncon)]
     b <- ao[,(ncon+1):(ncon+nman)]
 
-    gain <- array(0,c(nman,order*ncon))   # gain
-
-    z <- .C("optdes",
+    z <- .Call("optdes",
 	as.integer(ncon),
 	as.integer(nman),
 	as.integer(ns),
@@ -715,10 +654,9 @@ function (y, max.order=NULL, ns, q, r)
 	as.double(r),
 	as.double(z1$perr),
 	as.double(a),
-	as.double(b),
-	gain = as.double(gain))
+	as.double(b))
 
-    optdes.out <- list( perr=z1$perr, trans=a, gamma=b, gain=array(z$gain, dim=c(nman,order*ncon)) )
+    optdes.out <- list( perr=z1$perr, trans=a, gamma=b, gain=array(z[[1L]], dim=c(nman,order*ncon)) )
     return( optdes.out )
 }
 
@@ -732,17 +670,6 @@ function (y, max.order=NULL, ns, q, r, noise=NULL, len, plot=TRUE)
     ir <- dim(q)[1]     # number of controlled variables
     il <- dim(r)[1]     # number of manipulated variables
 
-    xx <- array(0,dim=c(ir,ns))  # controlled variables X
-    yy <- array(0,dim=c(il,ns))  # manipulated variables Y
-    xmean <- rep(0,ir)       # mean of X
-    ymean <- rep(0,il)       # mean of Y
-    x2sum <- rep(0,ir)       # sum of X**2
-    y2sum <- rep(0,il)       # sum of Y**2
-    x2mean <- rep(0,ir)      # mean of X**2
-    y2mean <- rep(0,il)      # mean of Y**2
-    xvar <- rep(0,ir)        # variance of X
-    yvar <- rep(0,il)        # variance of Y
-
     z1 <- optdes(y, max.order, ns, q, r)
     trans <- z1$trans
     gamma <- z1$gamma
@@ -750,7 +677,7 @@ function (y, max.order=NULL, ns, q, r, noise=NULL, len, plot=TRUE)
     order <- dim(gain)[2]/ir
     if( is.null(noise) ) noise <- wnoise(len, z1$perr, plot=FALSE)     # white noise
 
-    z <- .C("optsim",
+    z <- .Call("optsim",
 	as.integer(ns),
 	as.integer(order),
 	as.integer(ir),
@@ -758,20 +685,10 @@ function (y, max.order=NULL, ns, q, r, noise=NULL, len, plot=TRUE)
 	as.double(trans),
 	as.double(gamma),
 	as.double(gain),
-	as.double(noise),
-	xx = as.double(xx),
-	yy = as.double(yy),
-	xmean = as.double(xmean),
-	ymean = as.double(ymean),
-	x2sum = as.double(x2sum),
-	y2sum = as.double(y2sum),
-	x2mean = as.double(x2mean),
-	y2mean = as.double(y2mean),
-	xvar = as.double(xvar),
-	yvar = as.double(yvar))
+	as.double(noise))
 
-    convar <- array(z$xx,dim=c(ir,ns))
-    manvar <- array(z$yy,dim=c(il,ns))
+    convar <- array(z[[1L]],dim=c(ir,ns))
+    manvar <- array(z[[2L]],dim=c(il,ns))
 
     if( plot == TRUE ) {
       nc <- max(ir,il)
@@ -786,8 +703,8 @@ function (y, max.order=NULL, ns, q, r, noise=NULL, len, plot=TRUE)
     }
 
     optsim.out <- list( trans=trans, gamma=gamma, gain=gain, convar=convar, manvar=manvar,
-			xmean=z$xmean, ymean=z$ymean, xvar=z$xvar, yvar=z$yvar,
-			x2sum=z$x2sum, y2sum=z$y2sum, x2mean=z$x2mean, y2mean=z$y2mean )
+			xmean=z[[3L]], ymean=z[[4L]], xvar=z[[9L]], yvar=z[[10L]],
+			x2sum=z[[5L]], y2sum=z[[6L]], x2mean=z[[7L]], y2mean=z[[8L]] )
     return( optsim.out )
 }
 
@@ -797,16 +714,14 @@ function (len, perr, plot=TRUE)
 {
     ir <- 1                           # number of controlled variables
     if( is.array(perr) ) ir <- ncol(perr)
-    w <- array(0,dim=c(ir,len))       # white noise
 
-    z <- .C("wnoise",
+    z <- .Call("wnoise",
 	as.integer(len),
 	as.integer(ir),
-	as.double(perr),
-	w = as.double(w))
+	as.double(perr))
 
-    if( ir != 1 ) wnoise <- array(z$w,dim=c(ir,len))
-    if( ir == 1 ) wnoise <- z$w[1:len]
+    if( ir != 1 ) wnoise <- array(z[[1L]],dim=c(ir,len))
+    if( ir == 1 ) wnoise <- z[[1L]][1:len]
 
     if( plot == TRUE ) {
 #      nc <- as.integer((ir+1)/2)
@@ -830,11 +745,10 @@ function (len, perr, plot=TRUE)
 #####   TIMSAC74   #####
 
 autoarmafit <-
-function (y, max.order=NULL, tmp.file=NULL)
+function (y, max.order=NULL)
 {
     n <- length(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
-    if( is.null(tmp.file) )  tmp.file <- " "
 
     morder <- max.order
     autcv <- autcor(y, morder, plot=FALSE)$acov   # covariance sequence
@@ -850,20 +764,7 @@ function (y, max.order=NULL, tmp.file=NULL)
     lmax <- morder+icst+mmax
     nmax <- 25
 
-    newn <- 0                          # number of cases
-    p <- rep(0,nmax)                   # AR order
-    a <- array(0, dim=c(mmax,nmax))    # maximum lokelihood estimates of AR coefficients
-    q <- rep(0,nmax)                   # MA order
-    b <- array(0, dim=c(mmax,nmax))    # maximum lokelihood estimates of MA coefficients
-    std <- array(0, dim=c(mmax,nmax))  # standard deviation
-    v <- rep(0,nmax)                   # innovation variance
-    gr <- array(0, dim=c(mmax,nmax))   # final gradient
-    aic <- rep(0,nmax)                 # n*log(v)+2*(p+q)
-    aicm <- rep(0,nmax)                # minimum AIC
-    pbest <- 0                         # AR order of best choice
-    qbest <- 0                         # MA order of best choice
-
-    z <- .C("autarm",
+    z <- .Call("autarm",
 	as.integer(n),
 	as.integer(morder+1),
 	as.double(autcv),
@@ -872,32 +773,19 @@ function (y, max.order=NULL, tmp.file=NULL)
 	as.double(arcoef1),
 	as.integer(q1),
 	as.double(macoef1),
-	newn = as.integer(newn),
-	p = as.integer(p),
-	a = as.double(a),
-	q = as.integer(q),
-	b = as.double(b),
-	std = as.double(std),
-	v = as.double(v),
-        gr = as.double(gr),
-	aic = as.double(aic),
-        aicm = as.double(aicm),
-	qbest = as.integer(qbest),
-	pbest = as.integer(pbest),
-        as.character(tmp.file),
 	as.integer(lmax),
 	as.integer(mmax),
 	as.integer(nmax) )
 
-    nc <- z$newn
-    p <- z$p[1:nc]
-    q <- z$q[1:nc]
-    a <- array(z$a, dim=c(mmax,nmax))
-    b <- array(z$b, dim=c(mmax,nmax))
-    std <- array(z$std, dim=c(mmax,nmax))
+    nc <- z[[1L]]
+    p <- z[[2L]][1:nc]
+    q <- z[[4L]][1:nc]
+    a <- array(z[[3L]], dim=c(mmax,nmax))
+    b <- array(z[[5L]], dim=c(mmax,nmax))
+    std <- array(z[[6L]], dim=c(mmax,nmax))
     v <- rep(0,nc)
-    gr <- array(z$gr, dim=c(mmax,nmax))
-    aaic <- z$aic[1:nc]
+    gr <- array(z[[8L]], dim=c(mmax,nmax))
+    aaic <- z[[9L]][1:nc]
     arcoef <- list()
     macoef <- list()
     arstd <- list()
@@ -912,12 +800,12 @@ function (y, max.order=NULL, tmp.file=NULL)
         macoef[[i]] <- -b[(1:q[j]),j]
         arstd[[i]] <- std[(q[j]+1):(p[j]+q[j]),j]
         mastd[[i]] <- std[1:q[j],j]
-        v[i] <- z$v[j]
+        v[i] <- z[[7L]][j]
         grad[[i]] <- gr[(1:(p[j]+q[j])),j]
     }
 
     best.model <- list( ar=arcoef[[1]], ma=macoef[[1]] )
-    best.order <- list( arorder=z$qbest, maorder=z$pbest )
+    best.order <- list( arorder=z[[11L]], maorder=z[[12L]] )
 
     model <- list()
     for ( i in 1:nc )
@@ -957,7 +845,7 @@ print.autoarmafit <- function(x, ...)
 }
 
 armafit <-
-function (y, model.order, tmp.file=NULL)
+function (y, model.order)
 {
     n <- length(y)
     lag <- as.integer(2*sqrt(n))     # maximum lag
@@ -985,21 +873,7 @@ function (y, model.order, tmp.file=NULL)
     lmax <- lag+icst+mmax
     nmax <- 25	         # the limit of the total cases
 
-    newn <- 0                          # number of cases
-    p <- rep(0,nmax)                   # AR order
-    a <- array(0, dim=c(mmax,nmax))    # maximum lokelihood estimates of AR coefficients
-    q <- rep(0,nmax)                   # MA order
-    b <- array(0, dim=c(mmax,nmax))    # maximum lokelihood estimates of MA coefficients
-    std <- array(0, dim=c(mmax,nmax))  # standard deviation
-    v <- rep(0,nmax)                   # innovation variance
-    gr <- array(0, dim=c(mmax,nmax))   # final gradient
-    aic <- rep(0,nmax)                 # n*log(cxx)+2*(l+k)
-    aicm <- rep(0,nmax)                # minimum AIC
-    pbest <- 0                         # AR order of best choice
-    qbest <- 0                         # MA order of best choice
-    if(is.null(tmp.file))  tmp.file <- " "
-    
-    z <- .C("autarm",
+    z <- .Call("autarm",
 	as.integer(n),
 	as.integer(lag1),
 	as.double(autcv),
@@ -1008,31 +882,18 @@ function (y, model.order, tmp.file=NULL)
 	as.double(arcoef1),
 	as.integer(q1),
 	as.double(macoef1),
-	newn = as.integer(newn),
-	p = as.integer(p),
-	a = as.double(a),
-	q = as.integer(q),
-	b = as.double(b),
-	std = as.double(std),
-	v = as.double(v),
-	gr = as.double(gr),
-	aic = as.double(aic),
-	aicm = as.double(aicm),
-	pbest = as.integer(pbest),
-	qbest = as.integer(qbest),
-	as.character(tmp.file),
 	as.integer(lmax),
 	as.integer(mmax),
 	as.integer(nmax) )
 
-    nc <- z$newn
-    p <- z$p[1:nc]
-    q <- z$q[1:nc]
-    a <- array(z$a, dim=c(mmax,nmax))
-    b <- array(z$b, dim=c(mmax,nmax))
-    std <- array(z$std, dim=c(mmax,nmax))
-    gr <- array(z$gr, dim=c(mmax,nmax))
-    aaic <- z$aic[1:nc]
+    nc <- z[[1L]]
+    p <- z[[2L]][1:nc]
+    q <- z[[4L]][1:nc]
+    a <- array(z[[3L]], dim=c(mmax,nmax))
+    b <- array(z[[5L]], dim=c(mmax,nmax))
+    std <- array(z[[6L]], dim=c(mmax,nmax))
+    gr <- array(z[[8L]], dim=c(mmax,nmax))
+    aaic <- z[[9L]][1:nc]
     aic <- NULL
     arcoef <- NULL
     macoef <- NULL
@@ -1054,8 +915,8 @@ function (y, model.order, tmp.file=NULL)
           macoef <- -b[(1:q[j]),j]
           arstd <- std[(q[j]+1):(p[j]+q[j]),j]
           mastd <- std[1:q[j],j]
-          v <- z$v[j]
-          aic <- z$aic[j]
+          v <- z[[7L]][j]
+          aic <- z[[9L]][j]
           grad <- gr[(1:(p[j]+q[j])),j]
         }
     }
@@ -1078,29 +939,14 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
     tmnt <- array(0,dim=c(lag1,lag1))
     for( i in 1:lag1 ) tmnt[i,1:i] <- z1$tmomnt[[i]]   # third order moments
 
-    pspec1 <- rep(0,lag1)		# power spectrum smoothed by window w1
-    pspec2 <- rep(0,lag1)		# power spectrum smoothed by window w2
-    sig <- rep(0,lag1)		# significance
-    ch <- array(0, dim=c(lag1,lag1))	# coherence
-    br <- array(0, dim=c(lag1,lag1))	# real part of bispectrum
-    bi <- array(0, dim=c(lag1,lag1))	# imaginary part of bispectrum
-    rat <- 0
-
-    z <- .C("bispec",
+    z <- .Call("bispec",
 	as.integer(n),
 	as.integer(lag),
 	as.double(cv),
-	as.double(tmnt),
-	pspec1 = as.double(pspec1),
-	pspec2 = as.double(pspec2),
-	sig = as.double(sig),
-	ch = as.double(ch),
-	br = as.double(br),
-	bi = as.double(bi),
-	rat = as.double(rat))
+	as.double(tmnt))
 
-    if( window == "Akaike" ) pspec <- z$pspec2
-    if( window == "Hanning" ) pspec <- z$pspec1
+    if( window == "Akaike" ) pspec <- z[[2L]]
+    if( window == "Hanning" ) pspec <- z[[1L]]
 
     if( plot == TRUE ) {
       x <- rep(0,lag1)
@@ -1109,8 +955,8 @@ function (y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
       if( log == TRUE ) plot(x, pspec, type="l", log="y", ylab=ylab, xlab="Frequency")
       if( log == FALSE ) plot(x, pspec, type="l", ylab=ylab, xlab="Frequency") }
 
-    bispec.out <- list( pspec=pspec, sig=z$sig, cohe=array(z$ch, dim=c(lag1,lag1)),
-			breal=array(z$br, dim=c(lag1,lag1)), bimag=array(z$bi, dim=c(lag1,lag1)), exval=z$rat )
+    bispec.out <- list( pspec=pspec, sig=z[[3L]], cohe=array(z[[4L]], dim=c(lag1,lag1)),
+			breal=array(z[[5L]], dim=c(lag1,lag1)), bimag=array(z[[6L]], dim=c(lag1,lag1)), exval=z[[7L]] )
     return( bispec.out )
 }
 
@@ -1122,88 +968,36 @@ function (y, lag=NULL, max.order=NULL, plot=TRUE)
     if( is.null(lag) ) lag <- as.integer(2*sqrt(n))
     morder <- lag
 
-#    mmax <- 50
-#    nmax <- 101
-    if( is.null(max.order) ) max.order <- morder
-    mmax <- max.order
-    nmax <- 2*morder+1
-
-    arcoef <- rep(0,nmax)	# AR-coefficients
-    l1 <- 0			# upper limit of the model order +1
-#-----
-#    ifpl <- as.integer(3.0*sqrt(n))
-     ifpl <- min(mmax, morder)
-     l1 <- ifpl+1
-#-----
-    v <- rep(0,mmax+1)	# innovation vector
-    aic <- rep(0,mmax+1)	# AIC
-    oaic <- 0              	# minimum AIC
-    mo <- 0                	# order of AR
-    parcor <- rep(0,mmax)	# partial auto-correlation
-
-    nc <- 0                # total number of case
-    m1 <- rep(0,mmax)      # number of present and future variables
-    m2 <- rep(0,mmax)      # number of present and past variables
-    w <- array(0, dim=c(mmax,mmax,mmax))  # future set canonical weight
-    z <- array(0, dim=c(mmax,mmax))       # canonical R
-    Rs <- array(0, dim=c(mmax,mmax))      # R-squared
-    chi <- array(0, dim=c(mmax,mmax))     # chi-square
-    ndt <- array(0, dim=c(mmax,mmax))     # N.D.F
-    dic <- array(0,dim=c(mmax,mmax))      # DIC
-    dicm <- rep(0,mmax)                   # minimum DIC
-    po <- rep(0,mmax)                     # order of minimum DIC
-
-    k <- 0                 # order of AR
-    b <- rep(0,mmax)       # AR-coefficients
-    l <- 0                 # order of MA
-    a <- rep(0,mmax)       # MA-coefficients
-
     z2 <- autcor(y, morder, plot=FALSE)
     autcv <- z2$acov
-    tmp.file <- " "
 
+    if( is.null(max.order) ) max.order <- morder
+    mmax <- max.order
+#    ifpl <- as.integer(3.0*sqrt(n))
+    ifpl <- min(mmax, morder)
+    l1 <- ifpl+1			# upper limit of the model order +1
+    nmax <- 2*morder+1
 
-    z1 <- .C("canarm",
+    z1 <- .Call("canarm",
 	as.integer(n),
 	as.integer(morder+1),
 	as.double(autcv),
-	arcoef = as.double(arcoef),
 	as.integer(l1),
-	v = as.double(v),
-	aic = as.double(aic),
-	oaic = as.double(oaic),
-	mo = as.integer(mo),
-	parcor = as.double(parcor),
-	nc = as.integer(nc),
-	m1 = as.integer(m1),
-	m2 = as.integer(m2),
-	w = as.double(w),
-	z = as.double(z),
-	Rs = as.double(Rs),
-	chi = as.double(chi),
-	ndt = as.integer(ndt),
-	dicp = as.double(dic),
-	dicm = as.double(dicm),
-	po = as.integer(po),
-	k = as.integer(k),
-	b = as.double(b),
-	l = as.integer(l),
-	a = as.double(a),
-	as.character(tmp.file),
 	as.integer(mmax),
-	as.integer(nmax) )
+	as.integer(nmax))
 
-    mo <- z1$mo
-    parcor <- z1$parcor[1:(l1-1)]
-    nc <- z1$nc
-    m1 <- z1$m1[1:nc]
-    m2 <- z1$m2[1:nc]
-    w <- array(z1$w, dim=c(mmax,mmax,nc))
-    z <- array(z1$z, dim=c(mmax,nc))
-    Rs <- array(z1$Rs, dim=c(mmax,nc))
-    chi <- array(z1$chi, dim=c(mmax,nc))
-    ndt <- array(z1$ndt, dim=c(mmax,nc))
-    dicp <- array(z1$dicp, dim=c(mmax,nc))
+    ar <- z1[[1L]]
+    mo <- z1[[5L]]
+    parcor <- z1[[6L]][1:(l1-1)]
+    nc <- z1[[7L]]
+    m1 <- z1[[8L]][1:nc]
+    m2 <- z1[[9L]][1:nc]
+    w <- array(z1[[10L]], dim=c(mmax,mmax,nc))
+    z <- array(z1[[11L]], dim=c(mmax,nc))
+    Rs <- array(z1[[12L]], dim=c(mmax,nc))
+    chi <- array(z1[[13L]], dim=c(mmax,nc))
+    ndt <- array(z1[[14L]], dim=c(mmax,nc))
+    dicp <- array(z1[[15L]], dim=c(mmax,nc))
     cweight <- list()
     cR <- list()
     Rsquar <- list()
@@ -1216,8 +1010,8 @@ function (y, lag=NULL, max.order=NULL, plot=TRUE)
     for( i in 1:nc )  chisquar[[i]] <- chi[(1:m1[i]),i]
     for( i in 1:nc )  ndf[[i]] <- ndt[(1:m1[i]),i]
     for( i in 1:nc )  dic[[i]] <- dicp[(1:m1[i]),i]
-    k <- z1$k
-    l <- z1$l
+    k <- z1[[18L]]
+    l <- z1[[20L]]
 
     if( plot == TRUE ) {
       plot(parcor, type="h", ylab="Partial Autocorrelation", xlab="Lag")
@@ -1227,10 +1021,10 @@ function (y, lag=NULL, max.order=NULL, plot=TRUE)
       abline(h=2/sqrt(n), lty=3)
       abline(h=-2/sqrt(n), lty=3) }
 
-    canarm.out <- list( arinit=-z1$arcoef[1:mo], v=z1$v[1:l1], aic=z1$aic[1:l1], aicmin=z1$oaic,
+    canarm.out <- list( arinit=-ar[1:mo], v=z1[[2L]][1:l1], aic=z1[[3L]][1:l1], aicmin=z1[[4L]],
                         order.maice=mo, parcor=parcor, nc=nc, future=m1, past=m2, cweight=cweight,
-                        canocoef=cR, canocoef2=Rsquar, chisquar=chisquar, ndf=ndf, dic=dic, dicmin=z1$dicm[1:nc],
-                        order.dicmin=z1$po[1:nc], arcoef=-z1$b[1:k], macoef=-z1$a[1:l] )
+                        canocoef=cR, canocoef2=Rsquar, chisquar=chisquar, ndf=ndf, dic=dic, dicmin=z1[[16L]][1:nc],
+                        order.dicmin=z1[[17L]][1:nc], arcoef=-z1[[19L]][1:k], macoef=-z1[[21L]][1:l] )
     return( canarm.out )
 }
 
@@ -1244,8 +1038,8 @@ function (y)
     lag1 <- lag+1
     inw <- c(1:d)       # inw(k)=j means that the k-th component of y(i) is the j-th component of the original record z(i)
 
-    z1 <- mulcor(y, lag, plot=FALSE)
-    cov <- z1$cov       # covariance matrix
+    z2 <- mulcor(y, lag, plot=FALSE)
+    cov <- z2$cov       # covariance matrix
 
     lmax <- 12
     mj0 <- lmax+1
@@ -1275,55 +1069,32 @@ function (y)
     ivf <- 0				# number of vector vf
     vf <- rep(0,mj1*mj1)		# F matrix in vector form
 
-    z1 <- .C("canoca",
+    z1 <- .Call("canoca",
 	as.integer(d),
 	as.integer(inw),
 	as.integer(n),
 	as.integer(lag1),
 	as.integer(d),
 	as.double(cov),
-	l = as.integer(l),
-	aic = as.double(aic),
-        oaic = as.double(oaic),
-	mo = as.integer(mo),
-	v = as.double(v),
-	ac = as.double(ac),
-	nc = as.integer(nc),
-	m1 = as.integer(m1),
-	m2 = as.integer(m2),
-	w = as.double(w),
-	z = as.double(z),
-	Rs = as.double(Rs),
-	chi = as.double(chi),
-	ndt = as.integer(ndt),
-	dic = as.double(dic),
-	dicm = as.double(dicm),
-	po = as.integer(po),
-	f = as.double(f),
-	k = as.integer(k),
-	nh = as.integer(nh),
-	g = as.double(g),
-	ivf = as.integer(ivf),
-	vf = as.double(vf),
 	as.integer(lmax),
 	as.integer(mj0),
 	as.integer(mj1) )
 
-    l <- z1$l
-    mo <- z1$mo
-    ac <- array(z1$ac, dim=c(mj0,d,d))
+    l <- z1[[1L]]
+    mo <- z1[[4L]]
+    ac <- array(z1[[6L]], dim=c(mj0,d,d))
     arcoef <- array(,dim=c(d,d,mo))
     for( i in 1:mo ) arcoef[,,i] <- -ac[i,(1:d),(1:d)]
-    nc <- z1$nc
-    m1 <- z1$m1[1:nc]
-    m2 <- z1$m2[1:nc]
-    w <- array(z1$w, dim=c(mj1,mj1,mj1))
-    z <- array(z1$z, dim=c(mj1,mj1))
-    Rs <- array(z1$Rs, dim=c(mj1,mj1))
-    chi <- array(z1$chi, dim=c(mj1,mj1))
-    ndt <- array(z1$ndt, dim=c(mj1,mj1))
-    dicp <- array(z1$dic, dim=c(mj1,mj1))
-    f <- array(z1$f, dim=c(mj1,mj1))
+    nc <- z1[[7L]]
+    m1 <- z1[[8L]][1:nc]
+    m2 <- z1[[9L]][1:nc]
+    w <- array(z1[[10L]], dim=c(mj1,mj1,mj1))
+    z <- array(z1[[11L]], dim=c(mj1,mj1))
+    Rs <- array(z1[[12L]], dim=c(mj1,mj1))
+    chi <- array(z1[[13L]], dim=c(mj1,mj1))
+    ndt <- array(z1[[14L]], dim=c(mj1,mj1))
+    dicp <- array(z1[[15L]], dim=c(mj1,mj1))
+    f <- array(z1[[18L]], dim=c(mj1,mj1))
     cweight <- list()
     cR <- list()
     Rsquar <- list()
@@ -1338,14 +1109,14 @@ function (y)
     for( i in 1:nc )  ndf[[i]] <- ndt[(1:m1[i]),i]
     for( i in 1:nc )  dic[[i]] <- dicp[(1:m1[i]),i]
     for( i in 1:nc )  matF[[i]] <- f[1:(m1[i]-1),i]
-    k <- z1$k
-    g <- array(z1$g, dim=c(mj1,d))
-    ivf <- z1$ivf
+    k <- z1[[19L]]
+    g <- array(z1[[21L]], dim=c(mj1,d))
+    ivf <- z1[[22L]]
 
-    canoca.out <- list( aic=z1$aic[1:(l+1)], aicmin=z1$oaic, order.maice=mo, v=array(z1$v, dim=c(d,d)),
+    canoca.out <- list( aic=z1[[2L]][1:(l+1)], aicmin=z1[[3L]], order.maice=mo, v=array(z1[[5L]], dim=c(d,d)),
 			arcoef=arcoef, nc=nc, future=m1, past=m2, cweight=cweight, canocoef=cR, canocoef2=Rsquar,
-			chisquar=chisquar, ndf=ndf, dic=dic, dicmin=z1$dicm[1:nc], order.dicmin=z1$po[1:nc],
-                        matF=matF, vectH=z1$nh[1:k], matG=g[(1:k),(1:d)], vectF=z1$vf[1:ivf] )
+			chisquar=chisquar, ndf=ndf, dic=dic, dicmin=z1[[16L]][1:nc], order.dicmin=z1[[17L]][1:nc],
+                        matF=matF, vectH=z1[[20L]][1:k], matG=g[(1:k),(1:d)], vectF=z1[[23L]][1:ivf] )
     return( canoca.out )
 }
 
@@ -1355,28 +1126,23 @@ function (lag, f, gain, plot=TRUE)
 {
     k <- length(f)	# number of data points
 
-    acov <- rep(0,(lag+1))	# auto covariance
-    acor <- rep(0,(lag+1))	# auto covariance normalized
- 
-    z <- .C("covgen",
+    z <- .Call("covgen",
 	as.integer(lag),
 	as.integer(k),
 	as.double(f),
-	as.double(gain),
-	acov = as.double(acov),
-	acor = as.double(acor))
+	as.double(gain))
 
     if( plot == TRUE ) {
-      plot((0:lag), z$acor, type="h", ylab="Auto Covariance Normalized", xlab="Lag")
+      plot((0:lag), z[[2L]], type="h", ylab="Auto Covariance Normalized", xlab="Lag")
       abline(h=0, lty=1) }
 
-    covgen.out <- list( acov=z$acov, acor=z$acor )
+    covgen.out <- list( acov=z[[1L]], acor=z[[2L]] )
     return( covgen.out )
 }
 
 
 markov <-
-function (y, tmp.file=NULL)
+function (y)
 {
     n <- nrow(y)        # length of data
     d <- ncol(y)        # dimension of the observation vector
@@ -1391,7 +1157,7 @@ function (y, tmp.file=NULL)
     nh <- z2$vectH		# structural characteristic vector
     k <- length(nh)		# dimension of the state vector
     vectF <- z2$vectF		# initial estimate of the vector of free parameters in F
-    nvf <- length(vectF)	# length of vector vf
+    nvf <- length(vectF)		# length of vector vf
     matGi <- rep(z2$matG,1)     # initial estimates of the free parameters in G
 
     mj3 <- max(lag1,100)
@@ -1399,25 +1165,7 @@ function (y, tmp.file=NULL)
     mj6 <- 2*(k+d)-1
     mj7 <- as.integer((k-1)/d+1)
 
-    id <- rep(0,k)      # id(i)=1 means that the i-th row of a contains free parameters
-    ir <- rep(0,k)      # denotes the position of the last non-zero element within the i-th row in F
-    ij <- rep(0,d)      # denotes the position of the i-th non-trivial row within F
-    ik <- rep(0,d)      # denotes the number of free parameters within the i-th non-trivial row in F
-    ngr <- 0				# number of gradient vector
-    gr <- rep(0, mj4)			# gradient vector
-    a1 <- array(0, dim=c(k,k))		# initial estimate of the transition matrix (F)
-    a <- array(0, dim=c(k,k))		# transition matrix (F)
-    b <- array(0, dim=c(k,d))		# input matrix (G)
-    vd <- array(0, dim=c(mj4,mj4))	# DAVIDON variance
-    iqm <- 0				# AR-order
-    bm <- array(0, dim=c(d,d,mj7))	# AR-coefficient matrices
-    au <- array(0, dim=c(d,d,mj7))	# impulse response matrices
-    zz <- array(0, dim=c(d,d,mj7))	# MA-coefficient matrices
-    v <- array(0, dim=c(d,d))		# inovation variance
-    aic <- 0				# AIC
-    if( is.null(tmp.file) )  tmp.file <- " "
-
-    z <- .C("markov",
+    z <- .Call("markov",
 	as.integer(n),
 	as.integer(lag1),
 	as.integer(d),
@@ -1428,42 +1176,25 @@ function (y, tmp.file=NULL)
 	as.double(vectF),
 	as.double(matGi),
 	as.integer(icont),
-	idd = as.integer(id),
-	ir = as.integer(ir),
-	ij = as.integer(ij),
-	ik = as.integer(ik),
-	ngr = as.integer(ngr),
-	gr = as.double(gr),
-	a1 = as.double(a1),
-	a = as.double(a),
-	b = as.double(b),
-	vd = as.double(vd),
-	iqm = as.integer(iqm),
-	bm = as.double(bm),
-	au = as.double(au),
-	zz = as.double(zz),
-	v = as.double(v),
-	aic = as.double(aic),
-        as.character(tmp.file),
 	as.integer(mj3),
 	as.integer(mj4),
 	as.integer(mj6),
 	as.integer(mj7) )
 
-    ngr <- z$ngr
-    vd <- array(z$vd, dim=c(mj4,mj4))
-    iqm <- z$iqm
-    bm <- array(z$bm, dim=c(d,d,mj7))
-    au <- array(z$au, dim=c(d,d,mj7))
-    zz <- array(z$zz, dim=c(d,d,mj7))
+    ngr <- z[[5L]]
+    vd <- array(z[[10L]], dim=c(mj4,mj4))
+    iqm <- z[[11L]]
+    bm <- array(z[[12L]], dim=c(d,d,mj7))
+    au <- array(z[[13L]], dim=c(d,d,mj7))
+    zz <- array(z[[14L]], dim=c(d,d,mj7))
 
     arcoef <- array(-bm, dim=c(d,d,iqm))
     macoef <- array(-zz, dim=c(d,d,iqm-1))
 
-    markov.out <- list( id=z$id, ir=z$ir, ij=z$ij, ik=z$ik, grad=z$gr[1:ngr], matFi=array(z$a1, dim=c(k,k)),
-			matF=array(z$a, dim=c(k,k)), matG=array(z$b, dim=c(k,d)), davvar=vd[(1:ngr),(1:ngr)],
+    markov.out <- list( id=z[[1L]], ir=z[[2L]], ij=z[[3L]], ik=z[[4L]], grad=z[[6L]][1:ngr], matFi=array(z[[7L]], dim=c(k,k)),
+			matF=array(z[[8L]], dim=c(k,k)), matG=array(z[[9L]], dim=c(k,d)), davvar=vd[(1:ngr),(1:ngr)],
 			arcoef=arcoef, impuls=array(au, dim=c(d,d,iqm-1)),
-			macoef=macoef, v=array(z$v, dim=c(d,d)), aic=z$aic )
+			macoef=macoef, v=array(z[[15L]], dim=c(d,d)), aic=z[[16L]] )
     return( markov.out )
 }
 
@@ -1472,56 +1203,35 @@ nonst <-
 function (y, span, max.order=NULL, plot=TRUE)
 {
     n <- length(y)	# length of data
-    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # highest order of AR model
-    tmp.file <- " "
-
-    morder <- max.order
     if( span < 1 ) span <- n
     ns <- as.integer(n/span)
-    p <- rep(0,ns)			# AR order
-    coef <- array(0, dim=c(morder,ns))	# AR-coefficients
-    v <- rep(0,ns) 			# innovation variance
-    aic <- rep(0,ns)			# AIC
-    daic21 <- rep(0,ns)			# AIC2-AIC1
-    daic <- rep(0,ns)			# DAIC/N
-    ks <- rep(0,ns)			# start point of the current model
-    ke <- rep(0,ns)			# end point of the current model
-    pspec <- array(0, dim=c(121,ns))
+    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # highest order of AR model
+    morder <- max.order
 
-    z <- .C("nonst",
+    z <- .Call("nonst",
 	as.integer(n),
 	as.integer(span),
 	as.double(y),
 	as.integer(ns),
-	as.integer(morder),
-	p = as.integer(p),
-	coef = as.double(coef),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic21 = as.double(daic21),
-	daic = as.double(daic),
-	ks = as.integer(ks),
-	ke = as.integer(ke),
-	pspec = as.double(pspec),
-        as.character(tmp.file) )
+	as.integer(morder))
 
-    coef <- array(z$coef, dim=c(morder,ns))
+    coef <- array(z[[2L]], dim=c(morder,ns))
     arcoef <- list() 
-    for (i in 1:ns )  arcoef[[i]] <- coef[1:z$p[i],i]
-    pspec <- array(z$pspec, dim=c(121,ns))
+    for (i in 1:ns )  arcoef[[i]] <- coef[1:z[[1L]][i],i]
+    pspec <- array(z[[9L]], dim=c(121,ns))
 
     if( plot == TRUE ) {
       x <- rep(0,121)
       for( i in 1:121 ) x[i] <- (i-1)/240
       par(mfrow=c(ns,1))
       for( i in 1:ns ) {
-        plot(x, pspec[,i], type="l", main=paste("y(", z$ks[i], "),...,y(", z$ke[i], ")"),
+        plot(x, pspec[,i], type="l", main=paste("y(", z[[7L]][i], "),...,y(", z[[8L]][i], ")"),
              xlab="Frequency", ylab="Power Spectrum") }
       par(mfrow=c(1,1))
     }
 
-    nonst.out <- list( ns=ns, arcoef=arcoef, v=z$v, aic=z$aic, daic21=z$daic21, daic=z$daic,
-		       init=z$ks, end=z$ke, pspec=array(z$pspec, dim=c(121,ns)) )
+    nonst.out <- list( ns=ns, arcoef=arcoef, v=z[[3L]], aic=z[[4L]], daic21=z[[5L]], daic=z[[6L]],
+		       init=z[[7L]], end=z[[8L]], pspec=array(z[[9L]], dim=c(121,ns)) )
     return( nonst.out )
 }
 
@@ -1567,20 +1277,7 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
       if( is.null(impuls) ) impuls <- array(0, dim=c(d,d,q))
     }
 
-    yreal <- array(0, dim=c(s+h,d))	# real data
-    yori <- array(0, dim=c(h+1,d))	#
-    ypre <- array(0, dim=c(s+h,d))	# predicted values
-    ys <- array(0, dim=c(n,d))		# predicted - (real data)
-    z1 <- array(0, dim=c(s+h,d))	# predicted + (standard deviation)
-    z1 <- array(0, dim=c(s+h,d))	# predicted + (standard deviation)
-    z2 <- array(0, dim=c(s+h,d))	# predicted + 2*(standard deviation)
-    z3 <- array(0, dim=c(s+h,d))	# predicted + 3*(standard deviation)
-    zz1 <- array(0, dim=c(s+h,d))	# predicted - (standard deviation)
-    zz2 <- array(0, dim=c(s+h,d))	# predicted - 2*(standard deviation)
-    zz3 <- array(0, dim=c(s+h,d))	# predicted - 3*(standard deviation)
-    tmp.file <- " "
-
-    z <- .C("prdctr",
+    z <- .Call("prdctr",
 	as.integer(n),
 	as.integer(r),
 	as.integer(s),
@@ -1593,25 +1290,14 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
 	as.double(arcoef),
 	as.double(macoef),
 	as.double(impuls),
-	as.double(v),
-	yreal = as.double(yreal),
-	yori = as.double(yori),
-	ypre = as.double(ypre),
-	ys = as.double(ys),
-	z1 = as.double(z1),
-	z2 = as.double(z2),
-	z3 = as.double(z3),
-	zz1 = as.double(zz1),
-	zz2 = as.double(zz2),
-	zz3 = as.double(zz3),
-        as.character(tmp.file) )
+	as.double(v))
 
 #    yreal <- array(z$yreal, dim=c(s+h,d))
 #    yori <- array(z$yori, dim=c(h+1,d))
 #    for(i in 1:(n-s+1)) yreal[s+i-1,] <- yori[i,]
 #    for(j in 1:d) yreal[,j] <- yreal[(1:n),j]
 
-    predct <- array(z$ypre, dim=c(s+h,d))
+    predct <- array(z[[3L]], dim=c(s+h,d))
     for(i in 1:(r-1)) predct[i,] <- NA
 
 #    ys <- array(z$ys, dim=c(n,d))
@@ -1621,17 +1307,17 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
     for(j in 1:d)
       for(i in r:n) ys[i,j] <- y[i,j]-predct[i,j]
 
-    pstd <- array(z$z1, dim=c(s+h,d))
+    pstd <- array(z[[5L]], dim=c(s+h,d))
     pstd[1:s-1,] <- NA
-    p2std <- array(z$z2, dim=c(s+h,d))
+    p2std <- array(z[[6L]], dim=c(s+h,d))
     p2std[1:s-1,] <- NA
-    p3std <- array(z$z3, dim=c(s+h,d))
+    p3std <- array(z[[7L]], dim=c(s+h,d))
     p3std[1:s-1,] <- NA
-    mstd <- array(z$zz1, dim=c(s+h,d))
+    mstd <- array(z[[8L]], dim=c(s+h,d))
     mstd[1:s-1,] <- NA
-    m2std <- array(z$zz2, dim=c(s+h,d))
+    m2std <- array(z[[9L]], dim=c(s+h,d))
     m2std[1:s-1,] <- NA
-    m3std <- array(z$zz3, dim=c(s+h,d))
+    m3std <- array(z[[10L]], dim=c(s+h,d))
     m3std[1:s-1,] <- NA
 
     if( plot == TRUE ) {
@@ -1685,14 +1371,7 @@ function (span, len, r, arcoef, impuls, v, weight)
     d <- dim(arcoef)[1]		# dimension of Y(I)
     k <- dim(arcoef)[3]		# order of the process
 
-    bc <- array(0, dim=c(k*d,r))	# kd*(d-r) sub matrices of BX
-    bd <- array(0, dim=c(k*d,d-r))	# kd*r sub matrices of BX
-    g <- array(0, dim=c(r,k*d))		# controller gain G
-    av <- rep(0, d)	# average value of i-th componentof Y
-    si <- rep(0, d)	# variance
-    s2 <- rep(0, d)	# standard deviation
-    
-    z <- .C("simcon",
+    z <- .Call("simcon",
 	as.integer(d),
 	as.integer(k),
 	as.integer(span),
@@ -1701,16 +1380,10 @@ function (span, len, r, arcoef, impuls, v, weight)
 	as.double(arcoef),
 	as.double(impuls),
 	as.double(v),
-	as.double(weight),
-	bc = as.double(bc),
-	bd = as.double(bd),
-	g = as.double(g),
-	av = as.double(av),
-	si = as.double(si),
-	s2 = as.double(s2))
+	as.double(weight))
 
-    simcon.out <- list( gain=array(z$g, dim=c(r,k*d)), ave=z$av[1:d], var=z$si[1:d], std=z$s2[1:d],
-			bc=array(z$bc, dim=c(k*d,r)), bd=array(z$bd, dim=c(k*d,d-r)) )
+    simcon.out <- list( gain=array(z[[3L]], dim=c(r,k*d)), ave=z[[4L]][1:d], var=z[[5L]][1:d], std=z[[6L]][1:d],
+			bc=array(z[[1L]], dim=c(k*d,r)), bd=array(z[[2L]], dim=c(k*d,d-r)) )
     return( simcon.out )
 }
 
@@ -1722,30 +1395,21 @@ function (y, lag=NULL, plot=TRUE)
     if( is.null(lag) ) lag <- as.integer(2*sqrt(n))  # maximum lag
     lag1 <- lag+1
 
-    mean <- 0		# mean
-    acov <- rep(0,lag1)	# autocovariance
-    acor <- rep(0,lag1)		# normalized covariance
-    mnt <- array(0, dim=c(lag1,lag1))	# third order moments
-
-    z <- .C("thirmo",
+    z <- .Call("thirmo",
 	as.integer(n),
 	as.integer(lag),
-	as.double(y),
-	mean = as.double(mean),
-	acov = as.double(acov),
-	acor = as.double(acor),
-	mnt = as.double(mnt))
+	as.double(y))
 
-    mnt <- array(z$mnt, dim=c(lag1,lag1))
+    mnt <- array(z[[4L]], dim=c(lag1,lag1))
     tmomnt <- list()
     for( i in 1:lag1 ) tmomnt[[i]] <- mnt[i,1:i]
 
     if( plot == TRUE ) {
-      plot((0:lag), z$acor, type="h", ylab="Auto Covariance Normalized", xlab="Lag")
+      plot((0:lag), z[[3L]], type="h", ylab="Auto Covariance Normalized", xlab="Lag")
       abline(h=0, lty=1)
     }
 
-    thirmo.out <- list( mean=z$mean, acov=z$acov, acor=z$acor, tmomnt=tmomnt )
+    thirmo.out <- list( mean=z[[1L]], acov=z[[2L]], acor=z[[3L]], tmomnt=tmomnt )
     return( thirmo.out )
 }
 
@@ -1761,33 +1425,13 @@ function (y, max.order=NULL, span, plot=TRUE)
     morder <- max.order
     if( span < 0 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
-    mean <- 0
-    var <- 0
-    aic <- array(0, dim=c(ns,ns))
-    bw <- array(0, dim=c(ns,ns))  # Bayesian Weight
-    b <- array(0, dim=c(morder,ns))  # Partial Autocorrelation
-    a <- array(0, dim=c(morder,ns))  # Coefficients ( average by the Bayesian weights )
-    v  <- rep(0,ns)                 # Innovation Variance
-    ks <- rep(0,ns)                 # initial point of data
-    ke <- rep(0,ns)                 # end point of data
-    pxx <- array(0, dim=c(121,ns))  # power spectrum
 
-    z <- .C("blocar",
+    z <- .Call("blocar",
 	as.double(y),
 	as.integer(n),
 	as.integer(morder),
 	as.integer(span),
-	as.integer(ns),
-	mean = as.double(mean),
-	var = as.double(var),
-	aic = as.double(aic),
-	bw = as.double(bw),
-	b = as.double(b),
-	a = as.double(a),
-	v = as.double(v), 
-	ks = as.integer(ks),
-	ke = as.integer(ke),
-	pxx = as.double(pxx) )
+	as.integer(ns))
 
     aic <- list()
     bweight <- list()
@@ -1797,24 +1441,24 @@ function (y, max.order=NULL, span, plot=TRUE)
     bweight[[1]] <- NA
     for( i in 2:ns ) {
         j <- ((i-1)*ns+1):((i-1)*ns+i)
-        aic[[i]] <- z$aic[j]
-        bweight[[i]] <- z$bw[j]
+        aic[[i]] <- z[[3L]][j]
+        bweight[[i]] <- z[[4L]][j]
     }
-    for( i in 1:ns ) pacoef[[i]] <- z$b[((i-1)*morder+1):(i*morder)]
-    for( i in 1:ns ) arcoef[[i]] <- z$a[((i-1)*morder+1):(i*morder)]
-    pspec <- array(z$pxx, dim=c(121,ns))
+    for( i in 1:ns ) pacoef[[i]] <- z[[5L]][((i-1)*morder+1):(i*morder)]
+    for( i in 1:ns ) arcoef[[i]] <- z[[6L]][((i-1)*morder+1):(i*morder)]
+    pspec <- array(z[[10L]], dim=c(121,ns))
 
     if( plot == TRUE ) {
       x <- rep(0,121)
       for( i in 1:121 ) x[i] <- (i-1)/240
       par(mfrow=c(ns,1))
-      for( i in 1:ns ) plot(x, pspec[,i], type="l", main=paste("y(", z$ks[i], "),...,y(", z$ke[i], ")"),
+      for( i in 1:ns ) plot(x, pspec[,i], type="l", main=paste("y(", z[[8L]][i], "),...,y(", z[[9L]][i], ")"),
                             xlab="Frequency", ylab="Power Spectrum")
       par(mfrow=c(1,1))
     }
 
-    blocar.out <- list( mean=z$mean, var=z$var, aic=aic, bweight=bweight, pacoef=pacoef, arcoef=arcoef,
-			v=z$v, init=z$ks, end=z$ke, pspec=pspec )
+    blocar.out <- list( mean=z[[1L]], var=z[[2L]], aic=aic, bweight=bweight, pacoef=pacoef, arcoef=arcoef,
+			v=z[[7L]], init=z[[8L]], end=z[[9L]], pspec=pspec )
     return( blocar.out )
 }
 
@@ -1830,54 +1474,36 @@ function (y, max.order=NULL, span)
     calb<-rep(1,d)   # calibration constant for channel j (j=1,d)
     if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
-    mean <- rep(0,d)
-    var <- rep(0,d)
-    bw <- array(0, dim=c(ns,ns))        # Bayesian Weight
-    raic <- array(0, dim=c(ns,ns))      # AIC
-    a <- array(0, dim=c(d,d,morder,ns))    # AR-coefficient matrices
-    e <- array(0, dim=c(d,d,ns))        # innovation variance
-    aic <- rep(0,ns)                    # equivalent AIC of Bayesian model
-    ks <- rep(0,ns)                     # initial point of data
-    ke <- rep(0,ns)                     # end point of data
 
-    z <- .C("blomar",
+    z <- .Call("blomar",
 	as.double(y),
 	as.integer(n),
 	as.integer(d),
 	as.double(calb),
 	as.integer(morder),
 	as.integer(span),
-	as.integer(ns),
-	mean = as.double(mean),
-	var = as.double(var),
-	bw = as.double(bw),
-	raic = as.double(raic),
-	a = as.double(a),
-	e = as.double(e),
-	aic = as.double(aic),
-	ks = as.integer(ks),
-	ke = as.integer(ke) )
+	as.integer(ns))
 
-    bw <- array(z$bw, dim=c(ns,ns))
+    bw <- array(z[[3L]], dim=c(ns,ns))
     bweight <- list()
     bweight[[1]] <- NA
     for( i in 2:ns ) bweight[[i]] <- bw[1:i,i]
 
-    raic <- array(z$raic, dim=c(ns,ns))
+    raic <- array(z[[4L]], dim=c(ns,ns))
     aic <- list()
     aic[[1]] <- NA
     for( i in 2:ns ) aic[[i]] <- raic[1:i,i]
 
-    a <- array(z$a, dim=c(d,d,morder,ns))
+    a <- array(z[[5L]], dim=c(d,d,morder,ns))
     arcoef <- list()
     for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i], dim=c(d,d,morder))
 
-    e <- array(z$e, dim=c(d,d,ns))
+    e <- array(z[[6L]], dim=c(d,d,ns))
     v <- list()
     for( i in 1:ns ) v[[i]] <- array(e[,,i], dim=c(d,d))
 
-    blomar.out <- list( mean=z$mean, var=z$var, bweight=bweight, aic=aic, arcoef=arcoef, v=v, eaic=z$aic,
-			init=z$ks, end=z$ke )
+    blomar.out <- list( mean=z[[1L]], var=z[[2L]], bweight=bweight, aic=aic, arcoef=arcoef, v=v, eaic=z[[7L]],
+			init=z[[8L]], end=z[[9]] )
     class( blomar.out ) <- "blomar"
     return( blomar.out )
 }
@@ -1915,175 +1541,139 @@ print.blomar <- function(x, ...)
 
 
 bsubst <-
-function (y, mtype, lag=NULL, nreg, reg=NULL, term.lag=NULL, cstep=5, plot=TRUE)
+function (y, mtype, lag=NULL, nreg=NULL, reg=NULL, term.lag=NULL, cstep=5, plot=TRUE)
 {
+    if( mtype<0 || mtype>4 ) 
+      stop(" Allowed model type are
+      1 : autoregressive model,
+      2 : polynomial type non-linear model (lag's read in),
+      3 : polynomial type non-linear model (lag's automatically set),
+      4 : AR-model with polynomial mean value function\n")
+
+# specification of number of regressors (mtype=1,2,4)
+    if(is.null(nreg))  if( mtype != 3 )  stop(" Number of regressors is not specified")
+
+# specification of maximum time lag  (mtype=2)
+    if(is.null(reg))  if( mtype == 2 )  stop(" Regressors are not specified")
+
+# specification of regressor (mtype=3)
+    if(is.null(term.lag))  if( mtype == 3 ) stop(" Maximum time lags are not specified")
+
     n <- length(y)
     if( is.null(lag) ) lag <- as.integer(2*sqrt(n))  # maximum time lag use in the model
-    k <- nreg                                        # number of regressors
-    if(is.null(reg)) reg <- array(0, dim=c(3,nreg))  # specification of regressor (mtype=2,6)
-    if(is.null(term.lag)) term.lag <- rep(0,5)       # specification of regressor (mtype=3)
+# number of regressors
+    if( mtype == 3) {
+      k <- 0
+      lag5 <- term.lag[5]
+      for( i in 1:lag5 )  k <- k + i*(i+1)/2 - 1
+      nreg <- term.lag[1] + term.lag[2] + term.lag[3] + term.lag[4] + k
+    }
+
+    if(is.null(reg))  reg <- array(0, dim=c(3,nreg)) 
+    if(is.null(term.lag))  term.lag <- rep(0,5)
     f <- ""                                          # specification of regressor (mtype=5)
     cnst <- 0                                        # constant value (mtype=6)
 
-    ymean <- 0
-    yvar <- 0
-    m <- 0
-    aicm <- 0
-    vm <- 0
-    a1 <- rep(0,k)       # AR-coefficients
-    v  <- rep(0,k+1)
-    aic <- rep(0,k+1)
-    daic <- rep(0,k+1)
-    aicb <- 0            # AIC of Bayesian model
-    vb <- 0              # residual variance of Bayesian model
-    ek <- 0              # equivalent number of parameters
-    a2 <- rep(0,k)       # AR-coefficients of Bayesian model
-    ind <- rep(0,k)      # index of c(i) in order of increasing magnitude
-    c <- rep(0,k)        # square of partial correlations (c(i)= n*b(i)**2)
-    c1 <- rep(0,k+1)     # binomial type damper
-    c2 <- rep(0,k)       # final Bayesian weights of partial correlations
-    b <- rep(0,k)        # partial correlations of the Bayesian model b(i)
-    eicmin <- 0          # minimum EIC
-    esum <- rep(0,k+1)
-    npmean <- 0          # mean of number of parameter
-    npmean.nreg <- 0     # (=npmean/nreg)
-    e <- array(0, dim=c(n,cstep))  # prediction error
-    mean <- rep(0,cstep) # mean
-    var <- rep(0,cstep)  # variance
-    skew <- rep(0,cstep) # skewness
-    peak <- rep(0,cstep) # peakedness
-    cov <- rep(0,101)    # autocorrelation function
-    pxx <- rep(0,121)    # power spectrum
-
-    z <- .C("bsubst",
+    z <- .Call("bsubst",
 	as.double(y),
 	as.integer(n),
 	as.integer(mtype),
 	as.integer(lag),
 	as.integer(nreg),
 	as.integer(cstep),
- 	as.integer(reg),
+	as.integer(reg),
 	as.integer(term.lag),
 	as.character(f),
-	as.double(cnst),
-	ymean = as.double(ymean),
-	yvar = as.double(yvar),
-	m = as.integer(m),
-	aicm = as.double(aicm),
-	vm = as.double(vm),
-	a1 = as.double(a1),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic = as.double(daic),
-	aicb = as.double(aicb),
-	vb = as.double(vb),
-	ek = as.double(ek),
-	a2 = as.double(a2),
-	ind = as.integer(ind),
-	c = as.double(c),
-	c1 = as.double(c1),
-	c2 = as.double(c2),
-	b = as.double(b),
-	eicmin = as.double(eicmin),
-	esum = as.double(esum),
-	npmean = as.double(npmean),
-	npmean.nreg = as.double(npmean.nreg),
-	e = as.double(e),
-	mean = as.double(mean),
-	var = as.double(var),
-	skew = as.double(skew),
-	peak = as.double(peak),
-	cov = as.double(cov),
-	pxx = as.double(pxx) )
+	as.double(cnst))
 
-    perr <- array(z$e, dim=c(n,cstep))
+    mo <- z[[3L]]
+    arcoefm=z[[6L]][1:mo]
+    if( mtype != 4 ) {
+      nps <- lag+1
+      perr <- array(z[[23L]], dim=c(n,cstep))
+      perr <- perr[nps:n,]
+      lagh <- 100
+      nn <- n-nps-1
+      if( (lagh > nn) || (lagh == nn) ) lagh <- nn-1
+      lag1 <- lagh + 1
+      autcor1=z[[28L]][1:lag1]
+    }
+
 
     if( plot == TRUE ) {
-      mm <- 2
-      if( mtype==1 ) mm <- mm+1
-      nc <- (mm+cstep+1)/2
-      par(mfcol=c(nc,2))
 
-      for( i in 1:cstep ) {
-        sig <- sqrt(z$var[i])*0.5
-        hist( perr[(lag+1):n,i], breaks=c(-sig*10:1,0,sig*1:10), main="", xlab=paste(i,"-step ahead prediction error") )
+      if( mtype != 4 )  {
+         mm <- 2
+         if( mtype==1 ) mm <- mm+1
+         nc <- (mm+cstep+1)/2
+         par(mfcol=c(nc,2))
+        for( i in 1:cstep ) {
+          sig <- sqrt(z[[25L]][i])*0.5
+#          hist( perr[(lag+1):n,i], breaks=c(-sig*10:1,0,sig*1:10), main="", xlab=paste(i,"-step ahead prediction error") )
+          hist( perr[,i], breaks=c(-sig*10:1,0,sig*1:10), main="", xlab=paste(i,"-step ahead prediction error") )
+        }
       }
 
-      plot((0:nreg), z$daic, ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN" )
-      abline(h=0, lty=1)
+      if( mtype == 1 ) {
+        k <- lag
+        k1 <- k+1
+        plot((0:k), z[[9L]][1:k1], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN" )
+        abline(h=0, lty=1)
+      } else {
+        plot((0:nreg), z[[9L]], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN" )
+        abline(h=0, lty=1)
+      }
 
       if( mtype==1 ) {
         x <- rep(0,121)
         for( i in 1:121 ) x[i] <- (i-1)/240
-        plot(x, pxx, type="l", xlab="Frequency", ylab=paste("Power Spectrum"))
+        plot(x, z[[29L]], type="l", xlab="Frequency", ylab=paste("Power Spectrum"))
       }
 
-      plot( order<-c(0:100),z$cov,ylim=c(-1,1),bty="l",type="h", main="Autocorrelation of\n1-step ahead prediction error",
-            xlab="Lines show +/-2sd\n ( sd = sqrt(1/n) )", ylab="peautcor" )
-      abline( h=0, lty=1 )
-      abline( h=2*sqrt(1/(n-lag)), lty=3 )
-      abline( h=-2*sqrt(1/(n-lag)), lty=3 )
-      par(mfrow=c(1,1)) }
+      if( mtype != 4 ) {
+        plot( order<-c(0:lagh),autcor1,ylim=c(-1,1),bty="l",type="h", main="Autocorrelation of\n1-step ahead prediction error", xlab="Lines show +/-2sd\n ( sd = sqrt(1/n) )", ylab="peautcor" )
+        abline( h=0, lty=1 )
+        abline( h=2*sqrt(1/(n-lag)), lty=3 )
+        abline( h=-2*sqrt(1/(n-lag)), lty=3 )
+      }
+      par(mfrow=c(1,1))
+    }
 
-    if(mtype == 1) 
-	bsubst.out <- list( ymean=z$ymean, yvar=z$yvar, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic, order.maice=z$m,
-			    v.maice=z$vm, arcoef.maice=z$a1, v.bay=z$vb, aic.bay=z$aicb, np.bay=z$ek, arcoef.bay=z$a2,
-			    ind.c=z$ind, parcor2=z$c, damp=z$c1, bweight=z$c2, parcor.bay=z$b, eicmin=z$eicmin,
-			    esum=z$esum, npmean=z$npmean, npmean.nreg=z$npmean.nreg, perr=perr, mean=z$mean,
-			    var=z$var, skew=z$skew, peak=z$peak, peautcor=z$cov, pspec=z$pxx )
-    if(mtype != 1)
-	bsubst.out <- list( ymean=z$ymean, yvar=z$yvar, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic, order.maice=z$m,
-			    v.maice=z$vm, arcoef.maice=z$a1, v.bay=z$vb, aic.bay=z$aicb, np.bay=z$ek, arcoef.bay=z$a2,
-			    ind.c=z$ind, parcor2=z$c, damp=z$c1, bweight=z$c2, parcor.bay=z$b, eicmin=z$eicmin,
-			    esum=z$esum, npmean=z$npmean, npmean.nreg=z$npmean.nreg, perr=perr, mean=z$mean,
-			    var=z$var, skew=z$skew, peak=z$peak, peautcor=z$cov )
+
+    if(mtype == 1) {
+          k <- lag
+          k1 <- k+1
+	bsubst.out <- list( ymean=z[[1L]], yvar=z[[2L]], v=z[[7L]][1:k1], aic=z[[8L]][1:k1], aicmin=z[[4L]], daic=z[[9L]][1:k1], order.maice=mo, v.maice=z[[5L]], arcoef.maice=arcoefm, v.bay=z[[11L]], aic.bay=z[[10L]], np.bay=z[[12L]], arcoef.bay=z[[13L]][1:k], ind.c=z[[14L]][1:k], parcor2=z[[15L]][1:k], damp=z[[16L]][1:k1], bweight=z[[17L]][1:k], parcor.bay=z[[18L]][1:k], eicmin=z[[19L]], esum=z[[20L]][1:k1], npmean=z[[21L]], npmean.nreg=z[[22L]], perr=perr, mean=z[[24L]], var=z[[25L]], skew=z[[26L]], peak=z[[27L]], peautcor=autcor1, pspec=z[[29]] ) }
+
+    if(mtype==2 || mtype==3)
+	bsubst.out <- list( ymean=z[[1L]], yvar=z[[2L]], v=z[[7L]], aic=z[[8L]], aicmin=z[[4L]], daic=z[[9L]], order.maice=mo, v.maice=z[[5L]], arcoef.maice=arcoefm, v.bay=z[[11L]], aic.bay=z[[10L]], np.bay=z[[12L]], arcoef.bay=z[[13L]], ind.c=z[[14L]], parcor2=z[[15L]], damp=z[[16L]], bweight=z[[17L]], parcor.bay=z[[18L]], eicmin=z[[19L]], esum=z[[20L]], npmean=z[[21L]], npmean.nreg=z[[22L]], perr=perr, mean=z[[24L]], var=z[[25L]], skew=z[[26L]], peak=z[[27L]], peautcor=autcor1 )
+
+    if(mtype == 4)
+	bsubst.out <- list( ymean=z[[1L]], yvar=z[[2L]], v=z[[7L]], aic=z[[8L]], aicmin=z[[4L]], daic=z[[9L]], order.maice=mo, v.maice=z[[5L]], arcoef.maice=arcoefm, v.bay=z[[11L]], aic.bay=z[[10L]], np.bay=z[[12L]], arcoef.bay=z[[13L]], ind.c=z[[14L]], parcor2=z[[15L]], damp=z[[16L]], bweight=z[[17L]], parcor.bay=z[[18L]], eicmin=z[[19L]], esum=z[[20L]], npmean=z[[21L]], npmean.nreg=z[[22L]] )
+
     return( bsubst.out )
 }
 
-
 exsar <-
-function (y, max.order=NULL, plot=FALSE, tmp.file=NULL)
+function (y, max.order=NULL, plot=FALSE)
 {
     n <- length(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
-    if( is.null(tmp.file) )  tmp.file <- " "
-
     morder <- max.order
-    mean <-0
-    var <-0
-    v  <- rep(0,morder+1)
-    aic <- rep(0,morder+1)
-    daic <- rep(0,morder+1)
-    m <- 0               # MAICE order
-    aicm <- 0            # minimum AIC
-    sdm1 <- 0            # MAICE innovation variance
-    a1 <- rep(0,morder)  # MAICE AR-coefficients
-    sdm2 <- 0            # maximum likelihood estimates of innovation variance
-    a2 <- rep(0,morder)  # maximum likelihood estimates of AR-coefficients
 
-    z <- .C("exsar",
+    z <- .Call("exsar",
 	as.double(y),
 	as.integer(n),
-	as.integer(morder),
-	mean = as.double(mean),
-	var = as.double(var),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic = as.double(daic),
-	m = as.integer(m),
-	aicm = as.double(aicm),
-	sdm1 = as.double(sdm1),
-	a1 = as.double(a1), 
-	sdm2 = as.double(sdm2),
-	a2 = as.double(a2),
-	as.character(tmp.file) )
+	as.integer(morder))
+
+    if( z[[12L]] != 0 ) stop(" in FUNCT : SD is less than or equal to 0")
 
     if( plot == TRUE ) {
-      plot((0:morder), z$daic, ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
+      plot((0:morder), z[[5L]], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
       abline(h=0, lty=1) }
 
-    exsar.out  <- list( mean=z$mean, var=z$var, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic, order.maice=z$m, 
-			v.maice=z$sdm1, arcoef.maice=z$a1[1:z$m], v.mle=z$sdm2, arcoef.mle=z$a2[1:z$m] )
+    m <- z[[6L]]
+    exsar.out  <- list( mean=z[[1L]], var=z[[2L]], v=z[[3L]], aic=z[[4L]], aicmin=z[[7L]], daic=z[[5L]], order.maice=m, v.maice=z[[8L]], arcoef.maice=z[[9L]][1:m], v.mle=z[[10L]], arcoef.mle=z[[11L]][1:m] )
     return( exsar.out )
 }
 
@@ -2097,55 +1687,23 @@ function (y, max.order=NULL, span, const=0, plot=TRUE)
 
     if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
-    mean <- 0
-    var <- 0
-    a <- array(0, dim=c(morder+const,ns)) # current model : AR-coefficients
-    mf <- rep(0,ns)                  #               : order
-    sdf  <- rep(0,ns)                #               : innovation variance
-    ks <- rep(0,ns)                  #               : initial point of data
-    ke <- rep(0,ns)                  #               : end point of data
-    pxx <- array(0, dim=c(121,ns))   #               : power spectrum
-    ld1 <- rep(0,ns)                 # data length of the preceding stationary block
-    ld2 <- rep(0,ns)                 # data length of new block
-    ms <- rep(0,ns)                  # moving model   : order
-    sdms <- rep(0,ns)                #                : innovation variance
-    aics <- rep(0,ns)                #                : AIC 
-    mp <- rep(0,ns)                  # constant model : order
-    sdmp <- rep(0,ns)                #                : innovation variance
-    aicp <- rep(0,ns)                #                : AIC 
 
-    z <- .C("mlocar",
+    z <- .Call("mlocar",
 	as.double(y),
 	as.integer(n),
 	as.integer(morder),
 	as.integer(span),
 	as.integer(const),
-	as.integer(ns),
-	mean = as.double(mean),
-	var = as.double(var),
-	a = as.double(a),
-	mf = as.integer(mf),
-	sdf = as.double(sdf),
-	ks = as.integer(ks),
-	ke = as.integer(ke),
-	pxx = as.double(pxx),
-	ld1 = as.integer(ld1),
-	ld2 = as.integer(ld2),
-	ms = as.integer(ms),
-	sdms = as.double(sdms),
-	aics = as.double(aics),
-	mp = as.integer(mp),
-	sdmp = as.double(sdmp),
-	aicp = as.double(aicp) )
+	as.integer(ns))
 
-    a <- array(z$a, dim=c(morder+const,ns))
+    a <- array(z[[3L]], dim=c(morder+const,ns))
     arcoef <- list()
-    for(i in 1:ns) arcoef[[i]] <- a[1:z$mf[i],i]
-    pspec <- array(z$pxx, dim=c(121,ns))
-    npre <- z$ld1
-    order.const=z$mp
-    v.const=z$sdmp
-    aic.const=z$aicp
+    for(i in 1:ns) arcoef[[i]] <- a[1:z[[4L]][i],i]
+    pspec <- array(z[[8L]], dim=c(121,ns))
+    npre <- z[[9L]]
+    order.const=z[[14L]]
+    v.const=z[[15L]]
+    aic.const=z[[16L]]
     npre[1] <- NA
     order.const[1] <- NA
     v.const[1] <- NA
@@ -2155,13 +1713,13 @@ function (y, max.order=NULL, span, const=0, plot=TRUE)
       x <- rep(0,121)
       for( i in 1:121 ) x[i] <- (i-1)/240
       par(mfrow=c(ns,1))
-      for(i in 1:ns) plot(x, pspec[,i], type="l", main=paste("y(", z$ks[i], "),...,y(", z$ke[i], ")"),
+      for(i in 1:ns) plot(x, pspec[,i], type="l", main=paste("y(", z[[6L]][i], "),...,y(", z[[7L]][i], ")"),
                           xlab="Frequency", ylab="Power Spectrum")
       par(mfrow=c(1,1))
     }
 
-    mlocar.out <- list( mean=z$mean, var=z$var, ns=ns, order=z$mf, arcoef=arcoef, v=z$sdf, init=z$ks, end=z$ke, 
-			pspec=pspec, npre=npre, nnew=z$ld2, order.mov=z$ms, v.mov=z$sdms, aic.mov=z$aics,
+    mlocar.out <- list( mean=z[[1L]], var=z[[2L]], ns=ns, order=z[[4L]], arcoef=arcoef, v=z[[5L]], init=z[[6L]], end=z[[7L]], 
+			pspec=pspec, npre=npre, nnew=z[[10L]], order.mov=z[[11L]], v.mov=z[[12L]], aic.mov=z[[13L]],
 			order.const=order.const, v.const=v.const, aic.const=aic.const )
     return( mlocar.out )
 }
@@ -2178,22 +1736,8 @@ function (y, max.order=NULL, span, const=0)
     calb <- rep(1,d)   # calibration for channel j (j=1,d)
     if( span < 1 ) span <- n
     ns <- as.integer((n-morder+span-1)/span)
-    mean <- rep(0,d)
-    var <- rep(0,d)
-    ld1<- rep(0,ns)    # data length of the preceding stationary block
-    ld2 <- rep(0,ns)   # data length of new block
-    ms <- rep(0,ns)    # moving model   : AR-order
-    aicm <- rep(0,ns)  #                : aic
-    mp <- rep(0,ns)    # constant model : AR-order
-    aicc <- rep(0,ns)  #                : aic
-    mf <- rep(0,ns)                   # current model : order
-    aic <- rep(0,ns)                  #               : aic
-    a <- array(0, dim=c(d,d,morder,ns))  #               : AR-coefficient matrices
-    e <- array(0, dim=c(d,d,ns))      #               : innovation variance
-    ks <- rep(0,ns)                   #               : initial point of data
-    ke <- rep(0,ns)                   #               : end point of data
 
-    z <- .C("mlomar",
+    z <- .Call("mlomar",
 	as.double(y),
 	as.integer(n),
 	as.integer(d),
@@ -2201,43 +1745,30 @@ function (y, max.order=NULL, span, const=0)
 	as.integer(morder),
 	as.integer(span),
 	as.integer(const),
-	as.integer(ns),
-	mean = as.double(mean),
-	var = as.double(var),
-	ld1 = as.integer(ld1),
-	ld2 = as.integer(ld2),
-	ms = as.integer(ms),
-	aicm = as.double(aicm),
-	mp = as.integer(mp),
-	aicc = as.double(aicc),
-	mf = as.integer(mf),
-	aic = as.double(aic),
-	a = as.double(a),
-	e = as.double(e),
-	ks = as.integer(ks),
-	ke = as.integer(ke) )
+	as.integer(ns))
 
-    npre=z$ld1
-    order.mov=z$ms
-    aic.mov=z$aicm
-    order.const=z$mp
-    aic.const=z$aicc
+
+    npre=z[[3L]]
+    order.mov=z[[5L]]
+    aic.mov=z[[6L]]
+    order.const=z[[7L]]
+    aic.const=z[[8L]]
     npre[1] <- NA
     order.mov[1] <- NA
     aic.mov[1] <- NA
     order.const[1] <- NA
     aic.const[1] <- NA
 
-    a <- array(z$a, dim=c(d,d,morder,ns))
+    a <- array(z[[11L]], dim=c(d,d,morder,ns))
     arcoef <- list()
-    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i],dim=c(d,d,z$mf[i]))
+    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i],dim=c(d,d,z[[9L]][i]))
 
-    e <- array(z$e, dim=c(d,d,ns))
+    e <- array(z[[12L]], dim=c(d,d,ns))
     v <- list()
     for( i in 1:ns ) v[[i]] <- array(e[,,i],dim=c(d,d))
 
-    mlomar.out <- list( mean=z$mean, var=z$var, ns=ns, order=z$mf, aic=z$aic, arcoef=arcoef, v=v,
-			init=z$ks, end=z$ke, npre=npre, nnew=z$ld2, order.mov=order.mov, aic.mov=aic.mov,
+    mlomar.out <- list( mean=z[[1L]], var=z[[2L]], ns=ns, order=z[[9L]], aic=z[[10L]], arcoef=arcoef, v=v,
+			init=z[[13L]], end=z[[14L]], npre=npre, nnew=z[[4L]], order.mov=order.mov, aic.mov=aic.mov,
 			order.const=order.const, aic.const=aic.const )
     class( mlomar.out ) <- "mlomar"
     return( mlomar.out )
@@ -2288,118 +1819,57 @@ function (y, max.order=NULL, plot=FALSE)
 {
     n <- nrow(y)
     d <- ncol(y)
+    calb<-rep(1,d)   # calibration of channel i (i=1,d)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of the order of AR-model
     morder <- max.order
 
-    calb<-rep(1,d)   # calibration of channel i (i=1,d)
-    mean <- rep(0,d)
-    var <- rep(0,d)
-    v <- rep(0,morder+1)
-    aic <- rep(0,morder+1)
-    daic <- rep(0,morder+1)
-    m <- 0
-    aicm <- 0
-    vm <- 0
-    w1 <- rep(0,morder+1)             # Bayesian weights
-    w2 <- rep(0,morder)               # integrated Bayesian Weights
-    a <- array(0, dim=c(d,d,morder))  # AR-coefficients (forward model)
-    b <- array(0, dim=c(d,d,morder))  # AR-coefficients (backward model)
-    g <- array(0, dim=c(d,d,morder))  # partial autoregression coefficients (forward model)
-    h <- array(0, dim=c(d,d,morder))  # partial autoregression coefficients (backward model)
-    e <- array(0, dim=c(d,d))         # innovation variance matrix
-    aicb <- 0                         # equivalent AIC of the Bayesian (forward) model
-
-    z <- .C("mulbar",
+    z <- .Call("mulbar",
 	as.double(y),
 	as.integer(n),
 	as.integer(d),
 	as.double(calb),
-	as.integer(morder),
-	mean = as.double(mean),
-	var = as.double(var),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic = as.double(daic),
-	m = as.integer(m),
-	aicm = as.double(aicm),
-	vm = as.double(vm),
-	w1 = as.double(w1),
-	w2 = as.double(w2),
-	a = as.double(a),
-	b = as.double(b),
-	g = as.double(g),
-	h = as.double(h),
-	e = as.double(e),
-	aicb = as.double(aicb) )
+	as.integer(morder))
 
     if( plot == TRUE ) {
-      plot( (0:morder), z$daic, ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)" )
+      plot( (0:morder), z[[5L]], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)" )
       abline(h=0, lty=1) }
 
-    mulbar.out <- list( mean=z$mean, var=z$var, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic,
-			order.maice=z$m, v.maice=z$vm, bweight=z$w1, integra.bweight=z$w2,
-			arcoef.for=array(z$a, dim=c(d,d,morder)), arcoef.back=array(z$b, dim=c(d,d,morder)),
-			pacoef.for=array(z$g, dim=c(d,d,morder)), pacoef.back=array(z$h, dim=c(d,d,morder)),
-			v.bay=array(z$e, dim=c(d,d)), aic.bay=z$aicb )
+    mulbar.out <- list( mean=z[[1L]], var=z[[2L]], v=z[[3L]], aic=z[[4L]], aicmin=z[[7L]], daic=z[[5L]],
+			order.maice=z[[6L]], v.maice=z[[8L]], bweight=z[[9L]], integra.bweight=z[[10L]],
+			arcoef.for=array(z[[11L]], dim=c(d,d,morder)), arcoef.back=array(z[[12L]], dim=c(d,d,morder)),
+			pacoef.for=array(z[[13L]], dim=c(d,d,morder)), pacoef.back=array(z[[14L]], dim=c(d,d,morder)),
+			v.bay=array(z[[15L]], dim=c(d,d)), aic.bay=z[[16L]] )
     return( mulbar.out )
 }
 
 
 mulmar <-
-function (y, max.order=NULL, plot=FALSE, tmp.file=NULL) 
+function (y, max.order=NULL, plot=FALSE) 
 {
     n <- nrow(y)
     d <- ncol(y)
-    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
-    lag1 <- max.order+1
-
     calb <- rep(1, d)
-    mean <- rep(0, d)
-    var <- rep(0, d)
-    v <- array(0, dim = c(lag1, d))
-    aic <- array(0, dim = c(lag1, d))
-    daic <- array(0, dim = c(lag1, d))
-    m <- rep(0, d)
-    aicm <- rep(0, d)
-    vm <- rep(0, d)
-    npr <- rep(0, d)
-    jnd <- array(0, dim = c(lag1 * d, d))
-    a <- array(0, dim = c(lag1 * d, d))
-    rv <- rep(0, d)
-    aicf <- rep(0, d)
-    ei <- array(0, dim = c(d, d))
-    bi <- array(0, dim = c(d, d, lag1))
-    matv <- array(0, dim = c(d, d))
-    arcoef <- array(0, dim = c(d, d, lag1))
-    morder <- 0
-    aics <- 0
-    if (is.null(tmp.file))  tmp.file <- " "
+    if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
 
+    z <- .Call("mulmar", as.double(y), as.integer(n), as.integer(d), 
+        as.double(calb), as.integer(max.order))
 
-    z <- .C("mulmar", as.double(y), as.integer(n), as.integer(d), 
-        as.double(calb), as.integer(max.order), mean = as.double(mean), 
-        var = as.double(var), v = as.double(v), aic = as.double(aic), 
-        daic = as.double(daic), m = as.integer(m), aicm = as.double(aicm), 
-        vm = as.double(vm), npr = as.integer(npr), jnd = as.integer(jnd), 
-        a = as.double(a), rv = as.double(rv), aicf = as.double(aicf), 
-        ei = as.double(ei), bi = as.double(bi), matv = as.double(matv), 
-        arcoef = as.double(arcoef), morder = as.integer(morder), 
-        aics = as.double(aics), as.character(tmp.file))
+    lag1 <- max.order+1
     v <- list()
     aic <- list()
     daic <- list()
     for (i in 1:d) {
         j <- ((i - 1) * lag1 + 1):(i * lag1)
-        v[[i]] <- z$v[j]
-        aic[[i]] <- z$aic[j]
-        daic[[i]] <- z$daic[j]
+        v[[i]] <- z[[3L]][j]
+        aic[[i]] <- z[[4L]][j]
+        daic[[i]] <- z[[5L]][j]
     }
     jnd <- list()
     subregcoef <- list()
-    ind <- array(z$jnd, dim = c(lag1 * d, d))
-    a <- array(z$a, dim = c(lag1 * d, d))
-    for (i in 1:d) jnd[[i]] <- ind[(1:z$npr[[i]]), i]
-    for (i in 1:d) subregcoef[[i]] <- a[(1:z$npr[[i]]), i]
+    ind <- array(z[[10L]], dim = c(lag1 * d, d))
+    a <- array(z[[11L]], dim = c(lag1 * d, d))
+    for (i in 1:d) jnd[[i]] <- ind[(1:z[[9L]][[i]]), i]
+    for (i in 1:d) subregcoef[[i]] <- a[(1:z[[9L]][[i]]), i]
 
     if (plot == TRUE) {
         par(mfrow=c(d,1))  
@@ -2410,12 +1880,10 @@ function (y, max.order=NULL, plot=FALSE, tmp.file=NULL)
         }
         par(mfrow=c(1,1))
     }
-    mulmar.out <- list(mean = z$mean, var = z$var, v = v, aic = aic, aicmin = z$aicm,
-        daic = daic, order.maice = z$m, v.maice = z$vm, np = z$npr, jnd = jnd,
-        subregcoef = subregcoef, rvar = z$rv, aicf = z$aicf, respns = array(z$ei, dim = c(d, d)),
-#        regcoef = array(z$bi, dim = c(d, d, z$morder)), matv = array(z$matv, dim = c(d, d)),
-        matv = array(z$matv, dim = c(d, d)),
-        morder = z$morder, arcoef = array(z$arcoef, dim = c(d, d, z$morder)), aicsum = z$aics)
+    mulmar.out <- list(mean = z[[1L]], var = z[[2L]], v = v, aic = aic, aicmin = z[[7L]],
+        daic = daic, order.maice = z[[6L]], v.maice = z[[8L]], np = z[[9L]], jnd = jnd,
+        subregcoef = subregcoef, rvar = z[[12L]], aicf = z[[13L]], respns = array(z[[14L]], dim = c(d, d)),
+        matv = array(z[[16L]], dim=c(d,d)), morder = z[[18L]], arcoef = array(z[[17L]], dim=c(d,d,z[[18L]])), aicsum = z[[19L]])
     return(mulmar.out)
 }
 
@@ -2427,46 +1895,25 @@ function (y, ni, lag=NULL, ksw=0)
     if( is.null(lag) ) lag <- as.integer(2*sqrt(ni))
     lag1 <- lag+1
 
-    mean <-0
-    var <-0
-    np  <- rep(0,ni)                        # number of parameter
-    jnd <- array(0, dim=c(lag1*ni+ksw,ni))  # specification of i-th regressor (i=1,...,ip)
-    a <- array(0, dim=c(lag1*ni+ksw,ni))    # regression coefficients
-    aic <- rep(0,ni)
-    b <- array(0, dim=c(ni,ni,lag))  # AR-coefficient matrices
-    v <- array(0, dim=c(ni,ni))      # innovation variance matrix
-    c <- rep(0,ni)                   # constant vector
-    osd <- rep(0,ni)                 # residual variances
-    morder <- 0                      # order of the maice model
-
-    z <- .C("perars",
+    z <- .Call("perars",
 	as.double(y),
 	as.integer(n),
 	as.integer(ni),
 	as.integer(lag),
-	as.integer(ksw),
-	mean = as.double(mean),
-	var = as.double(var),
-	np = as.integer(np),
-	jnd = as.integer(jnd),
-	a = as.double(a),
-	aic = as.double(aic),
-	b = as.double(b),
-	v = as.double(v),
-	c = as.double(c),
-	osd = as.double(osd),
-	morder = as.integer(morder) )
+	as.integer(ksw))
 
-    ind <- array(z$jnd, dim=c(lag1*ni+ksw,ni))
+    npara <- z[[3L]]
+    ind <- array(z[[4L]], dim=c(lag1*ni+ksw,ni))
     jnd <- list()
-    for( i in 1:ni )  jnd[[i]] <- ind[1:z$np[i],i]
+    for( i in 1:ni )  jnd[[i]] <- ind[1:npara[i],i]
 
-    a <- array(z$a, dim=c(lag1*ni+ksw,ni))
+    a <- array(z[[5L]], dim=c(lag1*ni+ksw,ni))
     regcoef <- list()
-    for( i in 1:ni )  regcoef[[i]] <- a[1:z$np[i],i]
+    for( i in 1:ni )  regcoef[[i]] <- a[1:npara[i],i]
 
-    perars.out <- list( mean=z$mean, var=z$var, ord=jnd, regcoef=regcoef, rvar=z$osd, np=z$np, aic=z$aic,
-                        v=array(z$v, dim=c(ni,ni)), arcoef=array(z$b, dim=c(ni,ni,z$morder)), const=z$c, morder=z$morder )
+    perars.out <- list( mean=z[[1L]], var=z[[2L]], ord=jnd, regcoef=regcoef, rvar=z[[10L]], np=npara, 
+                           aic=z[[6L]], v=array(z[[8L]], dim=c(ni,ni)), arcoef=array(z[[7L]], dim=c(ni,ni,z$morder)),
+                           const=z[[9L]], morder=z[[11L]] )
 
     class( perars.out ) <- "perars"
     return( perars.out )
@@ -2506,51 +1953,16 @@ function (y, ar.order=NULL, plot=TRUE)
     if( is.null(ar.order) ) ar.order <- as.integer(2*sqrt(n))
     ar.order1 <- ar.order+1
 
-    mean <- 0
-    var <- 0
-    v  <- rep(0,ar.order1)
-    aic <- rep(0,ar.order1)
-    daic <- rep(0,ar.order1)
-    m <- 0
-    aicm <- 0
-    v.maice <- 0
-    pa <- rep(0,ar.order)     # partial autocorrelation coefficients (AR-model)
-    bw <- rep(0,ar.order1)    # Bayesian Weight
-    sbw <- rep(0,ar.order)    # integrated Bayesian Weights
-    pab <- rep(0,ar.order)    # partial autocorrelation coefficients (Bayesian model)
-    aicb <- 0                 # AIC of Bayesian model
-    vb <- 0                   # innovation variance of Bayesian model
-    np <- 0                   # equivalent number of parameters
-    a <- rep(0,ar.order)      # ar-coefficients (Bayesian model)
-    pxx <- rep(0,121)         # power spectrum
-
-    z <- .C("unibar",
+    z <- .Call("unibar",
 	as.double(y),
 	as.integer(n),
-	as.integer(ar.order),
-	mean = as.double(mean),
-	var = as.double(var),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic = as.double(daic),
-	m = as.integer(m),
-	aicm = as.double(aicm),
-	v.maice = as.double(v.maice),
-	pa = as.double(pa),
-	bw = as.double(bw),
-	sbw = as.double(sbw),
-	pab = as.double(pab),
-	aicb = as.double(aicb),
-	vb = as.double(vb),
-	np = as.double(np),
-	a = as.double(a), 
-	pxx = as.double(pxx) )
+	as.integer(ar.order))
 
     if( plot == TRUE ) {
       par(mfrow=c(3,1))
-      plot((0:ar.order), z$daic, ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
+      plot((0:ar.order), z[[5L]], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
       abline(h=0, lty=1)
-      plot(z$pa, type="h", xlab="Lag", ylab="Partial autocorrelation")
+      plot(z[[9L]], type="h", xlab="Lag", ylab="Partial autocorrelation")
       abline(h=0, lty=1)
 #      abline(h=1/sqrt(n), lty=3)
 #      abline(h=-1/sqrt(n),lty=3)
@@ -2558,57 +1970,38 @@ function (y, ar.order=NULL, plot=TRUE)
       abline(h=-2/sqrt(n), lty=3)
       x <- rep(0,121)
       for( i in 1:121 ) x[i] <- (i-1)/240
-      plot(x, z$pxx, type="l", xlab="Frequency", ylab="Power Spectral Density")
+      plot(x, z[[17L]], type="l", xlab="Frequency", ylab="Power Spectral Density")
       par(mfrow=c(1,1))
     }
 
-    unibar.out <- list( mean=z$mean, var=z$var, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic, 
-			order.maice=z$m, v.maice=z$v.maice, pacoef=z$pa, bweight=z$bw[2:(ar.order1)], integra.bweight=z$sbw,
-			v.bay=z$vb, aic.bay=z$aicb, np=z$np, pacoef.bay=z$pab, arcoef=z$a, pspec=z$pxx )
+    unibar.out <- list( mean=z[[1L]], var=z[[2L]], v=z[[3L]], aic=z[[4L]], aicmin=z[[7L]], daic=z[[5L]], 
+			order.maice=z[[6L]], v.maice=z[[8L]], pacoef=z[[9L]], bweight=z[[10L]][2:(ar.order1)], integra.bweight=z[[11L]],
+			v.bay=z[[14L]], aic.bay=z[[13L]], np=z[[15L]], pacoef.bay=z[[12L]], arcoef=z[[16L]],  pspec=z[[17L]] )
     return( unibar.out )
 }
 
 
 unimar <-
-function (y, max.order=NULL, plot=FALSE, tmp.file=NULL)
+function (y, max.order=NULL, plot=FALSE)
 {
     n <- length(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of AR-order
     morder <- max.order
-    if( is.null(tmp.file) )  tmp.file <- " "
 
-    mean <- 0
-    var <- 0
-    v  <- rep(0,morder+1)    # estimate of the innovation variance
-    aic <- rep(0,morder+1)   # AIC
-    daic <- rep(0,morder+1)  # AIC(M)-AICM
-    m <- 0
-    aicm <- 0                # minimum AIC
-    v.maice <- 0             # innovation variance attained at m
-    a <- rep(0,morder)       # AR-coefficients
-
-    z <- .C("unimar",
+    z <- .Call("unimar",
 	as.double(y),
 	as.integer(n),
-	as.integer(morder),
-	mean = as.double(mean),
-	var = as.double(var),
-	v = as.double(v),
-	aic = as.double(aic),
-	daic = as.double(daic),
-	m = as.integer(m),
-	aicm = as.double(aicm),
-	v.maice = as.double(v.maice),
-	a = as.double(a), 
-	as.character(tmp.file) )
+	as.integer(morder)
+)
 
     if( plot == TRUE ) {
-      plot((0:morder), z$daic, ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
+      plot((0:morder), z[[5L]], ylim=c(0,40), type="l", xlab="Lag", ylab="AIC(M)-AICMIN (Truncated at 40.0)")
       abline(h=0, lty=1)
     }
 
-    unimar.out <- list( mean=z$mean, var=z$var, v=z$v, aic=z$aic, aicmin=z$aicm, daic=z$daic, order.maice=z$m,
-			v.maice=z$v.maice, arcoef=z$a[1:z$m] )
+    m <- z[[6L]]
+    unimar.out <- list( mean=z[[1L]], var=z[[2L]], v=z[[3L]], aic=z[[4L]], aicmin=z[[7L]], daic=z[[5L]], 
+			order.maice=m, v.maice=z[[8L]], arcoef=z[[9L]][1:m] )
     return( unimar.out )
 }
 
@@ -2622,41 +2015,26 @@ function (y, arcoefi, macoefi)
     p <- length(arcoefi)  # AR-ORDER
     q <- length(macoefi)  # MA-ORDER
     p01 <- c(arcoefi,macoefi)    # INITIAL ESTIMATES OF AR- AND  MA-COEFFICIENTS
-    g1  <- rep(0,p+q)     # INITIAL GRADIENT
-    tl1 <- 0              # INITIAL (-2)LOG LIKELIHOOD
-    p02 <- rep(0,p+q)     # AR- AND MA-COEFFICIENTS
-    g2  <- rep(0,p+q)     # FINAL GRADIENT
-    alph.ar <- rep(0,p)   # FINAL ALPH (AR-PART)
-    alph.ma <- rep(0,q)   #            (MA-PART)
-    tl2 <- 0              # FINAL (-2)LOG LIKELIHOOD
-    sigma2 <- 0           # WHITE NOISE VARIANCE
 
-    z <- .C( "xsarma",
+    z <- .Call("xsarma",
 	as.double(y),
 	as.integer(n),
 	as.integer(p),
 	as.integer(q),
-	p01 = as.double(p01),
-	g1 = as.double(g1),
-	tl1 = as.double(tl1),
-	p02 = as.double(p02),
-	g2 = as.double(g2),
-	alph.ar = as.double(alph.ar),
-	alph.ma = as.double(alph.ma),
-	tl2 = as.double(tl2), 
-	sigma2 = as.double(sigma2) )
+	as.double(p01))
 
-    p02 <- -z$p02
+    coef <- -z[[3L]]
 
-    xsarma.out <- list( gradi=z$g1, lkhoodi=z$tl1, arcoef=p02[1:p], macoef=p02[(p+1):(p+q)],
-			grad=z$g2, alph.ar=z$alph.ar, alph.ma=z$alph.ma, lkhood=z$tl2, wnoise.var=z$sigma2)
+    xsarma.out <- list( gradi=z[[1L]], lkhoodi=z[[2L]], arcoef=coef[1:p], macoef=coef[(p+1):(p+q)],
+			grad=z[[4L]], alph.ar=z[[5L]], alph.ma=z[[6L]], lkhood=z[[7L]], wnoise.var=z[[8L]])
     return( xsarma.out )
 }
+
 
 #####   TIMSAC84   #####
 
 decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1, log=FALSE, trade=FALSE,
-	    diff=1, year=1980, month=1, miss=1, omax=99999.9, plot=TRUE)
+	    diff=1, year=1980, month=1, miss=0, omax=99999.9, plot=TRUE)
 {
     m1 <- trend.order
     m2 <- ar.order
@@ -2677,35 +2055,21 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
     ipar[8] <- year
     ipar[9] <- month
 
-    trend <- rep(0, n)
-    seasonal <- rep(0, n)
-    ar <- rep(0, n)
-    trad <- rep(0, n)
-    noise <- rep(0, n)
-#    para <- rep(0, 13+m2)
-    para <- rep(0, 26)
-
-    z <- .C("decomp",
+    z <- .Call("decomp",
              as.double(y),
              as.integer(n),
              as.integer(ipar),
-             trend = as.double(trend),
-             seasonal = as.double(seasonal),
-             ar = as.double(ar),
-             trad = as.double(trad),
-             noise = as.double(noise),
-             para = as.double(para),
              as.integer(miss),
              as.double(omax))	
 
-    aic=z$para[1]
-    lkhd=z$para[2]
-    sigma2=z$para[3]
-    tau1=z$para[4]
-    tau2=z$para[5]
-    tau3=z$para[6]
-    arcoef=z$para[7:(6+m2)]
-    tdf=z$para[(7+m2):(13+m2)]
+    aic=z[[6L]][1]
+    lkhd=z[[6L]][2]
+    sigma2=z[[6L]][3]
+    tau1=z[[6L]][4]
+    tau2=z[[6L]][5]
+    tau3=z[[6L]][6]
+    arcoef=z[[6L]][7:(6+m2)]
+    tdf=z[[6L]][(7+m2):(13+m2)]
 
     if( plot == TRUE ) {
       if(ilog == 1) y <- log(y)
@@ -2715,22 +2079,23 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
       if( itrade == 1 ) nc <- nc+1
       if( nc > 3 ) par(mfrow=c((nc+1)/2,2))
       if( nc <= 3 ) par(mfrow=c(nc,1))
-      matD <- array(c(y,z$trend),dim=c(n,2))
+      matD <- array(c(y,z[[1L]]),dim=c(n,2))
       matplot(matD, pch=0, type="l", col=1:2, main="Original and Trend", xlab="", ylab="")
-      ymax <- max(z$season, z$ar, z$trad)
-      ymin <- min(z$season, z$ar, z$trad)
+      ymax <- max(z[[2L]], z[[3L]], z[[4L]])
+      ymin <- min(z[[2L]], z[[3L]], z[[4L]])
       my <- max(ymax, abs(ymin))*1.5
-      if( seasonal.order != 0 ) plot(z$seasonal, type="l", main= "Seasonal", xlab="", ylab="", ylim=c(-my,my))
-      plot(z$noise, type="l", main= "Noise", xlab="", ylab="", ylim=c(-my,my))
-      if( ar.order != 0 ) plot(z$ar, type="l", main="AR component", xlab="", ylab="", ylim=c(-my,my))
-      if( itrade == 1) plot(z$trad, type="l", main="Trading Day Effect", xlab="", ylab="", ylim=c(-my,my))
+      if( seasonal.order != 0 ) plot(z[[2L]], type="l", main= "Seasonal", xlab="", ylab="", ylim=c(-my,my))
+      plot(z[[5L]], type="l", main= "Noise", xlab="", ylab="", ylim=c(-my,my))
+      if( ar.order != 0 ) plot(z[[3L]], type="l", main="AR component", xlab="", ylab="", ylim=c(-my,my))
+      if( itrade == 1) plot(z[[4L]], type="l", main="Trading Day Effect", xlab="", ylab="", ylim=c(-my,my))
       par(mfrow=c(1,1))
     }
 
-    decomp.out <- list(trend=z$trend, seasonal=z$seasonal, ar=z$ar, trad=z$trad, noise=z$noise,
+    decomp.out <- list(trend=z[[1L]], seasonal=z[[2L]], ar=z[[3L]], trad=z[[4L]], noise=z[[5L]],
                        aic=aic, lkhd=lkhd, sigma2=sigma2, tau1=tau1, tau2=tau2, tau3=tau3, arcoef=arcoef, tdf=tdf)
     return(decomp.out)
 }
+
 
 baysea <- function(y, period=12, span=4, shift=1, forecast=0, trend.order=2, seasonal.order=1, year=0, month=1, out=0, rigid=1, zersum=1, delta=7, alpha=0.01, beta=0.01, gamma=0.1, spec=TRUE, plot=TRUE, separate.graphics=FALSE)
 {
@@ -2794,33 +2159,10 @@ baysea <- function(y, period=12, span=4, shift=1, forecast=0, trend.order=2, sea
     if( period>1 && idc<period*2-1 ) idc <- period*2-1
     ipara[12] <- idc
 
-    outlier <- rep(0, ndata)      # outlier correction factor (ioutd=0 : without outlier detection) 
-    dmoi <- rep(0, ndata)         # missing observation interpolated data
-    trend <- rep(0, npf)          # trend
-    season <- rep(0, npf)         # seasonal
-    tdcmp <- rep(0, npf)          # trading-day component
-    irreg <- rep(0, ndata)        # irregular = data - trend - season - tdcmp - outlier
-    adjust <- rep(0, ndata)       # adjusted = trend + irregular
-    est <- rep(0, npf)            # smoothed = trend + season + tdcmp
-    psds <- rep(0,npf)            #
-    psdt <- rep(0,npf)            #
-    avabic <- 0                   # averaged ABIC
-
-    z <- .C("baysea",
+    z <- .Call("baysea",
              as.double(y),
              as.integer(ndata),
              as.integer(forecast),
-             outlier = as.double(outlier),
-             dmoi = as.double(dmoi),
-             trend = as.double(trend),
-             season = as.double(season),
-             tdcmp = as.double(tdcmp),
-             irreg = as.double(irreg),
-             adjust = as.double(adjust),
-             est = as.double(est),
-             psds = as.double(psds),
-             psdt = as.double(psdt),
-             avabic = as.double(avabic),
              as.integer(ipara),
              as.double(para),
              as.double(arft),
@@ -2830,20 +2172,28 @@ baysea <- function(y, period=12, span=4, shift=1, forecast=0, trend.order=2, sea
              as.integer(iars),
              as.integer(iarn))	
 
-    tday <- NULL
-    if( year != 0 ) tday <- z$tdcmp
     outlier <- NULL
-    if( out != 0 ) outlier <- z$outlier
+    if( out != 0 ) outlier <- z[[1L]]
+    tre <- z[[3L]]
+    sea <- z[[4L]]
+    tday <- NULL
+    if( year != 0 ) tday <- z[[5L]]
+    irr <- z[[6L]]
+    adj <- z[[7L]]
+    est <- z[[8L]]
+    psds <- z[[9L]]
+    psdt <- z[[10L]]
+    abic <- z[[11L]]
 
-    baysea.out <- list(outlier=outlier, trend=z$trend, season=z$season, tday=tday, irregular=z$irreg, adjust=z$adjust, smoothed=z$est, aveABIC=z$avabic)
+    baysea.out <- list(outlier=outlier, trend=tre, season=sea, tday=tday, irregular=irr, adjust=adj, smoothed=est, aveABIC=abic)
 
     if( spec == TRUE ) {
-      z1 <- spec.baysea(y, period, z$trend, trend.order, z$season, seasonal.order, z$irreg, z$adjust)
+      z1 <- spec.baysea(y, period, tre, trend.order, sea, seasonal.order, irr, adj)
       spec1 <- z1$irregular.spec
       spec2 <- z1$adjusted.spec
       spec3 <- z1$differenced.trend
       spec4 <- z1$differenced.season
-      if( plot == TRUE ) plot.baysea(y, period, outlier, z$trend, trend.order, z$season, seasonal.order, tday, z$irreg, z$adjust, z$est, z$psdt, z$psds, spec1, spec2, spec3, spec4, spec,separate.graphics )
+      if( plot == TRUE ) plot.baysea(y, period, outlier, tre, trend.order, sea, seasonal.order, tday, irr, adj, est, psdt, psds, spec1, spec2, spec3, spec4, spec, separate.graphics )
       ir.spec <- list(acov=spec1$acov, acor=spec1$acor, mean=spec1$mean, v=spec1$v, aic=spec1$aic, parcor=spec1$parcor, rspec=spec1$rspec) 
       ad.spec  <- list(acov=spec2$acov, acor=spec2$acor, mean=spec2$mean, v=spec2$v, aic=spec2$aic, parcor=spec2$parcor, rspec=spec2$rspec) 
       diff.trend <- list(acov=spec3$acov, acor=spec3$acor, mean=spec3$mean, v=spec3$v, aic=spec3$aic, parcor=spec3$parcor)
@@ -2854,7 +2204,7 @@ baysea <- function(y, period=12, span=4, shift=1, forecast=0, trend.order=2, sea
       ad.spec <- NULL
       diff.trend <- NULL
       diff.season <- NULL
-      plot.baysea(y, period, outlier, z$trend, trend.order, z$season, seasonal.order, tday, z$irreg, z$adjust, z$est, z$psdt, z$psds, ir.spec, ad.spec, diff.trend, diff.season, spec, separate.graphics)
+      plot.baysea(y, period, outlier, tre, trend.order, sea, seasonal.order, tday, irr, adj, est, psdt, psds, ir.spec, ad.spec, diff.trend, diff.season, spec, separate.graphics)
     }
 
     return( baysea.out )
@@ -2871,42 +2221,26 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
     ifpl <- min(30, ndata-1)
     ifpl1 <- ifpl+1
 
-    cxx <- rep(0, lag1)
-    cn <- rep(0, lag1)
-    xmean <- 0
-    sd <- rep(0,ifpl1)
-    aic <- rep(0,ifpl1)
-    parcor <- rep(0,ifpl)
-    pxx <- rep(0, lag1)
-    sxx <- rep(0, lag1)
-    bmya <- 0
-    bmym <- 0
-    ier <- 0
-
  # SPECTRUM OF IRREGULAR                               
     mode <- 1
-    z <- .C("spgrh",
+    z <- .Call("spgrh",
              as.double(irregular),
              as.integer(ndata),
              as.integer(lag1),
              as.integer(ifpl1),
              as.integer(mode),
-             as.integer(period),
-             cxx = as.double(cxx),
-             cn = as.double(cn),
-             xmean = as.double(xmean),
-             sd = as.double(sd),
-             aic = as.double(aic),
-             parcor = as.double(parcor),
-             pxx = as.double(pxx),
-             sxx = as.double(sxx),
-             bmya = as.double(bmya),
-             bmym = as.double(bmym),
-             ier = as.integer(ier))
+             as.integer(period))
 
-    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+    pxx <- z[[7L]]
+    sxx <- rep(0, lag1)
+    for( i in 1:lag1 ) {
+      t <- abs(pxx[i])
+      sxx[i] <- log10(t)
+    }
 
-    irregular.spec <- list(n=ndata, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor, rspec=z$pxx, rpspec=z$sxx, bmya=z$bmya, bmym=z$bmym)
+    if( z[[8L]] == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    irregular.spec <- list(n=ndata, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]], rspec=pxx, rpspec=sxx)
 
 # SPECTRUM OF DIFFERENCED ADJUSTED SERIES
     n1 <- ndata-1
@@ -2916,27 +2250,24 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
     lag <- min((n1-1), 60)
     lag1 <- lag+1
 
-    z <- .C("spgrh",
+    z <- .Call("spgrh",
              as.double(dadj),
              as.integer(n1),
              as.integer(lag1),
              as.integer(ifpl1),
              as.integer(mode),
-             as.integer(period),
-             cxx = as.double(cxx),
-             cn = as.double(cn),
-             xmean = as.double(xmean),
-             sd = as.double(sd),
-             aic = as.double(aic),
-             parcor = as.double(parcor),
-             pxx = as.double(pxx),
-             sxx = as.double(sxx),
-             bmya = as.double(bmya),
-             bmym = as.double(bmym),
-             ier = as.integer(ier))
-    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+             as.integer(period))
 
-    adjusted.spec <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor, rspec=z$pxx, rpspec=z$sxx, bmya=z$bmya, bmym=z$bmym)
+    pxx <- z[[7L]]
+    sxx <- rep(0, lag1)
+    for( i in 1:lag1 ) {
+      t <- abs(pxx[i])
+      sxx[i] <- log10(t)
+    }
+
+    if( z[[8L]] == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    adjusted.spec <- list(n=n1, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]], rspec=pxx, rpspec=sxx)
 
 #  PARCOR OF TREND.ORDER TIME(S) DIFFERENCED TREND SERIES
     n1 <- ndata		
@@ -2948,31 +2279,19 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
     trendd <- trendd[1:n1]
     lag <- min((n1-1), 60)
     lag1 <- lag+1
-    cxx <- rep(0, lag1)
-    cn <- rep(0, lag1)
-
     mode <- 0
-    z <- .C("spgrh",
+
+    z <- .Call("spgrh",
              as.double(trendd),
              as.integer(n1),
              as.integer(lag1),
              as.integer(ifpl1),
              as.integer(mode),
-             as.integer(period),
-             cxx = as.double(cxx),
-             cn = as.double(cn),
-             xmean = as.double(xmean),
-             sd = as.double(sd),
-             aic = as.double(aic),
-             parcor = as.double(parcor),
-             pxx = as.double(pxx),
-             sxx = as.double(sxx),
-             bmya = as.double(bmya),
-             bmym = as.double(bmym),
-             ier = as.integer(ier))
-    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+             as.integer(period))
 
-    differenced.trend <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor)
+    if( z[[8L]] == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    differenced.trend <- list(n=n1, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]])
 
 #  PARCOR OF SEASONAL.ORDER TIME(S) DIFFERENCED SEASONAL SERIES
     n1 <- ndata
@@ -2985,30 +2304,18 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
 
     lag <- min((n1-1), 60)
     lag1 <- lag+1
-    cxx <- rep(0, lag1)
-    cn <- rep(0, lag1)
 
-    z <- .C("spgrh",
+    z <- .Call("spgrh",
              as.double(seasond),
              as.integer(n1),
              as.integer(lag1),
              as.integer(ifpl1),
              as.integer(mode),
-             as.integer(period),
-             cxx = as.double(cxx),
-             cn = as.double(cn),
-             xmean = as.double(xmean),
-             sd = as.double(sd),
-             aic = as.double(aic),
-             parcor = as.double(parcor),
-             pxx = as.double(pxx),
-             sxx = as.double(sxx),
-             bmya = as.double(bmya),
-             bmym = as.double(bmym),
-             ier = as.integer(ier))
-    if( z$ier == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+             as.integer(period))
 
-    differenced.season <- list(n=n1, acov=z$cxx, acor=z$cn, mean=z$xmean, v=z$sd, aic=z$aic, parcor=z$parcor)
+    if( z[[8L]] == 2600 ) cat(" ***** WARNING : ACCURACY OF COMPUTATION LOST\n" )
+
+    differenced.season <- list(n=n1, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]])
 
     spec.baysea.out <- list(irregular.spec=irregular.spec, adjusted.spec=adjusted.spec, differenced.trend=differenced.trend, differenced.season=differenced.season)
 }
@@ -3090,9 +2397,9 @@ plot.baysea <- function(y, period, outlier, trend, trend.order, season, seasonal
       abline(h=2/sqrt(n), lty=3)
       abline(h=-2/sqrt(n), lty=3)
 
-      it <- irregular.spec$rpspec*10.0
-      ymin <- irregular.spec$bmym*10.0
-      ymax <- irregular.spec$bmya*10.0
+      it <- irregular.spec$rpspec * 10
+      ymin <- (min(irregular.spec$rpspec) - 1) * 10
+      ymax <- (max(irregular.spec$rpspec) + 1) * 10
       plot(it, type='l', main="High Order AR-Spectrum as an approximation to periodgram ( Order is fixed at 30 )", ylab="Rational Spectrum", xlab="Order", ylim=c(ymin,ymax))
       par(mfrow=c(1,1))
 
@@ -3109,9 +2416,9 @@ plot.baysea <- function(y, period, outlier, trend, trend.order, season, seasonal
       abline(h=2/sqrt(n), lty=3)
       abline(h=-2/sqrt(n), lty=3)
 
-      it <- adjusted.spec$rpspec*10.0
-      ymin <- adjusted.spec$bmym*10.0
-      ymax <- adjusted.spec$bmya*10.0
+      it <- adjusted.spec$rpspec * 10
+      ymin <- (min(adjusted.spec$rpspec) - 1) * 10
+      ymax <- (max(adjusted.spec$rpspec) + 1) * 10
       plot(it, type='l', main="High Order AR-Spectrum as an approximation to periodgram( Order is fixed at 30 )", xlab="Order", ylab="Rational Spectrum", ylim=c(ymin,ymax))
       par(mfrow=c(1,1))
 
@@ -3130,7 +2437,7 @@ plot.baysea <- function(y, period, outlier, trend, trend.order, season, seasonal
       par(mfrow=c(1,1))
 
 #  PARCOR OF SEASONAL.ORDER TIME(S) DIFFERENCED SEASONAL SERIES
-      lag <- length(differenced.season$acov)-1
+     lag <- length(differenced.season$acov)-1
       n <- differenced.season$n
       if( separate.graphics == TRUE )  X11()
       par(mfrow=c(2,1))
@@ -3166,18 +2473,10 @@ armaimp <- function( arcoef=NULL, macoef=NULL, v, n=1000, lag=NULL, nf=200, plot
 #   v                             # innovation variance
 #   n                             # original data length
     if( is.null(lag) )  lag <- as.integer(2*sqrt(n))    # maximum lag of autocovariance function
+    kmax <- max(arorder,maorder,lag)
 #   nf                            # number of frequencies in evaluating spectrum
 
-    g <- rep(0,(lag+1))           # impulse response function
-    acov <- rep(0,(lag+1))        # autocovariance function
-    parcor <- rep(0,lag)          # partial autocorrelation coefficient
-    spec <- rep(0,(nf+1))         # power spectrum
-    roota <- array(0, dim=c(arorder,2))   # characteristic roots of AR operator
-    rootb <- array(0, dim=c(maorder,2))   # characteristic roots of MA operator
-    ier <- 0
-    jer <- 0
-
-    z <- .C("arma",
+    z <- .Call("arma",
 	     as.integer(arorder),
 	     as.integer(maorder),
 	     as.double(arcoef),
@@ -3185,22 +2484,18 @@ armaimp <- function( arcoef=NULL, macoef=NULL, v, n=1000, lag=NULL, nf=200, plot
 	     as.double(v),
 	     as.integer(n),
 	     as.integer(lag),
-	     as.integer(nf),
-	     g = as.double(g),
-	     acov = as.double(acov),
-	     parcor = as.double(parcor),
-	     spec = as.double(spec),
-	     roota = as.double(roota),
-	     rootb = as.double(rootb),
-             ier = as.integer(ier),
-             jer = as.integer(jer))
+	     as.integer(kmax),    
+	     as.integer(nf))
 
-    impuls <- z$g
-    acov <- z$acov
-    parcor <- z$parcor
-    spec <- z$spec
-    roota <- array(z$roota, dim=c(arorder,2))
-    rootb <- array(z$rootb, dim=c(maorder,2))
+    impuls <- z[[1L]]
+    acov <- z[[2L]]
+    parcor <- z[[3L]]
+
+    spec <- z[[4L]]
+    if( arorder != 0 )  roota <- array(z[[5L]], dim=c(arorder,2))
+    if( maorder != 0 )  rootb <- array(z[[6L]], dim=c(maorder,2))
+    ier <- z[[7L]]
+    jer <- z[[8L]]
 
     croot.ar <- list()
     croot.ma <- list()
@@ -3219,10 +2514,10 @@ armaimp <- function( arcoef=NULL, macoef=NULL, v, n=1000, lag=NULL, nf=200, plot
       atan <- atan2(im,re)
       croot.ma[[i]] <- list(real=re, image=im, amp=amp, atan=atan, degree=atan*57.29577951) } }
 
-    if( z$ier == 1 ) cat(" ***** ERROR : MATRIX WITH ZERO ROW IN DECOMPOSE\n" )
-    if( z$ier == 2 ) cat(" ***** ERROR : SINGULAR MATRIX IN DECOMPOSE.ZERO DIDIVIDE IN SOLVE\n" )
-    if( z$ier == 3 ) cat(" ***** ERROR : CONVERGENCE IN IMPRUV.MATRIX IS NEARLY SINGULAR\n" )
-    if( z$jer == 1 ) cat(" ***** ERROR : NON-CONVERGENCE AT POLYRT\n" )
+    if( ier == 1 ) cat(" ***** ERROR : MATRIX WITH ZERO ROW IN DECOMPOSE\n" )
+    if( ier == 2 ) cat(" ***** ERROR : SINGULAR MATRIX IN DECOMPOSE.ZERO DIDIVIDE IN SOLVE\n" )
+    if( ier == 3 ) cat(" ***** ERROR : CONVERGENCE IN IMPRUV.MATRIX IS NEARLY SINGULAR\n" )
+    if( jer == 1 ) cat(" ***** ERROR : NON-CONVERGENCE AT POLYRT\n" )
 
     if( plot == TRUE ) {
       par(mfrow=c(3,2))
@@ -3251,7 +2546,7 @@ armaimp <- function( arcoef=NULL, macoef=NULL, v, n=1000, lag=NULL, nf=200, plot
       for( i in 1:k1 ) x[i] <- (i-1)/(2*k)
       plot(x, spec, type="l", xlab="frequency", ylab="log spectrum", )
 
-      if( z$jer == 0 ) {
+      if( jer == 0 ) {
         par(pty="s")
         plot(x=c(-1.0,1.0), y=c(0,0), type='l', xlim=c(-1.1,1.1), ylim=c(-1.1,1.1), xlab="ARMA characteristic roots\n(square:AR, triangle:MA)", ylab="", axes=FALSE)
         par(new=TRUE)
@@ -3278,48 +2573,27 @@ armaimp <- function( arcoef=NULL, macoef=NULL, v, n=1000, lag=NULL, nf=200, plot
 }
 
 
-tvvar <- function(y, trend.order, tau20, delta, plot=TRUE)     # PROGRAM 13.1
+tvvar <- function(y, trend.order, tau20=NULL, delta=NULL, plot=TRUE)     # PROGRAM 13.1
 {
     n <- length(y)             # length of data
-    n1 <- n/2
     m <- trend.order           # trend order
     iopt <- 1                  # search method
     if( is.null(tau20) || is.null(delta) ) iopt <- 0
     if( is.null(tau20) ) tau20 <- 0    # initial estimate of TAU2
     if( is.null(delta) ) delta <- 0    # search width
 
-    tvvar <- rep(0,n1)
-    normdat <- rep(0,n)
-    y1 <- rep(0,n1)
-    trend <- array(0, dim=c(n1,3))
-    noise <- rep(0,n1)
-    taumax <- 0
-    sig2m <- 0
-    ffmax <- 0
-    aic <- 0
-
-    z <- .C("tvvar",
+    z <- .Call("tvvar",
 	     as.double(y),
 	     as.integer(n),
 	     as.integer(m),
 	     as.double(tau20),
 	     as.integer(iopt),
-	     as.double(delta),
-	     tvvar = as.double(tvvar),
-	     normdat = as.double(normdat),
-	     y1 = as.double(y1),
-	     n1 = as.integer(n1),
-	     trend = as.double(trend),
-	     noise = as.double(noise),
-	     taumax = as.double(taumax),
-	     sig2m = as.double(sig2m),
-	     ffmax = as.double(ffmax),
-	     aic = as.double(aic))
+	     as.double(delta))
 
-    normdat <- z$normdat
-    ts <- z$y1
-    trend <- array(z$trend,dim=c(z$n1,3))
-    noise <- z$noise
+    normdat <- z[[2L]]
+    ts <- z[[3L]]
+    trend <- array(z[[5L]], dim=c(z[[4L]],3))
+    noise <- z[[6L]]
 
     if( plot == TRUE ) {
       par(mfcol=c(4,1))
@@ -3347,13 +2621,13 @@ tvvar <- function(y, trend.order, tau20, delta, plot=TRUE)     # PROGRAM 13.1
       par(mfcol=c(1,1), new=FALSE)
     }
 
-    tvvar.out <- list(tvvar=z$tvvar, normdat=normdat, ts=ts, trend=trend, noise=noise, tau2=z$taumax, sigma2=z$sig2m, lkhood=z$ffmax, aic=z$aic)
+    tvvar.out <- list(tvvar=z[[1L]], normdat=normdat, ts=ts, trend=trend, noise=noise, tau2=z[[7L]], sigma2=z[[8L]], lkhood=z[[9L]], aic=z[[10L]])
     return(tvvar.out)
 }
 
 
 tvar <-
-function (y,ar.order,trend.order=2,span,outlier,tau20=NULL,delta=NULL,plot=TRUE)     # PROGRAM 13.2
+function (y,ar.order,trend.order=2,span,outlier=NULL,tau20=NULL,delta=NULL,plot=TRUE)     # PROGRAM 13.2
 {
 #    y                    # original data
     n <- length(y)        # data length
@@ -3362,7 +2636,12 @@ function (y,ar.order,trend.order=2,span,outlier,tau20=NULL,delta=NULL,plot=TRUE)
     if( trend.order!=1 && trend.order!=2 ) stop( " ***** ERROR : 'trend.order' is 1 or 2." )
 #    span                 # local stationary span
 #    outlier              # position of i-th outlier
-    nout <- length(outlier)   # number of outliers
+    if( is.null(outlier) ) {        # number of outliers
+      nout <- 0
+      outlier <- 0
+    } else {
+      nout <- length(outlier)
+    }
 #    method               # search method
 #    tau20                # initial variance of systen noise
 #    delta                # delta for computing variance of system noise
@@ -3371,15 +2650,7 @@ function (y,ar.order,trend.order=2,span,outlier,tau20=NULL,delta=NULL,plot=TRUE)
     if( is.null(tau20) ) tau20 <- 0
     if( is.null(delta) ) delta <- 0
     
-    nn <- n/span
-    tau2 <- 0.0
-    sigma2 <- 0.0
-    lkhood <- 0.0
-    aic <- 0.0
-    arcoef <- array(0, dim=c(ar.order,nn))
-    parcor <- array(0, dim=c(ar.order,nn))
-
-    z <- .C("tvar",
+    z <- .Call("tvar",
 	     as.double(y),
 	     as.integer(n),
 	     as.integer(ar.order),
@@ -3389,17 +2660,12 @@ function (y,ar.order,trend.order=2,span,outlier,tau20=NULL,delta=NULL,plot=TRUE)
 	     as.integer(nout),
 	     as.integer(outlier),
 	     as.double(tau20),
-	     as.double(delta),
-	     tau2 = as.double(tau2),
-	     sigma2 = as.double(sigma2),
-	     lkhood = as.double(lkhood),
-	     aic = as.double(aic),
-	     arcoef = as.double(arcoef),
-	     parcor = as.double(parcor))
+	     as.double(delta))
 
-    sigma2 <- z$sigma2
-    arcoef <- array(z$arcoef, dim=c(ar.order,nn))
-    parcor <- array(z$parcor, dim=c(ar.order,nn))
+    nn <- n/span
+    sigma2 <- z[[2L]]
+    arcoef <- array(z[[5L]], dim=c(ar.order,nn))
+    parcor <- array(z[[6L]], dim=c(ar.order,nn))
 
     if( plot == TRUE ) {
       x <- span
@@ -3411,37 +2677,52 @@ function (y,ar.order,trend.order=2,span,outlier,tau20=NULL,delta=NULL,plot=TRUE)
           plot(x, parcor[i,], type="l", xlab="", ylim=c(-1.0,1.0),ylab=paste("parcor( i=",i,")")) } 
       par(mfrow=c(1,1)) }
 
+    tvar.out <- list( tau2max=z[[1L]], sigma2=sigma2, lkhood=z[[3L]], aic=z[[4L]], arcoef=arcoef, parcor=parcor )
+    return( tvar.out )
+}
+
+
+tvspc <-
+function (ar.order,sigma2,arcoef,var=NULL,span,nf=200)     # PROGRAM 13.3
+{
 #  PROGRAM 13.3  TVSPC   ...  CHANGING SPECTRUM ...  
 
-    nf <- 200          # parameter ( number of frequencies )
-    ivar <- 0          # =1: for variance correction
-    var <- rep(0, n)   # time varying variance
-    spec <- array(0, dim=c(nf+1,nn))
+    n <- dim(arcoef)[2]                    # number of points
+#    ar.order             # AR order
+#    sigma2
+#    arcoef               # Time varying AR coefficient
+    if( is.null(var) ) {
+      ivar <- 0
+      var <- rep(0,n*span)   # time varying variance
+    } else {
+      ivar <- 1          # =1: for variance correction
+    }
+#    span                 # local stationary span
+#    nf                    # number of frequencies
 
-    z1 <- .C("tvspc",
-	     as.integer(nn),
+    z1 <- .Call("tvspc",
+	     as.integer(n),
 	     as.integer(ar.order),
 	     as.integer(span),
 	     as.integer(nf),
 	     as.integer(ivar),
 	     as.double(sigma2),
 	     as.double(arcoef),
-	     as.double(var),
-	     spec = as.double(spec))
+	     as.double(var))
 
-    spec <- array(z1$spec, dim=c(nf+1,nn))
+    spectra <- array(z1[[1L]], dim=c(nf+1,n))
 
-    if( plot == TRUE ) {
-      par(ask=TRUE)
+#    if( plot == TRUE ) {
+#      par(ask=TRUE)
       x <- seq(0, 0.5, length=nf+1)
-      y <- seq(0, n, length=nn)
-      zmin <- as.integer(min(spec)-1)
-      zmax <- as.integer(max(spec)+1)
-      persp(x,y,z=spec,zlim=c(zmin,zmax),theta=10,phi=20,expand=0.5,col="lightblue",xlab="f",zlab="log p(f)",ticktype="detail")
-      par(ask=FALSE) }
+      y <- seq(0, n*span, length=n)
+#      zmin <- as.integer(min(spec)-1)
+#      zmax <- as.integer(max(spec)+1)
+#      persp(x,y,z=spec,zlim=c(zmin,zmax),theta=10,phi=20,expand=0.5,col="lightblue",xlab="f",zlab="log p
+#(f)",ticktype="detail")
+#      par(ask=FALSE) }
 
-    tvar.out <- list( tau2=z$tau2, sigma2=sigma2, lkhood=z$lkhood, aic=z$aic, arcoef=arcoef, parcor=parcor, spec=spec )
-    return( tvar.out )
+    tvspc.out <- list(x=x, y=y, z=spectra)
 }
 
 
@@ -3451,17 +2732,19 @@ ngsmth <- function(y,noisev=2,tau2,bv=1.0,noisew=1,sig2,bw=1.0,initd=1,k=200,plo
     n <- length(y)        # data length
 #   noisev                # type of system noise density (0,1,2,3)
                           # 1: Gaussian (normal) / 2: Pearson family / 3: two-sides exponential
-    if( noisev!=0 && noisev!=1 && noisev!=2 && noisev!=3 ) stop( " ***** ERROR : 'noisev' is numeric in {1,2,3}" )
+    if( noisev!=1 && noisev!=2 && noisev!=3 ) stop( " ***** ERROR : 'noisev' is numeric in {1,2,3}" )
 #   tau2                  # variance of dispersion of system noise
 #   bv                    # shape parameter of system noise (for noisev=2)
 #   noisew                # type of observation noise density (0,1,2,3,4)
                           # 1: Gaussian (normal) / 2: Pearson family / 3: two-sided exponential / 4:double exponential
-    if( noisew!=0 && noisew!=1 && noisew!=2 && noisew!=3 && noisew!=4 ) stop( " ***** ERROR : 'noisew' is numeric in {1,2,3,4}" )
+    if( noisew!=1 && noisew!=2 && noisew!=3 && noisew!=4 ) stop( " ***** ERROR : 'noisew' is numeric in {1,2,3,4}" )
 #   sig2                  # variance of dispersion of observation noise
 #   bw                    # shape parameter of observation noise (for noisew=2)
 #   initd                 # type of density function
-                          # 0: two-sided exponential / 1: Gaussian (normal) / 2: uniform
-    if( initd!=0 && initd!=1 && initd!=2 ) stop( " ***** ERROR : 'initd' is numeric in {0,1,2}" )
+                           # 1: Gaussian (normal) / 2: uniform / 3: two-sided exponential
+    if( initd!=1 && initd!=2 && initd!=3 ) stop( " ***** ERROR : 'initd' is numeric in {1,2,3}" )
+    if( initd==3 ) initd <- 0
+
 #   k                     # number of intervals
 
     ns <- 1
@@ -3469,12 +2752,7 @@ ngsmth <- function(y,noisev=2,tau2,bv=1.0,noisew=1,sig2,bw=1.0,initd=1,k=200,plo
     npe <- n
     k1 <- k+1
 
-    trend <- array(0, dim=c(npe,7))      # trend
-    lkhood <- 0.0                        # log-likelihood
-    smt <- array(0, dim=c(k1,npe))       # smoothed density
-    loc <- rep(0,npe)                    # location of the center of the interval
-
-    z <- .C("ngsmth",
+    z <- .Call("ngsmth",
 	     as.double(y),
 	     as.integer(n),
 	     as.integer(noisev),
@@ -3484,16 +2762,13 @@ ngsmth <- function(y,noisev=2,tau2,bv=1.0,noisew=1,sig2,bw=1.0,initd=1,k=200,plo
 	     as.double(sig2),
 	     as.double(bw),
 	     as.integer(initd),
-	     trend = as.double(trend),
-	     smt = as.single(smt),
-	     lkhood = as.double(lkhood),
 	     as.integer(ns),
 	     as.integer(nfe),
 	     as.integer(npe),
 	     as.integer(k1))
 
-    trend <- array(z$trend, dim=c(npe,7))
-    smt <- array(z$smt, dim=c(k1,npe))
+    trend <- array(z[[1L]], dim=c(npe,7))
+    smt <- array(z[[2L]], dim=c(k1,npe))
 
     if( plot == TRUE ) {
       ymin <- 0
@@ -3546,10 +2821,11 @@ ngsmth <- function(y,noisev=2,tau2,bv=1.0,noisew=1,sig2,bw=1.0,initd=1,k=200,plo
       par(ask=FALSE)
     }
 
-    ngsmth.out <- list( trend=trend, smt=smt, lkhood=z$lkhood )
+    ngsmth.out <- list( trend=trend, smt=smt, lkhood=z[[3L]] )
     return( ngsmth.out )
 
 }
+
 
 tsmooth <- function( y, f, g, h, q, r, x0=NULL, v0=NULL, filter.end=NULL, predict.end=NULL, outmin=-10.0e+30, outmax=10.0e+30, missed=NULL, np=NULL, plot=FALSE)     # PROGRAM 9.1
 {
@@ -3597,14 +2873,8 @@ tsmooth <- function( y, f, g, h, q, r, x0=NULL, v0=NULL, filter.end=NULL, predic
       startp <- startp[1:nmiss]                 # start position of missed intervals
       np <- np[1:nmiss]                         # number of missed observations
     }
- 
-    npe <- predict.end
-    xss <- array(0, dim=c(m,npe))     # mean vectors of the smoother
-    vss <- array(0, dim=c(m,m,npe))   # covariance matrices of the smoother
-    lkhood <- 0.0                     # log-likelihood
-    aic <- 0.0                        # AIC
 
-    z <- .C("smooth",
+    z <- .Call("smooth",
 	     as.double(yy),
 	     as.integer(n),
 	     as.integer(l),
@@ -3623,14 +2893,11 @@ tsmooth <- function( y, f, g, h, q, r, x0=NULL, v0=NULL, filter.end=NULL, predic
 	     as.double(outmax),
 	     as.integer(nmiss),
 	     as.integer(startp),
-	     as.integer(np),
-	     xss = as.double(xss),
-	     vss = as.double(vss),
-	     lkhood = as.double(lkhood),
-	     aic = as.double(aic))
+	     as.integer(np))
 
-    xss <- array(z$xss, dim=c(m,npe))
-    vss <- array(z$vss, dim=c(m,m,npe))
+    npe <- predict.end
+    xss <- array(z[[1L]], dim=c(m,npe))
+    vss <- array(z[[2L]], dim=c(m,m,npe))
     cov.smooth <- array(,dim=c(m,npe))
     for( i in 1:m ) cov.smooth[i,] <- vss[i,i,]
 
@@ -3646,9 +2913,10 @@ tsmooth <- function( y, f, g, h, q, r, x0=NULL, v0=NULL, filter.end=NULL, predic
       plot(xss[1,], type="l", ylim=c(ymin,ymax), main=paste("Mean vectors of the smoother XSS(i,j) ( i=1:",m,", j=1:",npe,")"), xlab="i = 1", ylab="")
       if( m > 1 ) for( i in 2:m )
         plot(xss[i,], type="l", ylim=c(ymin,ymax), xlab=paste("i =",i), ylab="")
+      par(mfcol=c(1,1))
     }
 
-    tsmooth.out <- list(mean.smooth=xss, cov.smooth=cov.smooth, esterr=err, lkhood=z$lkhood, aic=z$aic)
+    tsmooth.out <- list(mean.smooth=xss, cov.smooth=cov.smooth, esterr=err, lkhood=z[[3L]], aic=z[[4L]])
     return(tsmooth.out)
 }
 

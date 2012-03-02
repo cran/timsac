@@ -101,11 +101,12 @@ C
 C-----  MINIMIZATION OF TL(=-2)LOG LIKELIHOOD)                          
 C       BY DAVIDON'S VARIANCE ALGORITHM  -----                          
 cc      CALL SMINOP(TL,SIGMA2,Y,N,P0,IQ,IP)                               
-      IPRNT = 0
+cx      IPRNT = 0
 C     IPRNT=0:  NOT TO PRINT OUT INTERMEDIATE RESULTS
 C     IPRNT=1:  TO PRINT OUT INTERMEDIATE RESULTS ( LU: UNIT NUMBER)
-      CALL SMINOP( TL1,TL2,SIGMA2,Y,N,P01,G1,P02,G2,ALPHB,ALPHA,IQ,IP,
-     *             IPRNT,LU )
+cx      CALL SMINOP( TL1,TL2,SIGMA2,Y,N,P01,G1,P02,G2,ALPHB,ALPHA,IQ,IP,
+cx     *             IPRNT,LU )
+      CALL SMINOP( TL1,TL2,SIGMA2,Y,N,P01,G1,P02,G2,ALPHB,ALPHA,IQ,IP)
 C                                                                       
 C-----  PRINT AND PUNCH OUT OF FINAL RESULT  -----                      
 cc      CALL SUBRST(TITL,TL,SIGMA2,P0,IQ,IP)                              
@@ -435,7 +436,8 @@ C
       RETURN                                                            
       END                                                               
 cc      SUBROUTINE MSDAV2(PHAI,SIGMA2,G,C,Y,N,X,IQ,IP,ISWRO,IPRNT)        
-      SUBROUTINE MSDAV2(PHAI,SIGMA2,G,C,Y,N,X,IQ,IP,ISWRO,VD,IPRNT,LU)
+cx      SUBROUTINE MSDAV2(PHAI,SIGMA2,G,C,Y,N,X,IQ,IP,ISWRO,VD,IPRNT,LU)
+      SUBROUTINE MSDAV2(PHAI,SIGMA2,G,C,Y,N,X,IQ,IP,ISWRO,VD)
 C                                                                       
 C-----------------------------------------------------------------------
 C     DAVIDON'S (MINIMIZATION) PROCEDURE                                
@@ -498,12 +500,12 @@ C-----  SX=X-C  -----
       DO 210 I=1,IPQ                                                    
   210 SX(I)=X(I)-C(I)                                                   
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 3200                                         
+cx      IF(IPRNT.EQ.0) GO TO 3200                                         
 cc      WRITE(6,3900)                                                     
 cc      WRITE(6,3910) (C(I),I=1,IPQ)                                      
-      WRITE(LU,3900)                                                     
-      WRITE(LU,3910) (C(I),I=1,IPQ)                                      
- 3200 CONTINUE                                                          
+cx      WRITE(LU,3900)                                                     
+cx      WRITE(LU,3910) (C(I),I=1,IPQ)                                      
+cx 3200 CONTINUE                                                          
 C                                                                       
 C                                                                       
 C-----  GRADIENT COMPUTATION  -----                                     
@@ -525,9 +527,9 @@ cc      CALL ARCHCK(SSX,IP,ICOND)
 C                                                                       
       IF(ICOND.EQ.0) GO TO 309                                          
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 1220                                         
+cx      IF(IPRNT.EQ.0) GO TO 1220                                         
 cc      WRITE(6,4700)                                                     
-      WRITE(LU,4700)                                                     
+cx      WRITE(LU,4700)                                                     
  1220 CONTINUE                                                          
 C                                                                       
       ITN=ITN+1                                                         
@@ -552,7 +554,8 @@ C
       GO TO 1210                                                        
   309 CONTINUE                                                          
 cc      CALL SGRAD(SPHAI,SD,SG,Y,N,SX,IQ,IP,IPRNT)                        
-      CALL SGRAD(SPHAI,SD,SG,Y,N,SX,IQ,IP,IPRNT,LU)                        
+cx      CALL SGRAD(SPHAI,SD,SG,Y,N,SX,IQ,IP,IPRNT,LU)                        
+      CALL SGRAD(SPHAI,SD,SG,Y,N,SX,IQ,IP)
       IF(ICOND.EQ.1) GO TO 1220                                         
       IF(ITN.GE.10) GO TO 312                                           
   312 CONTINUE                                                          
@@ -617,10 +620,10 @@ C-----  SHPAI.LE.PHAI: SUCCESSFUL REDUCTION  -----
       PHAI=SPHAI                                                        
       SIGMA2=SD                                                         
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 571                                          
+cx      IF(IPRNT.EQ.0) GO TO 571                                          
 cc      WRITE(6,570) PHAI                                                 
-      WRITE(LU,570) PHAI                                                 
-  571 CONTINUE                                                          
+cx      WRITE(LU,570) PHAI                                                 
+cx  571 CONTINUE                                                          
 C                                                                       
       IPHAI=1                                                           
   800 CONTINUE                                                          
@@ -749,7 +752,8 @@ C
   610 FORMAT(1H ,10F10.5,/(1H ,10F10.5))                                
       END                                                               
 cc      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP,IPRNT)                      
-      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP,IPRNT,LU)                      
+cx      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP,IPRNT,LU)                      
+      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP)
 C                                                                       
 C-----------------------------------------------------------------------
 C     THIS SUBROUTINE COMPUTES AN APPROXIMATION TO GRADIENT BY DIFFERENC
@@ -831,15 +835,15 @@ cc      CALL FUNCT2(F1,SDN,Y,N,P1,IQ,IP)
    10 CONTINUE                                                          
 C--------------------                                                   
 C                                                                       
-      IF(IPRNT.EQ.0) RETURN                                             
+cx      IF(IPRNT.EQ.0) RETURN                                             
 cc      WRITE(6,450)                                                      
 cc      WRITE(6,520) (P0(I),I=1,IPQ)                                      
 cc      WRITE(6,500)                                                      
 cc      WRITE(6,520) (G(I),I=1,IPQ)                                       
-      WRITE(LU,450)                                                      
-      WRITE(LU,520) (P0(I),I=1,IPQ)                                      
-      WRITE(LU,500)                                                      
-      WRITE(LU,520) (G(I),I=1,IPQ)                                       
+cx      WRITE(LU,450)                                                      
+cx      WRITE(LU,520) (P0(I),I=1,IPQ)                                      
+cx      WRITE(LU,500)                                                      
+cx      WRITE(LU,520) (G(I),I=1,IPQ)                                       
 C                                                                       
       RETURN                                                            
   450 FORMAT(1H ,'P0(I)')                                               
@@ -849,8 +853,9 @@ C
       END                                                               
 cc      SUBROUTINE SMINOP(TL,SIGMA2,Y,N,P0,IQ,IP)                         
       SUBROUTINE SMINOP( TL,TL2,SIGMA2,Y,N,P0,G,P02,G2,ALPHB,ALPHA,IQ,
-     *                   IP,IPRNT,LU )
-C                                                                       
+cx     *                   IP,IPRNT,LU )
+     *                   IP )
+C C                                                                       
 C-----------------------------------------------------------------------
 C     THIS SUBROUTINE CONTROLS THE MAXIMUM LIKELIHOOD COMPUTATION.      
 C                                                                       
@@ -918,7 +923,8 @@ cc      CALL ARCHCK(PP0,IP,ICOND)
  4800 CONTINUE                                                          
       ISWRO=0                                                           
 cc      CALL SGRAD(TL,SIGMA2,G,Y,N,P0,IQ,IP,IPRNT)                        
-      CALL SGRAD(TL,SIGMA2,G,Y,N,P0,IQ,IP,IPRNT,LU)                        
+cx      CALL SGRAD(TL,SIGMA2,G,Y,N,P0,IQ,IP,IPRNT,LU)                        
+      CALL SGRAD(TL,SIGMA2,G,Y,N,P0,IQ,IP)
 C                                                                       
 cc      WRITE(6,450)                                                      
 cc      WRITE(6,520) (P0(I),I=1,IPQ)                                      
@@ -948,13 +954,13 @@ C-----  INVERSE OF HESSIAN COMPUTATION  -----
       HS(I,I)=BN+HS(I,I)                                                
  3010 CONTINUE                                                          
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 3120                                         
+cx      IF(IPRNT.EQ.0) GO TO 3120                                         
 cc      WRITE(6,3000)                                                     
-      WRITE(LU,3000)                                                     
-      DO 3100 I=1,IPQ                                                   
+cx      WRITE(LU,3000)                                                     
+cx      DO 3100 I=1,IPQ                                                   
 cc 3100 WRITE(6,3110) I,(HS(I,J),J=1,IPQ)                                 
- 3100 WRITE(LU,3110) I,(HS(I,J),J=1,IPQ)                                 
- 3120 CONTINUE                                                          
+cx 3100 WRITE(LU,3110) I,(HS(I,J),J=1,IPQ)                                 
+cx 3120 CONTINUE                                                          
 C                                                                       
 C-----  CORRECTION TERM CR(X)=HS*G(X) COMPUTATION  -----                
       DO 900 I=1,IPQ                                                    
@@ -964,23 +970,24 @@ cc  910 SUM=SUM+HS(I,J)*G(J)
   910 SUM=SUM+HS(I,J)*G2(J)
   900 CR(I)=SUM                                                         
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 3920                                         
+cx      IF(IPRNT.EQ.0) GO TO 3920                                         
 cc      WRITE(6,3900)                                                     
 cc      WRITE(6,3910) (CR(I),I=1,IPQ)                                     
-      WRITE(LU,3900)                                                     
-      WRITE(LU,3910) (CR(I),I=1,IPQ)                                     
- 3920 CONTINUE                                                          
+cx      WRITE(LU,3900)                                                     
+cx      WRITE(LU,3910) (CR(I),I=1,IPQ)                                     
+cx 3920 CONTINUE                                                          
 C                                                                       
 C-----  DAVIDON'S PROCEDURE  -----                                      
 C     MINIMIZATION OF INNOVATION VARIANCE                               
 cc      CALL MSDAV2(TL,SIGMA2,G,CR,Y,N,P0,IQ,IP,ISWRO,IPRNT)              
-      CALL MSDAV2(TL2,SIGMA2,G2,CR,Y,N,P02,IQ,IP,ISWRO,HS,IPRNT,LU)
+cx      CALL MSDAV2(TL2,SIGMA2,G2,CR,Y,N,P02,IQ,IP,ISWRO,HS,IPRNT,LU)
+      CALL MSDAV2(TL2,SIGMA2,G2,CR,Y,N,P02,IQ,IP,ISWRO,HS)
 C                                                                       
 C------------------------------                                         
-      IF(IPRNT.EQ.0) GO TO 3930                                         
+cx      IF(IPRNT.EQ.0) GO TO 3930                                         
 cc      WRITE(6,1200) ISWRO                                               
-      WRITE(LU,1200) ISWRO                                               
- 3930 CONTINUE                                                          
+cx      WRITE(LU,1200) ISWRO                                               
+cx 3930 CONTINUE                                                          
 C                                                                       
       IF(ISWRO.GE.IPQ) GO TO 1201                                       
       DO 1902 I=1,IPQ                                                   
@@ -990,10 +997,10 @@ cc      IF(DABS(PP0(I)-P0(I)).GE.CST005) GO TO 1919
       GO TO 1201                                                        
  1919 CONTINUE                                                          
 C                                                                       
-      IF(IPRNT.EQ.0) GO TO 3950                                         
+cx      IF(IPRNT.EQ.0) GO TO 3950                                         
 cc      WRITE(6,1926)                                                     
-      WRITE(LU,1926)                                                     
- 3950 CONTINUE                                                          
+cx      WRITE(LU,1926)                                                     
+cx 3950 CONTINUE                                                          
 C                                                                       
       GO TO 4890                                                        
 C                                                                       

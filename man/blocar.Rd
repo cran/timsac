@@ -9,9 +9,9 @@ blocar(y, max.order=NULL, span, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{span}{length of basic local span.}
-  \item{plot}{logical. If TRUE (default) spectrums pspec are plotted.}
+  \item{plot}{logical. If TRUE (default) spectrums \code{pspec} are plotted.}
 }
 \value{
   \item{var}{variance.}
@@ -26,30 +26,21 @@ blocar(y, max.order=NULL, span, plot=TRUE)
 }
 
 \details{
-  The basic AR model of scalar time series y(t) (t=1,...,n) is given by
-
-    \eqn{y(t) = a(1)y(t-1) + a(2)y(t-2) +...+ a(p)y(t-p) + u(t)},
-
-  where p is order of the model and u(t) is Gaussian white noise with mean 0 and variance v.
-
+  The basic AR model of scalar time series \eqn{y(t) (t=1,...,n)} is given by
+    \deqn{y(t) = a(1)y(t-1) + a(2)y(t-2) +...+ a(p)y(t-p) + u(t),}
+  where \eqn{p} is order of the model and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance \code{v}.
   At each stage of modeling of locally AR model, a two-step Bayesian procedure is applied
-
-    1.  Averaging of the models with different orders fitted to the newly obtained data.
-
-    2.  Averaging of the models fitted to the present and preceding spans.
-
+  \tabular{rl}{
+    1. \tab Averaging of the models with different orders fitted to the newly obtained data.\cr
+    2. \tab Averaging of the models fitted to the present and preceding spans.
+  }
   AIC of the model fitted to the new span is defined by
-
-  \eqn{AIC = ns log( det(v) ) + 2k},
-
-  where ns is the length of new data, v is the innovation variance
-  and k is the equivalent number of parameters, defined as the sum of squares of the Bayesian weights.
-
+    \deqn{AIC = ns\ log( sd ) + 2k,}{AIC = ns log( sd ) + 2k,}
+  where \eqn{ns} is the length of new data, \eqn{sd} is innovation variance
+  and \eqn{k} is the equivalent number of parameters, defined as the sum of squares of the Bayesian weights.
   AIC of the model fitted to the preceding spans are defined by
-
-    \eqn{AIC( j+1 ) = ns log( det(v(j) ) + 2}
-
-  where v(j) is the prediction error variance by the model fitted to j periods former span.
+    \deqn{AIC( j+1 ) = ns\ log( sd(j) ) + 2,}{AIC( j+1 ) = ns log( sd(j) ) + 2,}
+  where \eqn{sd(j)} is the prediction error variance by the model fitted to \eqn{j} periods former span.
 }
 
 \references{
@@ -58,8 +49,8 @@ blocar(y, max.order=NULL, span, plot=TRUE)
   Ann. Inst. Statist. Math., 30, B, 351--363.
 
   H.Akaike (1978)
-  A Bayesian Extension of the Minimin MIC Procedure of Autoregressive Model Fitting.
-  Reseach Meno. NO.126. The Institute of The Statistical Mathematics.
+  A Bayesian Extension of the Minimum AIC Procedure of Autoregressive Model Fitting.
+  Research Memo. NO.126. The Institute of The Statistical Mathematics.
 
   H.Akaike, G.Kitagawa, E.Arahata and F.Tada (1979)
   \emph{Computer Science Monograph, No.11, Timsac78.}

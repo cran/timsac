@@ -307,7 +307,7 @@ C
       K2 = K1*2                                                         
       NNF = 0
       NNS = 0
-      IFG = 0
+cx      IFG = 0
 C                                                                     +-
 C       ---  DATA LOADING AND HOUSEHOLDER TRANSFORMATION  ---         ! 
 C                                                                     +-
@@ -317,8 +317,9 @@ C                                                                     +-
 C       ---  AR-MODEL FITTING TO NEW SET OF DATA  ---                 ! 
 C                                                                     +-
 cc      CALL  ARMFIT( X,K,LAG,NS,ISW,TITLE,MJ1,B,SDS,MS )                 
-      CALL  ARMFIT( X,K,LAG,NS,ISW,MJ1,B,MS,SDS,AS,DICS,SDMS,AICMS,
-     *              IFG,LU )
+cx      CALL  ARMFIT( X,K,LAG,NS,ISW,MJ1,B,MS,SDS,AS,DICS,SDMS,AICMS,
+cx     *              IFG,LU )
+      CALL  ARMFIT( X,K,LAG,NS,ISW,MJ1,B,MS,SDS,AS,DICS,SDMS,AICMS)
 C                                                                NO  +--
 C                                                              +-----!  
 C                                                              !     +--
@@ -367,8 +368,9 @@ C       ---  AR MODEL FITTING TO POOLED DATA  ---
 C                                                                       
       NP = NF + NS                                                      
 cc      CALL  ARMFIT( X,K,LAG,NP,ISW,TITLE,MJ1,A,SDP,MP )                 
-      CALL  ARMFIT( X,K,LAG,NP,ISW,MJ1,A,MP,SDP,AP,DICP,SDMP,AICMP,
-     *              IFG,LU )
+cx      CALL  ARMFIT( X,K,LAG,NP,ISW,MJ1,A,MP,SDP,AP,DICP,SDMP,AICMP,
+cx     *              IFG,LU )
+      CALL  ARMFIT( X,K,LAG,NP,ISW,MJ1,A,MP,SDP,AP,DICP,SDMP,AICMP)
 C                                                                       
 C       ---  AIC FOR CONSTANT MODEL  ---                                
 C                                                                       

@@ -1,7 +1,7 @@
 \name{mlomar}
 \alias{mlomar}
 \alias{print.mlomar}
-\title{Minimum AIC Method of Loccally Stationary Multivariate AR Model Fitting}
+\title{Minimum AIC Method of Locally Stationary Multivariate AR Model Fitting}
 \description{
   Locally fit multivariate autoregressive models to non-stationary time series
   by the minimum AIC procedure using the householder transformation.
@@ -11,10 +11,10 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{span}{length of basic local span.}
-  \item{const}{integer. 0 denotes constant vector is not included as a regressor
-        and 1 denotes constant vector is included as the first regressor.}
+  \item{const}{integer. \code{0} denotes constant vector is not included as a regressor
+        and \code{1} denotes constant vector is included as the first regressor.}
 }
 \value{
   \item{mean}{mean.}
@@ -22,7 +22,7 @@
   \item{ns}{the number of local spans.}
   \item{order}{order of the current model.}
   \item{aic}{AIC of the current model.}
-  \item{arcoef}{AR coefficient matrices of the current model. arcoef[[m]][i,j,k] shows the value of i-th row, j-th column, k-th order of m-th model.}
+  \item{arcoef}{AR coefficient matrices of the current model. \code{arcoef[[m]][i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order of \eqn{m}-th model.}
   \item{v}{innovation variance of the current model.}
   \item{init}{initial point of the data fitted to the current model.}
   \item{end}{end point of the data fitted to the current model.}
@@ -34,12 +34,12 @@
   \item{aic.const}{AIC of the constant model.}
 }
 \details{
-  The data of length n are devided into k locally stationary spans,
+  The data of length \eqn{n} are divided into \eqn{k} locally stationary spans,
 
-    \code{|<-- n1 -->|<-- n2 -->|<-- n3 -->|.........|<-- nk -->|}
+    \deqn{|<-- n_1 -->|<-- n_2 -->|<-- n_3 -->| ..... |<-- n_k -->|}{|<-- n1 -->|<-- n2 -->|<-- n3 -->| ..... |<-- nk -->|}
 
-  where ni (i=1,...,k) denoted the number of basic spans, each of length span,
-  which constitute the i-th locally stationary span. At each local span,
+  where \eqn{n_i}{ni} \eqn{(i=1,\ldots,k)}{(i=1,...,k)} denoted the number of basic spans, each of length span,
+  which constitute the \eqn{i}-th locally stationary span. At each local span,
   the process is represented by a stationary autoregressive model.
 }
 

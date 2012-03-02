@@ -1,6 +1,6 @@
 \name{thirmo}
 \alias{thirmo}
-\title{Third Order Monents}
+\title{Third Order Moments}
 \description{
   Compute the third order moments.
 }
@@ -9,8 +9,8 @@ thirmo(y, lag=NULL, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE (default) autocovariance acor is plotted.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE (default) autocovariance \code{acor} is plotted.}
 }
 \value{
   \item{mean}{mean.}

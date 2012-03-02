@@ -5,39 +5,56 @@
   Estimate time-varying variance.
 }
 \usage{
-  tvvar(y, trend.order, tau20, delta, plot=TRUE)
+  tvvar(y, trend.order, tau20=NULL, delta=NULL, plot=TRUE)
 }
 
 \arguments{
   \item{y}{univariate time series.}
   \item{trend.order}{trend order.}
-  \item{tau20}{initial estimate of tau2.}
+  \item{tau20}{initial estimate of \code{tau2}.}
   \item{delta}{search width.}
-  \item{plot}{logical. If TRUE (default) normdat, ts, trend and noise are plotted.}
+  \item{plot}{logical. If TRUE (default) \code{normdat}, \code{ts}, \code{trend} and \code{noise} are plotted.}
 }
 
 \details{
-    A chi-square distribution with digree 2 is given by
+    Assuming that \eqn{\sigma_{2m-1}^2 = \sigma_{2m}^2}{sigma_(2m-1)^2 = sigma_(2m)^2}, we define a transformed time series \eqn{s_1,...,s_{N/2}}{s_1,...,s_(N/2)} by 
 
-    \eqn{s(m) = y(2m-1)**2 + y(2m)**2}
+      \deqn{s_m = y_{2m-1}^2 + y_{2m}^2,}{s_m = y_(2m-1)^2 + y_(2m)^2,}
 
-    where \eqn{y(n)} is original scalar time series and \eqn{\sigma(2m-1)**2 = \sigma(2m)**2}.
+    where \eqn{y_n} is a Gaussian white noise with mean \eqn{0} and variance \eqn{\sigma_n^2}{sigma_n^2}.
 
-    \eqn{z(m) = log(s(m)/2)}.
+    \eqn{s_m} is distributed as a \eqn{\chi^2}{chi-square} distribution with \eqn{2} degrees of freedom, so the probability density function of \eqn{s_m} is given by
 
-    \eqn{z(m) = log(\sigma**2) + w(m)},
+      \deqn{f(s) = \frac{1}{2\sigma^2} e^{-s/2\sigma^2}.}{f(s) = 1/(2sigma^2)  e^(-s/2sigma^2).}
+ 
+    By further transformation
 
-    where \eqn{w(m)} is a double exponential distribution with density \eqn{h(w) = exp{w-e**w}}.
+        \deqn{z_m = log(\frac{s_m}{2}),}{z_m = log(s_m/2),}
 
-    The space state model is given by
+    the probability density function of \eqn{z_m} is given by
 
-    \eqn{z(m) = t(m) + w(m)}.
+      \deqn{g(z) = \frac{1}{\sigma^2} exp{\{z-\frac{e^z}{\sigma^2}\}} = exp{\{(z-log\sigma^2)} - e^{(z-log\sigma^2)}\}.}{%
+            g(z) = 1/sigma^2 exp{z - e^z/sigma^2} = exp{(z-log(sigma^2)) - e^(z-log(sigma^2))}.}
+
+    Therefore the transformed time series is given by
+
+      \deqn{z_m = log \sigma^2 + w_m,}{z_m = log(sigma^2) + w_m,}
+
+    where \eqn{w_m} is a double exponential distribution with probability density function 
+
+      \deqn{h(w) = exp{\{w-e^w\}}.}{h(w) = exp{w-e^w}.}
+
+    In the space state model 
+
+    \deqn{z_m = t_m + w_m}
+
+    by identifying trend components of \eqn{z_m}, the log variance of original time series \eqn{y_n} is obtained.
 }
 
 \value{
   \item{tvvar}{time varying variance.}
   \item{normdat}{normalized data.}
-  \item{ts}{tranceformed time series s(m).}
+  \item{ts}{transformed time series \eqn{s_m}.}
   \item{trend}{trend.}
   \item{noise}{residuals.}
   \item{tau2}{variance of the system noise tau2.}
@@ -47,16 +64,16 @@
 }
 
 \references{
-  Kitagawa, G. (1993) \emph{Time series analysis programing (in Japanese)}. The Iwanami Computer Science Senes.
+  Kitagawa, G. (1993) \emph{Time series analysis programing (in Japanese)}. The Iwanami Computer Science Series.
 
   Kitagawa, G. and Gersch, W. (1996) \emph{Smoothness Priors Analysis of Time Series}. Lecture Notes in Statistics, No.116, Springer-Verlag.
 
-  Kitagawa, G. and Gersch, W. (1985) \emph{A smoothness priors time varying AR coefficient modeling of nonstationary time series}. IEEE trans. on Automatic Controle, AC-30, 48-56.
+  Kitagawa, G. and Gersch, W. (1985) \emph{A smoothness priors time varying AR coefficient modeling of nonstationary time series}. IEEE trans. on Automatic Control, AC-30, 48-56.
 }
 
 \examples{
   data(MYE1F) # an earthquake wave data
-  z <- tvvar(MYE1F, trend.order=2, tau20= 6.6e-06, delta=1.0e-06)
+  z <- tvvar(MYE1F, 2, 6.6e-06, 1.0e-06)
   z$lkhood
   z$aic
 }

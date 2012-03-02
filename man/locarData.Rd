@@ -1,11 +1,15 @@
 \name{locarData}
+\docType{data}
 \alias{locarData}
 \title{Non-stationary Test Data}
 \description{
-  A non-stationary test data for "mlocar" and "blocar".
+  A non-stationary data for testing \code{\link{mlocar}} and \code{\link{blocar}}.
 }
 \usage{
   data(locarData)
+}
+\format{
+  A time series of 1000 observations.
 }
 \source{
   H.Akaike, G.Kitagawa, E.Arahata and F.Tada (1979)
@@ -13,4 +17,4 @@
   The Institute of Statistical Mathematics.
 }
 
-\keyword{ts}
+\keyword{datasets}

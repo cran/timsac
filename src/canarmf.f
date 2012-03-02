@@ -1,6 +1,7 @@
       SUBROUTINE CANARMF(N,LAGH3,CYY,COEF,IFPL1,SD,AIC,OAIC,MO,A,
-     *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,TMP,
-     *MJ1,MJ2)
+cx     *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,TMP,
+cx     *MJ1,MJ2,IER)
+     *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,MJ1,MJ2)
 C
       INCLUDE 'timsac_f.h'
 C
@@ -72,8 +73,8 @@ c
       DIMENSION AST1((MJ2-1)*MJ2/2)
       DIMENSION VV(MJ1,MJ1)
 c
-      INTEGER*1 TMP(1)
-      CHARACTER CNAME*80
+cx      INTEGER*1 TMP(1)
+cx      CHARACTER CNAME*80
 c
 C     INITIAL CLEARING
 cc	DATA BETA /50*0.0D-00/, ALPHA/50*0.0D-00/
@@ -90,27 +91,29 @@ cc	CALL FLOPN3(DFNAM,NFL)
 cc	IF (NFL.EQ.0) GO TO 999
 cc	IF (NFL.EQ.0) GO TO 999
 c
-      LU=3
-      DO 100 I = 1,80
-  100 CNAME(I:I) = ' '
-      I = 1
-      IFG = 1
-      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
-	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
-            CNAME(I:I) = CHAR(TMP(I))
-            I = I+1
-         ELSE
-            IFG = 0
-         END IF
-      END DO
-      IF ( I.GT.1 ) THEN
-         IFG = 1
-         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
-         IF (IVAR .NE. 0) THEN
-            WRITE(*,*) ' ***  canarm temp FILE OPEN ERROR :',CNAME,IVAR
-            IFG=0
-         END IF
-      END IF
+cx      LU=3
+cx      IER=0
+cx      DO 100 I = 1,80
+cx  100 CNAME(I:I) = ' '
+cx      I = 1
+cx      IFG = 1
+cx      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
+cx	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
+cx            CNAME(I:I) = CHAR(TMP(I))
+cx            I = I+1
+cx         ELSE
+cx            IFG = 0
+cx         END IF
+cx      END DO
+cx      IF ( I.GT.1 ) THEN
+cx         IFG = 1
+cx         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
+cx         IF (IVAR .NE. 0) THEN
+cxcx            WRITE(*,*) ' ***  canarm temp FILE OPEN ERROR :',CNAME,IVAR
+cx            IER=IVAR
+cx            IFG=0
+cx         END IF
+cx      END IF
 C
 C     ABSOLUTE DIMENSIONS USED FOR SUBROUTINE CALL
 cc	MJ1=50
@@ -422,11 +425,11 @@ cc	WRITE(6,261)
 cc	WRITE(6,26102)
 cc	WRITE(6,262)
 cc	WRITE(6,264) (AMES(J),J=1,JJL)
-      IF (IFG.NE.0) THEN
-	 WRITE(LU,261)
-	 WRITE(LU,262)
-	 WRITE(LU,264) (AMES(J),J=1,JJL)
-      END IF
+cx      IF (IFG.NE.0) THEN
+cx	 WRITE(LU,261)
+cx	 WRITE(LU,262)
+cx	 WRITE(LU,264) (AMES(J),J=1,JJL)
+cx      END IF
 cc	WRITE(6,859) MO,OSD,OAIC
       F(JJ0)=AX
       F(IAN1)=AX
@@ -434,7 +437,7 @@ cc	WRITE(6,859) MO,OSD,OAIC
       F(LAN1)=AX
       F(LAN2)=AX
 cc	WRITE(6,861) (F(J),J=1,JJL)
-      IF (IFG.NE.0) WRITE(LU,264) (F(J),J=1,JJL)
+cx      IF (IFG.NE.0) WRITE(LU,264) (F(J),J=1,JJL)
       SE=CYY(2)
 C     ITERATION START
       DO 400 M=1,L
@@ -486,7 +489,7 @@ C     M,SD,AIC	PRINT OUT
 cc	WRITE(6,860) M,SD,AIC,A(M)
       AA(M)=A(M)
 cc	WRITE(6,861) (F(J),J=1,JJL)
-      IF (IFG.NE.0) WRITE(LU,264) (F(J),J=1,JJL)
+cx      IF (IFG.NE.0) WRITE(LU,264) (F(J),J=1,JJL)
       F(JJ)=FFFF
 cc  990 IF(OAIC.LT.AIC) GO TO 440
 cc	OAIC=AIC

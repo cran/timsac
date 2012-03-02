@@ -2,24 +2,24 @@
 \alias{optdes}
 \title{Optimal Controller Design}
 \description{
-  Computr optimal controller gain matrix for a quadratic criterion defined by two positive definite matrices Q and R.
+  Compute optimal controller gain matrix for a quadratic criterion defined by two positive definite matrices Q and R.
 }
 \usage{
   optdes(y, max.order=NULL, ns, q, r)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of model order. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{ns}{number of D.P. stages.}
-  \item{q}{positive definite (ir, ir) matrix \eqn{Q}, where ir is the number of controlled variables.
+  \item{q}{positive definite \eqn{(m, m)} matrix \eqn{Q}, where \eqn{m} is the number of controlled variables.
    
     A quadratic criterion is defined by \eqn{Q} and \eqn{R}.}
-  \item{r}{positive definite (il, il) matrix \eqn{R}, where il is th number of maninpulated variables.}
+  \item{r}{positive definite \eqn{(l, l)} matrix \eqn{R}, where \eqn{l} is the number of manipulated variables.}
 
 }
 \value{
   \item{perr}{prediction error covariance matrix.}
-  \item{trans}{first ir columns of transition matrix, where ir is the number of controlled variables.}
+  \item{trans}{first \eqn{m} columns of transition matrix, where \eqn{m} is the number of controlled variables.}
   \item{gamma}{gamma matrix.}
   \item{gain}{gain matrix.}
 }

@@ -1,5 +1,6 @@
       SUBROUTINE  MULMARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD1,AIC1,DIC1,IM,
-     * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS,TMP )
+cx     * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS,TMP,IER )
+     * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -80,8 +81,8 @@ C
       DIMENSION  AICM(ID), SDM(ID), IM(ID)
       DIMENSION  JNDF((LAG+1)*ID,ID), AF((LAG+1)*ID,ID)
       DIMENSION  NPR(ID), AIC(ID)
-      INTEGER*1  TMP(1)
-      CHARACTER  CNAME*80
+cx      INTEGER*1  TMP(1)
+cx      CHARACTER  CNAME*80
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -120,28 +121,30 @@ cc      READ( 5,1 )     LAG
 cc      WRITE( 6,3 )                                                      
 cc      WRITE( 6,4 )     LAG , MT                                         
 C                                                                       
-      LU=3
-      DO 100 I = 1,80
-         CNAME(I:I) = ' '
-  100 CONTINUE
-      I = 1
-      IFG = 1
-      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
-	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
-            CNAME(I:I) = CHAR(TMP(I))
-            I = I+1
-         ELSE
-            IFG = 0
-         END IF
-      END DO
-      IF ( I.GT.1 ) THEN
-         IFG = 1
-         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
-         IF (IVAR .NE. 0) THEN
-            WRITE(*,*) ' ***  mulmar temp FILE OPEN ERROR :',CNAME,IVAR
-            IFG=0
-         END IF
-      END IF
+cx      IER=0
+cx      LU=3
+cx      DO 100 I = 1,80
+cx         CNAME(I:I) = ' '
+cx  100 CONTINUE
+cx      I = 1
+cx      IFG = 1
+cx      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
+cx	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
+cx            CNAME(I:I) = CHAR(TMP(I))
+cx            I = I+1
+cx         ELSE
+cx            IFG = 0
+cx         END IF
+cx      END DO
+cx      IF ( I.GT.1 ) THEN
+cx         IFG = 1
+cx         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
+cx         IF (IVAR .NE. 0) THEN
+cxcx            WRITE(*,*) ' ***  mulmar temp FILE OPEN ERROR :',CNAME,IVAR
+cx            IER=IVAR
+cx            IFG=0
+cx         END IF
+cx      END IF
 
 C
 C     --  ORIGINAL DATA LOADING AND MEANS DELETION  --                  
@@ -162,7 +165,8 @@ C
 cc      CALL  MARFIT( X,Y,D,NMK,ID,LAG,KSW,MJ1,MJ2,MJ3,MJ4,0,IPR,B,E,EX,C,
 cc     *              LMAX,AIC )                                          
       CALL MARFIT( X,NMK,ID,LAG,KSW,MJ1,MJ2,MJ3,MJ4,0,IPR,AIC1,SD1,DIC1,
-     * AICM,SDM,IM,BI,EI,B,E,EX,CV,LMAX,AICS,JNDF,AF,NPR,AIC,IFG,LU )
+cx     * AICM,SDM,IM,BI,EI,B,E,EX,CV,LMAX,AICS,JNDF,AF,NPR,AIC,IFG,LU )
+     * AICM,SDM,IM,BI,EI,B,E,EX,CV,LMAX,AICS,JNDF,AF,NPR,AIC )
 cc      GO TO 999
 C
 cc  900 CONTINUE
@@ -183,7 +187,7 @@ C
 cc  999 CONTINUE
 cc      STOP                                                              
 cc      CLOSE( LU )
-      IF( IFG.NE.0 ) CLOSE( LU )
+cx      IF( IFG.NE.0 ) CLOSE( LU )
       RETURN
     1 FORMAT( 16I5 )                                                    
     3 FORMAT( ' PROGRAM TIMSAC 78.2.1',/'   MULTI-VARIATE AUTOREGRESSIVE

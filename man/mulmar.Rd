@@ -3,59 +3,52 @@
 \title{Multivariate Case of Minimum AIC Method of AR Model Fitting}
 \description{
   Fit a multivariate autoregressive model by the minimum AIC procedure.
-  Only the possiblities of zero coefficients at the begining and end of the model are considered.
+  Only the possibilities of zero coefficients at the beginning and end of the model are considered.
   The least squares estimates of the parameters are obtained by the householder transformation.
 }
 \usage{
-mulmar(y, max.order=NULL, plot=FALSE, tmp.file=NULL)
+mulmar(y, max.order=NULL, plot=FALSE)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE daic[[1]],...,daic[[d]] are plotted, where d is the dimention of the multivariate time series.}
-  \item{tmp.file}{a character string naming a file written intermediate results of AIC minimazation.
-        If NULL (default) output no file.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE \code{daic[[1]],...,daic[[d]]} are plotted, where \eqn{d} is the dimension of the multivariate time series.}
 }
 \value{
   \item{mean}{mean.}
   \item{var}{variance.}
   \item{v}{innovation variance.}
-  \item{aic}{AIC(m) (m = 0,...,max.order).}
+  \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
-  \item{daic}{AIC(m)-aicmin (m = 0,...,max.order).}
+  \item{daic}{AIC-aicmin.}
   \item{order.maice}{order of minimum AIC.}
-  \item{v.maice}{innovation variance attained at m = order.maice.}
+  \item{v.maice}{MAICE innovation variance.}
   \item{np}{number of parameters.}
-  \item{jnd}{specification of i-th regressor.}
+  \item{jnd}{specification of \eqn{i}-th regressor.}
   \item{subregcoef}{subset regression coefficients.}
   \item{rvar}{residual variance.}
-  \item{aicf}{final estimate of AIC (=nlog(rvar)+2np).}
+  \item{aicf}{final estimate of AIC (\eqn{=nlog}(\code{rvar})\eqn{+2}\code{np}).}
   \item{respns}{instantaneous response.}
   \item{matv}{innovation variance matrix.}
   \item{morder}{order of the MAICE model.}
-  \item{arcoef}{AR coefficients. arcoef[i,j,k] shows the value of i-th row, j-th column, k-th order.}
+  \item{arcoef}{AR coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k-}th order.}
   \item{aicsum}{the sum of aicf.}
 }
 \details{
   Multivariate autoregressive model is defined by
-
-    \eqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t)},
-
-  where p is order of the model and u(t) is Gaussian white noise with mean 0 and variance matrix matv.
-
+    \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +\ldots+ A(p)y(t-p) + u(t),}{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
+  where \eqn{p} is order of the model and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance matrix \code{matv}.
   AIC is defined by
-
-    \eqn{AIC = nlog(det(v)) + 2k}
-
-  where n is the number of data, v is the estimate of innovation variance matrix,
-  det is the determinant and k is the number of free parameters.
+    \deqn{AIC = n\ log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
+  where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation variance matrix,
+  \eqn{det} is the determinant and \eqn{k} is the number of free parameters.
 }
 
 \references{
   G.Kitagawa and H.Akaike (1978) A Procedure for The Modeling of Non-stationary Time Series.
   Ann. Inst. Statist. Math., 30, B, 351--363.
 
-  H.Akaike, G.Kiragawa, E.Arahata and F.Tada (1979)
+  H.Akaike, G.Kitagawa, E.Arahata and F.Tada (1979)
   \emph{Computer Science Monograph, No.11, Timsac78.}
   The Institute of Statistical Mathematics.
 }

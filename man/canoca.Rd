@@ -2,7 +2,7 @@
 \alias{canoca}
 \title{Canonical Correlation Analysis of Vector Time Series}
 \description{
-  Analyze canonical correlation of an d-dimensional multivariate time series.
+  Analyze canonical correlation of a d-dimensional multivariate time series.
 }
 \usage{
 canoca(y)
@@ -21,7 +21,7 @@ canoca(y)
   \item{aicmin}{minimum AIC.}
   \item{order.maice}{MAICE AR model order.}
   \item{v}{innovation variance.}
-  \item{arcoef}{autoregressive coefficients. arcoef[i,j,k] shows the value of i-th row, j-th column, k-th order.}
+  \item{arcoef}{autoregressive coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
   \item{nc}{number of cases.}
   \item{future}{number of variable in the future set.}
   \item{past}{number of variables in the past set.}
@@ -33,10 +33,10 @@ canoca(y)
   \item{dic}{DIC.}
   \item{dicmin}{minimum DIC.}
   \item{order.dicmin}{order of minimum DIC.}
-  \item{matF}{the transition matrix F.}
-  \item{vectH}{structual characteristic vector H of the canonical Markovian representation.}
-  \item{matG}{the estimate of the input matrix G.}
-  \item{vectF}{F matrix in vector form.}
+  \item{matF}{the transition matrix \eqn{F}.}
+  \item{vectH}{structural characteristic vector \eqn{H} of the canonical Markovian representation.}
+  \item{matG}{the estimate of the input matrix \eqn{G}.}
+  \item{vectF}{matrix \eqn{F} in vector form.}
 }
 
 \references{

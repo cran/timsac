@@ -8,11 +8,11 @@
   raspec(h, var, arcoef=NULL, macoef=NULL, log=FALSE, plot=TRUE)
 }
 \arguments{
-  \item{h}{specify frequencies \eqn{i/2h (i=0,1,...,h)}.}
+  \item{h}{specify frequencies \eqn{i}/\code{2h} (\eqn{i=0,1,\ldots,}{i=0,1,...,}\code{h}).}
   \item{var}{variance.}
   \item{arcoef}{AR coefficients.}
   \item{macoef}{MA coefficients.}
-  \item{log}{logical. If TRUE the spectrum is plotted as log(sepc).}
+  \item{log}{logical. If TRUE the spectrum is plotted as log(\code{raspec}).}
   \item{plot}{logical. If TRUE (default) the spectrum is plotted.}
 }
 \value{
@@ -20,10 +20,8 @@
 }
 \details{
   ARMA process :
-
-  \eqn{y(t) - a(1)y(t-1) -...- a(p)y(t-p) = u(t) - b(1)u(t-1) -...- b(q)u(t-q)}
-
-  where p is AR order, q is MA order and u(t) is a white noise with zero mean and variance equal to \code{var}.
+    \deqn{y(t) - a(1)y(t-1) - \ldots - a(p)y(t-p) = u(t) - b(1)u(t-1) - \ldots - b(q)u(t-q)}{y(t) - a(1)y(t-1) - ... - a(p)y(t-p) = u(t) - b(1)u(t-1) - ... - b(q)u(t-q)}
+  where \eqn{p} is AR order, \eqn{q} is MA order and \eqn{u(t)} is a white noise with zero mean and variance equal to \code{var}.
 }
 \references{
   H.Akaike and T.Nakagawa (1988) \emph{Statistical Analysis and Control

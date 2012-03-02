@@ -1,17 +1,46 @@
+#include <R.h>
+#include <Rdefines.h>
 #include "timsac.h"
-#include <R_ext/RS.h>
 
-extern int mulcor(double*, long*, long*, long*, double* ,double*, double*);
+extern void F77_NAME(mulcorf) (double*, int*, int*, int*, double*, double*, double*);
 
-/* rtimsac72.dll subroutine */ int mulcor (d1,i1,i2,i3,d2,d3,d4)
-
-	double *d1,*d2,*d3,*d4;
-	long *i1,*i2,*i3;
-
+SEXP mulcor(SEXP y, SEXP n, SEXP d, SEXP lag1)
 {
-	extern int F77_NAME(mulcorf) (double*, long*, long*, long*, double*, double*, double*);
+    double *d1, *d2, *d3, *d4;
+    int    *i1,*i2,*i3;
 
-	F77_CALL(mulcorf) (d1,i1,i2,i3,d2,d3,d4);
+    SEXP ans =  R_NilValue,  mean = R_NilValue, cov = R_NilValue, cor = R_NilValue;
+    double *xmean, *xcov, *xcor = NULL;
+    int   i, nd, nd2;
 
-	return 0;
+    d1 = NUMERIC_POINTER(y);
+    i1 = INTEGER_POINTER(n);
+    i2 = INTEGER_POINTER(d);
+    i3 = INTEGER_POINTER(lag1);
+
+    nd = *i3;
+    nd2 = nd * nd;
+    PROTECT(ans = allocVector(VECSXP, 3));
+    SET_VECTOR_ELT(ans, 0, mean = allocVector(REALSXP, nd));
+    SET_VECTOR_ELT(ans, 1, cov = allocVector(REALSXP, nd2));
+    SET_VECTOR_ELT(ans, 2, cor = allocVector(REALSXP, nd2)); 
+
+    d2 = NUMERIC_POINTER(mean);
+    d3 = NUMERIC_POINTER(cov);
+    d4 = NUMERIC_POINTER(cor);
+
+    F77_CALL(mulcorf) (d1,i1,i2,i3,d2,d3,d4);
+
+    xmean = REAL(mean);
+    xcov = REAL(cov);
+    xcor = REAL(cor);
+
+    for(i=0; i<nd; i++) xmean[i] = d2[i];
+    for(i=0; i<nd2; i++) xcov[i] = d3[i];
+    for(i=0; i<nd2; i++) xcor[i] = d4[i];
+
+    UNPROTECT(1);
+
+    return ans;
 }
+

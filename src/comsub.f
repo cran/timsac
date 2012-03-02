@@ -1022,7 +1022,8 @@ C     INNER-PRODUCT OF DD1 AND DD2.
 C
 C
 cc	SUBROUTINE MATINV(DET,M)
-      SUBROUTINE MATINV(M,HS,NN,IFG,LU)
+cxx      SUBROUTINE MATINV(M,HS,NN,IFG,LU)
+      SUBROUTINE MATINV(M,HS,NN)
 C      HS IS AN M*M MATRIX (IN COMMON AREA).
 C     HS-INVERSE IS RETURNED IN HS.
 C     DETERMINANT IS RETURNED IN DET.
@@ -1538,7 +1539,8 @@ c
 c
 cc      SUBROUTINE  ARMFIT( X,K,LAG,N,ISW,TITLE,MJ1,A,SDMIN,IMIN )        
       SUBROUTINE  ARMFIT( X,K,LAG,N,ISW,MJ1,A,IMIN,SD,AIC,DIC,SDMIN,
-     *                    AICM,IFG,LU )
+cx     *                    AICM,IFG,LU )
+     *                    AICM )
 C                                                                       
 C          +------------------------------+                             
 C          ! AUTOREGRESSIVE MODEL FITTING !                             
@@ -1578,7 +1580,7 @@ cc      DIMENSION  X(MJ1,1) , A(1) , SD(101) , AIC(101)
 cc      DATA     TTL / 4H   M,4H A I ,4H C E,4H   . /                    
 c
 cc      IF(ISW.GE.1)  WRITE( 6,3 )                                        
-      IF( (ISW.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,3 )
+cx      IF( (ISW.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,3 )
 C                                                                       
 C          +-----------------------------------------+                +-
 C          ! INNOVATION VARIANCE AND AIC COMPUTATION !                ! 
@@ -1600,15 +1602,16 @@ C
       IF( ISW .LT. 2 )     GO TO  20                                    
 C                                                                       
 cc           WRITE( 6,5 )                                                 
-      IF ( IFG.NE.0 )  WRITE( LU,5 )
+cx      IF ( IFG.NE.0 )  WRITE( LU,5 )
       M = 0                                                             
 cc      WRITE( 6,7 )     M , SD(1)                                        
-      IF ( IFG.NE.0 )  WRITE( LU,7 )  M , SD(1)
+cx      IF ( IFG.NE.0 )  WRITE( LU,7 )  M , SD(1)
       DO  10     M=1,K                                                  
       M1 = M + 1                                                        
       CALL  RECOEF( X,M,K,MJ1,A )                                       
 cc   10 WRITE( 6,6 )     M , SD(M1) , (A(I),I=1,M)                        
-   10 IF ( IFG.NE.0 )  WRITE( LU,6 )  M, SD(M1), (A(I),I=1,M)
+cx   10 IF ( IFG.NE.0 )  WRITE( LU,6 )  M, SD(M1), (A(I),I=1,M)
+   10 CONTINUE
 C                                                                       
    20 IF( IMIN .GE. 1 )  CALL  RECOEF( X,IMIN,K,MJ1,A )                 
       L1 = LAG + 1                                                      
@@ -2277,7 +2280,8 @@ C
 cc      SUBROUTINE  MARFIT( X,Y,D,N,ID,M,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,B,E, 
 cc     *                    EX,C,LMAX,AICS )                              
       SUBROUTINE  MARFIT( X,N,ID,M,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,AIC,SD,
-     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AAIC,IFG,LU )
+cx     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AAIC,IFG,LU )
+     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AAIC )
 C                                                                       
 C         MULTI-VARIATE AUTOREGRESSIVE MODEL FITTING                    
 C       ----------------------------------------------------------------
@@ -2358,8 +2362,8 @@ C
 cc      IF(IPR.GE.3)  WRITE( 6,3 )                                        
 cc      IF( IPR.GE.2)   WRITE( 6,645 )   II                               
 cc      IF(IPR.GE.3)  WRITE( 6,642 )                                      
-      IF( (IPR.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,645 )   II
-      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,642 )
+cx      IF( (IPR.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,645 )   II
+cx      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,642 )
       JJ = II - 1                                                       
       KK = MD + JJ                                                      
       KK1 = KK + 1                                                      
@@ -2426,9 +2430,10 @@ C
 cc      WRITE( 6,4 )                                                      
 cc      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD )                       
 cc      WRITE( 6,643 )                                                    
-      IF ( IFG.NE.0 )  WRITE( LU,4 )
-      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
-      IF ( IFG.NE.0 )  WRITE( LU,643 )
+cx      IF ( IFG.NE.0 )  WRITE( LU,4 )
+cx      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
+      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II) )
+cx      IF ( IFG.NE.0 )  WRITE( LU,643 )
    90 CONTINUE                                                          
 C                                                                       
 C                                                                       
@@ -2441,13 +2446,13 @@ C
 C                                                                       
       CALL  COPY( X,KK1,0,0,MJ1,MJ4,Y )                                 
 cc      IF(IPR.GE.3)  WRITE( 6,11 )     I1                                
-      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,11 )     I1
+cx      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,11 )     I1
       AIC1 = AICMIN                                                     
       AIC2 = AICMIN                                                     
       K01 = K0                                                          
 cc      IMP1 = IMIN + 1                                                   
 cc      IF(IPR.GE.3)  WRITE( 6,13 )     AIC1                              
-      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,13 )     AIC1
+cx      IF( (IPR.GE.3) .AND. (IFG.NE.0) )  WRITE( LU,13 )     AIC1
       IF( IMIN .GE. M )  GO TO 140                                      
 C                                                                       
 C          CHECK REGRESSOR MADD  < ADD? >                               
@@ -2466,14 +2471,14 @@ C
 cc      IF(IPR.GE.3)  WRITE( 6,5 )   MADD,OAIC,MADD,J1,I1                 
       IF( OAIC .GT. AIC1 )  GO TO 120                                   
 cc      IF( IPR .GE. 3 )     WRITE( 6,6 )                                 
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,56 ) MADD,OAIC,MADD,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,56 ) MADD,OAIC,MADD,J1,I1
       AIC1 = OAIC                                                       
       K01 = K01 + 1                                                     
   110 CONTINUE                                                          
       GO TO 140                                                         
   120 K = K - 1                                                         
 cc      IF( IPR .GE. 3 )     WRITE( 6,9 )                                 
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,59 ) MADD,OAIC,MADD,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,59 ) MADD,OAIC,MADD,J1,I1
       IF( J1 .NE. IMP1 )  GO TO 140                                     
       CALL  COPY( Y,KK1,0,0,MJ4,MJ1,X )                                 
       DO 130  J=1,KK                                                    
@@ -2503,7 +2508,7 @@ C
 cc      IF(IPR.GE.3)  WRITE( 6,7 )   MDEL,OAIC,MDEL,J1,I1                 
       IF( OAIC .GT. AIC2 )  GO TO 180                                   
 cc      IF( IPR .GE. 3 )     WRITE( 6,8 )                                 
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,78 ) MDEL,OAIC,MDEL,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,78 ) MDEL,OAIC,MDEL,J1,I1
       AIC2 = OAIC                                                       
       IF( AIC2 .GE. AIC1 )  GO TO 170                                   
       DO 165  I=1,KK                                                    
@@ -2513,7 +2518,7 @@ cc      IF( IPR .GE. 3 )     WRITE( 6,8 )
       GO TO  200                                                        
   180 K02 = K02 + 1                                                     
 cc      IF( IPR .GE. 3 )     WRITE( 6,18 )                                
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,718 ) MDEL,OAIC,MDEL,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,718 ) MDEL,OAIC,MDEL,J1,I1
   200 CONTINUE                                                          
       AICMIN = DMIN1( AIC1,AIC2 )                                       
 C                                                                       
@@ -2524,7 +2529,7 @@ C
       K0 = K02                                                          
   220 CONTINUE                                                          
 cc      IF(IPR.GE.3)  WRITE( 6,12 )     AICMIN ,K0                        
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,12 )  AICMIN ,K0
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,12 )  AICMIN ,K0
   230 CONTINUE                                                          
 C                                                                       
 C                                                                       
@@ -2534,9 +2539,10 @@ C
 cc      WRITE( 6,14 )                                                     
 cc      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD )                       
 cc      WRITE( 6,644 )                                                    
-      IF( IFG.NE.0 )  WRITE( LU,14 )
-      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
-      IF( IFG.NE.0 )  WRITE( LU,644 )                                   
+cx      IF( IFG.NE.0 )  WRITE( LU,14 )
+cx      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
+      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II) )
+cx      IF( IFG.NE.0 )  WRITE( LU,644 )                                   
   240 CONTINUE                                                          
 C                                                                       
 C--------------------   FINAL STEP OF AIC MINIMIZATION   ---------------
@@ -2548,8 +2554,8 @@ C
       CALL  COPY( X,KK1,0,0,MJ1,MJ4,Y )                                 
 cc      IF(IPR.GE.3)  WRITE( 6,19 )                                       
 cc      IF(IPR.GE.3)  WRITE( 6,13 )  AICMIN                               
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,19 )
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,13 )  AICMIN
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,19 )
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,13 )  AICMIN
       MDEL = 1                                                          
       K = K0-1                                                          
 cc      CALL  DELETE( Y,D,IND,JND,KK,K0,MDEL,MJ4 )                        
@@ -2560,7 +2566,7 @@ cc      IF(IPR.GE.3)  WRITE( 6,21)  MDEL,OAIC,MDEL
       IF(OAIC.GE.AICMIN)  GO TO 250                                     
 C                                                                       
 cc      IF(IPR.GE.3)  WRITE( 6,8 )                                        
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,218 )  MDEL,OAIC,MDEL
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,218 )  MDEL,OAIC,MDEL
       AICMIN = OAIC                                                     
       MSW = 0                                                           
       CALL  COPY( Y,KK1,0,0,MJ4,MJ1,X )                                 
@@ -2568,12 +2574,13 @@ cc      IF(IPR.GE.3)  WRITE( 6,8 )
 C                                                                       
   250 K0 = K0+1                                                         
 cc      IF(IPR.GE.3)  WRITE( 6,18 )                                       
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,2118 )  MDEL,OAIC,MDEL
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,2118 )  MDEL,OAIC,MDEL
       DO 260  I=1,KK                                                    
       J = IND(I)                                                        
   260 JND(J) = I                                                        
 cc  270 IF(IPR.GE.3)  WRITE( 6,16 )  AICMIN,K0                            
-  270 IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,16 )  AICMIN,K0
+cx  270 IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,16 )  AICMIN,K0
+  270 CONTINUE
   280 CONTINUE                                                          
 C                                                                       
 C         CHECK REGRESSOR MDEL  < DELETE ? >                            
@@ -2584,8 +2591,8 @@ C
 C                                                                       
 cc      IF(IPR.GE.3)  WRITE( 6,11 )     I1                                
 cc      IF(IPR.GE.3)  WRITE( 6,13 )     AICMIN                            
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,11 )     I1
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,13 )     AICMIN
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,11 )     I1
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,13 )     AICMIN
       DO 330  J0=1,IMP1                                                 
       J1 = J0 - 1                                                       
       IF( J1 .EQ. 0 .AND. I1.GE. II )  GO TO 330                        
@@ -2606,7 +2613,7 @@ cc      IF(IPR.GE.3)  WRITE( 6,7 )   MDEL,OAIC,MDEL,J1,I1
       IF( OAIC .GE. AICMIN )  GO TO 340                                 
 C                                                                       
 cc      IF( IPR .GE. 3 )     WRITE( 6,8 )                                 
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,78 ) MDEL,OAIC,MDEL,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,78 ) MDEL,OAIC,MDEL,J1,I1
       AICMIN = OAIC                                                     
       CALL  COPY( Y,KK1,0,0,MJ4,MJ1,X )                                 
 C                                                                       
@@ -2616,20 +2623,21 @@ cc  340 K0 = K0 + 1
   340 CONTINUE
       K0 = K0 + 1                                                       
 cc      IF( IPR .GE. 3 )     WRITE( 6,18 )                                
-      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,718 ) MDEL,OAIC,MDEL,J1,I1
+cx      IF((IPR.GE.3).AND.(IFG.NE.0)) WRITE( LU,718 ) MDEL,OAIC,MDEL,J1,I1
       DO 350  I=1,KK                                                    
       J = IND(I)                                                        
   350 JND(J) = I                                                        
   400 CONTINUE                                                          
 cc      IF( IPR .GE. 3 )     WRITE( 6,16 )   AICMIN , K0                  
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )   WRITE( LU,16 )   AICMIN , K0
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )   WRITE( LU,16 )   AICMIN , K0
 C                                                                       
 C                                                                       
 C                                                                       
 cc      IF(IPR.GE.3)  WRITE( 6,15 )                                       
 cc      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD )                       
-      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,15 )
-      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
+cx      IF( (IPR.GE.3).AND.(IFG.NE.0) )  WRITE( LU,15 )
+cx      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
+      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II) )
       NPR(II) = K0
       DO 450  KK = 1,K0
          JNDF(KK,II) = JND(KK)
@@ -3993,7 +4001,8 @@ C
 C
 C
 cc      SUBROUTINE  SRCOEF( X,M,K,N,MJ,JND,IPR,A,SD )                     
-      SUBROUTINE  SRCOEF( X,M,K,N,MJ,JND,IPR,A,SD,AIC,IFG,LU )          
+cx      SUBROUTINE  SRCOEF( X,M,K,N,MJ,JND,IPR,A,SD,AIC,IFG,LU )          
+      SUBROUTINE  SRCOEF( X,M,K,N,MJ,JND,IPR,A,SD,AIC ) 
 C                                                                       
 C     SUBSET REGRESSION COEFFICIENTS AND RESIDUAL VARIANCE COMPUTATION. 
 C                                                                       
@@ -4043,18 +4052,18 @@ C
 C                                                                       
 C          REGRESSION COEFFICIENTS AND RESIDUAL VARIANCE PRINT OUT      
 C                                                                       
-      IF( IPR .LT. 2 )  RETURN                                          
-      IF( IFG .EQ. 0 )  RETURN
+cx      IF( IPR .LT. 2 )  RETURN                                          
+cx      IF( IFG .EQ. 0 )  RETURN
 cc      WRITE( 6,5 )                                                      
 cc      WRITE( 6,6 )                                                      
-      IF( IFG.NE.0 )  WRITE( LU,5 )
-      IF( IFG.NE.0 )  WRITE( LU,6 )
-      DO  40     I=1,M                                                  
-      L = JND(I)                                                        
+cx      IF( IFG.NE.0 )  WRITE( LU,5 )
+cx      IF( IFG.NE.0 )  WRITE( LU,6 )
+cx      DO  40     I=1,M                                                  
+cx      L = JND(I)                                                        
 cc   40 WRITE( 6,7 )     L , A(I)                                         
 cc      WRITE( 6,8 )     OSD , M , AIC                                    
-   40 IF( IFG.NE.0 )  WRITE( LU,7 )     L , A(I)
-      IF( IFG.NE.0 )  WRITE( LU,8 )     OSD , M , AIC
+cx   40 IF( IFG.NE.0 )  WRITE( LU,7 )     L , A(I)
+cx      IF( IFG.NE.0 )  WRITE( LU,8 )     OSD , M , AIC
 C                                                                       
       RETURN                                                            
 cc    5 FORMAT( 1H0,10X,'SUBSET REGRESSION COEFFICIENTS' )                

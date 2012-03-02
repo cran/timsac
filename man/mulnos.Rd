@@ -5,20 +5,17 @@
   Compute relative power contributions in differential and integrated form, assuming the orthogonality between noise sources.
 }
 \usage{
-  mulnos(y, max.order=NULL, ncon=NULL, nman=0, h, inw=NULL)
+  mulnos(y, max.order=NULL, control=NULL, manip=NULL, h)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of model order. Default is 2*sqrt(n), where n is the length of time series y.}
-  \item{ncon}{number of controlled variables. Default is d, where d is the dimension of the time series y.}
-  \item{nman}{number of maninpulated variables.}
-  \item{h}{specify frequencies i/2h (i=0,...,h).}
-  \item{inw}{indicator; inw[i] (i=1,...,ncon) indicate the controlled variables and
-
-    inw[i+ncon] (i=1,...,nman) indicate the manipulate variables.}
+  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of time series \code{y}.}
+  \item{control}{controlled variables. Default is \eqn{c(1:d)}, where \eqn{d} is the dimension of the time series \code{y}.}
+  \item{manip}{manipulated variables. Default number of manipulated variable is \eqn{0}.}
+  \item{h}{specify frequencies \eqn{i/2}\code{h} (\eqn{i=0,...,}\code{h}).}
 }
 \value{
-  \item{nperr}{a normalized prediction error covaiance matrix.}
+  \item{nperr}{a normalized prediction error covariance matrix.}
   \item{diffr}{differential relative power contribution.}
   \item{integr}{integrated relative power contribution.}
 }
@@ -38,7 +35,7 @@
                       0,   -0.5,  0.3),3,3,byrow=TRUE)
   x <- matrix(rnorm(200*3),200,3)
   y <- mfilter(x,ar,"recursive")
-  mulnos(y, max.order=10, ncon=3, nman=0, h=20)
+  mulnos(y, max.order=10, h=20)
 }
 
 \keyword{ts}

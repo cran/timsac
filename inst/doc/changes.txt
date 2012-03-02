@@ -5,9 +5,71 @@
 
              *************************************
 
+  timsac_1.2.6
+ ==============
+ * Add C wrapper functions to call Fortran subroutines.
+
+ * Delete arguments 'tmp.file' in autoarmafit(), armafit(), exsar(), markov(), mulmar() and unimar().
+
+ * Change the type of argument 'smt' from "single" to "double" to use the type SEXP in ngsmth().
+
+ * Fixed a bug in bsubst().
+  In the case of mtype=3, the argument 'nreg'(number of regressors) of bsubst() is not invalid.
+  It is computed automatically in R function.
+
+
+  timsac_1.2.5
+ ==============
+ * Fixed a bug in markov().
+  Add arguments 'nh' to SUBROUTINE C0GR and SUBROUTINE NSUBX1 in markovf.f.
+
+  Found the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
+  Warning: Rank mismatch in argument 'nh' at (1) (rank-1 and scalar)
+
+ * Delete arguments 'param' from FUNCTION UNIF and FUNCTION DBLEXP in ngsmthf.f.
+
+  Found the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
+  Warning: Rank mismatch in argument 'param' at (1) (scalar and rank-1)
+  Warning: Rank mismatch in argument 'param' at (1) (scalar and rank-1)
+
+
+  timsac_1.2.4
+ ==============
+ * Delete the value 'spec' from tvar().
+
+ * Added function tvspc().
+
+ * Fixed a bug in tvar(). 
+   In subroutine setcar, the size of the array "A" in the declaration is unsuitable.
+   This often causes the abnormal termination of a routine process in which the argument "trend.order" is equal to 1.
+
+
+  timsac_1.2.3
+ ==============
+ * Delete the arguments 'ncon', 'nman' and 'inw' then add the arguments 'control' and 'manip' in fpec() and mulnos().
+
+ * Delete the argument 'niv' in mulfrf().
+
+ * Change the allowed values of 'initd' from {0,1,2} to {1,2,3} in ngsmth().
+
+ * Delete C sources and call .Fortran in timsac.R.
+
+
+  timsac_1.2.2
+ ==============
+ * Fixed a bug in decomp(). In subroutine smoth3, the working array "D" is not long enough.
+   This often causes the abnormal termination of a routine process in which the argument "seasonal.order" is equal to zero.
+
+   (Reported by Seisho Sato)
+
+ * Define default value for 'outlier' as NULL in tvar().
+ 
+ * Add an overview help page 'timsac-package'.
+
+
   timsac_1.2.1
  ==============
- * In decomp() a argument 'imiss' is renamed 'miss' and given a detailed description. 
+ * In decomp() an argument 'imiss' is renamed 'miss' and given a detailed description. 
 
 
   timsac_1.2.0
@@ -35,7 +97,7 @@
 
   timsac_1.1.1
  ==============
- * Change the type of argument 'smt' in ngsmth() from "double" to "single".
+ * Change the type of argument 'smt' from "double" to "single" in ngsmth().
  * Change the function name "arma()" to "armaimp()".
 
 

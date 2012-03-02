@@ -6,19 +6,16 @@
   Perform AR model fitting for control.
 }
 \usage{
-  fpec(y, max.order=NULL, ncon=NULL, nman=0, inw=NULL)
+  fpec(y, max.order=NULL, control=NULL, manip=NULL)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of model order. Default is 2*sqrt(n), where n is the length of time series y.}
-  \item{ncon}{number of controlled variables. Default is d, where d is the dimension of the time series y.}
-  \item{nman}{number of maninpulated variables.}
-  \item{inw}{indicator; inw[i] (i=1,...,ncon) indicate the controlled variables and
-
-    inw[i+ncon] (i=1,...,nman) indicate the manipulate variables.}
+  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of time series \code{y}.}
+  \item{control}{controlled variables. Default is \eqn{c(1:d)}, where \eqn{d} is the dimension of the time series \code{y}.}
+  \item{manip}{manipulated variables. Default number of manipulated variable is \eqn{0}.}
 }
 \value{
-  \item{cov}{covariance matrix rearrangement by inw.}
+  \item{cov}{covariance matrix rearrangement by \code{inw}.}
   \item{fpec}{FPEC (AR model fitting for control).}
   \item{rfpec}{RFPEC.}
   \item{aic}{AIC.}
@@ -27,7 +24,7 @@
   \item{rfpecmin}{minimum RFPEC.}
   \item{aicmin}{minimum AIC.}
   \item{perr}{prediction error covariance matrix.}
-  \item{arcoef}{a set of coefficient matrices. arcoef[i,j,k] shows the value of i-th row, j-th column, k-th order.}
+  \item{arcoef}{a set of coefficient matrices. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
 }
 
 \references{
@@ -45,7 +42,7 @@
                       0,   -0.5,  0.3),3,3,byrow=TRUE)
   x <- matrix(rnorm(200*3),200,3)
   y <- mfilter(x,ar,"recursive")
-  fpec(y, max.order=10, ncon=3, nman=0)
+  fpec(y, max.order=10)
 }
 
 \keyword{ts}

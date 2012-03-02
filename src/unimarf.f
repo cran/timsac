@@ -1,5 +1,6 @@
-      SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A,
-     *                     TMP )
+cx      SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A,
+cx     *                     TMP,IER )
+      SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -65,8 +66,8 @@ cc      DIMENSION  X(200,101) , D(200) , A(100)
       DIMENSION  ZS(N), Z(N)
       DIMENSION  X(N+1,LAG+1), A(LAG)
       DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
-      INTEGER*1  TMP(1)
-      CHARACTER  CNAME*80
+cx      INTEGER*1  TMP(1)
+cx      CHARACTER  CNAME*80
 C                                                                       
 C        EXTERNAL SUBROUTINE DECLARATION:                               
 C                                                                       
@@ -80,28 +81,30 @@ cc         OPEN( 6,FILE=OFLNAM,ERR=900,IOSTAT=IVAR )
 cc      ELSE
 cc         CALL SETWND
 cc      END IF
-      LU=3
-      DO 100 I = 1,80
-         CNAME(I:I) = ' '
-  100 CONTINUE
-      I = 1
-      IFG = 1
-      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
-	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
-            CNAME(I:I) = CHAR(TMP(I))
-            I = I+1
-         ELSE
-            IFG = 0
-         END IF
-      END DO
-      IF ( I.GT.1 ) THEN
-         IFG = 1
-         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
-         IF (IVAR .NE. 0) THEN
-            WRITE(*,*) ' ***  unimar temp FILE OPEN ERROR :',CNAME,IVAR
-            IFG=0
-         END IF
-      END IF
+cx      IER=0
+cx      LU=3
+cx      DO 100 I = 1,80
+cx         CNAME(I:I) = ' '
+cx  100 CONTINUE
+cx      I = 1
+cx      IFG = 1
+cx      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
+cx	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
+cx            CNAME(I:I) = CHAR(TMP(I))
+cx            I = I+1
+cx         ELSE
+cx            IFG = 0
+cx         END IF
+cx      END DO
+cx      IF ( I.GT.1 ) THEN
+cx         IFG = 1
+cx         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
+cx         IF (IVAR .NE. 0) THEN
+cxcx            WRITE(*,*) ' ***  unimar temp FILE OPEN ERROR :',CNAME,IVAR
+cx            IER=IVAR
+cx            IFG=0
+cx         END IF
+cx      END IF
 C                                                                       
 C        PARAMETERS:                                                    
 C             MJ1:  ABSOLUTE DIMENSION FOR SUBROUTINE CALL              
@@ -142,10 +145,10 @@ C          ! AR MODEL FITTING !                                       !
 C          +------------------+                                       +-
 C                                                                       
 cc      CALL  ARMFIT( X,K,LAG,NMK,ISW,TITLE,MJ1,A,SD,M )                  
-      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A,M,SD,AIC,DIC,SDM,AICM,
-     *              IFG,LU )
+cx      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A,M,SD,AIC,DIC,SDM,AICM,
+cx     *              IFG,LU )
+      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A,M,SD,AIC,DIC,SDM,AICM )
 C
-      IF( IFG.EQ.1 ) CLOSE( LU )
 cc	GO TO 999
 C                                                                      +
 cc  900 CONTINUE
@@ -165,7 +168,7 @@ cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C                                                                      +
 cc  999 CONTINUE
 cc      STOP                                                              
-      IF (IFG.NE.0) CLOSE(LU)                                           
+cx      IF (IFG.NE.0) CLOSE(LU)                                           
       RETURN
 C                                                                       
     1 FORMAT( 16I5 )                                                    

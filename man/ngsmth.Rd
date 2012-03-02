@@ -5,37 +5,36 @@
   Trend estimation by Non-Gaussian smoothing.
 }
 \usage{
-  ngsmth(y,noisev=2,tau2,bv=1.0,noisew=1,sig2,bw=1.0,initd=1,k=200,plot=TRUE)
+  ngsmth(y, noisev=2, tau2, bv=1.0, noisew=1, sig2, bw=1.0, 
+         initd=1, k=200, plot=TRUE)
 }
 
 \arguments{
   \item{y}{a univariate time series.}
-  \item{noisev}{type of system noise density. (1:Gaussian (normal), 2:Pearson family, 3:two-sides exponential)}
+  \item{noisev}{type of system noise density.\cr
+   1 : Gaussian (normal), 2 : Pearson family, 3 : two-sided exponential}
   \item{tau2}{variance of dispersion of system noise.}
-  \item{bv}{shape parameter of system noise (for noisev=2).}
-  \item{noisew}{type of observation noise density. (1:Gaussian (normal), 2:Pearson family, 3:two-sided exponential, 4:double exponential)}
+  \item{bv}{shape parameter of system noise (for \code{noisev}=2).}
+  \item{noisew}{type of observation noise density.\cr
+   1 : Gaussian (normal), 2 : Pearson family, 3 : two-sided exponential, 4 : double exponential}
   \item{sig2}{variance of dispersion of observation noise.}
-  \item{bw}{shape parameter of observation noise (for noisew=2).}
-  \item{initd}{type of density function. (0:two-sided exponential, 1:Gaussian (normal), 2:uniform)}
+  \item{bw}{shape parameter of observation noise (for \code{noisew}=2).}
+  \item{initd}{type of density function.\cr
+    1 : Gaussian (normal), 2 : uniform, 3 : two-sided exponential}
   \item{k}{number of intervals}
-  \item{plot}{logical. If TRUE (default) trend and smoothed density are plotted.}
+  \item{plot}{logical. If TRUE (default) \code{trend} and \code{smt} are plotted.}
 }
 
 \details{
   Consider a one dimensional state space model
-
-    \eqn{x(n) = x(n-1) + v(n)},
-
-    \eqn{y(n) = x(n) + w(n)},
-
+    \deqn{x(n) = x(n-1) + v(n),}
+    \deqn{y(n) = x(n) + w(n),}
   where the observation noise \eqn{w(n)} is assumed to be Gaussian distributed and
   the system noise \eqn{v(n)} is assumed to be distributed as the Pearson system
+    \deqn{q(v(n)) = c/(\tau^2 + v(n)^2)^b}{q(v(n)) = c/(tau^2 + v(n)^2)^b}
+  with \eqn{\frac{1}{2} < b < \infty}{1/2 < b < infty} and \eqn{c = \tau^{2b-1}\Gamma(b) \bigm/ \Gamma(\frac{1}{2})\Gamma(b-\frac{1}{2})}{c = tau^{2b-1} * Gamma(b) / {Gamma(1/2) * Gamma(b-1/2)}}.
 
-    \eqn{q(v(n)) = c/(\tau^2 + v(n)^2)^b}  
-
-  with \eqn{1/2 < b < \infty} and \eqn{c = \tau^{2b-1}\Gamma(b) / \Gamma(1/2)\Gamma(b - 1/2)}.
-
-  This broad family of distributions includes the Cauchy distribution (b=1).
+  This broad family of distributions includes the Cauchy distribution (\eqn{b=1}).
 }
 
 \value{
@@ -45,25 +44,26 @@
 }
 
 \references{
-  Kitagawa, G., (1993) \emph{Time series analysis programing (in Japanese)}. The Iwanami Computer Science Senes.
+  Kitagawa, G., (1993) \emph{Time series analysis programing (in Japanese)}. The Iwanami Computer Science Series.
 
   Kitagawa, G. and Gersch, W., (1996) \emph{Smoothness Priors Analysis of Time Series}. Lecture Notes in Statistics, No.116, Springer-Verlag.
 }
 
 \examples{
 
-  # trend model
+  ## trend model
   x <- rep(0,400)
   x[101:200] <- 1
   x[201:300] <- -1
-  y <- rnorm(600, mean=0, sd=0.5)
-  y <- y[101:500]
-  z1 <- ngsmth(x+y, noisev=2, tau2=0.211e-09, bv=1, noisew=2, sig2=1.042, bw=1 )
+  y <- x + rnorm(400, mean=0, sd=0.5)
 
-  z2 <- ngsmth(x+y, noisev=1, tau2=0.14e-01, bv=1, noisew=2, sig2=1.048, bw=1 )
+  # system noise density : Pearson family
+  z1 <- ngsmth(y,, 2.11e-10,, 2, 1.042)
 
+  # system noise density : Gaussian (normal)
+  z2 <- ngsmth(y, 1, 1.4e-02,, 2, 1.048)
 
-  #  an earthquake wave data
+  ##  an earthquake wave data
   data(MYE1F)
   n <- length(MYE1F)
   m <- n/2
@@ -71,10 +71,14 @@
   for( i in 2:n )  y[i] <- MYE1F[i] - 0.5*MYE1F[i-1]
   yy <- rep(0, m)
   for( i in 1:m ) yy[i] <- y[i*2]
-  z <- tvvar(yy, trend.order=2, tau20= 6.6e-06, delta=1.0e-06, plot=FALSE)
-  z1 <- ngsmth( z$ts, noisev=2, tau2=0.00026, bv=1, noisew=2, sig2=1.644934, bw=1, k=190 )
+  z <- tvvar(yy, 2, 6.6e-06, 1.0e-06, FALSE)
 
-  z2 <- ngsmth( z$ts, noisev=1, tau2=0.04909, bv=1, noisew=2, sig2=1.644934, bw=1, k=190 )
+  # system noise density : Pearson family
+  z1 <- ngsmth(z$ts, 2, 2.6e-04,, 2, 1.644934, k=190)
+
+  # system noise density : Gaussian (normal)
+  z2 <- ngsmth(z$ts, 1, 4.909e-02,, 2, 1.644934, k=190)
+
 
 }
 

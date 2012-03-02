@@ -10,16 +10,14 @@ canarm(y, lag=NULL, max.order=NULL, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{max.order}{upper limit of AR order and MA order, must be less than or equal to lag. Default is lag.}
-  \item{plot}{logical. If TRUE (default) parcor is plotted.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{max.order}{upper limit of AR order and MA order, must be less than or equal to \code{lag}. Default is \code{lag}.}
+  \item{plot}{logical. If TRUE (default) \code{parcor} is plotted.}
 }
 \details{
-  The ARMA model of stationary scalar time series y(t) (t=1,...,n) is given by
-
-  \eqn{y(t) - a(1)y(t-1) -...- a(p)y(t-p) = u(t) - b(1)u(t-1) -...- b(q)u(t-q)},
-
-  where p is AR order and q is MA order.
+  The ARMA model of stationary scalar time series \eqn{y(t) (t=1,...,n)} is given by
+    \deqn{y(t) - a(1)y(t-1) - ...- a(p)y(t-p) = u(t) - b(1)u(t-1) - ... - b(q)u(t-q),}
+  where \eqn{p} is AR order and \eqn{q} is MA order.
 }
 \value{
   \item{arinit}{AR coefficients of initial AR model fitting by the minimum AIC procedure.}
@@ -39,8 +37,8 @@ canarm(y, lag=NULL, max.order=NULL, plot=TRUE)
   \item{dic}{DIC.}
   \item{dicmin}{minimum DIC.}
   \item{order.dicmin}{order of minimum DIC.}
-  \item{arcoef}{AR coefficients a(i) (i = 1,...,p).}
-  \item{macoef}{MA coefficients b(i) (i = 1,...,q).}
+  \item{arcoef}{AR coefficients \eqn{a(i) (i = 1,...,p)}.}
+  \item{macoef}{MA coefficients \eqn{b(i) (i = 1,...,q)}.}
 }
 
 \references{

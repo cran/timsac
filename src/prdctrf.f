@@ -1,5 +1,6 @@
       SUBROUTINE PRDCTRF(N,P,Q,H,D,K,L,JSW,YY,B,A,WW,S,Y,YORI,YD,X,Z1,
-     *Z2,Z3,ZZ1,ZZ2,ZZ3,TMP)
+cx     *Z2,Z3,ZZ1,ZZ2,ZZ3,TMP,IER)
+     *Z2,Z3,ZZ1,ZZ2,ZZ3)
 C
       INCLUDE 'timsac_f.h'
 C
@@ -74,8 +75,8 @@ cc	EQUIVALENCE(W(1,1,1),X(1,1))
       DIMENSION Z1(Q+H,D),Z2(Q+H,D),Z3(Q+H,D)
       DIMENSION ZZ1(Q+H,D),ZZ2(Q+H,D),ZZ3(Q+H,D)
 C
-      INTEGER*1  TMP(1)
-      CHARACTER  CNAME*80
+cx      INTEGER*1  TMP(1)
+cx      CHARACTER  CNAME*80
 C
 C      DATA A/1000*0.0D-00/, B/1000*0.0D-00/, W/10000*0.0D-00/
 cc	DATA A/1000*0.0D-00/, B/1000*0.0D-00/, W/10100*0.0D-00/
@@ -100,27 +101,29 @@ C     INPUT / OUTPUT DATA FILE OPEN
 cc	CALL SETWND
 cc	CALL FLOPN2(NFL)
 cc	IF (NFL.EQ.0) GO TO 999
-      LU=3
-      DO 100 I = 1,80
-  100 CNAME(I:I) = ' '
-      I = 1
-      IFG = 1
-      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
-	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
-            CNAME(I:I) = CHAR(TMP(I))
-            I = I+1
-         ELSE
-            IFG = 0
-         END IF
-      END DO
-      IF ( I.GT.1 ) THEN
-         IFG = 1
-         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
-         IF (IVAR .NE. 0) THEN
-            WRITE(*,*) ' ***  prdctr temp FILE OPEN ERROR :',CNAME,IVAR
-            IFG=0
-         END IF
-      END IF
+cx      IER=0
+cx      LU=3
+cx      DO 100 I = 1,80
+cx  100 CNAME(I:I) = ' '
+cx      I = 1
+cx      IFG = 1
+cx      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
+cx	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
+cx            CNAME(I:I) = CHAR(TMP(I))
+cx            I = I+1
+cx         ELSE
+cx            IFG = 0
+cx         END IF
+cx      END DO
+cx      IF ( I.GT.1 ) THEN
+cx         IFG = 1
+cx         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
+cx         IF (IVAR .NE. 0) THEN
+cxcx            WRITE(*,*) ' ***  prdctr temp FILE OPEN ERROR :',CNAME,IVAR
+cx            IER=IVAR
+cx            IFG=0
+cx         END IF
+cx      END IF
 C
 cc	MJ1=10
 cc	MJ2=10
@@ -456,100 +459,100 @@ C
 C     ********************
 C     GRAPHIC PRINT OUT
 C     ********************
-      IF (IFG .NE. 0) THEN
-      KSTOR=K2
-      DO  600  J=1,D
-      DMAX=DMXT(J)
-      DMIN=DMIT(J)
+cx      IF (IFG .NE. 0) THEN
+cx      KSTOR=K2
+cx      DO  600  J=1,D
+cx      DMAX=DMXT(J)
+cx      DMIN=DMIT(J)
 cc	FMAX=ABS(DMAX)
 cc	FMIN=ABS(DMIN)
 cc	FMAX=AMAX1(FMAX,FMIN)
-      FMAX=DABS(DMAX)
-      FMIN=DABS(DMIN)
-      FMAX=DMAX1(FMAX,FMIN)
-      FMIN=-FMAX
-cc	YST=FMAX/60.0
-      YST=FMAX/60.0D-00
-      TFMIN=FMIN+AV(J)
-      TFMID=AV(J)
-      TFMAX=FMAX+AV(J)
+cx      FMAX=DABS(DMAX)
+cx      FMIN=DABS(DMIN)
+cx      FMAX=DMAX1(FMAX,FMIN)
+cx      FMIN=-FMAX
+cxcc	YST=FMAX/60.0
+cx      YST=FMAX/60.0D-00
+cx      TFMIN=FMIN+AV(J)
+cx      TFMID=AV(J)
+cx      TFMAX=FMAX+AV(J)
 cc	WRITE(6,931) J,(NAME(I,J),I=1,20)
 cc	WRITE(6,932)
 cc	WRITE(6,933)
 cc	WRITE(6,934) TFMIN,TFMID,TFMAX
 cc	WRITE(6,935)
-      WRITE(LU,931) J
-      WRITE(LU,932)
-      WRITE(LU,933)
-      WRITE(LU,934) TFMIN,TFMID,TFMAX
-      WRITE(LU,935)
+cx      WRITE(LU,931) J
+cx      WRITE(LU,932)
+cx      WRITE(LU,933)
+cx      WRITE(LU,934) TFMIN,TFMID,TFMAX
+cx      WRITE(LU,935)
 C
-      DO 599 I=1,IQH
-      YA=Y(I,J)-AV(J)
-      XX(61)=K6
+cx      DO 599 I=1,IQH
+cx      YA=Y(I,J)-AV(J)
+cx      XX(61)=K6
 cc      IF  (I-Q)	 501,569,570
 cc  501 IF  (I-P)	 502,550,550
-      IF  (I-Q.EQ.0) GO TO 569
-      IF  (I-Q.GT.0) GO TO 570
-  501 IF  (I-P.GE.0) GO TO 550
+cx      IF  (I-Q.EQ.0) GO TO 569
+cx      IF  (I-Q.GT.0) GO TO 570
+cx  501 IF  (I-P.GE.0) GO TO 550
 C
 C     REAL DATA
-  502 CALL SBSCAL(YA,YST,IX)
-      XX(IX)=K1
+cx  502 CALL SBSCAL(YA,YST,IX)
+cx      XX(IX)=K1
 cc	WRITE(6,936) I,(XX(I2),I2=1,121)
-      WRITE(LU,936) I,(XX(I2),I2=1,121)
-      XX(IX)=K5
-      GO TO 599
+cx      WRITE(LU,936) I,(XX(I2),I2=1,121)
+cx      XX(IX)=K5
+cx      GO TO 599
 C
 C     REAL DATA
-  550 CALL SBSCAL(YA,YST,IX)
+cx  550 CALL SBSCAL(YA,YST,IX)
 C     ONE-STEP PREDICTION
-      YB=YA-X(I,J)
-      CALL SBSCAL(YB,YST,JX)
+cx      YB=YA-X(I,J)
+cx      CALL SBSCAL(YB,YST,JX)
 C
 cc  566 IF  (IX-JX) 568,567,568
-  566 IF  (IX-JX.NE.0) GO TO 568
-  567 XX(IX)=K3
+cx  566 IF  (IX-JX.NE.0) GO TO 568
+cx  567 XX(IX)=K3
 cc	WRITE(6,936) I,(XX(I2),I2=1,121)
-      WRITE(LU,936) I,(XX(I2),I2=1,121)
-      XX(IX)=K5
-      GO TO 599
+cx      WRITE(LU,936) I,(XX(I2),I2=1,121)
+cx      XX(IX)=K5
+cx      GO TO 599
 C
-  568 XX(IX)=K1
-      XX(JX)=K2
+cx  568 XX(IX)=K1
+cx      XX(JX)=K2
 cc	WRITE(6,936) I,(XX(I2),I2=1,121)
-      WRITE(LU,936) I,(XX(I2),I2=1,121)
-      XX(IX)=K5
-      XX(JX)=K5
-      GO TO 599
+cx      WRITE(LU,936) I,(XX(I2),I2=1,121)
+cx      XX(IX)=K5
+cx      XX(JX)=K5
+cx      GO TO 599
 C
-  569 KSTOR=K2
-      K2=K4
-      ISR=0
+cx  569 KSTOR=K2
+cx      K2=K4
+cx      ISR=0
 C
 C     LONG RANGE PREDICTION
-  570 CALL SBSCAL(YA,YST,JX)
+cx  570 CALL SBSCAL(YA,YST,JX)
 cc  576 IF  (I-N) 577,577,598
-  576 IF  (I-N.GT.0) GO TO 598
+cx  576 IF  (I-N.GT.0) GO TO 598
 C     REAL DATA
-  577 ISR=ISR+1
-      YC=YORI(ISR,J)-AV(J)
-      CALL SBSCAL(YC,YST,IX)
-      GO TO 566
+cx  577 ISR=ISR+1
+cx      YC=YORI(ISR,J)-AV(J)
+cx      CALL SBSCAL(YC,YST,IX)
+cx      GO TO 566
 C
-  598 XX(JX)=K4
+cx  598 XX(JX)=K4
 cc	WRITE(6,936) I,(XX(I2),I2=1,121)
-      WRITE(LU,936) I,(XX(I2),I2=1,121)
-      XX(JX)=K5
-  599 CONTINUE
-      K2=KSTOR
-  600 CONTINUE
-      END IF
+cx      WRITE(LU,936) I,(XX(I2),I2=1,121)
+cx      XX(JX)=K5
+cx  599 CONTINUE
+cx      K2=KSTOR
+cx  600 CONTINUE
+cx      END IF
 C
 cc	CALL FLCLS2(NFL)
 cc  999 CONTINUE
 cc	STOP
-      IF (IFG.NE.0) CLOSE(LU)
+cx      IF (IFG.NE.0) CLOSE(LU)
   800 FORMAT(8I5)
   801 FORMAT(20A4)
   900 FORMAT(1H ,' PROGRAM 74.3.1. PREDICTION')
@@ -597,17 +600,4 @@ cc 1002 IF(DMIN-YD) 1004,1004,1003
  1003 DMIN=YD
  1004 RETURN
       END
-C
-C
-      SUBROUTINE SBSCAL(YA,YST,IX)
-	REAL*8 YA,YST
-C     YA SCALING
-      IF(YA.LT.0) GO TO 11
-   10 IFC=YA/YST+0.5
-      GO TO 12
-   11 IFC=YA/YST-0.5
-   12 IX=IFC+61
-      IF(IX.GT.121) IX=121
-      IF(IX.LE.0) IX=1
-      RETURN
-      END
+

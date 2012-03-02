@@ -5,13 +5,13 @@
   Compute multiple frequency response function, gain, phase, multiple coherency, partial coherency and relative error statistics.
 }
 \usage{
- mulfrf(y, lag=NULL, niv, iovar=c(1:(niv+1)))
+ mulfrf(y, lag=NULL, iovar=NULL)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{niv}{number of input variables.}
-  \item{iovar}{input and output variables. iovar(i)-th variables (1<=i<=niv) are input variables and iovar(niv+1)-th variable is output variable.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the number of rows in \code{y}.}
+  \item{iovar}{input variables (\code{iovar[i], i=1,k}) and output variable (\code{iovar[k+1]}) (\eqn{1 \le k \le d}{1<=i<=d}),
+ where \eqn{d} is the number of columns in \code{y}. Default is \eqn{c(1:d)}.}
 }
 \value{
   \item{cospec}{spectrum (complex).}
@@ -38,7 +38,7 @@
                       0,   -0.5,  0.3),3,3,byrow=TRUE)
   x <- matrix(rnorm(200*3),200,3)
   y <- mfilter(x,ar,"recursive")
-  mulfrf(y, lag=20, niv=2)
+  mulfrf(y, lag=20)
 }
 
 \keyword{ts}

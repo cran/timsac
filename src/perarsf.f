@@ -151,10 +151,12 @@ C          INSTANTANEOUS RESPONSE MODEL FITTING
 C                                                                       
 cc      CALL  MARFIT( X,U,D,NMK,IP,LAG,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,B,E,EX,
 cc     *              C,LMAX,AIC )                                        
-      IFG = 0
+cx      IFG = 0
       CALL MARFIT( X,NMK,IP,LAG,KSW,MJ1,MJ2,MJ3,MJ4,ISW,IPR,AIC,SD,
-     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AICF,IFG,LU )                                          
-C   C                                                                       
+cx     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AICF,IFG,LU )
+     *DIC,AICM,SDM,IM,BI,EI,B,E,EX,C,LMAX,AICS,JNDF,AF,NPR,AICF )
+C   
+C                                                                       
 C          REGRESSION MODEL PRINT OUT                                   
 C                                                                       
 cc      CALL  PRINT4( B,E,C,EX,ID,LMAX,MJ2 )                              

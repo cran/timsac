@@ -2,7 +2,7 @@
 \alias{wnoise}
 \title{White Noise Generator}
 \description{
-  Genetate approximately Gaussian vector white noise.
+  Generate approximately Gaussian vector white noise.
 }
 \usage{
   wnoise(len, perr, plot=TRUE)

@@ -10,7 +10,7 @@
 }
 \arguments{
   \item{y}{A multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{span}{length of basic local span.}
 }
 \value{
@@ -18,7 +18,7 @@
   \item{var}{variance.}
   \item{bweight}{Bayesian weight.}
   \item{aic}{AIC with respect to the present data.}
-  \item{arcoef}{AR coefficients. arcoef[[m]][i,j,k] shows the value of i-th row, j-th column, k-th order of m-th model.}
+  \item{arcoef}{AR coefficients. \code{arcoef[[m]][i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order of \eqn{m}-th model.}
   \item{v}{innovation variance.}
   \item{eaic}{equivalent AIC of Bayesian model.}
   \item{init}{start point of the data fitted to the current model.}
@@ -27,10 +27,8 @@
 
 \details{
   The basic AR model is given by
-
-    \eqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t)},
-
-  where p is order of the AR model and u(t) is innovation variance v.
+    \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
+  where \eqn{p} is order of the AR model and \eqn{u(t)} is innovation variance \code{v}.
 }
 
 \references{

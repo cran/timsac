@@ -44,6 +44,11 @@ cc	CALL SETWND
 cc	CALL FLOPN2(NFL)
 cc	IF (NFL.EQ.0) GO TO 999
 C
+c-------
+      A = 0
+      BR = 0
+      BI = 0
+c-------
 cc	MJ1=51
       CST0 =0.0D-00
       CST1 =1.0D-00

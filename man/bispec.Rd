@@ -2,30 +2,31 @@
 \alias{bispec}
 \title{Bispectrum}
 \description{
-  Compute bi-spectrum using the direct Fourier transform of sample third order monents.
+  Compute bi-spectrum using the direct Fourier transform of sample third order moments.
 }
 \usage{
 bispec(y, lag=NULL, window="Akaike", log=FALSE, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{window}{character string giving the definition of smoothing window. Allowed values are "Akaike" (default) or "Hanning".}
-  \item{log}{logical. If TRUE the spectrum pspec is plotted as log(pspec).}
-  \item{plot}{logical. If TRUE (default) the spectrum pspec is plotted.}
+  \item{log}{logical. If TRUE the spectrum \code{pspec} is plotted as log(\code{pspec}).}
+  \item{plot}{logical. If TRUE (default) the spectrum \code{pspec} is plotted.}
 }
 \details{
-  Hanning Window : a1(0)=0.5, a1(1)=a1(-1)=0.25, a1(2)=a1(-2)=0
-
-  Akaike Window  : a2(0)=0.625, a2(1)=a2(-1)=0.25, a2(2)=a2(-2)=-0.0625
+  \tabular{rlll}{
+    Hanning Window : \tab a1(0)=0.5,\tab a1(1)=a1(-1)=0.25,\tab a1(2)=a1(-2)=0\cr
+    Akaike Window : \tab a2(0)=0.625,\tab a2(1)=a2(-1)=0.25,\tab a2(2)=a2(-2)=-0.0625
+  }
 }
 \value{
-  \item{pspec}{power spectrum smoothed by "window".}
+  \item{pspec}{power spectrum smoothed by \code{window}.}
   \item{sig}{significance.}
   \item{cohe}{coherence.}
   \item{breal}{real part of bispectrum.}
   \item{bimag}{imaginary part of bispectrum.}
-  \item{exval}{aproximate expected value of coherence under Gaussian assumption.}
+  \item{exval}{approximate expected value of coherence under Gaussian assumption.}
 }
 
 \references{

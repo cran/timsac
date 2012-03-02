@@ -10,29 +10,27 @@ simcon(span, len, r, arcoef, impuls, v, weight)
 \arguments{
   \item{span}{span of control performance evaluation.}
   \item{len}{length of experimental observation.}
-  \item{r}{dimension of control input, less than or equal to d (dimension of a vector).}
-  \item{arcoef}{matrices of autoregressive coefficients. arcoef[i,j,k] shows the value of i-th row, j-th column, k-th order.}
-  \item{impuls}{impulse responce matrices.}
+  \item{r}{dimension of control input, less than or equal to \eqn{d} (dimension of a vector).}
+  \item{arcoef}{matrices of autoregressive coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
+  \item{impuls}{impulse response matrices.}
   \item{v}{covariance matrix of innovation.}
   \item{weight}{weighting matrix of performance.}
 }
 \details{
   The basic state space model is obtained from the autoregressive moving average model of
-  a vector process y(t);
-
-  \eqn{y(t) - A(1)y(t-1) -...- A(p)y(t-p) = u(t) - B(1)u(t-1) -...- B(p-1)u(t-p+1)},
-
-  where A(i) (i=1,p)  are the autoregressive coefficients of the ARMA representation of y(t).
+  a vector process \eqn{y(t)};
+    \deqn{y(t) - A(1)y(t-1) -\ldots- A(p)y(t-p) = u(t) - B(1)u(t-1) -\ldots- B(p-1)u(t-p+1),}{y(t) - A(1)y(t-1) - ... - A(p)y(t-p) = u(t) - B(1)u(t-1) - ... - B(p-1)u(t-p+1),}
+  where \eqn{A(i)} (\eqn{i=1,\ldots,p}{i=1,...,p}) are the autoregressive coefficients of the ARMA representation of \eqn{y(t)}.
 }
 
 \value{
   \item{gain}{controller gain.}
-  \item{ave}{average value of i-th component of y.}
+  \item{ave}{average value of i-th component of \code{y}.}
   \item{var}{variance.}
   \item{std}{standard deviation.}
-  \item{bc}{(p*d,r) sub matrices of impulse response matrices, where p is the order of the process, d is the dimension of the vector and
-            r is the dimension of the control input.}
-  \item{bd}{(p*d,d-r) sub matrices of impulse response matrices.}
+  \item{bc}{sub matrices \eqn{(pd,r)} of impulse response matrices, where \eqn{p} is the order of the process, \eqn{d} is the dimension of the vector and
+            \eqn{r} is the dimension of the control input.}
+  \item{bd}{sub matrices \eqn{(pd,d-r)} of impulse response matrices.}
 }
 
 \references{

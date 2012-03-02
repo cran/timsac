@@ -312,7 +312,8 @@ C
 C                                                                       
 cc      MJ4 = 50                                                          
       MJ4 = LAG
-      IPR = 0                                                           
+      IPR = 0
+cx      IFG = 0
 C                                                                       
       K1 = LAG + 1                                                      
       KD1 = K1*ID + KSW                                                 
@@ -329,7 +330,8 @@ C
 cc      CALL  MARFIT( X,Y,D,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,B,E,EX,C, 
 cc     *             MS,AICS )                                            
       CALL  MARFIT( X,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC,
-     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC,IFG,LU )       
+cx     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC,IFG,LU )
+     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC )
 C                                                                       
       IF( IF .NE. 0 )     GO TO 10                                      
 C                                                                       
@@ -362,7 +364,8 @@ C
 cc      CALL  MARFIT( X,Y,D,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,A,E,EX,C, 
 cc     *              MP,AICP )                                           
       CALL  MARFIT( X,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC, 
-     *AICM,SDM,M,AI,EI,A,E,EX,C,MP,AICP,JNDF,AF,NPR,AAIC,IFG,LU )
+cx     *AICM,SDM,M,AI,EI,A,E,EX,C,MP,AICP,JNDF,AF,NPR,AAIC,IFG,LU )
+     *AICM,SDM,M,AI,EI,A,E,EX,C,MP,AICP,JNDF,AF,NPR,AAIC )
 C                                                                       
 cc      WRITE( 6,7 )     NP , MP , AICP                                   
 C                                                                       

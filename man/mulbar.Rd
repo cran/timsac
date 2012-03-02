@@ -10,23 +10,23 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE daic is plotted.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE \code{daic} is plotted.}
 
 }
 \value{
   \item{mean}{mean.}
   \item{var}{variance.}
   \item{v}{innovation variance.}
-  \item{aic}{AIC(m), (m = 0,...,max.order).}
+  \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
-  \item{daic}{AIC(m)-aicmin (m = 0,...,max.order).}
+  \item{daic}{AIC-\code{aicmin}.}
   \item{order.maice}{order of minimum AIC.}
-  \item{v.maice}{innovation variance attained at m=order.maice.}
+  \item{v.maice}{MAICE innovation variance.}
   \item{bweight}{Bayesian weights.}
   \item{integra.bweight}{integrated Bayesian Weights.}
-  \item{arcoef.for}{AR coefficients (forward model). arcoef.for[i,j,k] shows the value of i-th row, j-th column, k-th order.}
-  \item{arcoef.back}{AR coefficients (backward model). arcoef.back[i,j,k] shows the value of i-th row, j-th column, k-th order.}
+  \item{arcoef.for}{AR coefficients (forward model). \code{arcoef.for[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
+  \item{arcoef.back}{AR coefficients (backward model). \code{arcoef.back[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
   \item{pacoef.for}{partial autoregression coefficients (forward model).}
   \item{pacoef.back}{partial autoregression coefficients (backward model).}
   \item{v.bay}{innovation variance of the Bayesian model.}
@@ -34,36 +34,24 @@
 }
 \details{
   The statistic AIC is defined by
+    \deqn{AIC = n\ log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
+  where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation variance matrix,
+  \eqn{det} is the determinant and \eqn{k} is the number of free parameters.
 
-    \eqn{AIC = nlog(det(v)) + 2k},
-
-  where n is the number of data, v is the estimate of innovation variance matrix,
-  det is the determinant and k is the number of free parameters.
-
-  Bayesian weight of the m-th order model is defined by
-
-    \eqn{W(n) = const * C(m) / (m+1)},
-
-  where const is the normalizing constant and \eqn{C(m)=exp(-0.5AIC(m))}.
-
+  Bayesian weight of the \eqn{m}-th order model is defined by
+    \deqn{W(n) = const \times C(m) / (m+1),}{W(n) = const * C(m) / (m+1),}
+  where \eqn{const} is the normalizing constant and \eqn{C(m)=exp(-0.5 AIC(m))}.
   The Bayesian estimates of partial autoregression coefficient matrices of forward and backward models are
-  obtained by (m = 1,...,lag)
-
-    \eqn{G(m) = G(m) D(m)},
-
-    \eqn{H(m) = H(m) D(m)},
-
-  where the original G(m) and H(m) are the (conditional) maximum likelihood estimates
-  of the highest order coefficient matrices of forward and backward AR models of order m
-  and D(m) is defined by
-
-    \eqn{D(m) = W(m) + ... + W(lag)}.
-
+  obtained by \eqn{(m = 1,\ldots,lag)}{(m = 1,...,lag)}
+    \deqn{G(m) = G(m) D(m),}
+    \deqn{H(m) = H(m) D(m),}
+  where the original \eqn{G(m)} and \eqn{H(m)} are the (conditional) maximum likelihood estimates
+  of the highest order coefficient matrices of forward and backward AR models of order \eqn{m}
+  and \eqn{D(m)} is defined by
+    \deqn{D(m) = W(m) + \ldots + W(lag).}{D(m) = W(m) + ... + W(lag).}
   The equivalent number of parameters for the Bayesian model is defined by
-
-    \eqn{ek = (D(1)^2 + ... + D(lag)^2) id + id (id+1)/2}
-
-  where id denotes dimension of the process.
+    \deqn{ek = (D(1)^2 + \ldots + D(lag)^2) id + id (id+1)/2}{ek = (D(1)^2 + ... + D(lag)^2) id + id (id+1)/2}
+  where \eqn{id} denotes dimension of the process.
 }
 
 \references{
@@ -71,7 +59,7 @@
   A Bayesian Extension of The Minimum AIC Procedure of Autoregressive Model Fitting.
    Research Memo. NO.126, The Institute of Statistical Mathematics.
 
-  G.Kiagawa and H.Akaike (1978)
+  G.Kitagawa and H.Akaike (1978)
   A Procedure for The Modeling of Non-stationary Time Series.
    Ann. Inst. Statist. Math., 30, B, 351--363.
 

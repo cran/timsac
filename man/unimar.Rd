@@ -6,39 +6,32 @@
   by the method of least squares realized through householder transformation. 
 }
 \usage{
-unimar(y, max.order=NULL, plot=FALSE, tmp.file=NULL)
+unimar(y, max.order=NULL, plot=FALSE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of AR order. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE daic is plotted.}
-  \item{tmp.file}{a character string naming a file written intermediate results of AR coefficients computation.
-                  If NULL (default) output no file.}
+  \item{max.order}{upper limit of AR order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \eqn{y}.}
+  \item{plot}{logical. If TRUE \code{daic} is plotted.}
 }
 \value{
   \item{mean}{mean.}
   \item{var}{variance.}
   \item{v}{innovation variance.}
-  \item{aic}{AIC(m) (m = 0,...,max.order).}
+  \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
-  \item{daic}{AIC(m)-aicmin (m = 0,...,max.order).}
+  \item{daic}{AIC-\code{aicmin}.}
   \item{order.maice}{order of minimum AIC.}
-  \item{v.maice}{innovation variance attained at \code{"order.maice"}.}
+  \item{v.maice}{innovation variance attained at \code{order.maice}.}
   \item{arcoef}{AR coefficients.}
 }
 \details{
   The AR model is given by
-
-    \eqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
-
-  where p is AR order and u(t) is Gaussian white noise with mean 0 and variance v.
-
+    \deqn{y(t) = a(1)y(t-1) + \ldots + a(p)y(t-p) + u(t),}{y(t) = a(1)y(t-1) + ... + a(p)y(t-p) + u(t),}
+  where \eqn{p} is AR order and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance \eqn{v}.
   AIC is defined by
-
-    \eqn{AIC = nlog(det(v)) + 2k}
-
-  where n is the length of data, v is the estimates of the innovation variance
-  and k is the number of parameter.
+    \deqn{AIC = nlog(det(v)) + 2k,}
+  where \eqn{n} is the length of data, \eqn{v} is the estimates of the innovation variance
+  and \eqn{k} is the number of parameter.
 }
 
 \references{

@@ -1,5 +1,5 @@
-      SUBROUTINE ARMAF(M,L,A,B,SIG2,N,K,NF,G,COV,PAR,SP,ROOTA,ROOTB,
-     *                  IER,JER)
+      SUBROUTINE ARMAF(M,L,A,B,SIG2,N,K,KMAX,NF,G,COV,PAR,SP,
+     * ROOTA,ROOTB,IER,JER)
 C
       INCLUDE 'timsac_f.h'
 C
@@ -35,7 +35,7 @@ cc      DIMENSION  G(0:MJ), COV(0:MJ), SP(0:NF)
 cc      DIMENSION  WRK1(0:MJ), WRK2(0:MJ), WRK3(MJ)
 cc      DATA  PAR/MJ*0.0D0/
       DIMENSION  A(M), B(L), PAR(K), ROOTA(M,2), ROOTB(L,2)
-      DIMENSION  G(0:K), COV(0:K), SP(0:NF)
+      DIMENSION  G(0:KMAX), COV(0:K), SP(0:NF)
       DIMENSION  WRK1(0:K), WRK2(0:K), WRK3(K,K)
 C
 cc      WRITE( 6,* )  'K = ?'
@@ -47,10 +47,13 @@ cc      READ(IDEV,*)  (A(I),I=1,M)
 cc      READ(IDEV,*)  (B(I),I=1,L)
 cc      CLOSE( IDEV )
 C
-      KMAX = MAX(M,L,K)
+cc      KMAX = MAX(M,L,K)
       CALL  IMPULS( M,L,A,B,K,G )
 cc      CALL  ARMCOV( M,L,A,B,SIG2,K,COV )
       CALL  ARMCOV( M,L,A,B,SIG2,K,COV,KMAX,IER )
+c------------
+      PAR = 0
+c------------
       CALL  PARCOR( A,M,PAR )
       CALL  ARCOEF( PAR,M,A )
 cc      IF( L.GT.0 )  CALL  ARYULE( COV,1000,K,WRK1,WRK2,PAR,WRK3,MAR )
@@ -64,67 +67,6 @@ cc      CALL  PRARMA( M,L,A,B,G,K,COV,K,PAR,SP,NF,ROOTA,ROOTB,MJ )
 C      CALL  PTARMA( G,K,COV,K,PAR,SP,NF,ROOTA,M,ROOTB,L,MJ )
 cc      STOP
       RETURN
-      E N D
-      SUBROUTINE  PRARMA( M,L,A,B,G,K,COV,K2,PARCOR,SP,NF,ROOTA,
-cc     *                    ROOTB,MJ )
-     *                     ROOTB )
-C
-C  ...  This subroutine prints out impulse response function,
-C       autocovariance function, PARCOR, power spectrum and
-C       characteristic roots of the AR and MA operators  ...
-C
-C     Inputs:
-C        A(I):    AR coefficient (I=1,M)
-C        B(I):    MA coefficient (I=1,L)
-C        G(I):    Impulse response function (I=0,K)
-C        COV(I):  Autocovariance function (I=0,K2)
-C        SP(I):   Power spectrum (I=0,NF)
-C        PARCOR(I):  Partial autocorrelation function (I=1,K2)
-C        ROOTA(I):   Characteristic roots of AR operator (I=1,M)
-C        ROOTB(I):   Characteristic roots of MA operator (I=1,L)
-C
-      IMPLICIT REAL*8(A-H,O-Z)
-      DIMENSION  G(0:K), COV(0:K2), PARCOR(K2), A(M), B(L)
-cc      DIMENSION  ROOTA(MJ,2), ROOTB(MJ,2), SP(0:NF)
-      DIMENSION  ROOTA(M,2), ROOTB(L,2), SP(0:NF)
-C
-      WRITE(6,600)
-      WRITE(6,610)  M, L
-      IF(M.GT.0)  WRITE(6,620)  (A(I),I=1,M)
-      IF(L.GT.0)  WRITE(6,630)  (B(I),I=1,L)
-      WRITE(6,640)  (G(I),I=1,K)
-      WRITE(6,650)  (COV(I),I=0,K2)
-      WRITE(6,660)  (PARCOR(I),I=1,K2)
-      WRITE(6,670)  (SP(I),I=0,NF)
-      WRITE(6,700)
-      WRITE(6,680)
-      DO 10  I=1,M
-      AMP = DSQRT ( ROOTA(I,1)**2 + ROOTA(I,2)**2 )
-      TAN = DATAN2( ROOTA(I,2),ROOTA(I,1) )
-      DEG = TAN * 0.5729577951D02
-   10 WRITE(6,690)  ROOTA(I,1), ROOTA(I,2), AMP, TAN, DEG
-      WRITE(6,710)
-      WRITE(6,680)
-      DO 20  I=1,L
-      AMP = DSQRT ( ROOTB(I,1)**2 + ROOTB(I,2)**2 )
-      TAN = DATAN2( ROOTB(I,2),ROOTB(I,1) )
-      DEG = TAN * 0.5729577951D02
-   20 WRITE(6,690)  ROOTB(I,1), ROOTB(I,2), AMP, TAN, DEG
-C
-      RETURN
-  600 FORMAT( 1H ,'PROGRAM 6.1:  ARMA MODEL' )
-  610 FORMAT( 1H ,'M =',I3,5X,'L =',I3 )
-  620 FORMAT( 1H ,'**  AR COEFFICIENTS  **',/(10F8.4) )
-  630 FORMAT( 1H ,'**  MA COEFFICIENTS  **',/(10F8.4) )
-  640 FORMAT( 1H ,'**  IMPULSE RESPONSE FUNCTION  **',/(5F15.8) )
-  650 FORMAT( 1H ,'**  AUTOCOVARIANCE FUNCTION  **',/(5D15.7) )
-  660 FORMAT( 1H ,'**  PARCOR  **',/(10F8.4) )
-  670 FORMAT( 1H ,'**  POWER SPECTRUM  **',/(10F8.3) )
-  680 FORMAT( 9X,'REAL',8X,'IMAGINARY',10X,'SQRT(R**2+I**2)  ARCTAN(I/R)
-     1',5X,'DEGREE' )
-  690 FORMAT( 1H ,2D15.5,7X,2D15.5,F12.3 )
-  700 FORMAT( 1H ,'**  CHARACTERISTIC ROOTS OF AR OPERATOR  **' )
-  710 FORMAT( 1H ,'**  CHARACTERISTIC ROOTS OF MA OPERATOR  **' )
       E N D
 cc      SUBROUTINE  CHROOT( A,M,ROOT,MJ )
       SUBROUTINE  CHROOT( A,M,ROOT,MJ,IER )
@@ -359,7 +301,8 @@ C     Y.I.
       IMPLICIT REAL*8( A-H,O-Z )
 cc      DIMENSION  A(*), B(*), COV(0:K), G(0:100), X(30,30)
 cc      DIMENSION  Z(100), UL(30,30), IPS(100)
-      DIMENSION  A(*), B(*), COV(0:K), G(0:KMAX), X(M+1,M+1)
+cxxxxxxxxx      DIMENSION  A(*), B(*), COV(0:K), G(0:KMAX), X(M+1,M+1)
+      DIMENSION  A(1), B(1), COV(0:K), G(0:KMAX), X(M+1,M+1)
       DIMENSION  Z(M+1), UL(M+1,M+1), IPS(M+1)
 C
 cc      KMAX = MAX(M,L,K)
@@ -495,7 +438,8 @@ C     Output:
 C        G(I):  Impulse response function
 C     Y.I.
       IMPLICIT REAL*8( A-H,O-Z )
-      DIMENSION A(*), B(*), G(0:K)
+cxxxxx      DIMENSION A(*), B(*), G(0:K)
+      DIMENSION A(1), B(1), G(0:K)
 C
       G(0) = 1.0
       DO  20 I=1,K

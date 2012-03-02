@@ -11,18 +11,18 @@
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{ar.order}{order of the AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE (default) daic, pacoef and pspec are plotted.}
+  \item{ar.order}{order of the AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE (default) \code{daic}, \code{pacoef} and \code{pspec} are plotted.}
 }
 \value{
   \item{mean}{mean.}
   \item{var}{variance.}
   \item{v}{innovation variance.}
-  \item{aic}{AIC(m) (m = 0,...,ar.order).}
+  \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
-  \item{daic}{AIC(m)-aicmin (m = 0,...,ar.order).}
+  \item{daic}{AIC-\code{aicmin}.}
   \item{order.maice}{order of minimum AIC.}
-  \item{v.maice}{innovation variance attained at m=order.maice.}
+  \item{v.maice}{innovation variance attained at m=\code{order.maice}.}
   \item{pacoef}{partial autocorrelation coefficients (least squares estimate).}
   \item{bweight}{Bayesian Weight.}
   \item{integra.bweight}{integrated Bayesian weights.}
@@ -35,34 +35,23 @@
 }
 \details{
   The AR model is given by
-
-    \eqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
-
-  where p is AR order and u(t) is Gaussian white noise with mean 0 and variance v(p).
-
+    \deqn{y(t) = a(1)y(t-1) + \ldots + a(p)y(t-p) + u(t),}{y(t) = a(1)y(t-1) + ... + a(p)y(t-p) + u(t),}
+  where \eqn{p} is AR order and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance \eqn{v(p)}.
   The basic statistic AIC is defined by
+    \deqn{AIC = nlog(det(v)) + 2m,}
+  where \eqn{n} is the length of data, \eqn{v} is the estimate of innovation variance, and \eqn{m} is the order of the model.
 
-    \eqn{AIC = nlog(det(v)) + 2m},
-
-  where n is the length of data, v is the estimate of innovation variance, and m is the order of the model.
-
-  Bayesian weight of the m-th order model is defined by
-
-    \eqn{W(m) = CONST*C(m) / (m+1)},
-
-  where CONST is the normalizing constant and \eqn{C(m)=exp(-0.5AIC(m))}.
-
+  Bayesian weight of the \eqn{m}-th order model is defined by
+    \deqn{W(m) = CONST \times C(m) / (m+1),}{W(m) = CONST * C(m) / (m+1),}
+  where \eqn{CONST} is the normalizing constant and \eqn{C(m)=exp(-0.5AIC(m))}.
   The equivalent number of free parameter for the Bayesian model is defined by
-
-    \eqn{ek = D(1)^2 +...+ D(k)^2 +1}
-
-  where D(j) is defined by \eqn{D(j)=W(j) +...+ W(k)}.
-
-  m in the definition of AIC is replaced by ek to be define an equivalent AIC for a Bayesian model.
+    \deqn{ek = D(1)^2 + \ldots + D(k)^2 +1,}{ek = D(1)^2 + ... + D(k)^2 +1,}
+  where \eqn{D(j)} is defined by \eqn{D(j)=W(j) + \ldots + W(k)}{D(j)=W(j) + ... + W(k)}.
+  \eqn{m} in the definition of AIC is replaced by \eqn{ek} to be define an equivalent AIC for a Bayesian model.
 }
 
 \references{
-  H.Akaike (1978) A Bayesian Extension of The Minimum AIC Procedure of Autoregressivemodel Fitting.
+  H.Akaike (1978) A Bayesian Extension of The Minimum AIC Procedure of Autoregressive model Fitting.
   Research memo. No.126. The Institute of Statistical Mathematics.
 
   G.Kitagawa and H.Akaike (1978) A Procedure for The Modeling of Non-Stationary Time Series.

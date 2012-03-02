@@ -1,7 +1,9 @@
       SUBROUTINE  EXSARF( Z1,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M1,AMIN,SDM1,A1,
-     *                    SDM2,A2,TMP )
+cx     *                    SDM2,A2,TMP,IER,JER )
+     *                    SDM2,A2,JER )
 c----------------   for  isw = 2   --------------------
-c     *                    SDM22,A22,TMP )
+cxc     *                    SDM22,A22,TMP )
+c     *                    SDM22,A22,JER )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -70,8 +72,8 @@ cc      COMMON     / BBB /  Z
 cc      COMMON     / CCC /  ISW , IPR                                     
 C
       DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
-      INTEGER*1  TMP(1)
-      CHARACTER  CNAME*80
+cx      INTEGER*1  TMP(1)
+cx      CHARACTER  CNAME*80
 C
 cc      CHARACTER(100) IFLNAM,OFLNAM
 C                                                                       
@@ -86,28 +88,30 @@ cc         OPEN( 6,FILE=OFLNAM,ERR=900,IOSTAT=IVAR )
 cc      ELSE
 cc         CALL SETWND
 cc      END IF
-      LU=3
-      DO 100 I = 1,80
-         CNAME(I:I) = ' '
-  100 CONTINUE
-      I = 1
-      IFG = 1
-      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
-	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
-            CNAME(I:I) = CHAR(TMP(I))
-            I = I+1
-         ELSE
-            IFG = 0
-         END IF
-      END DO
-      IF ( I.GT.1 ) THEN
-         IFG = 1
-         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
-         IF (IVAR .NE. 0) THEN
-            WRITE(*,*) ' ***  exsar temp FILE OPEN ERROR :',CNAME,IVAR
-            IFG=0
-         END IF
-      END IF
+cx      IER=0
+cx      LU=3
+cx      DO 100 I = 1,80
+cx         CNAME(I:I) = ' '
+cx  100 CONTINUE
+cx      I = 1
+cx      IFG = 1
+cx      DO WHILE( (IFG.EQ.1) .AND. (I.LE.80) )
+cx	   IF ( TMP(I).NE.ICHAR(' ') ) THEN
+cx            CNAME(I:I) = CHAR(TMP(I))
+cx            I = I+1
+cx         ELSE
+cx            IFG = 0
+cx         END IF
+cx      END DO
+cx      IF ( I.GT.1 ) THEN
+cx         IFG = 1
+cx         OPEN (LU,FILE=CNAME,IOSTAT=IVAR)
+cx         IF (IVAR .NE. 0) THEN
+cxcx            WRITE(*,*) ' ***  exsar temp FILE OPEN ERROR :',CNAME,IVAR
+cx            IER=IVAR
+cx            IFG=0
+cx         END IF
+cx      END IF
 C                                                                       
 C          PARAMETERS:                                                  
 C             MJ1:  ABSOLUTE DIMENSION FOR SUBROUTINE CALL              
@@ -148,8 +152,9 @@ C          ! AR MODEL FITTING !
 C          +------------------+                                         
 C                                                                       
 cc      CALL  ARMFIT( X,K,LAG,NMK,ISW,TITLE,MJ1,A,SD,M )                  
-      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN,
-     *              IFG,LU )
+cx      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN,
+cx     *              IFG,LU )
+      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN )
       DO 5  I = 1,K
     5 A2(I) = A1(I)
 C                                                                       
@@ -157,13 +162,17 @@ C          +-------------------------------------------+
 C          ! MAXIMIZATION OF EXACT LIKELIHOOD FUNCTION !                
 C          +-------------------------------------------+                
 C                                                                       
+      JER = 0
       IF( ISW .EQ. 2 )  GO TO 10                                        
 C                                                                       
       IPR = 7                                                           
 cc      CALL  ARMLE( Z,N,M,K,TITLE,A )                                    
 cc      STOP
-      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU )
-      IF (IFG.NE.0) CLOSE(LU)
+ccx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU )
+cx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU,JER )
+      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,JER )
+cx      IF( JER .NE. 0 ) RETURN
+cx      IF (IFG.NE.0) CLOSE(LU)
       RETURN
 C                                                                       
    10 DO 20  M=1,K                                                      
@@ -171,7 +180,10 @@ cc      CALL  RECOEF( X,M,K,MJ1,A )
       CALL  RECOEF( X,M,K,MJ1,A2 )
       IPR = 5                                                           
 cc   20 CALL  ARMLE( Z,N,M,K,TITLE,A )                                    
-      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,IFG,LU )
+ccx      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,IFG,LU )
+cx      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,IFG,LU,JER )
+      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,JER )
+      IF( JER .NE. 0 ) RETURN
       DO 15  I = 1,M
    15 A22(I,M) = A2(I)
       SDM22(M) = SDM2
@@ -204,11 +216,13 @@ C
 C                                                                       
 cc  999 CONTINUE
 cc      STOP 
-      IF (IFG.NE.0) CLOSE(LU)                                                                       
+cx      IF (IFG.NE.0) CLOSE(LU)                                                                       
       RETURN
       E N D                                                             
 cc      SUBROUTINE  ARMLE( Z,N,K,L,TITLE,A )                              
-      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,IFG,LU )
+ccx      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,IFG,LU )
+cx      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,IFG,LU,JER )
+      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,JER )
 C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 C                                                                       
 C     THIS SUBROUTINE PRODUCES EXACT MAXIMUM LIKELIHOOD ESTIMATES OF THE
@@ -252,7 +266,7 @@ C
       IHES = 1                                                          
 C                                                                       
 cc      WRITE( 6,3 )                                                      
-      IF( IFG.NE.0 ) WRITE( LU,3 )  K
+cx      IF( IFG.NE.0 ) WRITE( LU,3 )  K
       NMLP1 = N - L + 1                                                 
       K1 = K + 1                                                        
       L1 = L + 1                                                        
@@ -293,7 +307,11 @@ C
       DO  80   I=1,5                                                    
 C                                                                       
 cc      CALL  DAVIDN( FUNCT,HESIAN,A,K,IHES )                             
-      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,IFG,LU )
+ccx      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,IFG,LU )
+cx      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,
+cx     *                     IFG,LU,JER )
+      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,JER )
+      IF( JER .NE. 0 ) RETURN
 C                                                                       
       IF( F0-AIC .LT. 0.001 )     GO TO 90                              
    80 F0 = AIC                                                          
@@ -311,7 +329,9 @@ cc     11H-) )
       END                                                               
 cc      SUBROUTINE  DAVIDN( FUNCT,HESIAN,X,N,IHES )                       
       SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,IPR,AIC,SD,
-     *                    IFG,LU )
+ccx     *                    IFG,LU )
+cx     *                    IFG,LU,JER )
+     *                    JER )
 C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 C                                                                       
 C          MINIMIZATION BY DAVIDON-FLETCHER-POWELL PROCEDURE            
@@ -362,10 +382,12 @@ C
       ISW = 0                                                           
 C                                                                       
 cc      CALL  FUNCT( N,X,XM,G,IG )                                        
-      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG )
+cx      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
 C                                                                       
 cc      IF( IPR .GE. 2 )   WRITE( 6,340 )   XM, SD, AIC                   
-      IF( (IPR.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,340 )  XM, SD, AIC
+cx      IF( (IPR.GE.2) .AND. (IFG.NE.0) )  WRITE( LU,340 )  XM, SD, AIC
 C                                                                       
 C          INVERSE OF HESSIAN COMPUTATION (IF AVAILABLE)                
 C                                                                       
@@ -447,11 +469,14 @@ C          LINEAR  SEARCH
 C                                                                       
 cc      CALL  LINEAR( FUNCT,X,S,RAMDA,ED,N,IG )                           
       CALL  LINEAR( FUNCT,Z,NZ,X,S,RAMDA,ED,N,R,AIC,SD,F,ISW,IPR,IG,
-     *              IFG,LU )
+ccx     *              IFG,LU )
+cx     *              IFG,LU,JER )
+     *              JER )
+      IF( JER .NE. 0 ) RETURN
 C                                                                       
 cc      IF( IPR .GE. 2 )   WRITE( 6,330 )   RAMDA, F, SD, AIC             
-      IF( (IPR.GE.2) .AND. (IFG.NE.0) )
-     *                     WRITE( LU,330 )  RAMDA, F, SD, AIC
+cx      IF( (IPR.GE.2) .AND. (IFG.NE.0) )
+cx     *                     WRITE( LU,330 )  RAMDA, F, SD, AIC
 C                                                                       
       S1 = 0.0D00                                                       
       DO  210   I=1,N                                                   
@@ -463,7 +488,9 @@ C
       ISW = 0                                                           
 C                                                                       
 cc      CALL  FUNCT( N,X,XM,G,IG )                                        
-      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG )
+cx      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
 C                                                                       
       S2 = 0.D0                                                         
       DO  220     I=1,N                                                 
@@ -474,16 +501,16 @@ C
       IF( ICC .GE. 5 )     GO TO 900                                    
       GO TO 11110                                                       
   900 CONTINUE                                                          
-      IF( IPR .LE. 0 )   RETURN                                         
+cx      IF( IPR .LE. 0 )   RETURN                                         
 cc      WRITE( 6,600 )                                                    
 cc      WRITE( 6,610 )     (X(I),I=1,N)                                   
 cc      WRITE( 6,601 )                                                    
 cc      WRITE( 6,610 )     (G(I),I=1,N)                                   
-      IF( IFG .EQ. 0 )   RETURN
-      WRITE( LU,600 )                                                    
-      WRITE( LU,610 )     (X(I),I=1,N)                                   
-      WRITE( LU,601 )                                                    
-      WRITE( LU,610 )     (G(I),I=1,N)                                   
+cx      IF( IFG .EQ. 0 )   RETURN
+cx      WRITE( LU,600 )                                                    
+cx      WRITE( LU,610 )     (X(I),I=1,N)                                   
+cx      WRITE( LU,601 )                                                    
+cx      WRITE( LU,610 )     (G(I),I=1,N)                                   
       RETURN                                                            
   330 FORMAT( 1H ,'LAMBDA =',D15.7,3X,'(-1)LOG LIKELIHOOD =',D23.15,3X, 
      * 'SD =',D22.15,5X,'AIC =',D23.15 )                                
@@ -494,7 +521,8 @@ cc      WRITE( 6,610 )     (G(I),I=1,N)
   610 FORMAT( 1H ,10D13.5 )                                             
       END                                                               
 cc      SUBROUTINE  FUNCT( M,A,F,G,IFG )                                  
-      SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG )
+cx      SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG )
+      SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG,JER )
 C                                                                       
 C     THIS SUBROUTINE COMPUTES THE EXACT LIKELIHOOD AND ITS GRADIENT OF 
 C     THE M-TH ORDER AR-MODEL.                                          
@@ -616,7 +644,11 @@ C
       CALL  ARCOEF( B,M,A )                                             
       GO TO  280                                                        
   220 CONTINUE                                                          
-      IF( SD .LE. 0.0D00 )     STOP  11111                              
+cx      IF( SD .LE. 0.0D00 )     STOP  11111                              
+      IF( SD .GT. 0.0D00 ) GO TO 221
+      JER = 11111
+      RETURN
+  221 CONTINUE
 C                                                                       
 C         LIKELIHOOD                                                    
 C                                                                       
@@ -749,7 +781,9 @@ cc      CALL  INVDET( H,HDET,K,50 )
       E N D                                                             
 cc      SUBROUTINE  LINEAR( FUNCT,X,H,RAM,EE,K,IG )                       
       SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IPR,IG,
-     *                    JFG,LU )
+ccx     *                    JFG,LU )
+cx     *                    JFG,LU,JER )
+     *                    JER )
 C                                                                       
 C     THIS SUBROUTINE PERFORMS THE LINEAR SEARCH ALONG THE DIRECTION SPE
 C     BY THE VECTOR H                                                   
@@ -796,8 +830,10 @@ C
    20 X1(I) = X(I) + RAM2*H(I)                                          
 cc      CALL  FUNCT( K,X1,E2,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,2)  RAM2,E2                                 
-      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )                                       
-      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,2)  RAM2,E2
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
+cx      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,2)  RAM2,E2
 C                                                                       
       IF( IG .EQ. 1 )  GO TO  50                                        
       IF( E2 .GT. E1 )  GO TO 50                                        
@@ -805,10 +841,12 @@ C
       DO 40  I=1,K                                                      
    40 X1(I) = X(I) + RAM3*H(I)                                          
 cc      CALL  FUNCT( K,X1,E3,G,IG )                                       
-      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
       IF( IG.EQ.1 )  GO TO  500                                         
 cc      IF( IPR.GE.7 )  WRITE(6,3)  RAM3,E3                               
-      IF( (IPR.GE.7) .AND. (JFG.NE.0 ) )  WRITE(LU,3)  RAM3,E3
+cx      IF( (IPR.GE.7) .AND. (JFG.NE.0 ) )  WRITE(LU,3)  RAM3,E3
       IF( E3 .GT. E2 )  GO TO 70                                        
       RAM1 = RAM2                                                       
       RAM2 = RAM3                                                       
@@ -824,8 +862,10 @@ C
    60 X1(I) = X(I) + RAM2*H(I)                                          
 cc      CALL  FUNCT( K,X1,E2,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,4)  RAM2,E2                                 
-      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )
-      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,4)  RAM2,E2
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
+cx      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,4)  RAM2,E2
       IF( E2.GT.E1 )  GO TO 50                                          
 C                                                                       
 cc   70 ASSIGN 80 TO RETURN                                               
@@ -836,8 +876,10 @@ C
    90 X1(I) = X(I) + RAM*H(I)                                           
 cc      CALL  FUNCT( K,X1,EE,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,5)  RAM,EE                                  
-      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
-      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,5)  RAM,EE
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
+cx      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,5)  RAM,EE
 C                                                                       
       IFG = 0                                                           
 cc      ASSIGN  300 TO  SUB                                               
@@ -881,8 +923,10 @@ C
   140 X1(I) = X(I) + RAM*H(I)                                           
 cc      CALL  FUNCT( K,X1,EE,G,IG )                                       
 cc      IF( IPR.GE.7 )  WRITE(6,6)  RAM,EE                                
-      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
-      IF( (IPR.GE.7)  .AND. (JFG.NE.0) )  WRITE(LU,6)  RAM,EE
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG,JER )
+      IF ( JER .NE. 0 ) RETURN
+cx      IF( (IPR.GE.7)  .AND. (JFG.NE.0) )  WRITE(LU,6)  RAM,EE
 cc      ASSIGN 200 TO SUB                                                 
       SUB = 200
       IFG = IFG+1                                                       
@@ -931,8 +975,10 @@ C
   520 X1(I) = X(I) + RAM*H(I)                                           
 cc      CALL  FUNCT( K,X1,E3,G,IG )                                       
 cc      IF( IPR.GE.7 )  WRITE(6,7)  RAM,E3                                
-      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
-      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,7)  RAM,E3
+ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
+      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG,JER )
+      IF( JER .NE. 0 ) RETURN
+cx      IF( (IPR.GE.7) .AND. (JFG.NE.0) )  WRITE(LU,7)  RAM,E3
       IF( IG.EQ.1 )  GO TO 540                                          
       IF( E3.GT.E2 )  GO TO 530                                         
       RAM1 = RAM2                                                       

@@ -5,14 +5,12 @@
   Produce exact maximum likelihood estimates of the parameters of a scalar AR model.
 }
 \usage{
-  exsar(y, max.order=NULL, plot=FALSE, tmp.file=NULL)
+  exsar(y, max.order=NULL, plot=FALSE)
 }
 \arguments{
-  \item{y}{a univariate time sries.}
-  \item{max.order}{upper limit of AR order. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE daic is plotted.}
-  \item{tmp.file}{a character string naming a file written intermediate results of minimization by DAVIDON-FLETCHER-POWELL procedure.
-        If NULL (default) output no file.}
+  \item{y}{a univariate time series.}
+  \item{max.order}{upper limit of AR order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE \code{daic} is plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -20,7 +18,7 @@
   \item{v}{innovation variance.}
   \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
-  \item{daic}{AIC-aicmin.}
+  \item{daic}{AIC-\code{aicmin}.}
   \item{order.maice}{order of minimum AIC.}
   \item{v.maice}{MAICE innovation variance.}
   \item{arcoef.maice}{MAICE AR coefficients.}
@@ -30,9 +28,9 @@
 \details{
   The AR model is given by
 
-    \eqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
+    \deqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
 
-  where p is AR order and u(t) is a zero mean white noise.
+  where \eqn{p} is AR order and \eqn{u(t)} is a zero mean white noise.
 }
 
 \references{

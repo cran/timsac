@@ -95,7 +95,7 @@ C
       EXTERNAL  SETX4                                                   
       EXTERNAL  SETX5                                                   
       EXTERNAL  SETX6                                                   
-      EXTERNAL  SETX7                                                   
+cc      EXTERNAL  SETX7                                                   
       EXTERNAL  PRDCT1                                                  
       EXTERNAL  PRDCT2                                                  
       EXTERNAL  PRDCT3                                                  
@@ -114,7 +114,8 @@ C
 C        PARAMETERS:                                                    
 C             MJ1:  ABSOLUTE DIMENSION FOR SUBROUTINE CALL              
 C                                                                       
-      IF ((IMODEL.LE.0) .OR. (IMODEL.GE.8)) GO TO 150
+cc      IF ((IMODEL.LE.0) .OR. (IMODEL.GE.8)) GO TO 150
+      IF ((IMODEL.LE.0) .OR. (IMODEL.GE.7)) GO TO 150
 cc      MJ = 1000                                                         
 cc      MJ1 = 200                                                         
       NN = N
@@ -152,7 +153,8 @@ C          ---------------------
 C          HOUSEHOLDER REDUCTION                                        
 C          ---------------------                                        
 C                                                                       
-      GO TO ( 10,20,30,40,50,60,70 ), IMODEL                            
+cc      GO TO ( 10,20,30,40,50,60,70 ), IMODEL                            
+      GO TO ( 10,20,30,40,50,60 ), IMODEL                            
 C                                                                       
    10 K = LAG                                                           
 cc      CALL  REDUCT( SETX1,Z,D,NMK,0,K,MJ1,LAG,X )                       
@@ -172,7 +174,8 @@ cc      CALL  REDUCT( SETX2,Z,D,NMK,0,K,MJ1,LAG,X )
 C                                                                       
 cc   30 CALL  SETLAG( K )                                                 
 cc      CALL  REDUCT( SETX2,Z,D,NMK,0,K,MJ1,LAG,X )                       
-   30 CALL  SETLAG( K,LG2(1),LG2(2),LG2(3),LG2(4),LG2(5) )
+cxx   30 CALL  SETLAG( K,LG2(1),LG2(2),LG2(3),LG2(4),LG2(5) )
+   30 CALL  SETLAG( KK,LG2(1),LG2(2),LG2(3),LG2(4),LG2(5) )
       DO 31 I=1,K
          LG1(1,I) = L1(I)
          LG1(2,I) = L2(I)
@@ -217,7 +220,7 @@ cc      CALL  REDUCT( SETX6,Z,D,NMK,0,K,MJ1,LAG,X )
       GO TO 100                                                         
 C                                                                       
 cc   70 CALL  REDUCT( SETX7,Z,D,NMK,0,K,MJ1,LAG,X )                       
-   70 CALL  REDUCT( SETX7,Z,NMK,0,K,MJ1,LAG,X )                       
+cc   70 CALL  REDUCT( SETX7,Z,NMK,0,K,MJ1,LAG,X )                       
 C                                                                       
   100 CONTINUE                                                          
 cc	CLOSE( MT )
@@ -227,9 +230,10 @@ C          MAICE PROCEDURE
 C          ---------------                                              
 C                                                                       
 cc      CALL  ARMFIT( X,K,LAG,NMK,ISW,TITLE,MJ1,A,SD,M )                  
-      IFG=0
-      CALL ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M,SD,AIC,DIC,SDM,AICM,
-     *             IFG,LU )
+cx      IFG=0
+cx      CALL ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M,SD,AIC,DIC,SDM,AICM,
+cx     *             IFG,LU )
+      CALL ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M,SD,AIC,DIC,SDM,AICM)
 C                                                                       
 C          ------------------                                           
 C          BAYESIAN PROCEDURE                                           
@@ -238,6 +242,7 @@ C
 cc      CALL  SBBAYS( X,D,K,NMK,IPR,MJ1,A,SD )                            
       CALL  SBBAYS( X,K,NMK,IPR,MJ1,A2,SDB,EK,AICB,IND,C,C1,C2,B,
      *OEIC,ESUM,OMEAN,OM  )
+              if( k.eq.32 ) return
 C                                                                       
 cc      IF( IMODEL .EQ. 1 )  CALL  NRASPE( SD,A,B,K,0,121,TITLE )         
       IF( IMODEL .EQ. 1 )  CALL  NRASPE( SDB,A2,B,K,0,120,SXX )
@@ -1688,22 +1693,22 @@ C
       RETURN                                                            
 C                                                                       
       E N D                                                             
-      SUBROUTINE  SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )                       
-cc      WRITE( 6,3)                                                       
-      WRITE( *,3)                                                       
-    3 FORMAT(///////1H ,30X,73(1H*),/,                                  
-     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX7',5X,23(1H*),//,             
-     11H ,35X,'THIS SUBROUTINE IS RESERVED FOR THE OPTIONAL USE.',/,    
-     11H ,35X,'USER SHOULD PREPARE THIS SUBROUTINE.',/,                 
-     11H ,35X,'FORMAT:',/,                                              
-     11H ,40X,'SUBROUTINE SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )',/,           
-     11H ,35X,'OTHER PARAMETERS SHOULD BE SENT BY USING COMMON AREA.',/,
-     11H ,35X,'SEE THE LISTS OF SETX1,SETX2,SETX3 AND SETX4 AS THE INSTR
-     1UCTION.',//,                                                      
-     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX6',5X,23(1H*),/,              
-     11H ,30X,73(1H*))                                                  
-      STOP                                                              
-      END                                                               
+cc      SUBROUTINE  SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )                       
+ccc      WRITE( 6,3)                                                       
+cc      WRITE( *,3)                                                       
+cc    3 FORMAT(///////1H ,30X,73(1H*),/,                                  
+cc     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX7',5X,23(1H*),//,             
+cc     11H ,35X,'THIS SUBROUTINE IS RESERVED FOR THE OPTIONAL USE.',/,    
+cc     11H ,35X,'USER SHOULD PREPARE THIS SUBROUTINE.',/,                 
+cc     11H ,35X,'FORMAT:',/,                                              
+cc     11H ,40X,'SUBROUTINE SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )',/,           
+cc     11H ,35X,'OTHER PARAMETERS SHOULD BE SENT BY USING COMMON AREA.',/,
+cc     11H ,35X,'SEE THE LISTS OF SETX1,SETX2,SETX3 AND SETX4 AS THE INSTR
+cc     1UCTION.',//,                                                      
+cc     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX6',5X,23(1H*),/,              
+cc     11H ,30X,73(1H*))                                                  
+cc      STOP                                                              
+cc      END                                                               
       SUBROUTINE  SRTMIN( X,N,IX )                                      
 C                                                                       
 C       THIS SUBROUTINE ARRANGES X(I) (I=1,N) IN ORDER OF INCREASING    
@@ -1827,7 +1832,7 @@ C          -----  SPECIFICATION OF NEXT SUBSET  -----
   120          CONTINUE                                                 
 C          ------------------------------------------                   
 C                                                                       
-  130 CONTINUE                                                          
+  130 CONTINUE             
       IF( IP .GT. K )   GO TO 200                                       
       IF( KND(IP+1) .EQ. 0 )   GO TO 140                                
 C                                                                       

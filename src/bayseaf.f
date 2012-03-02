@@ -409,7 +409,7 @@ C     PRESET CONSTANTS
 C                                                                       
 CC 1496 REWIND 5                                                          
 cc      IY = 500                                                          
-cc      IA = 500                                                          
+cc      IA = 500                                                       
 cc      IRSLT = 500                                                       
 cc      MDC=40000                                                         
 cc      ALPHA = 0.01D0                                                    

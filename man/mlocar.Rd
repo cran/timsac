@@ -9,11 +9,11 @@
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{span}{length of the basic local span.}
-  \item{const}{integer. 0 denotes constant vector is not included as a regressor
-        and 1 denotes constant vector is included as the first regressor.}
-  \item{plot}{logical. If TRUE (default) spectrums pspec are plotted.}
+  \item{const}{integer. \code{0} denotes constant vector is not included as a regressor
+        and \code{1} denotes constant vector is included as the first regressor.}
+  \item{plot}{logical. If TRUE (default) spectrums \code{pspec} are plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -35,18 +35,18 @@
   \item{aic.const}{AIC of the constant model.}
 }
 \details{
-  The data of length n are devided into k locally stationary spans,
+  The data of length \eqn{n} are devided into \eqn{k} locally stationary spans,
 
-  \code{|<-- n1 -->|<-- n2 -->|<-- n3 -->|.........|<-- nk -->|}
+    \deqn{|<-- n_1 -->|<-- n_2 -->|<-- n_3 -->| ..... |<-- n_k -->|}{  |<-- n1 -->|<-- n2 -->|<-- n3 -->| ..... |<-- nk -->|}
 
-  where \code{ni (i=1,...,k)} denotes the number of basic spans, each of length span,
-  which constitute the i-th locally stationary span. At each local span,
+  where \eqn{n_i}{ni} (\eqn{i=1,\ldots,k}{i=1,...,k}) denotes the number of basic spans, each of length span,
+  which constitute the \eqn{i}-th locally stationary span. At each local span,
   the process is represented by a stationary autoregressive model.
 }
 
 \references{
   G.Kitagawa and H.Akaike (1978)
-  A Procedure for The Modeling of Non-Staionary Time Series.
+  A Procedure for The Modeling of Non-Stationary Time Series.
    Ann. Inst. Statist. Math., 30, B, 351--363.
 
   H.Akaike, G.Kitagawa, E.Arahata and F.Tada (1979)

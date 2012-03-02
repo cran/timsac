@@ -10,10 +10,9 @@
 }
 \arguments{
   \item{lag}{desired maximum lag of covariance.}
-  \item{f}{frequency f(i) (i=1,...,k), where k is the number of data points.
-
-   By definition f(1) = 0.0 and f(k) = 0.5, f(i)'s are arranged in increasing order.}
-  \item{gain}{power gain of the filter at the frequency f(i).}
+  \item{f}{frequency \code{f(i)} \eqn{(i=1,...,k)}, where \eqn{k} is the number of data points.
+   By definition \code{f(1)} = 0.0 and \code{f(k)} = 0.5, \code{f(i)}'s are arranged in increasing order.}
+  \item{gain}{power gain of the filter at the frequency \code{f(i)}.}
   \item{plot}{logical. If TRUE (default) autocorrelations are plotted.}
 }
 \value{

@@ -10,9 +10,9 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
-  \item{plot}{logical. If TRUE (default) correlations cor are plotted.}
-  \item{lag_axis}{logical. If TRUE (default) with plot=TRUE, x\_axis is drawn.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{plot}{logical. If TRUE (default) correlations \code{cor} are plotted.}
+  \item{lag_axis}{logical. If TRUE (default) with plot=TRUE, \eqn{x}-axis is drawn.}
 }
 \value{
   \item{cov}{covariances.}

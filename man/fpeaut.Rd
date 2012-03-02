@@ -8,17 +8,17 @@
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of model order. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
 }
 \value{
   \item{ordermin}{order of minimum FPE.}
   \item{best.ar}{AR coefficients with minimum FPE.}
-  \item{sigma2m}{= sigma2(ordermin).}
+  \item{sigma2m}{= \code{sigma2}(\code{ordermin}).}
   \item{fpemin}{minimum FPE.}
   \item{rfpemin}{minimum RFPE.}
   \item{ofpe}{OFPE.}
   \item{arcoef}{AR coefficients.}
-  \item{sigma2}{\eqn{Sigma^2.}}
+  \item{sigma2}{\eqn{\sigma^2.}{sigma^2.}}
   \item{fpe}{FPE (Final Prediction Error).}
   \item{rfpe}{RFPE.}
   \item{parcor}{partial correlation.}
@@ -26,10 +26,8 @@
 }
 \details{
   The AR model is given by
-
-    \eqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
-
-  where p is AR order and u(t) is a zero mean white noise.
+    \deqn{y(t) = a(1)y(t-1) + .... + a(p)y(t-p) + u(t)}
+  where \eqn{p} is AR order and \eqn{u(t)} is a zero mean white noise.
 }
 
 \references{

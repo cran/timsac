@@ -30,7 +30,8 @@ cc      DIMENSION  YM(10), ST(7), TREND(MJ,7), LOC(MJ)
 cc      REAL*4    PS(K,MJ), FS(K,MJ), SS(K,MJ)
       DIMENSION  Y(N), F(K), Q(-K:K)
       DIMENSION  YM(2), ST(7), TREND(NPE,7), LOC(NPE)
-      REAL*4     SS(K,NPE)
+cxx      REAL*4     SS(K,NPE)
+      REAL*8     SS(K,NPE)
 cc      COMMON   /COMAAA/  Y
 cc      COMMON   /C91214/  XMIN, XMAX, FIGMIN, FIGMAX, YM
 cc      COMMON   /C91215/  NOISEV, NOISEW, INITD, ITF, ITH
@@ -81,7 +82,8 @@ C
       DO 10 J=1,K
 cc   10 S(J) = SS(J,I)
 cc      CALL  PINTVL( S,K,XMIN,DX,ST )
-   10 F(J) = DBLE(SS(J,I))
+cxx   10 F(J) = DBLE(SS(J,I))
+   10 F(J) = SS(J,I)
       CALL  PINTVL( F,K,XMIN,DX,ST )
       DO 20 J=1,7
    20 TREND(I,J) = ST(J) + DX*LOC(I)
@@ -149,7 +151,8 @@ C
 cc      DIMENSION  P(K), F(K), S(K), T(K), Y(N), Q(-K:K), LOC(N)
 cc      REAL*4     FS(K,N), PS(K,N), SS(K,N)
       DIMENSION  P(K), F(K), S(K), T(K), Y(N), Q(-K:K), LOC(NPE)
-      REAL*4     PS(K,NPE), SS(K,NPE)
+cxx      REAL*4     PS(K,NPE), SS(K,NPE)
+      DIMENSION     PS(K,NPE), SS(K,NPE)
 cc      COMMON   /C91215/  NOISEV, NOISEW, INITD, ITF, ITH
 cc      COMMON   /C91216/  B, OUTMIN, OUTMAX
 cc      COMMON   /C91219/  NN, KK, NS, NFE, NPE
@@ -182,10 +185,9 @@ C
 C  ...  SAVE FOR SMOOTHING  ...
 C
       DO 130 I=1,K
-cc      PS(I,II) = P(I)
+      PS(I,II) = P(I)
 cc  130 FS(I,II) = F(I)
-      PS(I,II) = SNGL(P(I))
-  130 SS(I,II) = SNGL(F(I))
+  130 SS(I,II) = F(I)
 C
 C  ...  SHIFT ORIGIN  ...
 C
@@ -201,7 +203,7 @@ cc      DO 190 I=1,K
 cc  190 SS(I,J) = FS(I,J)
       DO 195 I=1,K
 cc  195 S(I) = FS(I,NFE)
-  195 S(I) = DBLE(SS(I,NFE))
+  195 S(I) = SS(I,NFE)
 C
       DO 300 II=NFE-1,NS,-1
 cc      IF(MOD(II,10).EQ.0)  WRITE(6,*) II
@@ -209,11 +211,10 @@ cc      IF(MOD(II,10).EQ.0)  WRITE(6,*) II
       T(I) = 0.0D0
       P(I) = 0.0D0
 cc  210 F(I) = FS(I,II)
-  210 F(I) = DBLE(SS(I,II))
+  210 F(I) = SS(I,II)
       DO 220 I=1,K
       J = I - (LOC(II+1)-LOC(II))
-cc      IF( J.GE.1.AND.J.LE.K )  P(I) = PS(J,II+1)
-      IF( J.GE.1.AND.J.LE.K )  P(I) = DBLE(PS(J,II+1))
+      IF( J.GE.1.AND.J.LE.K )  P(I) = PS(J,II+1)
   220 IF( J.GE.1.AND.J.LE.K )  T(I) = S(J)
       DO 230 I=1,K
   230 S(I) = T(I)
@@ -224,8 +225,7 @@ cc      CALL  SCONVL( Q,S,P,F,K,T )
 C
       DO 240 I=1,K
       S(I) = T(I)
-cc  240 SS(I,II) = S(I)
-  240 SS(I,II) = SNGL(S(I))
+  240 SS(I,II) = S(I)
   300 CONTINUE
 C
       RETURN
@@ -287,6 +287,8 @@ C
       PARAM(2) = TAU2
       PARAM(3) = BV
 C
+      Q = 0
+c
       DO 20 I=1-K,K-1
       X0 = -DX*I - DX/2
       SUM = (USERV(X0,PARAM) + USERV(X0+DX,PARAM))/2
@@ -306,6 +308,8 @@ C
       PARAM(2) = TAU2
       PARAM(3) = BV
 C
+      Q = 0
+c
       DO 20 I=1-K,K-1
       X0 = -DX*I - DX/2
       SUM = (GAUSS(X0,PARAM) + GAUSS(X0+DX,PARAM))/2
@@ -325,6 +329,8 @@ C
       PARAM(2) = TAU2
       PARAM(3) = BV
 C
+      Q = 0
+c
       DO 20 I=1-K,K-1
       X0 = -DX*I - DX/2
       SUM = (PEARSN(X0,PARAM) + PEARSN(X0+DX,PARAM))/2
@@ -344,6 +350,8 @@ C
       PARAM(2) = TAU2
       PARAM(3) = BV
 C
+      Q = 0
+c
       DO 20 I=1-K,K-1
       X0 = -DX*I - DX/2
       SUM = (TWOEXP(X0,PARAM) + TWOEXP(X0+DX,PARAM))/2
@@ -381,7 +389,8 @@ C
       X = XMIN + DX*(I-1)
       IF( INITD.EQ.0 )  P(I) = USERI( X,PARAM )
       IF( INITD.EQ.1 )  P(I) = GAUSS( X,PARAM )
-      IF( INITD.EQ.2 )  P(I) = UNIF ( X,PARAM )
+cc      IF( INITD.EQ.2 )  P(I) = UNIF ( X,PARAM )
+      IF( INITD.EQ.2 )  P(I) = UNIF ( X )
    10 CONTINUE
       RETURN
       END
@@ -406,7 +415,8 @@ C
       IF( NOISEW.EQ.1 )  F(I) = P(I)*GAUSS ( Y,PARAM )
       IF( NOISEW.EQ.2 )  F(I) = P(I)*PEARSN( Y,PARAM )
       IF( NOISEW.EQ.3 )  F(I) = P(I)*TWOEXP( Y,PARAM )
-      IF( NOISEW.EQ.4 )  F(I) = P(I)*DBLEXP( Y,PARAM )
+cc      IF( NOISEW.EQ.4 )  F(I) = P(I)*DBLEXP( Y,PARAM )
+      IF( NOISEW.EQ.4 )  F(I) = P(I)*DBLEXP( Y )
    10 CONTINUE
       RETURN
       E N D
@@ -465,9 +475,9 @@ C
       E N D
       SUBROUTINE  POST3D( F,LOC,K,N )
       IMPLICIT REAL*8(A-H,O-Z)
-      REAL*4     F(K,N)
+      REAL*8     F(K,N)
 cc      DIMENSION  YH(2000), FF(801), LOC(N)
-      REAL*4     FF(-K:2*K)
+      REAL*8     FF(-K:2*K)
       DIMENSION  LOC(N)
 cc      COMMON   /C91214/  X0, X1, F0, F1, YM(10)
 cc      ANGLE = 70.0
@@ -583,7 +593,8 @@ C
       DGAMMA = DGAM*SUM
       RETURN
       E N D
-      DOUBLE PRECISION FUNCTION  DBLEXP( X,PARAM )
+cc      DOUBLE PRECISION FUNCTION  DBLEXP( X,PARAM )
+      DOUBLE PRECISION FUNCTION  DBLEXP( X )
 C
 C  ...  double exponential distribution  f(x) = exp(x - exp(x))  ...
 C
@@ -617,7 +628,8 @@ C
          USERI = SIGMA*DEXP( -SIGMA*DABS(X-PARAM(1)) )/2
       RETURN
       E N D
-      DOUBLE PRECISION FUNCTION  UNIF( X,PARAM )
+cc      DOUBLE PRECISION FUNCTION  UNIF( X,PARAM )
+      DOUBLE PRECISION FUNCTION  UNIF( X )
 C
 C  ...  uniform distribution  f(x) = 1  ...
 C

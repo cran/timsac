@@ -178,7 +178,7 @@ C
 cc      NN = N
 cc      CALL  SPARAM( MT,A,IPAR,para,iopt )
       LLL = L+M2
-      CALL  SPARAM( N,A,LLL+1,IPAR,NIP,para,NPA,iopt )
+      CALL  SPARAM( N,A,LLL,IPAR,NIP,para,NPA,iopt )
 c      outmax = omaxx                      
       do 123 i=1,n                      
       imis(i) = 0
@@ -237,7 +237,7 @@ C           ...  plot estimated components  ...
 C                                   
 
 cc      call trpar( A,para)
-      call trpar( A,LLL+1,para,NPA)
+      call trpar( A,LLL,para,NPA)
 
 C      para(2)= FF
 cc      CALL PLOTDD(WORK(NP1),L+M+1,TITLE,A,WORK(NP2),WORK(NP3),WORK(NP7),                                   
@@ -301,11 +301,13 @@ cc     *                  NS, NI, MISING, IOUT,LL,N,NYEAR,nmonth,NPREDS,
 cc     *                     NPREDE, NPRED
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)                            
 cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG                   
-      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
       COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
       EXTERNAL   FUNCSA                                                 
 C                                                                       
@@ -372,7 +374,9 @@ cc      DIMENSION  A(M) , G(M) , B(20)
       DIMENSION  A(M) , G(M) , B(M)
 c      COMMON     / CCC /  ISW , IPR, ISMT, IDIF, log
       COMMON     /CCC/    ISW, IPR, ISMT, IDIF, LOG, MESH              
-      COMMON     /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON     /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON   /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
+
       DATA       ICNT /0/                                               
       CONST = 0.0001D0                                                  
 C
@@ -434,7 +438,8 @@ cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,
 cc     *                    NPREDE, NPRED
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)
 cc      COMMON    /COMSM4/  NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG       
@@ -880,7 +885,8 @@ C
 C      COMMON     /CMFUNC/  DJACOB                                       
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 cc      common     /cccout/  IMIS(3000)
-      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
 C                                                                       
       DJACOB = 0.0D0                                                    
       if(ilog .eq. 0) return
@@ -908,14 +914,15 @@ C
       IMPLICIT  REAL*8 (A-H,O-Z)
 cc      DIMENSION  X(20) , DX(20) , G(20) , G0(20) , Y(20)                
 cc      DIMENSION  H(20,20) , WRK(20) , S(20)
-      DIMENSION  Z(NN), E(L,LM1,NN), TDAY(N,7), IMIS(NN), X(N)
+      DIMENSION  Z(NN), E(L,LM1,NN), TDAY(NN,7), IMIS(NN), X(N)
       DIMENSION  DX(N) ,G(N) ,G0(N) ,Y(N) ,H(N,N), WRK(N), S(N)
 c      COMMON     / CCC /  ISW, IPR                                      
 c      COMMON     /CMFUNC/  DJACOB, F, SD, AIC                           
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,
 cc     *                   GI(20),GDUM(20) 
       COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
-      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
       EXTERNAL   FUNCT
 cc      DATA  TAU1 , TAU2  /  1.0D-1 , 1.0D-1  /             
       DATA  TAU2  /  1.0D-1  /
@@ -924,6 +931,7 @@ cc      DATA  TAU1 , TAU2  /  1.0D-1 , 1.0D-1  /
       ISW = 0                                                           
 C                                                                       
 cc      CALL  FUNCND( FUNCT,N,X,XM,G,IG )
+      XM = 0
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,NN,N,X,XM,G,IG,L,LM1 )
 C                                                                       
 C          INITIAL ESTIMATE OF INVERSE OF HESSIAN                       
@@ -1341,7 +1349,8 @@ cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,
 cc     *                    NPREDE, NPRED
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)
 C     *                   ,DI, TAU(3)                                   
 C                                                                       
@@ -1405,26 +1414,30 @@ C     ...  INFORMATION SQUARE ROOT FILTER & SMOOTHER  ...
 C          FOR SEASONAL ADJUSTMENT                                      
 C                                                                       
       IMPLICIT  REAL*8  ( A-H,O-Z )                                     
-      REAL*8     Z(N), T(L,LM1,N), REG(N,M5), EPRED(N), VPRED(N), TRADE
+cc      REAL*8     Z(N), T(L,LM1,N), REG(N,M5), EPRED(N), VPRED(N), TRADE
 cc      DIMENSION  S(MJ,MJ), R(MJ,MJ), IMIS(N), TRADE(N,7)                
 cc      DIMENSION  D(100), WI(10,10), X(40), TT(40), E(40)
+      REAL*8     Z(N), T(L,LM1,N), REG(N,M5)
       DIMENSION  S(M+1,M+1), R(LM1+1,LM1), IMIS(N), TRADE(N,7)            
-      DIMENSION  D(LM1), WI(3,3), X(M), TT(L), E(M)                
+      DIMENSION  D(LM1+1), WI(3,3), X(LM1), TT(L), E(M)                
       INTEGER    PERIOD, SORDER
 cc      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *             NS, NI, MISING, IOUT, LL, NN, NYEAR,nmonth, NPREDS, 
 cc     *                    NPREDE, IPRED
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)                            
 c      COMMON    /CMFUNC/  DJACOB, FF, SIG2, AIC                        
 cc      COMMON    /CMFUNC/  DJACOB,FF,
 cc     *            SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
-      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
+
       DATA  PAI/3.1415926535D0/                                         
 C                                                                       
-      M    = M1 + M2 + M3 + M4 + M5                                     
+cc      M    = M1 + M2 + M3 + M4 + M5                                     
       M12  = M1 + M2                                                    
       M123 = M1 + M2 + M3                                               
       M45 = M4 + M5                                                     
@@ -1577,7 +1590,7 @@ C
 C  ...  LONG RANGE PREDICTION  ...                                      
 C                                                                       
 cc  430 CALL  RECOEF( R,LM,LM,MJ,X )                                      
-  430 CALL  RECOEF( R,LM,LM,LM+1,X )
+  430 CALL  RECOEF( R,LM,LM,LM1+1,X )
       SUM = ID(M1)*X(L+1) + ID(M2)*X(L1+1) + ID(M3)*X(L12+1)            
       IF( M4 .EQ. 6 )  then
       DO 431 J=1,6                                                      
@@ -1587,16 +1600,16 @@ cc  430 CALL  RECOEF( R,LM,LM,MJ,X )
       tmp=trade(II,2)+trade(II,3)+trade(II,4)+trade(II,5)+trade(II,6)
       sum=sum+(trade(II,1)+trade(II,7)-0.4*tmp)*x(L123+1)
       end if
-  432 IF( M5 .EQ. 0 )  GO TO 434                                        
-      DO 433 J=1,M5                                                     
-  433 SUM = SUM + REG(II,J)*X(L1234+J)                                  
-  434 EPRED(II) = SUM                                                   
-      SUM = 1.0D0                                                       
-      DO 445 I=1,M                                                      
-  445 SUM = SUM * S(I,I)/R(L+I,L+I)                                     
-      VPRED(II) = SUM**2                                                
-c      WRITE(6,977)  II, EPRED(II), VPRED(II)                            
-  977 FORMAT( 1H ,I5,2F15.7 )                                           
+cc  432 IF( M5 .EQ. 0 )  GO TO 434                                        
+cc      DO 433 J=1,M5                                                     
+cc  433 SUM = SUM + REG(II,J)*X(L1234+J)                                  
+cc  434 EPRED(II) = SUM                                                   
+cc      SUM = 1.0D0                                                       
+cc      DO 445 I=1,M                                                      
+cc  445 SUM = SUM * S(I,I)/R(L+I,L+I)                                     
+cc      VPRED(II) = SUM**2                                                
+ccc      WRITE(6,977)  II, EPRED(II), VPRED(II)                            
+cc  977 FORMAT( 1H ,I5,2F15.7 )                                           
 C                                                                       
 C  ...  MISSING OBSERVATION  ...                                        
 C                                                                       
@@ -1769,7 +1782,8 @@ cc      DIMENSION  TAU2(3), PAC(10), ARCC(10)
 cc     *              BSPAN, ISPAN, MISING, OUTLIR, LL, N, YEAR, month,
 cc     *                    PREDS, PREDE, PRED
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)    
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)    
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)    
      *                   ,DI, UI(3), TDF(7)
       COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 C      NAMELIST  /PARAM/  M1, M2, M5, PERIOD, SORDER, TRADE, MT, BSPAN,  
@@ -2010,8 +2024,10 @@ cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
-      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)
 C                                                                       
        tau1 = 0.0D00

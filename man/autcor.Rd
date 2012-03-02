@@ -9,14 +9,14 @@ autcor(y, lag=NULL, plot=TRUE, lag_axis=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is 2*sqrt(n), where n is the length of the time series y.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
   \item{plot}{logical. If TRUE (default) autocorrelations are plotted.}
-  \item{lag_axis}{logical. If TRUE (default) with plot=TRUE, x\_axis is drawn.}
+  \item{lag_axis}{logical. If TRUE (default) with plot=TRUE, \eqn{x}-axis is drawn.}
 }
 \value{
   \item{acov}{autocovariances.}
   \item{acor}{autocorrelations (normalized covariances).}
-  \item{mean}{mean of y.}
+  \item{mean}{mean of \code{y}.}
 }
 
 \references{

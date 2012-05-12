@@ -537,17 +537,14 @@ cc      IF(NPAR.GT.NDATA+FOCAST)NPAR=NDATA+FOCAST
 cc      IF( NDATA+FOCAST .LE. IRSLT )   GO TO 100                         
 cc      WRITE( 6,603 )                                                    
 cc  603 FORMAT( 1H , 'IRSLT IS TOO SMALL OR NDATA+FOCAST IS TOO LARGE' )  
-cc      STOP                                                              
 cc  100 IF( NPAR.LE.IA )   GO TO 200                                      
 cc      WRITE( 6,605 )                                                    
 cc  604 FORMAT( 1H ,'MDC IS TOO SMALL')                                   
-cc      STOP                                                              
 cc  200 CONTINUE                                                          
 cc      NPAR=NPAR*IPRD                                                    
 cc      IF( NPAR .LE. MDC )   GO TO 300                                   
 cc      WRITE( 6,604 )                                                    
 cc  605 FORMAT( 1H ,'IA IS TOO SMALL' )                                   
-cc      STOP                                                              
 cc  300 CONTINUE                                                          
 C                                                                       
 C                                                                       
@@ -935,7 +932,6 @@ cc  990 CONTINUE
 cc      IF ((NFL.EQ.2) .OR. (NFL.EQ.4)) CLOSE(6)
 cc      IF (PUNCH.EQ.1) CLOSE(7)
 cc  999 CONTINUE
-cc      STOP                                                              
       RETURN
     3 FORMAT( 1H ,'*** ABIC(',D20.10,'  ) =  ',D20.10 )                 
   600 FORMAT(1H ,'AVABIC =',F10.2)                                      
@@ -1127,7 +1123,6 @@ C
       TOL=1.0D-38                                                       
       DIIO=0.0D00
 C                                                                       
-cc      IF( MJ1 .GT. 1000) STOP                                           
       MNK=K                                                             
       IF(N.LE.K) MNK=N-1                                                
       DO 100 II=1,MNK                                                   

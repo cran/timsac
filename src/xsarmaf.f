@@ -164,7 +164,6 @@ cc      IF ((NFL.EQ.2) .OR. (NFL.EQ.4)) OPEN(6, FILE='/dev/fd/1')
 cc#endif
 ccC /* __linux__ */
 cc  999 CONTINUE
-cc      STOP                                                              
       RETURN
       END                                                               
 cc      SUBROUTINE ARCHCK(A,M,ICOND)                                      

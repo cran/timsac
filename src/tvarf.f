@@ -83,7 +83,6 @@ cc  100 WRITE(6,600)  TAU2, SIG2, FLK
 cc      WRITE(6,*)  M, K
 cc      WRITE(6,610)  TAUMAX, SIG2M, FMAX, AIC
 cc      WRITE(6,*)  FF,SIG2
-C     STOP
 C
 C  ... Fixed Interval Smoother  ...
 C
@@ -101,7 +100,6 @@ cc      CALL  PTCAR( XSS,XPS,N,NOBS,MJ,M,K,TAUMAX,SIG2,FF,AIC )
       CALL  PTCAR( XSS,N,NOBS,MJ,M,K,TAR,PAR )
 cc      CALL  PRCAR( XSS,N,NOBS,MJ,M,K,TAUMAX,SIG2,FF,AIC )
 C
-cc      STOP
       RETURN
   600 FORMAT( 1H ,5X,F15.10,F12.6,F13.5 )
   610 FORMAT( 1H ,'TAUMAX =',F15.10,3X,'SIG2 =',F15.10,3X,

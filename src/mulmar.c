@@ -13,7 +13,7 @@ SEXP mulmar( SEXP y, SEXP n, SEXP d, SEXP calb, SEXP lag )
 
     double *xmean, *xvar, *xv, *xaic, *xdaic, *xaicm, *xvm, *xa, *xrv, *xaicf, *xei, *xbi, *xmatv, *xarcoef,  *xaics = NULL;
     int      *xm, *xnpr, *xjnd, *xmorder = NULL;
-    int      i, nd, nd2, lg1;
+    int      i, nd, nd2, lg, lg1;
 
     d1 = NUMERIC_POINTER(y);
     i1 = INTEGER_POINTER(n);
@@ -23,7 +23,8 @@ SEXP mulmar( SEXP y, SEXP n, SEXP d, SEXP calb, SEXP lag )
 
     nd = *i2;
     nd2 = nd * nd;
-    lg1 = *i3 + 1;
+    lg = *i3;
+    lg1 = lg + 1;
     PROTECT(ans = allocVector(VECSXP, 19));
     SET_VECTOR_ELT(ans, 0, mean = allocVector(REALSXP, nd));
     SET_VECTOR_ELT(ans, 1, var = allocVector(REALSXP, nd));
@@ -39,9 +40,9 @@ SEXP mulmar( SEXP y, SEXP n, SEXP d, SEXP calb, SEXP lag )
     SET_VECTOR_ELT(ans, 11, rv = allocVector(REALSXP, nd));
     SET_VECTOR_ELT(ans, 12, aicf = allocVector(REALSXP, nd)); 
     SET_VECTOR_ELT(ans, 13, ei = allocVector(REALSXP, nd2)); 
-    SET_VECTOR_ELT(ans, 14, bi = allocVector(REALSXP, nd2*lg1));
+    SET_VECTOR_ELT(ans, 14, bi = allocVector(REALSXP, nd2*lg));
     SET_VECTOR_ELT(ans, 15, matv = allocVector(REALSXP, nd2)); 
-    SET_VECTOR_ELT(ans, 16, arcoef = allocVector(REALSXP, nd2*lg1)); 
+    SET_VECTOR_ELT(ans, 16, arcoef = allocVector(REALSXP, nd2*lg)); 
     SET_VECTOR_ELT(ans, 17, morder = allocVector(INTSXP, 1));
     SET_VECTOR_ELT(ans, 18, aics = allocVector(REALSXP, 1));
 
@@ -101,9 +102,9 @@ SEXP mulmar( SEXP y, SEXP n, SEXP d, SEXP calb, SEXP lag )
     for(i=0; i<nd; i++) xrv[i] = d11[i];
     for(i=0; i<nd; i++) xaicf[i] = d12[i];
     for(i=0; i<nd2; i++) xei[i] = d13[i];
-    for(i=0; i<nd2*lg1; i++) xbi[i] = d14[i];
-    for(i=0; i<nd; i++) xmatv[i] = d15[i];
-    for(i=0; i<nd*lg1; i++) xarcoef[i] = d16[i];
+    for(i=0; i<nd2*lg; i++) xbi[i] = d14[i];
+    for(i=0; i<nd2; i++) xmatv[i] = d15[i];
+    for(i=0; i<nd2*lg; i++) xarcoef[i] = d16[i];
     *xmorder = *i7;
     *xaics = *d17;
 

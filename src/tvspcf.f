@@ -72,7 +72,6 @@ cc      CALL  PT3DSP( AR,SIG2,MJ,M,N,NOBS,VAR )
 
 cc      CALL  PLOTE
 C     call  plot( 0.0,0.0,999 )
-cc      STOP
       RETURN
       E N D
 cc      SUBROUTINE  PT3DSP( A,SIG2,MJ,M,N,NOBS,VAR )

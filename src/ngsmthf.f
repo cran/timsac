@@ -94,7 +94,6 @@ C
 cc      CALL  PTNGSM( N,NPE,NOISEV,NOISEW,TAU2,SIG2,FF,B,Y,TREND,MJ,
 cc     *              FIGMIN,FIGMAX,SS,K,LOC )
       CALL  POST3D( SS,LOC,K,NPE )
-cc      STOP
       RETURN
       E N D
 cc      SUBROUTINE  DEFALT

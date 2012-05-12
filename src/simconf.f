@@ -603,7 +603,6 @@ cc  610 WRITE(6,905) I,AV(I),SI(I),S2(I)
 C                                                                       
 cc      CALL FLCLS2(NFL)
 cc  999 CONTINUE
-cc 2700 STOP                                                              
       RETURN
   800 FORMAT(6I5)                                                       
   900 FORMAT('1  PROGRAM 74.3.2. OPTIMAL CONTROLLER DESIGN')            

@@ -205,8 +205,7 @@ cc      WRITE(6,610) IVAR,IFLNAM
 cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C
 cc  999 CONTINUE
-cc      STOP                                                              
-      close(3)
+cc      close(3)
       RETURN
     1 FORMAT( 16I5 )                                                    
     2 FORMAT( ///1H ,'PROGRAM TIMSAC 78.3.3',/,'   LOCALLY STATIONARY MU

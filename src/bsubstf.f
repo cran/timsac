@@ -93,13 +93,13 @@ C
       EXTERNAL  SETX1                                                   
       EXTERNAL  SETX2                                                   
       EXTERNAL  SETX4                                                   
-      EXTERNAL  SETX5                                                   
-      EXTERNAL  SETX6                                                   
+cx      EXTERNAL  SETX5                                                   
+cx      EXTERNAL  SETX6                                                   
 cc      EXTERNAL  SETX7                                                   
       EXTERNAL  PRDCT1                                                  
       EXTERNAL  PRDCT2                                                  
-      EXTERNAL  PRDCT3                                                  
-      EXTERNAL  PRDCT6                                                  
+cx      EXTERNAL  PRDCT3                                                  
+cx      EXTERNAL  PRDCT6                                                  
 C
 cc	CHARACTER(100) IFLNAM,OFLNAM
 cc	CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -154,7 +154,8 @@ C          HOUSEHOLDER REDUCTION
 C          ---------------------                                        
 C                                                                       
 cc      GO TO ( 10,20,30,40,50,60,70 ), IMODEL                            
-      GO TO ( 10,20,30,40,50,60 ), IMODEL                            
+cx      GO TO ( 10,20,30,40,50,60 ), IMODEL                            
+      GO TO ( 10,20,30,40 ), IMODEL                            
 C                                                                       
    10 K = LAG                                                           
 cc      CALL  REDUCT( SETX1,Z,D,NMK,0,K,MJ1,LAG,X )                       
@@ -189,20 +190,20 @@ cc   40 CALL  REDUCT( SETX4,Z,D,NMK,0,K,MJ1,LAG,X )
       GO TO 100                                                         
 C                                                                       
 cc   50 CALL  REDREG( K )                                                 
-   50 CONTINUE
-      DO 51 J=1,K+1
-         DO 51 I=1,20
-            II = (I-1)*4+1
-            G(I,J) = CHAR(F(II,J)) // CHAR(F(II+1,J))
-     *                             // CHAR(F(II+2,J)) //CHAR(F(II+3,J))
-   51 CONTINUE
+cx   50 CONTINUE
+cx      DO 51 J=1,K+1
+cx         DO 51 I=1,20
+cx            II = (I-1)*4+1
+cx            G(I,J) = CHAR(F(II,J)) // CHAR(F(II+1,J))
+cx     *                             // CHAR(F(II+2,J)) //CHAR(F(II+3,J))
+cx   51 CONTINUE
 cc      CALL  REDUCT( SETX5,Z,D,NMK,0,K,MJ1,LAG,X )                       
-      CALL  REDUCT( SETX5,Z,NMK,0,K,MJ1,LAG,X )                       
-      GO TO 100                                                         
+cx      CALL  REDUCT( SETX5,Z,NMK,0,K,MJ1,LAG,X )                       
+cx      GO TO 100                                                         
 C                                                                       
-   60 CONTINUE                                                          
-	SD0 = SUM
-      CONST = CNST
+cx   60 CONTINUE                                                          
+cx	SD0 = SUM
+cx      CONST = CNST
 cc      SD0 = 0.D0                                                        
 cc      DO 65  I=1,N                                                      
 cc   65 SD0 = SD0 + Z(I)*Z(I)                                             
@@ -210,14 +211,14 @@ cc      SD0 = SD0 / N
 cc      READ( 5,9 )     CONST                                             
 cc      WRITE( 6,12 )   SD0 , CONST                                       
 cc      CALL  REDLAG( K )                                                 
-      DO 66 I=1,K
-         L1(I) = LG1(1,I)
-         L2(I) = LG1(2,I)
-         L3(I) = LG1(3,I)
-   66 CONTINUE
+cx      DO 66 I=1,K
+cx         L1(I) = LG1(1,I)
+cx         L2(I) = LG1(2,I)
+cx         L3(I) = LG1(3,I)
+cx   66 CONTINUE
 cc      CALL  REDUCT( SETX6,Z,D,NMK,0,K,MJ1,LAG,X )                       
-      CALL  REDUCT( SETX6,Z,NMK,0,K,MJ1,LAG,X )                       
-      GO TO 100                                                         
+cx      CALL  REDUCT( SETX6,Z,NMK,0,K,MJ1,LAG,X )                       
+cx      GO TO 100                                                         
 C                                                                       
 cc   70 CALL  REDUCT( SETX7,Z,D,NMK,0,K,MJ1,LAG,X )                       
 cc   70 CALL  REDUCT( SETX7,Z,NMK,0,K,MJ1,LAG,X )                       
@@ -253,7 +254,8 @@ C          -------------------------
 C          PREDICTION ERROR CHECKING                                    
 C          -------------------------                                    
 C                                                                       
-      GO TO ( 110,120,120,150,130,140 ), IMODEL                         
+cx      GO TO ( 110,120,120,150,130,140 ), IMODEL                         
+      GO TO ( 110,120,120,150 ), IMODEL                         
       GO TO 150                                                         
 C                                                                       
 cc  110 CALL CHECK( PRDCT1,Z,A,K,0,IL,NPS,N,0,MJ,E )                      
@@ -267,12 +269,12 @@ cc  120 CALL  CHECK( PRDCT2,Z,A,K,0,IL,NPS,N,0,MJ,E )
       GO TO 150                                                         
 C                                                                       
 cc  130 CALL CHECK( PRDCT3,Z,A,K,0,IL,NPS,N,0,MJ,E )                      
-  130 CALL CHECK( PRDCT3,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
-     *            PEAK,COV,MJ2 )
+cx  130 CALL CHECK( PRDCT3,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+cx     *            PEAK,COV,MJ2 )
 C                                                                       
 cc  140 CALL  CHECK( PRDCT6,Z,A,K,0,IL,NPS,N,0,MJ,E )                     
-  140 CALL  CHECK( PRDCT6,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
-     *             PEAK,COV,MJ2 )
+cx  140 CALL  CHECK( PRDCT6,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+cx     *             PEAK,COV,MJ2 )
 C                                                                       
   150 CONTINUE                                                          
       RETURN
@@ -688,459 +690,6 @@ C
 CC  300 RETURN                                                            
       RETURN
 	END                                                               
-      SUBROUTINE  PRDCT3( Z,A,K,L,IL,NPS,NPE,MJ1,EZ )                   
-C                                                                       
-C     THIS SUBROUTINE COMPUTES SEVERAL STEP AHEAD PREDICTION VALUE OF A 
-C     NON-LINEAR REGRESSION MODEL.                                      
-C                                                                       
-C       INPUTS:                                                         
-C          Z:      ORIGINAL DATA VECTOR                                 
-C          A:      VECTOR OF AR-COEFFICIENTS                            
-C          K:      ORDER OF THE AR MODEL                                
-C          L:      THIS DUMMY VARIABLE IS NOT REFERENCED IN THIS SUBROUT
-C          IL:     MAXIMUM SPAN OF LONG RANGE PREDICTION                
-C          NPS:    PREDICTION STARTING POSITION                         
-C          NPE:    PREDICTION ENDING POSITION                           
-C          MJ1:    ABSOLUTE DIMENSION OF EZ                             
-C                                                                       
-C          G:      REGRESSOR AND REGRESSAND SPECIFICATION STATEMENT, LOA
-C                  AT SUBROUTINE REDREG                                 
-C                                                                       
-C       OUTPUT:                                                         
-C          EZ:     PREDICTION VALUE MATRIX                              
-C                                                                       
-CC      REAL*8  A                                                         
-      CHARACTER(4) G
-      COMMON     / EEE /  G(20,31)                                      
-CC      DIMENSION  Z(1) , A(1) , EZ(MJ1,1)                                
-      REAL*8  Z(1) , A(1) , EZ(MJ1,1)
-      CHARACTER(4) F
-      DIMENSION  E(20) , F(20)                                          
-      CHARACTER(4) A1, A2, A4,
-     *             A5, A6, A7, A8,
-     *             T, X
-cc      DATA      A1/4H//  / , A2/4H)   / , A4/4H+   / ,                  
-cc     *          A5/4H-   / , A6/4H*   / , A7/4H/   / , A8/4H**  / ,     
-cc     *          T /4HT   / , X /4HX   /                                 
-      DATA      A1/'//  '/ , A2/')   '/ , A4/'+   '/ ,                  
-     *          A5/'-   '/ , A6/'*   '/ , A7/'/   '/ , A8/'**  '/ ,     
-     *          T /'T   '/ , X /'X   '/                                 
-      CHARACTER(4) ASIN, ACOS, CLOG,
-     *             BLOG, AEXP, AINV,
-     *             SQ, CUBE, ROOT
-cc      DATA      ASIN/4HSIN / , ACOS/4HCOS / , CLOG/4HLOG / ,            
-cc     *          BLOG/4HLOG1/ , AEXP/4HEXP / , AINV/4HINV / ,            
-cc     *          SQ  /4HSQ  / , CUBE/4HCUBE/ , ROOT/4HSQRT/              
-      DATA      ASIN/'SIN '/ , ACOS/'COS '/ , CLOG/'LOG '/ ,            
-     *          BLOG/'LOG1'/ , AEXP/'EXP '/ , AINV/'INV '/ ,            
-     *          SQ  /'SQ  '/ , CUBE/'CUBE'/ , ROOT/'SQRT'/              
-      CHARACTER(4) FF, GG
-C                                                                       
-C                                                                       
-      P = 0
-      Q = 0
-      W = 0
-      V = 0
-C
-      DO 3000  II=NPS,NPE                                               
-      DO 2000  J1=1,IL                                                  
-      JJ = J1 - 1                                                       
-      SUM = 0.0                                                         
-      DO 1000  J=1,K                                                    
-      DO 5  I=1,20                                                      
-    5 F(I) = G(I,J)                                                     
-      I = 0                                                             
-      Y = 1.0                                                           
-  500 I = I + 1                                                         
-      IF(I.GT.20)  GO TO 10                                             
-      FF = F(I)                                                         
-C      ENCODE( 4,1,GG )   FF                                             
-      GG = FF(1:1)
-C                                                                       
-      IF(FF.NE.A1)  GO TO 20                                            
-   10 Y = Y*U                                                           
-      GO TO 1000                                                        
-C                                                                       
-   20 IF(FF.NE.A2)  GO TO 30                                            
-      Y = Y*U                                                           
-      GO TO 500                                                         
-C                                                                       
-   30 IF(GG.NE.T)  GO TO 50                                             
-CC      ASSIGN 40 TO ISUB                                                 
-CC      GO TO 300
-      Q = P
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C   40 DECODE( 4,3,FF )   S                                              
-      READ(UNIT=FF, FMT=3) S
-C
-      U = II + S + JJ                                                   
-      GO TO 500                                                         
-C                                                                       
-   50 IF(GG.NE.X)  GO TO 60                                             
-CC      ASSIGN 55 TO ISUB                                                 
-CC      GO TO 300
-      Q = P
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C   55 DECODE( 4,2,FF )   LL                                             
-      READ(UNIT=FF, FMT=2) LL
-C
-      IT = II + LL + JJ                                                 
-      I1 = LL + J1                                                      
-      IF( -LL-J1 .GE. 0 )   U = Z(IT)                                   
-      IF( -LL-J1 .LT. 0 )   U = E(I1)                                   
-      GO TO 500                                                         
-C                                                                       
-   60 IF(FF.NE.A4)  GO TO 70                                            
-      U = V + U                                                         
-CC      GO TO 400                                                         
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-      V = W                                                             
-      W = P                                                             
-      P = Q                                                             
-      GO TO 500                                                         
-C C                                                                       
-   70 IF(FF.NE.A5)  GO TO 80                                            
-      U = V- U                                                          
-CC      GO TO 400                                                         
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-      V = W                                                             
-      W = P                                                             
-      P = Q                                                             
-      GO TO 500                                                         
-C C                                                                       
-   80 IF(FF.NE.A6)  GO TO 90                                            
-      U = V * U                                                         
-CC      GO TO 400                                                         
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-      V = W                                                             
-      W = P                                                             
-      P = Q                                                             
-      GO TO 500                                                         
-C C                                                                       
-   90 IF(FF.NE.A7)  GO TO 100                                           
-      U = V / U                                                         
-CC      GO TO 400                                                         
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-      V = W                                                             
-      W = P                                                             
-      P = Q                                                             
-      GO TO 500                                                         
-C C                                                                       
-  100 IF(FF.NE.A8)  GO TO 120                                           
-      U = V**U                                                          
-CC      GO TO 400                                                         
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-      V = W                                                             
-      W = P                                                             
-      P = Q                                                             
-      GO TO 500                                                         
-C C                                                                       
-  120 IF(FF.NE.ASIN)  GO TO 130                                         
-      U = SIN( U )                                                      
-      GO TO 500                                                         
-C                                                                       
-  130 IF(FF.NE.ACOS)  GO TO 140                                         
-      U = COS( U )                                                      
-      GO TO 500                                                         
-C                                                                       
-  140 IF(FF.NE.CLOG)  GO TO 150                                         
-      U = ALOG( U )                                                     
-      GO TO 500                                                         
-C                                                                       
-  150 IF(FF.NE.BLOG)  GO TO 160                                         
-      U = ALOG10( U )                                                   
-      GO TO 500                                                         
-C                                                                       
-  160 IF(FF.NE.AEXP)  GO TO 170                                         
-      U = EXP( U )                                                      
-      GO TO 500                                                         
-C                                                                       
-  170 IF(FF.NE.AINV)  GO TO  180                                        
-      U = 1.D0 / U                                                      
-      GO TO 500                                                         
-C                                                                       
-  180 IF(FF.NE.SQ)  GO TO 190                                           
-      U = U**2                                                          
-      GO TO 500                                                         
-C                                                                       
-  190 IF(FF.NE.ROOT)  GO TO 220                                         
-      U = SQRT( U )                                                     
-      GO TO 500                                                         
-C                                                                       
-  220 IF(FF.NE.CUBE)  GO TO 200                                         
-      U = U**3                                                          
-      GO TO 500                                                         
-C                                                                       
-  200 CONTINUE                                                          
-CC      ASSIGN 210 TO ISUB                                                
-CC      GO TO 300
-      Q = P
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C  210 DECODE( 4,4,FF )   U                                              
-      READ(UNIT=FF, FMT=4) U
-C
-      GO TO 500                                                         
-C                                                                       
- 1000 SUM = SUM + A(J)*Y                                                
- 2000 E(J1) = SUM                                                       
-      DO 3000  J=1,IL                                                   
- 3000 EZ(II,J) = E(J)                                                   
-      RETURN                                                            
-C                                                                       
-C-----------------------------------------------------------            
-C                    STACK AREA                                         
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-CC  400 V = W                                                             
-CC      W = P                                                             
-CC      P = Q                                                             
-CC      GO TO 500                                                                      
-C
-C          PUSH DOWN STACK                                              
-C
-CC  300 Q = P                                                             
-CC      P = W                                                             
-CC      W = V                                                             
-CC      V = U                                                             
-CC      GO TO ISUB, ( 40,55,210 )        
-C                                                                       
-    1 FORMAT( A1,3X )                                                   
-    2 FORMAT( 1X,I3 )                                                   
-    3 FORMAT( 1X,F3.0 )                                                 
-    4 FORMAT( F4.0 )                                                    
-      E N D                                                             
-      SUBROUTINE  PRDCT6( Z,A,K,L,IL,NPS,NPE,MJ1,EZ )                   
-C                                                                       
-C     THIS SUBROUTINE COMPUTES SEVERAL STEP AHEAD PREDICITON VALUE OF A 
-C     NON-LINEAR REGRESSION MODEL.                                      
-C                                                                       
-C       INPUTS:                                                         
-C          Z:      ORIGINAL DATA VECTOR                                 
-C          A:      VECTOR OF AR-COEFFICIENTS                            
-C          K:      ORDER OF THE AR MODEL                                
-C          L:      THIS DUMMY VARIABLE IS NOT REFERENCED IN THIS SUBROUT
-C          IL:     MAXIMUM SPAN OF LONG RANGE PREDICTION                
-C          NPS:    PREDICTION STARTING POSITION                         
-C          NPE:    PREDICTION ENDING POSITION                           
-C          MJ1:    ABSOLUTE DIMENSION OF EZ                             
-C                                                                       
-C       OUTPUT:                                                         
-C          EZ:     PREDICTION VALUE MATRIX                              
-C                                                                       
-CC      IMPLICIT  REAL*8 ( A-D,O-Y )                                      
-      IMPLICIT  REAL * 8  ( A-H , O-Z )
-cc      REAL * 4   SD , CONST , C                                         
-cc      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(20)                        
-      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
-      COMMON     / BBB /  LAG1(50) , LAG2(50) , LAG3(50) , SD , CONST   
-cc      INTEGER  RETURN                                                   
-C                                                                       
-      C = -1.0/(SD*CONST)                                               
-      DO 100  II=NPS,NPE                                                
-         DO 50  J1=1,IL                                                 
-            JJ = J1-1                                                   
-            SUM = 0.D0                                                  
-            DO 40  J=1,K                                                
-               XX = 1.D0                                                
-               LAG = LAG1(J)                                            
-CC               ASSIGN 10 TO RETURN                                      
-CC               GO TO 200
-CC   10          XX = XX*X
-               X = 1.D0                                                          
-               IF( LAG .GT. 0 )  THEN                                      
-                  I = II+JJ-LAG                                                     
-                  IF( I .GE. II )  THEN
-                     I = I-II+1                                                    
-                     ZZ = C*Y(I)**2                                                    
-                     X = Y(I)*EXP( ZZ )                                    
-                  ELSE
-                     ZZ = C*Z(I)**2                                                    
-                     X = Z(I)*EXP( ZZ )                                                                                                         
-                  END IF
-               END IF                                                
-               XX = XX*X                                                
-C                                                                       
-               LAG = LAG2(J)                                            
-CC               ASSIGN 20 TO RETURN                                      
-CC               GO TO 200
-CC   20          XX = XX*X                                                
-               X = 1.D0                                                          
-               IF( LAG .GT. 0 )  THEN                                      
-                  I = II+JJ-LAG                                                     
-                  IF( I .GE. II )  THEN
-                     I = I-II+1                                                    
-                     ZZ = C*Y(I)**2
-                     X = Y(I)*EXP( ZZ )
-                  ELSE
-                     ZZ = C*Z(I)**2                                                    
-                     X = Z(I)*EXP( ZZ )                                                                                                         
-                  END IF
-               END IF                                                
-               XX = XX*X  
-C                                                                       
-               LAG = LAG3(J)                                            
-CC               ASSIGN 30 TO RETURN                                      
-CC               GO TO 200
-CC   30          XX = XX*X                                                
-               X = 1.D0                                                          
-               IF( LAG .GT. 0 )  THEN                                      
-                  I = II+JJ-LAG                                                     
-                  IF( I .GE. II )  THEN
-                     I = I-II+1                                                    
-                     ZZ = C*Y(I)**2                                                    
-                     X = Y(I)*EXP( ZZ )                                    
-                  ELSE
-                     ZZ = C*Z(I)**2                                                    
-                     X = Z(I)*EXP( ZZ )                                                                                                         
-                  END IF
-               END IF                                                
-               XX = XX*X
-C                                                                       
-   40       SUM = SUM + A(J)*XX                                         
-   50    Y(J1) = SUM                                                    
-C                                                                       
-      DO  100  J=1,IL                                                   
-      EZ(II,J) = Y(J)                                                   
-  100 CONTINUE                                                          
-      GO TO 300                                                         
-C                                                                       
-C   -----  INTERNAL SUBROUTINE  -----                                   
-C                                                                       
-CC  200 X = 1.D0                                                          
-CC      IF( LAG .LE. 0 )   GO TO 220                                      
-CC      I = II+JJ-LAG                                                     
-CC      IF( I .GE. II )   GO TO 210                                       
-CC      ZZ = C*Z(I)**2                                                    
-CC      X = Z(I)*EXP( ZZ )                                                
-CC      GO TO 220                                                         
-CC  210 I = I - II + 1                                                    
-CC      ZZ = C*Y(I)**2                                                    
-CC      X = Y(I)*EXP( ZZ )                                                
-CC  220 GO TO RETURN, ( 10,20,30 )                                      
-C                                                                       
-  300 RETURN                                                            
-      END                                                               
-cc      SUBROUTINE  SBBAYS( X,D,K,N,IPR,MJ1,A,SD )                        
-      SUBROUTINE  SBBAYS( X,K,N,IPR,MJ1,A,SD,EK,AIC,IND,C,C1,C2,B,
-     *OEIC,ESUM,OMEAN,OM  )                        
-C                                                                       
-C     THIS SUBROUTINE PRODUCES BAYESIAN MODEL BASED ON ALL SUBSET       
-C     REGRESSION MODELS USING THE OUTPUT OF SUBROUTINE REDUCT.          
-C       ----------------------------------------------------------------
-C       THE FOLLOWING SUBROUTINES ARE DIRECTLY CALLED BY THIS SUBROUTINE
-C             RECOEF                                                    
-C             SDCOMP                                                    
-C             SUBSPC                                                    
-C       ----------------------------------------------------------------
-C                                                                       
-C       INPUTS:                                                         
-C          X:     N*(K+1) TRIANGULAR MATRIX,OUTPUT OF SUBROUTINE REDUCT 
-C          K:     NUMBER OF REGRESSORS OF THE BAYESIAN MODEL            
-C          N:     DATA LENGTH                                           
-C          IPR:   =0  TO SUPPRESS THE OUTPUTS                           
-C                 =1  TO PRINT OUT FINAL RESULT                         
-C                 =2  TO PRINT OUT INTERIM AND FINAL RESULTS            
-C          MJ1:   ABSOLUTE DIMENSION OF X                               
-C                                                                       
-C       OUTPUTS:                                                        
-C          A(I) (I=1,K):   REGRESSION COEFFICIENTS OF BAYESIAN MODEL    
-C          SD:    RESIDUAL VARIANCE                                     
-C                                                                       
-      IMPLICIT  REAL * 8  (A-H , O-Z )                                  
-cc      DIMENSION  X(MJ1,1) , A(1) , D(1)                                 
-cc      DIMENSION  B(50) , G(50)                                          
-cc      DIMENSION  IND(50), C(50), C1(50), C2(50), ESUM(50)
-      DIMENSION  X(MJ1,1) , A(1) , D(K)                                 
-      DIMENSION  B(K) , G(K)
-      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
-      K1 = K + 1                                                        
-      FN = N                                                            
-cc      IF( IPR .GE. 2 )     WRITE( 6,3 )                                 
-C                                                                       
-C          PARTIAL CORRELATIONS COMPUTATION                             
-C                                                                       
-      SUM = X(K1,K1)**2                                                 
-      DO 10   I=1,K                                                     
-      J = K1-I                                                          
-      SUM = SUM + X(J,K1)**2                                            
-      G(J) = DSQRT( SUM )                                               
-   10 B(J) = X(J,K1)*X(J,J) / (G(J)*DABS(X(J,J)))                       
-C                                                                       
-C          PARTIAL CORRELATIONS OF BAYESIAN MODEL COMPUTATION           
-C                                                                       
-cc      CALL  SUBSPC( B,K,N,IPR,EK )                                      
-      CALL  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM,OMEAN,OM )
-C                                                                       
-C          MODIFICATION OF CROSS-PRODUCTS  X(I,K1) (I=1,K)              
-C                                                                       
-      DO 30   I=1,K                                                     
-cc      B(I) = B(I)*X(I,I)*G(I) / DABS(X(I,I))                            
-      BB = B(I)*X(I,I)*G(I) / DABS(X(I,I))                            
-      D(I) = X(I,K1)                                                    
-cc   30 X(I,K1) = B(I)                                                    
-   30 X(I,K1) = BB
-C                                                                       
-C          REGRESSION COEFFICIENTS OF BAYSIAN MODEL                     
-C                                                                       
-      CALL  RECOEF( X,K,K,MJ1,A )                                       
-C                                                                       
-      DO 40   I=1,K                                                     
-   40 X(I,K1) = D(I)                                                    
-C                                                                       
-C          RESIDUAL VARIANCE AND AIC                                    
-C                                                                       
-cc      CALL  SDCOMP( X,A,D,N,K,MJ1,SD )                                  
-      CALL  SDCOMP( X,A,N,K,MJ1,SD )                                  
-C                                                                       
-      IF( IPR .EQ. 0 )     RETURN                                       
-      AIC = FN*DLOG(SD) + 2.D0*EK                                       
-cc      WRITE( 6,6 )     SD , EK , AIC                                    
-      RETURN                                                            
-C                                                                       
-    3 FORMAT( //1H ,18(1H-),/,' BAYESIAN PROCEDURE',/,1H ,18(1H-) )     
-    5 FORMAT( 1H ,10D13.5 )                                             
-    6 FORMAT( 1H ,'RESIDUAL VARIANCE',16X,'SD =',D19.8,/,1H ,'EQUIVALENT
-     1 NUMBER OF PARAMETERS  EK =',F10.3,/,1H ,32X,'AIC =',F15.3 )      
-      E N D                                                             
 cc      SUBROUTINE  SETLAG( K )                                           
       SUBROUTINE  SETLAG( K,LAG1,LAG2,LAG3,LAG4,LAG5 )                                           
 C                                                                       
@@ -1371,344 +920,6 @@ C
       RETURN                                                            
 C                                                                       
       END                                                               
-      SUBROUTINE  SETX5( Z,N0,L,K,MJ1,JSW,LAG,X1 )                      
-C                                                                       
-C     THIS SUBROUTINE PREPARES DATA MATRIX X FROM DATA VECTOR Z(I) (I=N0
-C     N0+LAG+L) FOR AUTOREGRESSIVE MODEL FITTING.  X IS THEN USED AS INP
-C     SUBROUTINE HUSHLD.                                                
-C                                                                       
-C       INPUTS:                                                         
-C          Z:     ORIGINAL DATA VECTOR                                  
-C          N0:    INDEX OF THE END POINT OF DISCARDED FORMER OBSERVATION
-C                 (NEW OBSERVATION STARTS AT N0+LAG+1 AND ENDS AT N0+LAG
-C          L:     DIMENSION OF THE VECTOR OF NEW OBSERVATIONS           
-C          K:     NUMBER OF REGRESSORS (=LAG OR LAG+1)                  
-C          MJ1:   ABSOLUTE DIMENSION OF X                               
-C          JSW:   =0   TO CONSTRUCT INITIAL L*(K+1) DATA MATRIX         
-C                  =1   TO AUGMENT ORIGINAL (K+1)*(K+1) MATRIX X BY AN  
-C                      L*(K+1) DATA MATRIX OF ADDITIONAL OBSERVATIONS   
-C          LAG:   MAXIMUM TIME LAG OF THE MODEL                         
-C                 =K   CONSTANT VECTOR IS NOT INCLUDED AS A REGRESSOR   
-C                 <K   CONSTANT VECTOR IS INCLUDED AS THE FIRST REGRESSO
-C                                                                       
-C          G:     REGRESSOR AND REGRESSAND SPECIFICATION STATEMENT, LOAD
-C                 AT SUBROUTINE REDREG                                  
-C                                                                       
-C       OUTPUT:                                                         
-C          X:      L*(K+1) MATRIX          IF  JSW = 0                  
-C                 (K+1+L)*(K+1) MATRIX     IF  JSW = 1                  
-C                                                                       
-      REAL*8  X1                                                        
-      REAL*8  Z , P , Q , U , V , W , Y
-      CHARACTER(4) G
-      COMMON     / EEE /  G(20,31)                                      
-      CHARACTER(4) F
-      DIMENSION  Z(1) , F(20)                                           
-      DIMENSION  X1(MJ1,1)                                              
-      CHARACTER(4) A1, A2, A4,
-     *             A5, A6, A7, A8,
-     *             T, X
-cc      DATA      A1/4H//  / , A2/4H)   / , A4/4H+   / ,                  
-cc     *          A5/4H-   / , A6/4H*   / , A7/4H/   / , A8/4H**  / ,     
-cc     *          T /4HT   / , X /4HX   /                                 
-      DATA      A1/'//  '/ , A2/')   '/ , A4/'+   '/ ,                  
-     *          A5/'-   '/ , A6/'*   '/ , A7/'/   '/ , A8/'**  '/ ,     
-     *          T /'T   '/ , X /'X   '/                                 
-      CHARACTER(4) ASIN, ACOS, CLOG,
-     *             BLOG, AEXP, AINV,
-     *             SQ, CUBE, ROOT
-cc      DATA      ASIN/4HSIN / , ACOS/4HCOS / , CLOG/4HLOG / ,            
-cc     *          BLOG/4HLOG1/ , AEXP/4HEXP / , AINV/4HINV / ,            
-cc     *          SQ  /4HSQ  / , CUBE/4HCUBE/ , ROOT/4HSQRT/              
-      DATA      ASIN/'SIN '/ , ACOS/'COS '/ , CLOG/'LOG '/ ,            
-     *          BLOG/'LOG1'/ , AEXP/'EXP '/ , AINV/'INV '/ ,            
-     *          SQ  /'SQ  '/ , CUBE/'CUBE'/ , ROOT/'SQRT'/              
-      CHARACTER(4) FF, GG
-C
-      P = 0
-      Q = 0
-      W = 0
-      V = 0
-C                                                                       
-C     ---  REGRESSOR AND REGRESSAND SPECIFICATION STATEMENT G IS LOADED 
-C                                                                       
-      K1 = K + 1                                                        
-      I0 = 0                                                            
-      IF(JSW.EQ.1)   I0 = K1                                            
-C                                                                       
-      DO 1000  JJ=1,K1                                                  
-      DO 5  I=1,20                                                      
-    5 F(I) = G(I,JJ)                                                    
-      DO 1000  II=1,L                                                   
-      I1 = II + I0                                                      
-      I = 0                                                             
-      Y = 1.D0                                                          
-      U = 1.D0                                                          
-  500 I = I + 1                                                         
-      IF(I.GT.20)  GO TO 10                                             
-      FF = F(I)                                                         
-C      ENCODE( 4,1,GG )   FF                                             
-      GG = FF(1:1)
-C                                                                       
-      IF(FF.NE.A1)  GO TO 20                                            
-   10 Y = Y*U                                                           
-      GO TO 1000                                                        
-C                                                                       
-   20 IF(FF.NE.A2)  GO TO 30                                            
-      Y = Y*U                                                           
-      GO TO 500                                                         
-C                                                                       
-   30 IF(GG.NE.T)  GO TO 50                                             
-CC      ASSIGN 40 TO ISUB                                                 
-CC      GO TO 300
-	Q = P                                                             
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C   40 DECODE( 4,3,FF )   S                                              
-      READ(UNIT=FF, FMT=3) S
-C
-      U = II + N0 + LAG + S                                             
-      GO TO 500                                                         
-C                                                                       
-   50 IF(GG.NE.X)  GO TO 60                                             
-CC      ASSIGN 55 TO ISUB                                                 
-CC      GO TO 300
-	Q = P                                                             
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C   55 DECODE( 4,2,FF )   LL                                             
-      READ(UNIT=FF, FMT=2) LL
-C
-      IT = II + N0 + LAG + LL                                           
-      U = Z(IT)                                                         
-      GO TO 500                                                         
-C                                                                       
-   60 IF(FF.NE.A4)  GO TO 70                                            
-      U = V + U                                                         
-CC      GO TO 400                                                         
-	V = W
-	W = P
-	P = Q
-	GO TO 500
-C                                                                       
-   70 IF(FF.NE.A5)  GO TO 80                                            
-      U = V- U                                                          
-CC      GO TO 400                                                         
-	V = W
-	W = P
-	P = Q
-	GO TO 500	
-C                                                                       
-   80 IF(FF.NE.A6)  GO TO 90                                            
-      U = V * U                                                         
-CC      GO TO 400                                                         
-	V = W
-	W = P
-	P = Q
-	GO TO 500
-C                                                                       
-   90 IF(FF.NE.A7)  GO TO 100                                           
-      U = V / U                                                         
-CC      GO TO 400                                                         
-	V = W
-	W = P
-	P = Q
-	GO TO 500
-C                                                                       
-  100 IF(FF.NE.A8)  GO TO 120                                           
-      U = V**U                                                          
-CC      GO TO 400                                                         
-	V = W
-	W = P
-	P = Q
-	GO TO 500
-C                                                                       
-  120 IF(FF.NE.ASIN)  GO TO 130                                         
-CC      U = SIN( U )                                                      
-      U = DSIN( U )
-      GO TO 500                                                         
-C                                                                       
-  130 IF(FF.NE.ACOS)  GO TO 140                                         
-CC      U = COS( U )                                                      
-      U = DCOS( U )
-      GO TO 500                                                         
-C                                                                       
-  140 IF(FF.NE.CLOG)  GO TO 150                                         
-CC      U = ALOG( U )                                                     
-      U = DLOG( U )
-      GO TO 500                                                         
-C                                                                       
-  150 IF(FF.NE.BLOG)  GO TO 160                                         
-CC      U = ALOG10( U )                                                   
-      U = DLOG10( U )
-      GO TO 500                                                         
-C                                                                       
-  160 IF(FF.NE.AEXP)  GO TO 170                                         
-CC      U = EXP( U )                                                      
-      U = DEXP( U )
-      GO TO 500                                                         
-C                                                                       
-  170 IF(FF.NE.AINV)  GO TO  180                                        
-      U = 1.D0 / U                                                      
-      GO TO 500                                                         
-C                                                                       
-  180 IF(FF.NE.SQ)  GO TO 190                                           
-      U = U**2                                                          
-      GO TO 500                                                         
-C                                                                       
-  190 IF(FF.NE.ROOT)  GO TO 220                                         
-CC      U = SQRT( U )                                                     
-      U = DSQRT( U )
-      GO TO 500                                                         
-C                                                                       
-  220 IF(FF.NE.CUBE)  GO TO 200                                         
-      U = U**3                                                          
-      GO TO 500                                                         
-C                                                                       
-  200 CONTINUE                                                          
-CC      ASSIGN 210 TO ISUB                                                
-CC      GO TO 300
-	Q = P                                                             
-      P = W                                                             
-      W = V                                                             
-      V = U                                                             
-C
-C g77 NOT supports DECODE function and uses special form.
-C  210 DECODE( 4,4,FF )   U                                              
-      READ(UNIT=FF, FMT=4) U
-C
-      GO TO 500                                                         
-C                                                                       
- 1000 X1(I1,JJ) = Y                                                     
-      RETURN                                                            
-C                                                                       
-C-----------------------------------------------------------            
-C                        STACK AREA                                     
-C-----------------------------------------------------------            
-C                                                                       
-C          POP UP STACK                                                 
-C                                                                       
-CC  400 V = W                                                             
-CC      W = P                                                             
-CC      P = Q                                                             
-CC      GO TO 500                                                         
-C                                                                       
-C          PUSH DOWN STACK                                              
-C                                                                       
-CC  300 Q = P                                                             
-CC      P = W                                                             
-CC      W = V                                                             
-CC      V = U                                                             
-CC      GO TO ISUB, ( 40,55,210 )                                         
-C                                                                       
-C                                                                       
-    1 FORMAT( A1,3X )                                                   
-    2 FORMAT( 1X,I3 )                                                   
-    3 FORMAT( 1X,F3.0 )                                                 
-    4 FORMAT( F4.0 )                                                    
-      END                                                               
-      SUBROUTINE  SETX6( Z,N0,L,K,MJ1,JSW,LAG,X )                       
-C                                                                       
-C          +----------------------------------------+                   
-C          ! MATRIX X SET UP (FOR NON-LINEAR MODEL) !                   
-C          +----------------------------------------+                   
-C                                                                       
-C     THIS SUBROUTINE PREPARES DATA MATRIX X FROM DATA VECTOR Z(I) (I=N0
-C     N0+K+LAG) FOR THE FITTING OF NON-LINEAR AUTOREGRESSIVE MODEL.  X I
-C     USED AS THE INPUT TO SUBROUTINE HUSHLD.                           
-C                                                                       
-C       INPUTS:                                                         
-C          Z:      ORIGINAL DATA VECTOR                                 
-C          N0:     INDEX OF THE END POINT OF DISCARDED FORMER OBSERVATIO
-C                  (NEW OBSERVATION STARTS AT N0+LAG+1 AND ENDS AT N0+LA
-C          L:      DIMENSION OF THE VECTOR OF NEW OBSERVATIONS          
-C          K:      NUMBER OF REGRESSORS                                 
-C          MJ1:    ABSOLUTE DIMENSION OF X                              
-C          JSW:    =0   TO CONSTRUCT INITIAL L*(K+1) DATA MATRIX        
-C                  =1   TO AUGMENT ORIGINAL (K+1)*(K+1) MATRIX X BY AN  
-C                       L*(K+1) DATA MATRIX OF ADDITIONAL OBSERVATIONS  
-C          LAG:    MAXIMUM TIME LAG                                     
-C          KSW:    THIS DUMMY VARIABLE IS NOT REFERENCED IN THIS SUBROUT
-C                                                                       
-C--  THE FOLLOWING VARIABLE SPECIFICATION IS GIVEN EITHER BY REDLAG OR S
-C         (L1(I) , L2(I) , L3(I))  (I=1,K)                              
-C                                                                       
-C               I-TH REGRESSOR IS DEFINED BY                            
-C                    Z(N-L1(I)) * Z(N-L2(I)) * Z(N-L3(I))               
-C               WHERE 0-LAG TERM Z(N-0) IS AUTOMATICALLY REPLACED BY CON
-C                                                                       
-C       OUTPUT:                                                         
-C          X:      L*(K+1) MATRIX           IF  JSW = 0                 
-C                  (K+1+L)*(K+1) MATRIX     IF  JSW = 1                 
-C                                                                       
-      IMPLICIT  REAL * 8  ( Z )
-      REAL * 8  X(MJ1,1)                                                
-      REAL * 8  C, SD, CONST
-      DIMENSION  Z(1)                                                   
-      COMMON     / BBB /  L1(50) , L2(50) , L3(50) , SD , CONST         
-C                                                                       
-      C = -1.0/(SD*CONST)                                               
-      K1 = K + 1                                                        
-      I0 = K1*JSW                                                       
-      DO  10     I=1,L                                                  
-      I1 = I + I0                                                       
-      J1 = N0 + LAG + I                                                 
-   10 X(I1,K1) = Z(J1)                                                  
-C                                                                       
-      DO  70     II=1,K                                                 
-      LL1 = L1(II)                                                      
-      LL2 = L2(II)                                                      
-      LL3 = L3(II)                                                      
-      DO  60     I=1,L                                                  
-      ZTEM = 1.0                                                        
-      I1 = I + I0                                                       
-      J1 = N0 + LAG + I                                                 
-      IF( LL1 .EQ. 0 )     GO TO 40                                     
-      M1 = J1 - LL1                                                     
-      ZZ = C*Z(M1)**2                                                   
-CC      ZZ = Z(M1)*EXP(ZZ)                                                
-      ZZ = Z(M1)*DEXP(ZZ)
-      ZTEM = ZTEM * ZZ                                                  
-   40 IF( LL2 .EQ. 0 )     GO TO 50                                     
-      M2 = J1 - LL2                                                     
-      ZZ = C*Z(M2)**2                                                   
-CC      ZZ = Z(M2)*EXP(ZZ)                                                
-      ZZ = Z(M2)*DEXP(ZZ)
-      ZTEM = ZTEM * ZZ                                                  
-   50 IF( LL3 .EQ. 0 )     GO TO 60                                     
-      M3 = J1 - LL3                                                     
-      ZZ = C*Z(M3)**2                                                   
-CC      ZZ = Z(M3)*EXP(ZZ)                                                
-      ZZ = Z(M3)*DEXP(ZZ)
-      ZTEM = ZTEM * ZZ                                                  
-   60 X(I1,II) = ZTEM                                                   
-   70 CONTINUE                                                          
-C                                                                       
-      RETURN                                                            
-C                                                                       
-      E N D                                                             
-cc      SUBROUTINE  SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )                       
-ccc      WRITE( 6,3)                                                       
-cc      WRITE( *,3)                                                       
-cc    3 FORMAT(///////1H ,30X,73(1H*),/,                                  
-cc     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX7',5X,23(1H*),//,             
-cc     11H ,35X,'THIS SUBROUTINE IS RESERVED FOR THE OPTIONAL USE.',/,    
-cc     11H ,35X,'USER SHOULD PREPARE THIS SUBROUTINE.',/,                 
-cc     11H ,35X,'FORMAT:',/,                                              
-cc     11H ,40X,'SUBROUTINE SETX7( Z,N0,L,K,MJ1,JSW,KSW,X )',/,           
-cc     11H ,35X,'OTHER PARAMETERS SHOULD BE SENT BY USING COMMON AREA.',/,
-cc     11H ,35X,'SEE THE LISTS OF SETX1,SETX2,SETX3 AND SETX4 AS THE INSTR
-cc     1UCTION.',//,                                                      
-cc     11H ,30X,23(1H*),5X,'SUBROUTINE  SETX6',5X,23(1H*),/,              
-cc     11H ,30X,73(1H*))                                                  
-cc      STOP                                                              
-cc      END                                                               
       SUBROUTINE  SRTMIN( X,N,IX )                                      
 C                                                                       
 C       THIS SUBROUTINE ARRANGES X(I) (I=1,N) IN ORDER OF INCREASING    
@@ -1964,3 +1175,85 @@ C
   608 FORMAT( 1H ,'OMEAN =',D15.8,5X,'OM =',D15.8 )                     
   609 FORMAT( 1H ,I7,F13.5 )                                            
       END                                                               
+cc      SUBROUTINE  SBBAYS( X,D,K,N,IPR,MJ1,A,SD )                        
+      SUBROUTINE  SBBAYS( X,K,N,IPR,MJ1,A,SD,EK,AIC,IND,C,C1,C2,B,
+     *OEIC,ESUM,OMEAN,OM  )                        
+C                                                                       
+C     THIS SUBROUTINE PRODUCES BAYESIAN MODEL BASED ON ALL SUBSET       
+C     REGRESSION MODELS USING THE OUTPUT OF SUBROUTINE REDUCT.          
+C       ----------------------------------------------------------------
+C       THE FOLLOWING SUBROUTINES ARE DIRECTLY CALLED BY THIS SUBROUTINE
+C             RECOEF                                                    
+C             SDCOMP                                                    
+C             SUBSPC                                                    
+C       ----------------------------------------------------------------
+C                                                                       
+C       INPUTS:                                                         
+C          X:     N*(K+1) TRIANGULAR MATRIX,OUTPUT OF SUBROUTINE REDUCT 
+C          K:     NUMBER OF REGRESSORS OF THE BAYESIAN MODEL            
+C          N:     DATA LENGTH                                           
+C          IPR:   =0  TO SUPPRESS THE OUTPUTS                           
+C                 =1  TO PRINT OUT FINAL RESULT                         
+C                 =2  TO PRINT OUT INTERIM AND FINAL RESULTS            
+C          MJ1:   ABSOLUTE DIMENSION OF X                               
+C                                                                       
+C       OUTPUTS:                                                        
+C          A(I) (I=1,K):   REGRESSION COEFFICIENTS OF BAYESIAN MODEL    
+C          SD:    RESIDUAL VARIANCE                                     
+C                                                                       
+      IMPLICIT  REAL * 8  (A-H , O-Z )                                  
+cc      DIMENSION  X(MJ1,1) , A(1) , D(1)                                 
+cc      DIMENSION  B(50) , G(50)                                          
+cc      DIMENSION  IND(50), C(50), C1(50), C2(50), ESUM(50)
+      DIMENSION  X(MJ1,1) , A(1) , D(K)                                 
+      DIMENSION  B(K) , G(K)
+      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
+      K1 = K + 1                                                        
+      FN = N                                                            
+cc      IF( IPR .GE. 2 )     WRITE( 6,3 )                                 
+C                                                                       
+C          PARTIAL CORRELATIONS COMPUTATION                             
+C                                                                       
+      SUM = X(K1,K1)**2                                                 
+      DO 10   I=1,K                                                     
+      J = K1-I                                                          
+      SUM = SUM + X(J,K1)**2                                            
+      G(J) = DSQRT( SUM )                                               
+   10 B(J) = X(J,K1)*X(J,J) / (G(J)*DABS(X(J,J)))                       
+C                                                                       
+C          PARTIAL CORRELATIONS OF BAYESIAN MODEL COMPUTATION           
+C                                                                       
+cc      CALL  SUBSPC( B,K,N,IPR,EK )                                      
+      CALL  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM,OMEAN,OM )
+C                                                                       
+C          MODIFICATION OF CROSS-PRODUCTS  X(I,K1) (I=1,K)              
+C                                                                       
+      DO 30   I=1,K                                                     
+cc      B(I) = B(I)*X(I,I)*G(I) / DABS(X(I,I))                            
+      BB = B(I)*X(I,I)*G(I) / DABS(X(I,I))                            
+      D(I) = X(I,K1)                                                    
+cc   30 X(I,K1) = B(I)                                                    
+   30 X(I,K1) = BB
+C                                                                       
+C          REGRESSION COEFFICIENTS OF BAYSIAN MODEL                     
+C                                                                       
+      CALL  RECOEF( X,K,K,MJ1,A )                                       
+C                                                                       
+      DO 40   I=1,K                                                     
+   40 X(I,K1) = D(I)                                                    
+C                                                                       
+C          RESIDUAL VARIANCE AND AIC                                    
+C                                                                       
+cc      CALL  SDCOMP( X,A,D,N,K,MJ1,SD )                                  
+      CALL  SDCOMP( X,A,N,K,MJ1,SD )                                  
+C                                                                       
+      IF( IPR .EQ. 0 )     RETURN                                       
+      AIC = FN*DLOG(SD) + 2.D0*EK                                       
+cc      WRITE( 6,6 )     SD , EK , AIC                                    
+      RETURN                                                            
+C                                                                       
+    3 FORMAT( //1H ,18(1H-),/,' BAYESIAN PROCEDURE',/,1H ,18(1H-) )     
+    5 FORMAT( 1H ,10D13.5 )                                             
+    6 FORMAT( 1H ,'RESIDUAL VARIANCE',16X,'SD =',D19.8,/,1H ,'EQUIVALENT
+     1 NUMBER OF PARAMETERS  EK =',F10.3,/,1H ,32X,'AIC =',F15.3 )      
+      E N D                                                             

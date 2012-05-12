@@ -167,7 +167,6 @@ C
 C                                                                       
       IPR = 7                                                           
 cc      CALL  ARMLE( Z,N,M,K,TITLE,A )                                    
-cc      STOP
 ccx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU )
 cx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU,JER )
       CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,JER )
@@ -215,7 +214,6 @@ C
      *1H ,'  ORIGINAL DATA INPUT DEVICE  MT =',I3 )                     
 C                                                                       
 cc  999 CONTINUE
-cc      STOP 
 cx      IF (IFG.NE.0) CLOSE(LU)                                                                       
       RETURN
       E N D                                                             
@@ -644,7 +642,6 @@ C
       CALL  ARCOEF( B,M,A )                                             
       GO TO  280                                                        
   220 CONTINUE                                                          
-cx      IF( SD .LE. 0.0D00 )     STOP  11111                              
       IF( SD .GT. 0.0D00 ) GO TO 221
       JER = 11111
       RETURN

@@ -2426,13 +2426,14 @@ C
 C                                                                       
 C         REGRESSION COEFFICIENTS COMPUTATION ( INITIAL ESTIMATE )      
 C                                                                       
-      IF( IPR .LT. 3 )  GO TO 90                                        
+      IF( IPR .LT. 3 )  GO TO 90
 cc      WRITE( 6,4 )                                                      
 cc      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD )                       
 cc      WRITE( 6,643 )                                                    
 cx      IF ( IFG.NE.0 )  WRITE( LU,4 )
 cx      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II),IFG,LU )
-      CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II) )
+      IF( IMIN.GT.0 )
+     *    CALL  SRCOEF( X,K0,KK,N,MJ1,JND,IPR,A,SDD,AAIC(II) )
 cx      IF ( IFG.NE.0 )  WRITE( LU,643 )
    90 CONTINUE                                                          
 C                                                                       
@@ -3318,7 +3319,7 @@ C
       DO  90     I=1,N                                                  
    90 SUM = SUM + Z(I,J)                                                
 cc      ZMEAN = SUM / DFLOAT(N)                                           
-      ZMEAN(J) = SUM / DFLOAT(N)
+      ZMEAN(J) = SUM / DBLE(N)
       DO  100     I=1,N                                                 
 cc  100 Z(I,J) = Z(I,J) - ZMEAN                                           
   100 Z(I,J) = Z(I,J) - ZMEAN(J)
@@ -3327,7 +3328,7 @@ C
       DO  110     I=1,N                                                 
   110 SUM = SUM + Z(I,J)*Z(I,J)                                         
 cc      ZVARI = SUM / DFLOAT(N)                                           
-      ZVARI(J) = SUM / DFLOAT(N)
+      ZVARI(J) = SUM / DBLE(N)
 C                                                                       
 C         MEAN AND VARIANCE PRINT OUT                                   
 C                                                                       
@@ -3755,7 +3756,8 @@ C
       SUM = 0.0D00                                                      
       DO 10     I=1,N                                                   
    10 SUM = SUM + X(I)                                                  
-      XMEAN = SUM / DFLOAT(N)                                           
+cc      XMEAN = SUM / DFLOAT(N)                                           
+      XMEAN = SUM / DBLE(N)                                           
       DO 20   I=1,N                                                     
    20 X(I) = X(I) - XMEAN                                               
 C                                                                       
@@ -3764,7 +3766,8 @@ C
       SUM = 0.D0                                                        
       DO  30     I=1,N                                                  
    30 SUM = SUM + X(I) * X(I)                                           
-      SUM = SUM / DFLOAT(N)                                             
+cc      SUM = SUM / DFLOAT(N)                                             
+      SUM = SUM / DBLE(N)                                             
 C                                                                       
 C          MEAN AND VARIANCE PRINT OUT                                  
 C                                                                       

@@ -112,7 +112,6 @@ C     *              YMEAN,NMISS,N0,NN )
 cc      CALL  PRSTAT( M,TAU2,FLK,AIC,XSS,VSS,YMEAN,MJ,NFE,NPE,
 cc     *              NMISS,N0,NN )
 C
-cc      STOP
       RETURN
       E N D
 cc      SUBROUTINE  MOMENT( Y,N,YMEAN,VAR )

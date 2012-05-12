@@ -86,7 +86,7 @@ cc      DIMENSION  C(24)
 cc      DIMENSION  EX(24)                                                 
       DIMENSION  ZS(N), Z(N), Y(N/IP,IP)                                    
       DIMENSION  X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW)
-      DIMENSION  B(IP,IP,LAG) , E(IP,IP)                     
+      DIMENSION  B(IP,IP,LAG) , E(IP,IP), BI(IP,IP,LAG) , EI(IP,IP)                     
       DIMENSION  C(IP)
       DIMENSION  EX(IP)
 C
@@ -178,7 +178,6 @@ cc      WRITE(6,610) IVAR,IFLNAM
 cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,/,5X,100A)
 C
 cc  999 CONTINUE
-cc      STOP                                                              
       RETURN
 C                                                                       
     1 FORMAT( 16I5 )                                                    

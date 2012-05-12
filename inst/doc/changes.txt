@@ -5,6 +5,14 @@
 
              *************************************
 
+  timsac_1.2.7
+ ==============
+ * Fixed a bug in mulmar().
+  Mulmar() did not work for certain types of data.   
+
+   (Reported by William Pleasant)
+
+
   timsac_1.2.6
  ==============
  * Add C wrapper functions to call Fortran subroutines.

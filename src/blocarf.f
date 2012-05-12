@@ -194,7 +194,6 @@ C
   600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//5X,100A)
   610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//5X,100A)
 C
-cc  999 STOP                                                              
       RETURN
     1 FORMAT( 16I5 )                                                    
     2 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,

@@ -154,7 +154,8 @@ C          LOCALLY STATIONARY AR-MODEL FITTING
 C          -----------------------------------                          
 C                                                                       
 cc      CALL  NONSTB( SETX1,Z,X,D,LAG,N0,NS,KMAX,KSW,ISW,TITLE,MJ1,A,SD ) 
-      CALL  NONSTB( SETX1,Z,X,LAG,N0,NS,KMAX,KSW,ISW,MJ1,KC,F,
+cx      CALL  NONSTB( SETX1,Z,X,LAG,N0,NS,KMAX,KSW,ISW,MJ1,KC,F,
+      CALL  NONSTB( SETX1,Z,N,X,LAG,N0,NS,KMAX,KSW,ISW,MJ1,KC,F,
      *              AIC(1,NR),C(1,NR),B(1,NR),A(1,NR),SD(NR) )
 C                                                                       
 cc      NP = N0 + LAG + 1                                                 
@@ -211,7 +212,8 @@ C
       END                                                               
 cc      SUBROUTINE  NONSTB( SETX,Z,X,D,LAG,N0,NS,KMAX,KSW,ISW,TITLE,MJ1,A,
 cc     1SD )                                                              
-      SUBROUTINE  NONSTB( SETX,Z,X,LAG,N0,NS,KMAX1,KSW,ISW,MJ1,KC,F,
+cx      SUBROUTINE  NONSTB( SETX,Z,X,LAG,N0,NS,KMAX1,KSW,ISW,MJ1,KC,F,
+      SUBROUTINE  NONSTB( SETX,Z,N,X,LAG,N0,NS,KMAX1,KSW,ISW,MJ1,KC,F,
      1AIC,C,B,A,SD )                                                    
 C                                                                       
 C     BAYESIAN TYPE NON-STATIONARY AUTOREGRESSIVE MODEL FITTING PROCEDUR
@@ -261,7 +263,8 @@ CC      REAL*4  Z , TITLE
 cc      REAL*4  TITLE
 cc      DIMENSION  X(MJ1,1) , D(1) , A(1) , Z(1) , TITLE(1)               
 cc      DIMENSION  F(50,20) , AIC(21) , C(50) , B(50)                     
-      DIMENSION  X(MJ1,1) , D(LAG+KSW+1), A(1) , Z(1)
+cx      DIMENSION  X(MJ1,1) , D(LAG+KSW+1), A(1) , Z(1)
+      DIMENSION  X(MJ1,1) , D(LAG+KSW+1), A(LAG+KSW) , Z(N)
       DIMENSION  F(LAG+KSW,KMAX1) , AIC(KMAX1) , C(KMAX1) , B(LAG+KSW)
       DIMENSION  SDD(LAG+KSW+1), AICC(LAG+KSW+1), DIC(LAG+KSW+1)
       DIMENSION  B1(LAG+KSW), W(LAG+KSW+1)

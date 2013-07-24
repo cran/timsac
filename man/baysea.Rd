@@ -49,7 +49,7 @@
     \deqn{y(t) = T(t) + S(t) + I(t) + TDC(t) + OCF(t)}
   where \eqn{T(t)} is trend component, \eqn{S(t)} is seasonal component, \eqn{I(t)} is irregular, \eqn{TDC(t)} is trading day factor and \eqn{OCF(t)} is outlier correction factor.
   For the purpose of comparison of models the criterion ABIC is defined
-    \deqn{ABIC = -2(log\ maximum\ likelihood\ of\ the\ model).}{ABIC = -2(log maximum likelihood of the model).}
+    \deqn{ABIC = -2 \log(maximum\ likelihood\ of\ the\ model).}{ABIC = -2 log (maximum likelihood of the model).}
   Smaller value of ABIC represents better fit.
 }
 

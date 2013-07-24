@@ -38,12 +38,12 @@
     \deqn{y(t) = a(1)y(t-1) + \ldots + a(p)y(t-p) + u(t),}{y(t) = a(1)y(t-1) + ... + a(p)y(t-p) + u(t),}
   where \eqn{p} is AR order and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance \eqn{v(p)}.
   The basic statistic AIC is defined by
-    \deqn{AIC = nlog(det(v)) + 2m,}
+    \deqn{AIC = n\log(det(v)) + 2m,}{AIC = nlog(det(v)) + 2m,}
   where \eqn{n} is the length of data, \eqn{v} is the estimate of innovation variance, and \eqn{m} is the order of the model.
 
   Bayesian weight of the \eqn{m}-th order model is defined by
     \deqn{W(m) = CONST \times C(m) / (m+1),}{W(m) = CONST * C(m) / (m+1),}
-  where \eqn{CONST} is the normalizing constant and \eqn{C(m)=exp(-0.5AIC(m))}.
+  where \eqn{CONST} is the normalizing constant and \eqn{C(m)=\exp(-0.5AIC(m))}{C(m)=exp(-0.5AIC(m))}.
   The equivalent number of free parameter for the Bayesian model is defined by
     \deqn{ek = D(1)^2 + \ldots + D(k)^2 +1,}{ek = D(1)^2 + ... + D(k)^2 +1,}
   where \eqn{D(j)} is defined by \eqn{D(j)=W(j) + \ldots + W(k)}{D(j)=W(j) + ... + W(k)}.

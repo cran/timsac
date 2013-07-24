@@ -29,7 +29,7 @@ unimar(y, max.order=NULL, plot=FALSE)
     \deqn{y(t) = a(1)y(t-1) + \ldots + a(p)y(t-p) + u(t),}{y(t) = a(1)y(t-1) + ... + a(p)y(t-p) + u(t),}
   where \eqn{p} is AR order and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance \eqn{v}.
   AIC is defined by
-    \deqn{AIC = nlog(det(v)) + 2k,}
+    \deqn{AIC = n\log(det(v)) + 2k,}{AIC = nlog(det(v)) + 2k,}
   where \eqn{n} is the length of data, \eqn{v} is the estimates of the innovation variance
   and \eqn{k} is the number of parameter.
 }

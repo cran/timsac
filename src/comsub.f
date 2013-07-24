@@ -32,7 +32,7 @@ C     DSUMF   ---  (72) autcor, mulcor, fftcor
 C     RANDM   ---  (72) wnoise
 C
 C------------------------------------------------- 
-C     DINT    ---  (74) prdctr, simcon
+C     DINIT    ---  (74) prdctr, simcon
 C     INNERP  ---  (74) autarm, canoca, markov
 C     MATINV  ---  (74) autarm, markov
 C     MSVD    ---  (74) canarm, canoca
@@ -66,7 +66,7 @@ C     MSDCOM  ---  (78) mulbar, blomar
 C     MSETX1  ---  (78) mulmar, mulbar, perars, mlomar, blomar
 C     NRASPE  ---  (78) unibar, bsubst, mlocar, blocar
 C     PARCOR  ---  (78) exsar (84) decomp
-C     RECOEF  ---  (78) unimar, bsubst, mlocar, exsar (84) decomp
+C     RECOEF  ---  (78) unimar, bsubst, mlocar, exsar, (84) decomp
 C     REDATA  ---  (78) unimar, unibar, bsubst, perars, mlocar, blocar, exsar
 C     REDUCT  ---  (78) unimar, unibar, bsubst, mlocar, blocar, exsar
 C     SDCOMP  ---  (78) unibar, bsubst, blocar
@@ -76,13 +76,6 @@ C     SRCOEF  ---  (78) mulmar, perars, mlomar
 C     TRIINV  ---  (78) mulmar, perars
 C
 C     DMIN*8  ---  (78) blocar, blomar
-C
-C-------------------------------------------------
-C     ARMASP  ---  (Iwanami) arma, tvspc
-C     FOURIE  ---  (Iwanami) arma, tvspc
-C     MOMENTK ---  (Iwanami) ngsmth, tvvar
-C     SMOOTH  ---  (Iwanami) tvvar, smooth
-C     GINVRS  ---  (Iwanami) tvvar, smooth
 C
 C-------------------------------------------------
 C
@@ -1317,7 +1310,8 @@ C          JND(I)=J:     UPDATED STATUS, I-TH REGRESSOR IS VARIABLE J.
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ,1) , D(1) , IND(1) , JND(1)                       
-      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
+cx      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
+      DIMENSION  X(MJ,K+1) , IND(K+1) , JND(K+1)                       
 C                                                                       
       K1 = K + 1                                                        
       DO  60     I=1,K1                                                 
@@ -1349,7 +1343,8 @@ C     THIS SUBROUTINE COMPUTES INNOVATION VARIANCE AND AIC OF THE MODEL
 C     WITH M REGRESSORS.                                                
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ,1)                                                
+cx      DIMENSION  X(MJ,1)                                                
+      DIMENSION  X(MJ,K+1)
 C                                                                       
 C       INPUTS:                                                         
 C          X:     (K+1)*(K+1) REDUCED MATRIX                            
@@ -1415,7 +1410,7 @@ C
 cc      REAL * 4   TITLE(20) , TTL(6)                                     
 cc      DIMENSION  X(MJ1,1) , D(1) , A(1) , B(1)                          
 cc      DIMENSION  SD(101) , AIC(101) , C(101)                            
-      DIMENSION  X(MJ1,1), D(1), A(1), B(1), B1(1)
+      DIMENSION  X(MJ1,1), D(K+1), A(K), B(K), B1(K)
       DIMENSION  SD(K+1), AIC(K+1), C(K+1), DIC(K+1)
 cc      DATA       TTL / 4H..  ,4H BAY,4HESIA,4HN MO,4HDEL ,4H  .. /      
 C                                                                       
@@ -1652,13 +1647,15 @@ C         D:    INTEGRATED BAYESIAN WEIGHTS
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      REAL * 4  TABLE(41) , AST , AXIS , TERM                           
-      CHARACTER TABLE(41) , AST , AXIS , TERM                           
-      DIMENSION  X(MJ1,1) , B(1) , C(1) , D(1)                          
-      DIMENSION  B1(1)
+cx      CHARACTER TABLE(41),  AST , AXIS , TERM                           
+cx      DIMENSION  X(MJ1,1) , B(1) , C(1) , D(1)                          
+cx      DIMENSION  B1(1)
+      DIMENSION  X(MJ1,K+1) , B(K) , C(K+1) , D(K+1)                          
+      DIMENSION  B1(K)
 cc      DATA  AST , AXIS / 1H* , 1H! /                                    
 cc      DATA  TABLE / 41*1H /                                             
-      DATA  AST , AXIS / '*' , '!' /                                    
-      DATA  TABLE/ 41*' ' /                                             
+cx      DATA  AST , AXIS / '*' , '!' /                                    
+cx      DATA  TABLE/ 41*' ' /                                             
       K1 = K + 1                                                        
       FN = N                                                            
 C                                                                       
@@ -1689,26 +1686,26 @@ C
       ISIGM1 = J0 - ISIG                                                
       ISIGP2 = J0 + ISIG*2                                              
       ISIGM2 = J0 - ISIG*2                                              
-      TABLE(ISIGP1) = AXIS                                              
-      TABLE(ISIGM1) = AXIS                                              
-      TABLE(ISIGP2) = AXIS                                              
-      TABLE(ISIGM2) = AXIS                                              
-      TABLE(J0) = AXIS                                                  
+cx      TABLE(ISIGP1) = AXIS                                              
+cx      TABLE(ISIGM1) = AXIS                                              
+cx      TABLE(ISIGP2) = AXIS                                              
+cx      TABLE(ISIGM2) = AXIS                                              
+cx      TABLE(J0) = AXIS                                                  
 C                                                                       
 cc      WRITE( 6,11 )                                                     
 cc      WRITE( 6,12 )                                                     
-      DO  90     I=1,K                                                  
-      BB = B(I)*SC                                                      
-      IB = BB
-      IF( BB .GT. 0.D0 )     IB = BB + 0.5D0                            
-      IF( BB .LT. 0.D0 )     IB = BB - 0.5D0                            
-      IB = IB + J0                                                      
-      TERM = TABLE(IB)                                                  
-      TABLE(IB) = AST                                                   
+cx      DO  90     I=1,K                                                  
+cx      BB = B(I)*SC                                                      
+cx      IB = BB
+cx      IF( BB .GT. 0.D0 )     IB = BB + 0.5D0                            
+cx      IF( BB .LT. 0.D0 )     IB = BB - 0.5D0                            
+cx      IB = IB + J0                                                      
+cx      TERM = TABLE(IB)                                                  
+cx      TABLE(IB) = AST                                                   
 cc      WRITE( 6,13 )     I , B(I) , C(I+1) , D(I)                        
 cc      WRITE( 6,14 )     (TABLE(J),J=1,41)                               
-      TABLE(IB) = TERM                                                  
-   90 CONTINUE                                                          
+cx      TABLE(IB) = TERM                                                  
+cx   90 CONTINUE                                                          
 C                                                                       
 C          PARCOR OF BAYESIAN MODEL                                     
 C                                                                       
@@ -1760,7 +1757,8 @@ C       OUTPUT:
 C         C(I) (I=1,K+1):   VECTOR OF BAYESIAN WEIGHTS                  
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  AIC(1) , C(1)                                          
+cx      DIMENSION  AIC(1) , C(1)                                          
+      DIMENSION  AIC(K+1) , C(K+1)                                          
 C                                                                       
 C          C(I)  =  EXP( -AIC(I)/2 )                                    
 C                                                                       
@@ -1827,8 +1825,10 @@ C          C:     CONSTANT VECTOR
 C          E:     COEFFICIENT FOR INSTANTANEOUS RESPONSE                
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  A(1) , JND(1) , C(1)                                   
-      DIMENSION  B(MJ1,MJ1,1) , E(MJ1,1)                                
+cx      DIMENSION  A(1) , JND(1) , C(1)                                   
+cx      DIMENSION  B(MJ1,MJ1,1) , E(MJ1,1)                                
+      DIMENSION  A(M) , JND(M) , C(ID)                                   
+      DIMENSION  B(MJ1,MJ1,MM) , E(MJ1,ID)                                
 C                                                                       
       M0 = MSW + 1                                                      
       C(II) = 0.D0                                                      
@@ -1871,7 +1871,8 @@ C          SD(M)  (M=1,K+1):   VECTOR OF INNOVATION VARIANCES
 C          AIC(M) (M=1,K+1):   VECTOR OF AIC'S.                         
 C                                                                       
       IMPLICIT  REAL * 8( A-H,O-Z )                                     
-      DIMENSION  X(MJ1,1) , AIC(1) , SD(1)                              
+cx      DIMENSION  X(MJ1,1) , AIC(1) , SD(1)                              
+      DIMENSION  X(MJ1,K+1) , AIC(K+1) , SD(K+1)                              
       FN = N                                                            
       K1 = K + 1                                                        
 C                                                                       
@@ -1904,7 +1905,8 @@ C        OUTPUT:
 C             Y(I+JJ,J):     COPY OF X (I,J=1,...,K)                    
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ1,1) , Y(MJ2,1)                                    
+cx      DIMENSION  X(MJ1,1) , Y(MJ2,1)                                    
+      DIMENSION  X(MJ1,K) , Y(MJ2,K)                                    
 C                                                                       
       DO  10     I=1,K                                                  
       I1 = I + II                                                       
@@ -1942,7 +1944,8 @@ C          X:            (K+1)*(K+1)  MATRIX
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ,1) , D(1) , IND(1) , JND(1)                       
-      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
+cx      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
+      DIMENSION  X(MJ,K+1) , IND(K+1) , JND(K+1)                       
 C                                                                       
       K1 = K + 1                                                        
       DO  60     I=1,K1                                                 
@@ -2041,7 +2044,8 @@ C         X:   TRANSFORMED MATRIX
 C                                                                       
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ1,1) , D(MJ1) , IND(1) , JND(1)                    
+cx      DIMENSION  X(MJ1,1) , D(MJ1) , IND(1) , JND(1)                    
+      DIMENSION  X(MJ1,K) , D(MJ1) , IND(K) , JND(K)                    
 C                                                                       
       TOL = 1.0D-60                                                     
 C                                                                       
@@ -2106,7 +2110,8 @@ C          X:     SQUARE ROOT OF DATA COVARIANCE MATRIX (UPPER TRIANGULA
 C                                                                       
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ1,1) , D(MJ1)                                      
+cc      DIMENSION  X(MJ1,1) , D(MJ1)                                      
+      DIMENSION  X(MJ1,K) , D(MJ1)                                      
 C                                                                       
            TOL = 1.0D-60                                                
 C                                                                       
@@ -2169,7 +2174,8 @@ C          IMIN:  MAICE ORDER
 C                                                                       
       IMPLICIT  REAL * 8( A-H,O-Z )                                     
 cc      REAL * 4  TBL(41) , AST , BLNK , AXIS , PERI                      
-      DIMENSION  AIC(1) , SD(1)                                         
+cx      DIMENSION  AIC(1) , SD(1)                                         
+      DIMENSION  AIC(K+1) , SD(K+1)                                         
       DIMENSION  DIC(K+1)
 cc      DATA  AST / 1H* / , BLNK / 1H  / , AXIS / 1H! / , PERI / 1H. /    
 C                                                                       
@@ -2239,9 +2245,11 @@ C       OUTPUTS:
 C          A:     AR-COEFFICIENT MATRICES OF FORWARD MODEL              
 C          B:     AR-COEFFICIENT MATRICES OF BACKWARD MODEL             
       IMPLICIT  REAL * 8 ( A-H , O-Z )                                  
-      DIMENSION  A(MJ3,MJ3,1) , B(MJ3,MJ3,1)                            
-      DIMENSION  D(MJ3,MJ3,1) , E(MJ3,MJ3,1)                            
+cx      DIMENSION  A(MJ3,MJ3,1) , B(MJ3,MJ3,1)                            
+cx      DIMENSION  D(MJ3,MJ3,1) , E(MJ3,MJ3,1)                            
 cc      DIMENSION  F(10,10) , G(10,10)                                    
+      DIMENSION  A(MJ3,MJ3,M) , B(MJ3,MJ3,M)                            
+      DIMENSION  D(MJ3,MJ3,M) , E(MJ3,MJ3,M)                            
       DIMENSION  F(ID,ID) , G(ID,ID)                                    
 C                                                                       
       DO 10  II=1,M                                                     
@@ -2327,7 +2335,7 @@ cc      DIMENSION  X(MJ1,1) , Y(MJ4,1) , D(1) , E(MJ2,1) , B(MJ2,MJ2,MJ3)
 cc      DIMENSION  C(1) , A(100) , AIC(51) , SD(51) , EX(1)               
 cc      DIMENSION  IND(100) , JND(100) , KND(100)                         
       DIMENSION  X(MJ1,1), Y(MJ4,MJ4), E(ID,ID), B(ID,ID,M) 
-      DIMENSION  C(1), A(MJ4)
+      DIMENSION  C(ID), A(MJ4)
       DIMENSION  AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID), EX(ID)
       DIMENSION  AICM(ID), SDM(ID), IM(ID)
       DIMENSION  IND(MJ4) , JND(MJ4) , KND(MJ4)                         
@@ -2792,9 +2800,12 @@ C         EK:     EQUIVALENT NUMBER OF AUTOREGRESSIVE COEFFICIENTS
 C                                                                       
       IMPLICIT REAL * 8  ( A-H , O-Z )                                  
 cc      DIMENSION  X(MJ1,1) , D(1) , A(MJ2,MJ2,1) , B(MJ2,MJ2,1)          
-      DIMENSION  X(MJ1,1), D(M), A(MJ2,MJ2,1), B(MJ2,MJ2,1)          
-      DIMENSION  G(MJ2,MJ2,1) , H(MJ2,MJ2,1)                            
-      DIMENSION  E(MJ2,1)                                               
+cx      DIMENSION  X(MJ1,1), D(M), A(MJ2,MJ2,1), B(MJ2,MJ2,1)          
+cx      DIMENSION  G(MJ2,MJ2,1) , H(MJ2,MJ2,1)                            
+cx      DIMENSION  E(MJ2,1)                                               
+      DIMENSION  X(MJ1,(M+1)*ID+KSW), D(M), A(MJ2,MJ2,M), B(MJ2,MJ2,M)          
+      DIMENSION  G(MJ2,MJ2,M) , H(MJ2,MJ2,M)                            
+      DIMENSION  E(MJ2,ID)
 cc      DIMENSION  AIC(51) , SD(51)                                       
       DIMENSION  AIC1(M+1) , SD1(M+1), DIC1(M+1), DIC2(M+1)
       DIMENSION  AIC(M+1) , SD(M+1)
@@ -3003,7 +3014,8 @@ C          H:      BAYESIAN ESTIMATES OF "PARCOR'S" (BACKWARD MODEL)
 C          D:      INTEGRATED BAYESIAN WEIGHT EACH ORDER (I=1,...,M)    
 C                                                                       
       IMPLICIT  REAL * 8 ( A-H , O-Z )                                  
-      DIMENSION  G(MJ2,MJ2,1) , H(MJ2,MJ2,1) , C(1) , D(1)              
+cx      DIMENSION  G(MJ2,MJ2,1) , H(MJ2,MJ2,1) , C(1) , D(1)              
+      DIMENSION  G(MJ2,MJ2,M) , H(MJ2,MJ2,M) , C(M+1) , D(M)              
 C                                                                       
 C          INTEGRATED BAYESIAN WEIGHT                                   
 C                                                                       
@@ -3070,8 +3082,9 @@ C          C:     CONSTANT VECTOR
 C          E:     INNOVATION COVARIANCE MATRIX                          
 C                                                                       
       IMPLICIT  REAL*8 ( A-H,O-Z )                                      
-      DIMENSION  B( MJ2,MJ2,MJ3 ) , E( MJ2,1 ) , EX( 1 ) , C( 1 )       
+cx      DIMENSION  B( MJ2,MJ2,MJ3 ) , E( MJ2,1 ) , EX( 1 ) , C( 1 )       
 cc      DIMENSION  C1(24) , EE(24,24)                                     
+      DIMENSION  B( MJ2,MJ2,MJ3 ) , E( MJ2,ID ) , EX( ID ) , C( ID )       
       DIMENSION  C1(ID) , EE(ID,ID)
 C
 C    INPUT  E ---> EI
@@ -3192,8 +3205,9 @@ C          G:      AR-COEFFICIENT MATRICES OF FORWARD MODEL
 C          H:      AR-COEFFICIENT MATRICES OF BACKWARD MODEL            
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ1,1) , G(MJ3,MJ3,1) , H(MJ3,MJ3,1)                 
+cx      DIMENSION  X(MJ1,1) , G(MJ3,MJ3,1) , H(MJ3,MJ3,1)                 
 cc      DIMENSION  C(10,10) , R(10,10)                                    
+      DIMENSION  X(MJ1,(M+1)*ID+KSW) , G(MJ3,MJ3,M) , H(MJ3,MJ3,M)                 
       DIMENSION  C(ID,ID) , R(ID,ID)                                    
 C                                                                       
 cc      MJ2 = 10                                                          
@@ -3387,7 +3401,8 @@ C
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ1,1) , D(1)                                        
 CC      REAL * 4  Z(MJ,1)                                                 
-      DIMENSION  Z(MJ,1), X(MJ1,1)
+cx      DIMENSION  Z(MJ,1), X(MJ1,1)
+      DIMENSION  Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
 C                                                                       
       L = MIN0( NMK,MJ1 )                                               
       K1 = LAG + 1                                                      
@@ -3474,7 +3489,8 @@ C
       IMPLICIT  REAL * 8 ( A-H,O-Z )                                    
 cc      DIMENSION  X(MJ,1) , A(MJ2,MJ2,1) , E(MJ2,1) , Y(MJ4,1)           
 cc      DIMENSION  D(1)                                                   
-      DIMENSION  X(MJ,1) , A(ID,ID,M) , E(ID,ID) , Y((M+1)*ID,ID)
+cx      DIMENSION  X(MJ,1) , A(ID,ID,M) , E(ID,ID) , Y((M+1)*ID,ID)
+      DIMENSION X(MJ,(M+1)*ID+KSW), A(ID,ID,M), E(ID,ID), Y((M+1)*ID,ID)
 C                                                                       
       MD = M * ID                                                       
       M1D= MD + ID                                                      
@@ -3545,7 +3561,8 @@ C       OUTPUT:
 C          X:      L*(LAG+1) MATRIX            IF  JSW = 0              
 C                  (LAG+1+L)*(LAG+1) MATRIX    IF  JSW = 1              
 C                                                                       
-      REAL * 8  X(MJ1,1) , Z(MJ,1)
+cx      REAL * 8  X(MJ1,1) , Z(MJ,1)
+      REAL * 8  X(MJ1,(LAG+1)*ID+KSW) , Z(MJ,ID)
 CC      DIMENSION  Z(MJ,1)                                                
 C                                                                       
       KD = LAG*ID + KSW                                                 
@@ -3686,7 +3703,8 @@ C       OUTPUT:
 C          A(I) (I=1,M):   VECTOR OF REGRESSION COEFFICIENTS            
 C                                                                       
       IMPLICIT REAL * 8 (A-H,O-Z )                                      
-      DIMENSION X(MJ,1) , A(1)                                          
+cx      DIMENSION X(MJ,1) , A(1)                                          
+      DIMENSION X(MJ,K+1) , A(M)                                          
 C                                                                       
       K1 = K + 1                                                        
       A(M) = X(M, K1) / X(M,M)                                          
@@ -3819,7 +3837,8 @@ C
       IMPLICIT  REAL*8( A-H,O-Z )                                       
 CC      DIMENSION  X(MJ1,1) , D(1)                                        
 CC      REAL * 4   Z(1)                                                   
-      DIMENSION  X(MJ1,1) , Z(1)
+cx      DIMENSION  X(MJ1,1) , Z(1)
+      DIMENSION  X(MJ1,LAG+1) , Z(N0+LAG+NMK)
 C                                                                       
       L = MIN0( NMK,MJ1 )                                               
       K1 = K + 1                                                        
@@ -3891,7 +3910,8 @@ C         SD:  RESIDUAL VARIANCE
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ,1) , Y(1) , A(1)                                  
-      DIMENSION  X(MJ,1) , Y(K+1) , A(K)
+cx      DIMENSION  X(MJ,1) , Y(K+1) , A(K)
+      DIMENSION  X(MJ,K+1) , Y(K+1) , A(K)
 C                                                                       
       K1 = K + 1                                                        
 C                                                                       
@@ -3942,7 +3962,8 @@ C                 (K+1+L)*(K+1) MATRIX     IF  JSW = 1
 C                                                                       
 CC      REAL * 8  X(MJ1,1)                                                
 CC      DIMENSION  Z(1)                                                   
-      REAL * 8  X(MJ1,1) , Z(1)
+cx      REAL * 8  X(MJ1,1) , Z(1)
+      REAL * 8  X(MJ1,LAG+1) , Z(N0+LAG+L)
 C                                                                       
       KSW = 0                                                           
       IF( K .NE. LAG )     KSW = 1                                      
@@ -3984,7 +4005,8 @@ C       OUTPUT:
 C          G:      SOLUTION OF THE MATRIX EQUATION                      
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  C(MJ2,1) , R(MJ2,1) , G(MJ3,MJ3,1)                     
+cx      DIMENSION  C(MJ2,1) , R(MJ2,1) , G(MJ3,MJ3,1)                     
+      DIMENSION  C(MJ2,ID) , R(MJ2,ID) , G(MJ3,MJ3,II)                     
 C                                                                       
       IDM1 = ID - 1                                                     
       DO  10   J=1,ID                                                   
@@ -4021,7 +4043,8 @@ C         A:     REGRESSION COEFFICIENTS
 C         SD:    INNOVATION VARIANCE                                    
 C                                                                       
       IMPLICIT  REAL * 8(A-H,O-Z)                                       
-      DIMENSION  X(MJ,1) , A(1) , JND(1)                                
+cx      DIMENSION  X(MJ,1) , A(1) , JND(1)                                
+      DIMENSION  X(MJ,K+1) , A(M) , JND(M)                                
       K1 = K + 1                                                        
       M1 = M + 1                                                        
 C                                                                       
@@ -4094,7 +4117,8 @@ C       OUTPUT:
 C          Y:    INVERSE OF X                                           
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ,1) , Y(MJ1,1)                                     
+cx      DIMENSION  X(MJ,1) , Y(MJ1,1)                                     
+      DIMENSION  X(MJ,M) , Y(MJ1,M)                                     
       MM1 = M - 1                                                       
       DO  10     I=1,MM1                                                
       DO  10     J=I,M                                                  
@@ -4132,308 +4156,5 @@ C
       IF( DMIN .GT. X(I) )         DMIN = X(I)                          
    10 CONTINUE                                                          
       RETURN                                                            
-      END                                                               
-C
-C
-      SUBROUTINE ARMASP( A,M,B,L,SIG2,NF,SP )
-C
-C  ...  Logarithm of the power spectrum of the ARMA model  ...
-C
-C     Inputs:
-C        M:     AR order
-C        L:     MA order
-C        A(I):  AR coefficient
-C        B(I):  MA coefficient
-C        SIG2:  Innovation variance
-C        NF:    Number of frequencies
-C     Output:
-C        SP(I): Power spectrum (in log scale)
-C
-      IMPLICIT REAL*8(A-H,O-Z)
-      DIMENSION A(M), B(L)
-cc      DIMENSION SP(0:NF), H(0:500), FR(0:500), FI(0:500)
-      DIMENSION SP(0:NF), H(0:M+L), FR(0:NF), FI(0:NF)
-C
-      H(0) = 1.0D0
-      DO 10 I=1,M
-   10 H(I) = -A(I)
-C
-      CALL  FOURIE( H,M+1,NF+1,FR,FI )
-C
-      DO 20 I=0,NF
-   20 SP(I) = SIG2/( FR(I)**2 + FI(I)**2 )
-C
-      H(0) = 1.0D0
-      DO 30 I=1,L
-   30 H(I) = -B(I)
-      CALL  FOURIE( H,L+1,NF+1,FR,FI )
-      DO 40 I=0,NF
-   40 SP(I) = SP(I)*( FR(I)**2 + FI(I)**2 )
-C
-      DO 50 I=0,NF
-   50 SP(I) = DLOG10( SP(I) )
-C
-      RETURN
-      E N D
-C
-C
+      END
 
-      SUBROUTINE FOURIE( X,N,M,FC,FS )
-C
-C  ...  Discrete Fourier transformation by Goertzel method  ...
-C
-C     Inputs:
-C        X(I):   data (I=1,N)
-C        N:      data length
-C        M:      number of Fourier components
-C        FC(J):  Fourier cosine transform (J=1,M)
-C        FS(J):  Fourier sine transform   (J=1,M)
-C
-      IMPLICIT REAL*8 (A-H,O-Z)
-      DIMENSION  X(N), FC(M), FS(M)
-      DATA  PI/3.14159265358979D0/
-C
-      W = PI/(M-1)
-      DO 20 I=1,M
-      CI = DCOS(W*(I-1))
-      SI = DSIN(W*(I-1))
-      T1 = 0.0
-      T2 = 0.0
-      DO 10 J=N,2,-1
-        T0 = 2*CI*T1 - T2 + X(J)
-        T2 = T1
-   10   T1 = T0
-      FC(I) = CI*T1 - T2 + X(1)
-   20 FS(I) = SI*T1
-C
-      RETURN
-      E N D
-cc      SUBROUTINE  MOMENT( Y,N,YMEAN,VAR )
-      SUBROUTINE  MOMENTK( Y,N,YMEAN,VAR )      
-C
-C  ...  Mean and variance of the data  ...
-C
-C     Inputs:
-C       Y(I):   data
-C       N:      data length
-C     Outputs:
-C       YMEAN:  mean
-C       VAR:    variance
-C
-      IMPLICIT REAL*8(A-H,O-Z)
-      DIMENSION  Y(N)
-C
-      SUM = 0.0D0
-      DO 10 I=1,N
-   10 SUM = SUM + Y(I)
-      YMEAN = SUM/N
-      SUM = 0.0D0
-      DO 20 I=1,N
-   20 SUM = SUM + (Y(I)-YMEAN)**2
-      VAR = SUM/N
-C
-      RETURN
-      E N D
-cc      SUBROUTINE  SMOOTH( F,M,MJ,NDIM,NS,NFE,NPE,VFS,VPS,XFS,XPS,
-cc     *                    VSS,XSS )
-      SUBROUTINE  SMOOTH( F,M,NDIM,NS,NFE,NPE,VFS,VPS,XFS,XPS,VSS,XSS )
-C
-C  ...  Fixed Interval Smoother (General Form)  ...
-C
-C     Inputs:
-C        NS:     Start position of filtering
-C        NFE:    End position of filtering
-C        NPE:    End position of prediction
-C        M:      Dimension of the state vector
-C        F:      M*M matrix
-C        MJ:     Adjustable dimension of XF, VF
-C        NDIM:   Adjustable dimension of XFS, XPS, VFS, VPS
-C        NMAX    Adjustable dimension of Y
-C        VFS:    Covariance matrices of the filter
-C        VPS:    Covariance matrices of the predictor
-C        XFS:    Mean vectors of the filter
-C        XPS:    Mean vectors of the predictor
-C     Outputs:
-C        VSS:    Covariance matrices of the smoother
-C        XSS:    Mean vectors of the smoother
-C
-      IMPLICIT REAL*8(A-H,O-Z)
-cc      DIMENSION  F(MJ,MJ)
-cc      DIMENSION  XS(40), VS(40,40), VP(40,40)
-cc      DIMENSION  XFS(MJ,NDIM), XPS(MJ,NDIM), XSS(MJ,NDIM)
-cc      DIMENSION  VFS(MJ,MJ,NDIM), VPS(MJ,MJ,NDIM), VSS(MJ,MJ,NDIM)
-cc      DIMENSION  WRK(40,40), SGAIN(40,40)
-      DIMENSION  F(M,M)
-      DIMENSION  XS(M), VS(M,M), VP(M,M)
-      DIMENSION  XFS(M,NDIM), XPS(M,NDIM), XSS(M,NDIM)
-      DIMENSION  VFS(M,M,NDIM), VPS(M,M,NDIM), VSS(M,M,NDIM)
-      DIMENSION  WRK(M,M), SGAIN(M,M)
-C
-C
-C  ...  SMOOTHING  ...
-C
-      DO 10 II=NFE,NPE
-      DO 10  I=1,M
-      XSS(I,II)   = XFS(I,II)
-      DO 10  J=1,M
-   10 VSS(I,J,II) = VFS(I,J,II)
-      DO 20  I=1,M
-      XS(I)   = XFS(I,NFE)
-      DO 20  J=1,M
-   20 VS(I,J) = VFS(I,J,NFE)
-C
-      DO 500  II=NFE-1,NS,-1
-C
-      NZERO = 0
-      DO 100 I=1,M
-  100 IF( VFS(I,I,II).GT.1.0D-12 )  NZERO = NZERO + 1
-C
-      IF( NZERO.EQ.0 )  THEN
-         DO 110  I=1,M
-         XS(I)     = XFS(I,II)
-         XSS(I,II) = XFS(I,II)
-         DO 110  J=1,M
-         VS(I,J)     = VFS(I,J,II)
-  110    VSS(I,J,II) = VFS(I,J,II)
-C
-      ELSE
-      DO 410  I=1,M
-      DO 410  J=1,M
-  410 VP(I,J) = VPS(I,J,II+1)
-C
-cc      CALL  GINVRS( VP,VDET,M,40 )
-      CALL  GINVRS( VP,VDET,M )
-C
-      DO 425  I=1,M
-      DO 425  J=1,M
-      SUM = 0.0D0
-      DO 420  IJ=1,M
-  420 SUM = SUM + VFS(I,IJ,II)*F(J,IJ)
-  425 WRK(I,J) = SUM
-C
-      DO 440  I=1,M
-      DO 440  J=1,M
-      SUM = 0.0D0
-      DO 430 IJ=1,M
-  430 SUM = SUM + WRK(I,IJ)*VP(IJ,J)
-  440 SGAIN(I,J) = SUM
-C
-      DO 450  I=1,M
-      XS(I) = XFS(I,II)
-      DO 450  J=1,M
-      WRK(I,J) = 0.0D0
-  450 VS (I,J) = VFS(I,J,II)
-C
-      DO 460  J=1,M
-      DO 460  I=1,M
-  460 XS(I) = XS(I) + SGAIN(I,J)*(XSS(J,II+1) - XPS(J,II+1))
-C
-      DO 470  J=1,M
-      DO 470 IJ=1,M
-      DO 470  I=1,M
-  470 WRK(I,J)=WRK(I,J) + SGAIN(I,IJ)*(VSS(IJ,J,II+1)-VPS(IJ,J,II+1))
-C
-      DO 480  J=1,M
-      DO 480 IJ=1,M
-      DO 480  I=1,M
-  480 VS(I,J) = VS(I,J) + WRK(I,IJ)*SGAIN(J,IJ)
-      DO 485 I=1,M
-  485 IF( VS(I,I).LT.0.0D0 )  VS(I,I) = 0.0D0
-C
-      DO 490  I=1,M
-      XSS(I,II) = XS(I)
-      DO 490  J=1,M
-  490 VSS(I,J,II) = VS(I,J)
-      END IF
-C
-  500 CONTINUE
-C
-      RETURN
-      E N D
-cc      SUBROUTINE  GINVRS( A,DET,M,MJ )
-      SUBROUTINE  GINVRS( A,DET,M )
-C
-C  ...  Generalized inverse of a square matrix A  ...
-C
-C     Inputs:
-C        A:     M*M matrix
-C        M:     Dimension of A
-C        MJ:    Adjustable dimension of A
-C     Outputs:
-C        A:     Generalize inverse of A
-C        DET:   Determinant of A
-C
-      IMPLICIT REAL*8(A-H,O-Z)
-cc      DIMENSION  A(MJ,MJ), IND(50)
-      DIMENSION  A(M,M), IND(M+1)
-      EPS = 1.0D-10
-C
-      DO 10  I=1,M
-   10 IND(I) = I
-cc------------
-      I0 = 0
-      LMAX = 0
-cc------------
-      DO 60  L=1,M
-      AMAX = 0.0D0
-      DO 20  I=L,M
-      IF( A(IND(I),IND(I)).GT.AMAX )  THEN
-        AMAX = A(IND(I),IND(I))
-        I0 = I
-      END IF
-   20 CONTINUE
-      IF( AMAX.GT.EPS*A(IND(1),IND(1)) )  THEN
-         IMAX = IND(I0)
-         DO 30  I=I0,L+1,-1
-   30    IND(I) = IND(I-1)
-         IND(L) = IMAX
-         LMAX   = L
-         DO 40  I=L+1,M
-         A(IND(I),IMAX) = -A(IND(I),IMAX)/A(IMAX,IMAX)
-         DO 40  J=L+1,M
-   40    A(IND(I),IND(J)) = A(IND(I),IND(J))
-     *                    + A(IND(I),IMAX)*A(IMAX,IND(J))
-      ELSE
-         DO 50  I=L,M
-         DO 50  J=L,M
-   50    A(IND(I),IND(J)) = 0.0D0
-         GO TO 70
-      END IF
-   60 CONTINUE
-C
-   70 DET = 1.0D0
-      DO 80  I=1,M
-C     DET = DET*A(IND(I),IND(I))
-C     IF( A(IND(I),IND(I)).GT.EPS*AMAX )  THEN
-      IF( A(IND(I),IND(I)).GT.0.0D0 )  THEN
-        A(IND(I),IND(I)) = 1.0D0/A(IND(I),IND(I))
-      ELSE
-        A(IND(I),IND(I)) = 0.0D0
-      END IF
-   80 CONTINUE
-C
-      MS = MIN0( M-1,LMAX )
-      DO 200  L=MS,1,-1
-      DO 100 J=L+1,M
-      SUM = 0.0D0
-      DO 90  I=L+1,M
-   90 SUM = SUM + A(IND(I),IND(L))*A(IND(I),IND(J))
-  100 A(IND(L),IND(J)) = SUM
-      SUM = A(IND(L),IND(L))
-      DO 110  I=L+1,M
-  110 SUM = SUM + A(IND(L),IND(I))*A(IND(I),IND(L))
-      A(IND(L),IND(L)) = SUM
-      DO 120  I=L+1,M
-  120 A(IND(I),IND(L)) = A(IND(L),IND(I))
-      IMAX = IND(L)
-      DO 130 I=L+1,M
-      IF( IMAX.GT.IND(I) )  THEN
-         IND(I-1) = IND(I)
-         IND(I)   = IMAX
-      END IF
-  130 CONTINUE
-  200 CONTINUE
-C
-      RETURN
-      E N D
-      

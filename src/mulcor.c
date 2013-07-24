@@ -11,19 +11,19 @@ SEXP mulcor(SEXP y, SEXP n, SEXP d, SEXP lag1)
 
     SEXP ans =  R_NilValue,  mean = R_NilValue, cov = R_NilValue, cor = R_NilValue;
     double *xmean, *xcov, *xcor = NULL;
-    int   i, nd, nd2;
+    int   i, nd, ldd;
 
     d1 = NUMERIC_POINTER(y);
     i1 = INTEGER_POINTER(n);
     i2 = INTEGER_POINTER(d);
     i3 = INTEGER_POINTER(lag1);
 
-    nd = *i3;
-    nd2 = nd * nd;
+    nd = *i2;
+    ldd = (*i3) * nd * nd;
     PROTECT(ans = allocVector(VECSXP, 3));
     SET_VECTOR_ELT(ans, 0, mean = allocVector(REALSXP, nd));
-    SET_VECTOR_ELT(ans, 1, cov = allocVector(REALSXP, nd2));
-    SET_VECTOR_ELT(ans, 2, cor = allocVector(REALSXP, nd2)); 
+    SET_VECTOR_ELT(ans, 1, cov = allocVector(REALSXP, ldd));
+    SET_VECTOR_ELT(ans, 2, cor = allocVector(REALSXP, ldd)); 
 
     d2 = NUMERIC_POINTER(mean);
     d3 = NUMERIC_POINTER(cov);
@@ -36,8 +36,8 @@ SEXP mulcor(SEXP y, SEXP n, SEXP d, SEXP lag1)
     xcor = REAL(cor);
 
     for(i=0; i<nd; i++) xmean[i] = d2[i];
-    for(i=0; i<nd2; i++) xcov[i] = d3[i];
-    for(i=0; i<nd2; i++) xcor[i] = d4[i];
+    for(i=0; i<ldd; i++) xcov[i] = d3[i];
+    for(i=0; i<ldd; i++) xcor[i] = d4[i];
 
     UNPROTECT(1);
 

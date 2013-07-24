@@ -18,7 +18,7 @@ nonst(y, span, max.order=NULL, plot=TRUE)
     \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
   where \eqn{p} is order of the AR model and \eqn{u(t)} is innovation variance.
   AIC is defined by
-    \eqn{AIC = nlog(det(sd)) + 2k,}
+    \deqn{AIC = n \log(det(sd)) + 2k,}{AIC = nlog(det(sd)) + 2k,}
   where \eqn{n} is the length of data, \eqn{sd} is the estimates of the innovation variance
   and \eqn{k} is the number of parameter.
 }

@@ -5,12 +5,47 @@
 
              *************************************
 
+  timsac_1.3.0
+ ==============
+ * Set the correct dimension for array bounds (1) and (*) in Fortran souce files.
+
+ * Delete the functions armaimp(), lsar2(), ngsmth(), tsmooth(), tvvar(), tvar() and tvspc().
+
+ * Delete a document "f77program.pdf" in doc directory.
+
+
+  timsac_1.2.8
+ ==============
+ * Added function lsar2().
+
+ * Define the functions print.blocar(), print.mlocar(), print.nonst() and print.tvvar() using S3method ditective.
+
+ * Rename the argument 'ord' in perars() to 'subset'.
+
+ * Delete the argument 'ar.order' in tvspc().
+
+ * Added a document "f77program.pdf" to doc directory.
+
+ * Fixed a bug in autoarmafit() and armafit().
+  Add a array "CXY" equivalent to "CXX" to subroutine SC0GRH in autarmf.f.
+
+ * Delete the default value for delta in function tvvar() and tvar().
+
+ * Fixed a bug in decomp().
+  If argument "log" is TRUE and there is zero or nagative number in input data y, output error message.
+
+ * Fixed a bug in mulcor().
+  In mulcor.c, size of allocVector are not enough.
+
+
   timsac_1.2.7
  ==============
  * Fixed a bug in mulmar().
   Mulmar() did not work for certain types of data.   
 
    (Reported by William Pleasant)
+
+ * Change the maintainer address from "timsac at jasp.ism.ac.jp" to "ismrp at jasp.ism.ac.jp".
 
 
   timsac_1.2.6

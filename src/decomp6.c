@@ -4,15 +4,16 @@
 #include <Rdefines.h>
 #include "timsac.h"
 
-extern void F77_NAME(decompf) (double*, int*, int*, double*, double*, double*, double*, double*, double*, int*, double*);
+extern void F77_NAME(decompf) (double*, int*, int*, double*, double*, double*, double*, double*, double*, int*, double*, int*);
 
 SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8;
-    int *i1,*i2,*i3;
+    int *i1,*i2,*i3,*i4;
 
-    SEXP ans = R_NilValue, trend = R_NilValue, seasonal = R_NilValue, ar = R_NilValue, trad = R_NilValue, noise = R_NilValue, para = R_NilValue;
+    SEXP ans = R_NilValue, trend = R_NilValue, seasonal = R_NilValue, ar = R_NilValue, trad = R_NilValue, noise = R_NilValue, para = R_NilValue, ier = R_NilValue;
     double *xtrend, *xseasonal, *xar, *xtrad, *xnoise, *xpara = NULL;
+    int *xier = NULL;
     int i, nn;
 
     d1 = NUMERIC_POINTER(y);
@@ -22,13 +23,14 @@ SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
     d8 = NUMERIC_POINTER(omax);
 
     nn = *i1;
-    PROTECT(ans = allocVector(VECSXP, 6));
+    PROTECT(ans = allocVector(VECSXP, 7));
     SET_VECTOR_ELT(ans, 0, trend = allocVector(REALSXP, nn));
     SET_VECTOR_ELT(ans, 1, seasonal = allocVector(REALSXP, nn));
     SET_VECTOR_ELT(ans, 2, ar = allocVector(REALSXP, nn));
     SET_VECTOR_ELT(ans, 3, trad = allocVector(REALSXP, nn));
     SET_VECTOR_ELT(ans, 4, noise = allocVector(REALSXP, nn));
     SET_VECTOR_ELT(ans, 5, para = allocVector(REALSXP, 26));
+    SET_VECTOR_ELT(ans, 6, ier = allocVector(INTSXP, 1));
 
     d2 = NUMERIC_POINTER(trend);
     d3 = NUMERIC_POINTER(seasonal);
@@ -36,8 +38,9 @@ SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
     d5 = NUMERIC_POINTER(trad);
     d6 = NUMERIC_POINTER(noise);
     d7 = NUMERIC_POINTER(para);
+    i4 = INTEGER_POINTER(ier);
 
-    F77_CALL(decompf) (d1,i1,i2,d2,d3,d4,d5,d6,d7,i3,d8);
+    F77_CALL(decompf) (d1,i1,i2,d2,d3,d4,d5,d6,d7,i3,d8,i4);
 
     xtrend = REAL(trend);
     xseasonal = REAL(seasonal);
@@ -45,6 +48,7 @@ SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
     xtrad = REAL(trad);
     xnoise = REAL(noise);
     xpara = REAL(para);
+    xier = INTEGER(ier);
 
     for(i=0; i<nn; i++) xtrend[i] = d2[i];
     for(i=0; i<nn; i++) xseasonal[i] = d3[i];
@@ -52,6 +56,7 @@ SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
     for(i=0; i<nn; i++) xtrad[i] = d5[i];
     for(i=0; i<nn; i++) xnoise[i] = d6[i];
     for(i=0; i<26; i++) xpara[i] = d7[i];
+    *xier = *i4;
 
     UNPROTECT(1);
 

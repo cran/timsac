@@ -35,11 +35,11 @@ blocar(y, max.order=NULL, span, plot=TRUE)
     2. \tab Averaging of the models fitted to the present and preceding spans.
   }
   AIC of the model fitted to the new span is defined by
-    \deqn{AIC = ns\ log( sd ) + 2k,}{AIC = ns log( sd ) + 2k,}
+    \deqn{AIC = ns \log( sd ) + 2k,}{AIC = ns log( sd ) + 2k,}
   where \eqn{ns} is the length of new data, \eqn{sd} is innovation variance
   and \eqn{k} is the equivalent number of parameters, defined as the sum of squares of the Bayesian weights.
   AIC of the model fitted to the preceding spans are defined by
-    \deqn{AIC( j+1 ) = ns\ log( sd(j) ) + 2,}{AIC( j+1 ) = ns log( sd(j) ) + 2,}
+    \deqn{AIC( j+1 ) = ns \log( sd(j) ) + 2,}{AIC( j+1 ) = ns log( sd(j) ) + 2,}
   where \eqn{sd(j)} is the prediction error variance by the model fitted to \eqn{j} periods former span.
 }
 

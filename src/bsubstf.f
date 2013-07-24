@@ -373,9 +373,10 @@ C
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  X , F , E                                               
-      DIMENSION  X(1) , E(MJ,1)                                         
+cx      DIMENSION  X(1) , E(MJ,1)                                         
 cc      DIMENSION  A(1) , COV(120)                                        
-      DIMENSION  A(1) , COV(MJ2)                                        
+      DIMENSION  X(NPE) , E(MJ,IL)
+      DIMENSION  A(K) , COV(MJ2)                                        
       DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL)
 cc      COMMON  /COMXX/ F(2000)                                           
       DIMENSION  F(NPE-NPS+1,IL)
@@ -512,7 +513,8 @@ C          F4:    PEAKEDNESS OF X
 C                                                                       
       IMPLICIT  REAL * 8  ( F )                                         
 CC      DIMENSION  X(1)                                                   
-	REAL*8  X(1)
+cx	REAL*8  X(1)
+	REAL*8  X(N)
 C                                                                       
       FN = N                                                            
       FSUM = 0.D0                                                       
@@ -556,8 +558,10 @@ C          EZ:     PREDICTION VALUE MATRIX
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z(1) , EZ(MJ,1)                                         
-      DIMENSION  Z(1) , EZ(MJ,1)
-	DIMENSION  A(1)                                                   
+cx      DIMENSION  Z(1) , EZ(MJ,1)
+cx	DIMENSION  A(1)
+      DIMENSION  Z(NPE) , EZ(MJ,IL)
+      DIMENSION  A(M)                                                   
 C                                                                       
 C                                                                       
       DO  100     II=NPS,NPE                                            
@@ -608,7 +612,8 @@ C
 CC      IMPLICIT  REAL*8 ( A-D,O-Y )                                      
       IMPLICIT  REAL*8 ( A-H,O-Z ) 
 cc      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(20)                        
-      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
+cx      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
+      DIMENSION  Z(NPE) , A(K) , EZ(MJ1,IL) , Y(IL)                        
 cc      REAL * 4   CSTDMY, SD0DMY
       COMMON     / BBB /  LAG1(50) , LAG2(50) , LAG3(50), CSTDMY, SD0DMY
 CC      INTEGER  RETURN                                                   
@@ -829,7 +834,8 @@ C
 CC      REAL * 8  X(MJ1,1)                                                
 CC      DIMENSION  Z(1)                                                   
 cc      REAL * 4   CSTDMY, SD0DMY
-      REAL * 8  X(MJ1,1) ,  Z(1) , ZTEM
+cx      REAL * 8  X(MJ1,1) ,  Z(1) , ZTEM
+      REAL * 8  X(MJ1,K+1) ,  Z(N0+LAG+L) , ZTEM
       REAL * 8  CSTDMY, SD0DMY
       COMMON     / BBB /  L1(50) , L2(50) , L3(50), CSTDMY, SD0DMY  
 C                                                                       
@@ -887,8 +893,9 @@ C
 C                                                                       
       IMPLICIT  REAL  * 8 (A-H,O-Z)                                     
 CC      REAL * 4 Z(1)                                                     
-      DIMENSION  Z(1)
-      DIMENSION  X(MJ1,1)                                               
+cx      DIMENSION  Z(1)
+cx      DIMENSION  X(MJ1,1)                                               
+      DIMENSION  X(MJ1,K+1) ,  Z(NO+LAG+L)
 cc      COMMON     / AAA /  N , M                                         
       COMMON     / AAA /  N
 C                                                                       
@@ -933,7 +940,8 @@ C          X:   ARRANGED VECTOR
 C          IND: INDEX OF ARRANGED VECTOR                                
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(1) , IX(1)                                           
+cx      DIMENSION  X(1) , IX(1)                                           
+      DIMENSION  X(N) , IX(N)                                           
 C                                                                       
       NM1 = N - 1                                                       
       DO  30     I=1,N                                                  
@@ -983,7 +991,8 @@ C
 cc      DIMENSION  B(1) , C(50) , D(50,50)                                
 cc      DIMENSION  IND(50) , KND(50) , ESUM(50)                           
 cc      DIMENSION  C1(50), C2(50), ESUM1(50)
-      DIMENSION  B(1) , C(K) , D(K+1,K+1)                                
+cx      DIMENSION  B(1) , C(K) , D(K+1,K+1)                                
+      DIMENSION  B(K) , C(K) , D(K+1,K+1)                                
       DIMENSION  IND(K) , KND(K+1) , ESUM(K+1)                           
       DIMENSION  C1(K+1), C2(K), ESUM1(K+1)
 C                                                                       
@@ -1205,7 +1214,8 @@ C
 cc      DIMENSION  X(MJ1,1) , A(1) , D(1)                                 
 cc      DIMENSION  B(50) , G(50)                                          
 cc      DIMENSION  IND(50), C(50), C1(50), C2(50), ESUM(50)
-      DIMENSION  X(MJ1,1) , A(1) , D(K)                                 
+cx      DIMENSION  X(MJ1,1) , A(1) , D(K)                                 
+      DIMENSION  X(MJ1,K+1) , A(K) , D(K)                                 
       DIMENSION  B(K) , G(K)
       DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
       K1 = K + 1                                                        

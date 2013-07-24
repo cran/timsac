@@ -22,10 +22,9 @@
   Pure autoregression is not allowed.
 }
 \value{
-  \item{best.order}{the order of the best ARMA model.}
   \item{best.model}{the best choice of ARMA coefficients.}
   \item{model}{a list with components \code{arcoef} (Maximum likelihood estimates of AR coefficients), \code{macoef} (Maximum likelihood estimates of MA coefficients),
-  \code{arstd} (AR standard deviation), \code{mastd} (MA standard deviation), \code{v} (Innovation variance), \code{aic} (AIC \eqn{= n log(det(v))+2(p+q)})
+  \code{arstd} (AR standard deviation), \code{mastd} (MA standard deviation), \code{v} (Innovation variance), \code{aic} (AIC \eqn{= n \log(det(v))+2(p+q)}{= n log(det(v))+2(p+q)})
   and \code{grad} (Final gradient) in AIC increasing order.}
 }
 
@@ -39,9 +38,7 @@
   # "arima.sim" is a function in "stats".
   # Note that the sign of MA coefficient is opposite from that in "timsac".
   y <- arima.sim(list(order=c(2,0,1),ar=c(0.64,-0.8),ma=-0.5),n=1000)
-  z <- autoarmafit(y)
-  z$best.order
-  z$best.model
+  autoarmafit(y)
 }
 
 \keyword{ts}

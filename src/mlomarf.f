@@ -102,7 +102,6 @@ cc      MJ = 1500
 cc      MJ1 = 200                                                         
 cc      MJ2 = 100                                                         
 cc      MJ3 = 5                                                           
-      MJ = N
       MJ2 = ((LAG+1)*ID+KSW)*2
       MJ1 = MJ2*2
       MJ3 = ID
@@ -155,7 +154,7 @@ cc      IF( N-LK1-NS .LT. MX )     NS = N - LK
 C                                                                       
 cc      CALL  MNONST( Z,X,U,D,KSW,LAG,L,NS,ID,IF,MJ,MJ1,MJ2,MJ3,A,B,E,MF, 
 cc     *              AIC )                                               
-      CALL MNONST( Z,X,U,KSW,LAG,L,NNF,NF(M),NS(M),ID,IF,MJ,MJ1,MJ2,MJ3,
+      CALL MNONST( Z,X,U,KSW,LAG,L,NNF,NF(M),NS(M),ID,IF,N,MJ1,MJ2,MJ3,
      * A(1,1,1,M),B,E(1,1,M),MS(M),AIC(M),MP(M),AICP(M),MF(M),AICF(M) )
 C                                                                      
 cc      L = L + NS                                                        
@@ -297,7 +296,8 @@ C
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  X(MJ1,1) , U(MJ2,1) , D(1)                             
-      DIMENSION  Z(MJ,1)                                                
+cx      DIMENSION  Z(MJ,1)                                                
+      DIMENSION  Z(MJ,ID)                                                
       DIMENSION  X(MJ1,MJ2) , U(MJ2,MJ2)
       DIMENSION  A(ID,ID,LAG) , B(ID,ID,LAG) , E(ID,ID)                 
       DIMENSION  AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID) 

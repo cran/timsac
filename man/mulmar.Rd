@@ -27,7 +27,7 @@ mulmar(y, max.order=NULL, plot=FALSE)
   \item{jnd}{specification of \eqn{i}-th regressor.}
   \item{subregcoef}{subset regression coefficients.}
   \item{rvar}{residual variance.}
-  \item{aicf}{final estimate of AIC (\eqn{=nlog}(\code{rvar})\eqn{+2}\code{np}).}
+  \item{aicf}{final estimate of AIC (\eqn{=n\log}{=nlog}(\code{rvar})\eqn{+2}\code{np}).}
   \item{respns}{instantaneous response.}
   \item{matv}{innovation variance matrix.}
   \item{morder}{order of the MAICE model.}
@@ -39,7 +39,7 @@ mulmar(y, max.order=NULL, plot=FALSE)
     \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +\ldots+ A(p)y(t-p) + u(t),}{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
   where \eqn{p} is order of the model and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance matrix \code{matv}.
   AIC is defined by
-    \deqn{AIC = n\ log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
+    \deqn{AIC = n \log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
   where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation variance matrix,
   \eqn{det} is the determinant and \eqn{k} is the number of free parameters.
 }

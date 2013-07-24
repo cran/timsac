@@ -1,15 +1,19 @@
 useDynLib(timsac)
 
-export(autcor, mulcor, fftcor, auspec, mulspe, sglfre, mulfrf, fpeaut, fpec, mulnos, raspec, mulrsp, optdes, optsim,
-       wnoise, autoarmafit, armafit, canarm, covgen, canoca, markov, prdctr, simcon, nonst, thirmo, bispec,
-       unimar, unibar, bsubst, mulmar, mulbar, perars, mlocar, blocar, mlomar, blomar, exsar, xsarma, decomp, mfilter,
-       armaimp, tsmooth, ngsmth, tvar, tvvar, tvspc, baysea)
+export(autcor, mulcor, fftcor, auspec, mulspe, sglfre, mulfrf, fpeaut, fpec, mulnos, raspec, mulrsp, optdes,
+ optsim, wnoise, autoarmafit, armafit, canarm, covgen, canoca, markov, prdctr, simcon, nonst, thirmo, bispec,
+ unimar, unibar, bsubst, mulmar, mulbar, perars, mlocar, blocar, mlomar, blomar, exsar, xsarma, decomp, baysea,
+ mfilter)
 
 S3method(print, autoarmafit)
+S3method(print, blocar)
 S3method(print, blomar)
 S3method(print, fpec)
+S3method(print, mlocar)
 S3method(print, mlomar)
 S3method(print, mulcor)
 S3method(print, mulspe)
 S3method(print, perars)
+S3method(print, nonst)
 S3method(print, prdctr)
+

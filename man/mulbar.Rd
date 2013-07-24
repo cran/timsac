@@ -34,13 +34,13 @@
 }
 \details{
   The statistic AIC is defined by
-    \deqn{AIC = n\ log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
+    \deqn{AIC = n \log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
   where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation variance matrix,
   \eqn{det} is the determinant and \eqn{k} is the number of free parameters.
 
   Bayesian weight of the \eqn{m}-th order model is defined by
     \deqn{W(n) = const \times C(m) / (m+1),}{W(n) = const * C(m) / (m+1),}
-  where \eqn{const} is the normalizing constant and \eqn{C(m)=exp(-0.5 AIC(m))}.
+  where \eqn{const} is the normalizing constant and \eqn{C(m)=\exp(-0.5 AIC(m))}{C(m)=exp(-0.5 AIC(m))}.
   The Bayesian estimates of partial autoregression coefficient matrices of forward and backward models are
   obtained by \eqn{(m = 1,\ldots,lag)}{(m = 1,...,lag)}
     \deqn{G(m) = G(m) D(m),}

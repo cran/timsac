@@ -19,7 +19,7 @@
 \value{
   \item{mean}{mean.}
   \item{var}{variance.}
-  \item{ord}{specification of i-th regressor (i=1,...,\code{ni}).}
+  \item{subset}{specification of i-th regressor (i=1,...,\code{ni}).}
   \item{regcoef}{regression coefficients.}
   \item{rvar}{residual variances.}
   \item{np}{number of parameters.}
@@ -36,7 +36,7 @@
   where \eqn{nd} is the number of periods, \eqn{ni} is the number of instants in one period and \eqn{u(i,j)} is the Gaussian white noise.
   When \code{ksw} is set to \eqn{0}, the constant term \eqn{c(j)} is excluded.
      
-  The statistics AIC is defined by \eqn{AIC = nlog(det(v)) + 2k},
+  The statistics AIC is defined by \eqn{AIC = n \log(det(v)) + 2k}{AIC = nlog(det(v)) + 2k},
   where \eqn{n} is the length of data, \eqn{v} is the estimate of the innovation variance matrix and \eqn{k} is the number of parameters.
   The outputs are the estimates of the regression coefficients and innovation variance of the periodic AR model for each instant.
 }
@@ -53,9 +53,7 @@
 
 \examples{
   data(Airpolution)
-  z <- perars(Airpolution, ni=6, lag=2, ksw=1)
-  z$regcoef
-  z$v
+  perars(Airpolution, ni=6, lag=2, ksw=1)
 }
 
 \keyword{ts}

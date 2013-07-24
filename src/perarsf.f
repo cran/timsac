@@ -212,7 +212,8 @@ C          Y:     REARRANGED DATA MATRIX
 C          ND:    NUMBER OF ROWS OF Y                                   
 C                                                                        
 CC      DIMENSION  Z(1) , Y(MJ,1)                                         
-      REAL * 8  Z(1) , Y(MJ,1)
+cx      REAL * 8  Z(1) , Y(MJ,1)
+      REAL * 8  Z(N) , Y(MJ,IP)
       ND = N / IP                                                       
       DO 10  I=1,ND                                                     
       DO 10  J=1,IP                                                     

@@ -1,5 +1,6 @@
       SUBROUTINE  DECOMPF(DATA,N,IPAR,TREND,SEASNL,AR,
-     *                    TRAD,NOISE,para,imiss,omaxx )
+cx     *                    TRAD,NOISE,para,imiss,omaxx )
+     *                    TRAD,NOISE,para,imiss,omaxx,ier )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -23,13 +24,15 @@ c
       LM1 = L+M+1
 c
       call decompff (DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
-     *               para,iopt,imiss,omaxx,LM1)
+cx     *               para,iopt,imiss,omaxx,LM1)
+     *               para,iopt,imiss,omaxx,LM1,ier)
 c
       return
       end
 c
       SUBROUTINE  DECOMPFF(DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
-     *                     para,iopt,imiss,omaxx,LM1 )
+cx     *                     para,iopt,imiss,omaxx,LM1 )
+     *                     para,iopt,imiss,omaxx,LM1,ier )
 C
 C                                                                       
 c  Bug fixed (97/10/17)
@@ -207,7 +210,9 @@ C           ...  log transformation  ...
 C                                                                       
 c      IF(LOG .EQ. 1)  CALL  LOGTRF( WORK,N )                            
 cc      CALL  LOGTRF( WORK,IMIS,N,LOG )
-      CALL  LOGTRF( Z,IMIS,N,LOG )
+cx      CALL  LOGTRF( Z,IMIS,N,LOG )
+      CALL  LOGTRF( Z,IMIS,N,LOG,ier )
+      if(ier .ne. 0) return
 C                                                                       
 C           ...  prepare calender for trading day adjustment  ...       
 C                                                                       
@@ -875,7 +880,8 @@ C ------------------------------------------------------------
     7 FORMAT( 5X ,'RAM =',D10.3, 5X,'E7 =',F10.3 )                      
       E N D                                                             
 cc      SUBROUTINE  LOGTRF( Z,N,ilog )                                         
-      SUBROUTINE  LOGTRF( Z,IMIS,N,ilog )
+cx      SUBROUTINE  LOGTRF( Z,IMIS,N,ilog )
+      SUBROUTINE  LOGTRF( Z,IMIS,N,ilog,ier )
 C                                                                       
 C ... LOG TRANSFORMATION ...                                            
 C                                                                       
@@ -888,14 +894,22 @@ cc      common     /cccout/  IMIS(3000)
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
 C                                                                       
+      ier = 0
       DJACOB = 0.0D0                                                    
       if(ilog .eq. 0) return
+      ier = -1
       DO 10 I=1,N                                                       
 c      DJACOB = DJACOB - DLOG10(Z(I))                                    
-	if(IMIS(i) .ne. 1)  DJACOB = DJACOB - DLOG(Z(I)) 
+cx	if(IMIS(i) .ne. 1)  DJACOB = DJACOB - DLOG(Z(I)) 
 c   10 Z(I) = DLOG10( Z(I) )   
-	Z(I) = DLOG( Z(I) )                                             
+cx	Z(I) = DLOG( Z(I) )                                             
+         if(IMIS(i) .ne. 1) then
+            if(Z(I) .le. 0) return
+            DJACOB = DJACOB - DLOG(Z(I)) 
+            Z(I) = DLOG( Z(I) )
+         end if
  10   continue
+      ier = 0
 C                                                                       
 c      WRITE(6,600)  DJACOB                                              
 C     WRITE(6,610) (Z(I),I=1,N)                                         
@@ -1270,7 +1284,8 @@ C         XM:     MEAN
 C                                                                       
       IMPLICIT REAL*8( A-H,O-Z )                                        
 cc      REAL * 4     FORM(20), TITLE(20)
-      REAL*8       X(1) ,DATA(1)         
+cx      REAL*8       X(1) ,DATA(1)         
+      REAL*8       X(N) ,DATA(N)         
 C                                                                       
 C       LOADING OF TITLE, DATA LENGTH, FORMAT SPECIFICATION AND DATA    
 C                                                                       

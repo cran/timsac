@@ -85,13 +85,7 @@
 
 \examples{
   data(Blsallfood)
-  z <- decomp(Blsallfood, trade=TRUE, year=1973)
-  z$aic
-  z$lkhd
-  z$sigma2
-  z$tau1
-  z$tau2
-  z$tau3
+  decomp(Blsallfood, trade=TRUE, year=1973)
 }
 
 \keyword{ts}

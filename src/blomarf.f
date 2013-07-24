@@ -250,10 +250,13 @@ C
       IMPLICIT  REAL *8  ( A-H , O-Z )                                  
 CC      REAL*4     Z(MJ,1) , F1(100,10,11) , F2(100,10,11)
 cc      DIMENSION  X(MJ1,1) , D(1) , A(MJ3,MJ3,1) , B(MJ3,MJ3,1)          
-      DIMENSION  Z(MJ,1) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
-      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,1) , B(MJ3,MJ3,1)
-      DIMENSION  G(MJ3,MJ3,1) , H(MJ3,MJ3,1) , E(MJ3,1)                 
+cx      DIMENSION  Z(MJ,1) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
+cx      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,1) , B(MJ3,MJ3,1)
+cx      DIMENSION  G(MJ3,MJ3,1) , H(MJ3,MJ3,1) , E(MJ3,1)                 
 cc      DIMENSION  Y(100,10) , AIC(11) , C(11)                            
+      DIMENSION  Z(MJ,ID) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
+      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,LAG) , B(MJ3,MJ3,LAG)
+      DIMENSION  G(MJ3,MJ3,LAG) , H(MJ3,MJ3,LAG) , E(MJ3,ID) 
       DIMENSION  AIC(KMAX1) , C(KMAX1)
 cc      DATA     KC  / 0 /                                                
 C

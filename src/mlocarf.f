@@ -295,12 +295,13 @@ CC      REAL * 4  Z(1) , TITLE(1)
 cc      REAL * 4   TITLE(1)
 cc      DIMENSION  X(MJ1,1) , U(MJ2,1) , A(1)                      
 cc      DIMENSION  B(50)                                                  
-      DIMENSION  Z(1)
+cx      DIMENSION  Z(1)
+      DIMENSION  Z(MJ1)
       DIMENSION  X(MJ1,K+1) , U(K+1,K+1) , A(K)                      
       DIMENSION  B(K)                                                  
       DIMENSION  SDS(K+1), AS(K+1), DICS(K+1)
       DIMENSION  SDP(K+1), AP(K+1), DICP(K+1)
-	EXTERNAL  SETX
+      EXTERNAL  SETX
 C                                                                       
       K1 = K + 1                                                        
       K2 = K1*2                                                         

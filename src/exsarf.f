@@ -760,9 +760,10 @@ cc      COMMON     / AAA /  N
 cc      COMMON     / BBB /  Z
 cc      COMMON     / DDD /  R , F , AIC , SD                              
 cc      DIMENSION  R(31,31)                                               
-      DIMENSION  R(K+1,K+1)                                               
-      DIMENSION  X(1)                                                   
+cx      DIMENSION  X(1)                                                   
 cc      DIMENSION  H(50,50) , S(50)                                       
+      DIMENSION  R(K+1,K+1)                                               
+      DIMENSION  X(K)                                                   
       DIMENSION  H(K,K) , S(K)                                       
       DO 10  I=1,K                                                      
       SUM = R(1,I+1)                                                    

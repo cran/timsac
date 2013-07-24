@@ -381,7 +381,7 @@ c
      *            PSDS0(NDATA+FOCAST),PSDT0(NDATA+FOCAST)
       DIMENSION  FTRN(IPARA(4)+3),FSEA((IPARA(5)+3)*IPARA(1)+3)
       DIMENSION  F(NDATA+FOCAST+1),WEEK(7,NDATA+FOCAST)
-      DIMENSION  YS(NDATA+FOCAST),YS1(NDATA+FOCAST),YO(NDATA+FOCAST)
+      DIMENSION  YS(NDATA),YS1(NDATA),YO(NDATA)
 cc      CHARACTER*80   TITLE
 cc      COMMON /ILOGT/ LOGT,ISHRNK,PUNCH,IOUTD,ROUT                       
 cc      COMMON /IDATA/ PERIOD,ORDER,SORDER,YEAR,NDAY,IFIX                 
@@ -616,8 +616,8 @@ C     IEND=1: LAST SPAN IN NORMAL ITERATION
 C      --------------------                                             
 C                                                                       
 C                                                                       
-cc      CALL COPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)              
-      CALL BCOPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)
+cc      CALL COPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)           
+         CALL BCOPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)
 C                                                                       
 C     INITIALIZATION FOR THE INNER LOOP SUBSEA                          
 C                                                                       
@@ -645,7 +645,7 @@ C     SEASONAL DECOMPOSITION OF ICN-TH LOCAL SPAN
       CALL SUBSEA(ABIC,SEAS0,TREND0,EST0,ADJ0,IRREG0,TDCMP0,            
 cc     *  FSEA,FTRN,YS,N,FOCAST,RLIM,WEEK,DC,IDC,H,NH,F,H2,N2,ITRN,       
 cc     *  IARS,ARFS,IART,ARFT,IARN,ARFN,PSDT0,PSDS0)                      
-     *  FSEA,FTRN,YS,N,FOCAST,RLIM,WEEK,IDC,NH,F,N2,ITRN,       
+     *  FSEA,LFSEA,FTRN,YS,N,FOCAST,RLIM,WEEK,IDC,NH,F,N2,ITRN,       
      *  IARS,ARFS,IART,ARFT,IARN,ARFN,PSDT0,PSDS0,NPF,
      *  PERIOD,ORDER,SORDER,YEAR,NDAY,LOGT,
      *  ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA)
@@ -656,7 +656,7 @@ cc      CALL OUTLIR(IRREG0,N,10,2,1,YS1,RLIM)
       CALL OUTLIR(IRREG0,N,10,2,1,YS1,RLIM,IOUTD,ROUT)
       IOUT=IOUT+1                                                       
       CALL ADD(YS,N,EST0,N,YS1,N)                                       
-cc      IF(IOUT .EQ. 2) CALL COPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)            
+cc      IF(IOUT .EQ. 2) CALL COPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)     
       IF(IOUT .EQ. 2) CALL BCOPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)
       IF(IOUT .NE. 1) GO TO 9700                                        
       NTEM = N+1                                                        
@@ -679,7 +679,7 @@ cc      CALL COPY(EST,LF,1,LF,HEAD,1,EST0,LF,1,LF,1,1)
 cc      CALL COPY(ADJUST,L,1,L,HEAD,1,ADJ0,L,1,L,1,1)                     
 cc      CALL COPY(IRREG,L,1,L,HEAD,1,IRREG0,L,1,L,1,1)                    
 cc      CALL COPY(TDCMP,LF,1,LF,HEAD,1,TDCMP0,LF,1,LF,1,1)                
-cc      CALL COPY(CDATA,L,1,L,HEAD,1,YS1,L,1,L,1,1)                       
+cc      CALL COPY(CDATA,L,1,L,HEAD,1,YS1,L,1,L,1,1)         
       CALL BCOPY(PSDT,LF,1,LF,HEAD,1,PSDT0,LF,1,LF,1,1)
       CALL BCOPY(PSDS,LF,1,LF,HEAD,1,PSDS0,LF,1,LF,1,1)
       CALL BCOPY(SEASON,LF,1,LF,HEAD,1,SEAS0,LF,1,LF,1,1)
@@ -992,7 +992,8 @@ C       Y:     MY-VECTOR
 C       Z:     MZ-VECTOR                                                
 C                                                                       
       IMPLICIT REAL*8 ( A-H,O-Z )                                       
-      DIMENSION X(1), Y(1), Z(1)                                        
+cc      DIMENSION X(1), Y(1), Z(1)                                        
+      DIMENSION X(MX), Y(MY), Z(MZ)                                        
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1010,7 +1011,8 @@ C       I0:    ABSOLUTE POSITION OF THE FIRST ROW OF X
 C       J0:    ABSOLUTE POSITION OF THE FIRST COLUMN OF X               
 C                                                                       
       IMPLICIT REAL*8 (A-H,O-Z )                                        
-      DIMENSION X(MJ,1)                                                 
+cx      DIMENSION X(MJ,1)                                                 
+      DIMENSION X(MJ, I0+N-1)                                                 
       I0M1 = I0 - 1                                                     
       J0M1 = J0 - 1                                                     
       DO 10 J=1,N                                                       
@@ -1032,7 +1034,9 @@ C       IY:    ABSOLUTE POSITION OF THE FIRST ROW OF Y
 C       JY:    ABSOLUTE POSITION OF THE FIRST COLUMN OF Y               
 C                                                                       
       IMPLICIT  REAL*8 ( A-H,O-Z )                                      
-      DIMENSION X(MMX,1), Y(MMY,1)                                      
+cx      DIMENSION X(MMX,1), Y(MMY,1)
+cxx      DIMENSION X(MMX,JX+NX-1), Y(MMY,JY+NY-1)
+      DIMENSION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1)
       IXM1 = IX-1                                                       
       JXM1 = JX - 1                                                     
       IYM1 = IY - 1                                                     
@@ -1060,9 +1064,13 @@ C
       IMPLICIT REAL*8 (A-H,O-Z )                                        
       INTEGER*4 YEAR                                                    
       REAL*8 IRREG0                                                     
-      DIMENSION A(1),Y(1),SEAS0(1),TREND0(1),EST0(1),ADJ0(1),IRREG0(1)  
+cc      DIMENSION A(1),Y(1),SEAS0(1),TREND0(1),EST0(1),ADJ0(1),IRREG0(1)  
 cc     * ,W(1),WEEK(7,1),TDC0(1), PSDT(500),PSDS(500),ERR(1000)           
-     * ,W(1),WEEK(7,1),TDC0(1), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
+cx      DIMENSION A(2*(NN+NF)+NDAY+6),Y(1),SEAS0(NN+NF),TREND0(NN+NF),
+cx     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(8),WEEK(7,1),
+      DIMENSION A(2*(NN+NF)+NDAY+6),Y(NN),SEAS0(NN+NF),TREND0(NN+NF),
+     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(NDAY+6),WEEK(7,NN+NF),
+     * TDC0(NN+NF), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
 cc      COMMON /IDATA/ IP,IDUMMY(2),YEAR,NDAY                             
 C                                                                       
       N=NN+NF                                                           
@@ -1083,9 +1091,11 @@ C
       IF(YEAR .EQ. 0) GO TO 20                                          
       NTEM = N*2+1                                                      
       N7 = 6 + NDAY                                                     
-cc      CALL COPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)                           
-      CALL BCOPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
-      CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,N7)                      
+cc      CALL COPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
+cx      CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,N7)     
+cx      CALL BCOPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
+      CALL BCOPY(W,N7,1,N7,1,1,A,N7,1,N,NTEM,1)
+      CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,7)                      
    20 CONTINUE                                                          
       CALL ADD(EST0,N,TREND0,N,SEAS0,N)                                 
       IF(YEAR .NE. 0) CALL ADD(EST0,N,EST0,N,TDC0,N)                    
@@ -1118,7 +1128,8 @@ C          X:     IN UPPER TRIANGULAR FORM
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ1,1) , D(1000)                                     
-      DIMENSION  X(MJ1,1) , D(N)                                     
+cx      DIMENSION  X(MJ1,1) , D(N)                                     
+      DIMENSION  X(MJ1,K) , D(N)
 C                                                                       
       TOL=1.0D-38                                                       
       DIIO=0.0D00
@@ -1191,7 +1202,8 @@ C       Z:     MZ*NZ MATRIX
 C       MMZ:   ABSOLUTE DIMENSION OF Z                                  
 C                                                                       
       IMPLICIT REAL*8 ( A-H,O-Z )                                       
-      DIMENSION X(MMX,1), Y(MMY,1), Z(MMZ,1)                            
+cx      DIMENSION X(MMX,1), Y(MMY,1), Z(MMZ,1)                            
+      DIMENSION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ)                            
       KK = NY                                                           
       IF( KK .GT. MZ ) KK = MZ                                          
       DO 100 J=1,NX                                                     
@@ -1214,7 +1226,8 @@ C       Y:     MY-VECTOR
 C       Z:     MZ-VECTOR                                                
 C                                                                       
       IMPLICIT REAL*8 ( A-H,O-Z )                                       
-      DIMENSION X(1), Y(1), Z(1)                                        
+cc      DIMENSION X(1), Y(1), Z(1)                                        
+      DIMENSION X(MX), Y(MY), Z(MZ)                                        
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1225,9 +1238,9 @@ C
       SUBROUTINE SUBSEA(ABICM,SEASON,TREND,EST,ADJ,IRREG,TDC,           
 cc     *   FSEA,FTRN,YS,N,NF,RLIM,WEEK,DC,IDC,H,NH,F,H2,N2,ITRN,          
 cc     *  IARS,ARFS,IART,ARFT,IARN,ARFN,PSDT,PSDS)                        
-     *    FSEA,FTRN,YS,N,NF,RLIM,WEEK,IDC,NH,F,N2,ITRN,IARS,ARFS,IART,
-     *   ARFT,IARN,ARFN,PSDT,PSDS,NPF,PERIOD,IORD,ISOD,YEAR,NDAY,LOGT,
-     *  ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA)
+     *  FSEA,LFSEA,FTRN,YS,N,NF,RLIM,WEEK,IDC,NH,F,N2,ITRN,IARS,ARFS,
+     *  IART,ARFT,IARN,ARFN,PSDT,PSDS,NPF,PERIOD,IORD,ISOD,YEAR,NDAY,
+     *  LOGT,ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA)
 C     SEASONAL DECOMPOSITION PROCEDURE                                  
 C     FOR THE DEFINITIONS OF THE VARIABLES APPEARING IN THE ARGUMENTS,  
 C     SEE THE COMMENTS IN THE MAIN ROUTINE                              
@@ -1240,11 +1253,16 @@ cc     *   ,ERR(1000),PSDT(500),PSDS(500)
 cc     *  ,SEASON(1),TREND(1),EST(1),ADJ(1),IRREG(1),A(1000)
 cc     * ,WEEK(7,1),TDC(1),WEEK0(8),WEEK1(8),H(NH,1),F(1)                 
 cc      DIMENSION  DTRN(500),DSEAS(500), ARFS(1), ARFT(1), ARFN(1)        
-      DIMENSION  SEASON(1),TREND(1),EST(1),ADJ(1),IRREG(1),TDC(1),
-     *   FSEA(1),FTRN(1),YS(1),WEEK(7,1),F(1),ARFS(1),ARFT(1),ARFN(1),
-     *  PSDT(NPF),PSDS(NPF)
-      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(8),
-     *   WEEK1(8),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
+      DIMENSION  SEASON(NPF),TREND(NPF),EST(NPF),ADJ(NPF),
+     *   IRREG(NPF),TDC(NPF),
+cx     *   FSEA(LFSEA),FTRN(IORD+3),YS(N),WEEK(7,1),F(NPF+1),ARFS(1),
+cx     *   ARFT(3),ARFN(1),PSDT(NPF),PSDS(NPF)
+     *   FSEA(LFSEA),FTRN(IORD+3),YS(N),WEEK(7,1),F(NPF+1),ARFS(3),
+     *   ARFT(3),ARFN(3),PSDT(NPF),PSDS(NPF)
+cx      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(8),
+cx     *   WEEK1(8),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
+      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(7),
+     *   WEEK1(7),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
      *  DSEAS(NPF)
 cc      COMMON /IDATA/ PERIOD,IORD,ISOD,YEAR,NDAY,IFIX                    
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA      
@@ -1282,7 +1300,8 @@ C
 cc      CALL SETDC(H,NH,F,M1,FSEA,N+NF,SMTH2,ZER,IARS,ARFS,IARN,ARFN)     
 cc     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR)
       CALL SETDC(H,NH,F,M1,FSEA,N+NF,SMTH2,ZER,IARS,ARFS,IARN,ARFN,
-     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR)
+cx     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR)
+     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR,NPF)
       ALNDT0=0.D0                                                       
       DO 2233 I=1,M1                                                    
       TEM=DABS(H(1,I))                                                  
@@ -1304,7 +1323,7 @@ cc      CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT
 cc     *             ,YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT)            
       CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT,
      *   YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT,ALPHA,
-     *  BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR)
+     *  BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
 C                                                                       
 C     LEAST SQUARES COMPUTATION                                         
 C                                                                       
@@ -1371,7 +1390,7 @@ cc      CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT
 cc     *             ,YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT)            
       CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT,
      *    YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT,ALPHA,
-     *   BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR)
+     *   BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
       NDTEM=ND + 1                                                      
 cc      CALL SOLVE(DC,IDC,H2,N2,A,M1,SQE,NDTEM,ERR)                       
       CALL BSOLVE(DC,IDC,H2,N2,A,M1,SQE,NDTEM,ERR)
@@ -1454,7 +1473,8 @@ C     NOTE:  THIS SUBROUTINE WORKS FOR YEARS
 C              AD.1901 - AD.2099                                        
 C                                                                       
       IMPLICIT INTEGER*4 (A-Z)                                          
-      REAL*8 WEEK(7,1),W0(8)                                            
+cx      REAL*8 WEEK(7,1),W0(8)                                            
+      REAL*8 WEEK(7,N),W0(8)
 C                                                                       
       DYEAR=(MONTH0-1)/12                                               
       IF(MONTH0 .GE. 1) GO TO 20                                        
@@ -1845,7 +1865,8 @@ C
 C       OUTPUT:                                                         
 C          MB:    NUMBER IN BINARY REPRESENTATION                       
 C                                                                       
-      DIMENSION  MB(1)                                                  
+cx      DIMENSION  MB(1)
+      DIMENSION  MB(K)
 C                                                                       
       N = M                                                             
       DO 10  I=1,K                                                      
@@ -1869,7 +1890,8 @@ C          X:   ARRANGED VECTOR
 C          IND: INDEX OF ARRANGED VECTOR                                
 C                                                                       
       IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(1) , IX(1)                                           
+cx      DIMENSION  X(1) , IX(1)                                           
+      DIMENSION  X(N) , IX(N)
 C                                                                       
       NM1 = N - 1                                                       
       DO  20     II=1,NM1                                               
@@ -2061,8 +2083,9 @@ C     OUTPUT:
 C        (Y(I),I=1,N):   MODIFIED DATA                                  
 C                                                                       
       IMPLICIT  REAL*8  ( A-H,O-Z )                                     
-      DIMENSION   IX(N),  POST(1), JND(1), KND(1), Y(N)                 
+cx      DIMENSION   IX(N),  POST(1), JND(1), KND(1), Y(N)                 
 cc      DIMENSION  IND(500)                                               
+      DIMENSION   IX(N),  POST(N), JND(IC), KND(IC), Y(N)                 
       DIMENSION  IND(N)                                               
 cc      COMMON /CSPRSS/ ISPRSS                                            
 cc      COMMON /ILOGT/ IDUMMY(3),IOUTD,CONST                              
@@ -2144,7 +2167,8 @@ C
 C                                                                       
       SUBROUTINE  EXHSLD(H1,N1,H2,N2,H3,N3,H4,M1,IPOS)                  
       IMPLICIT REAL*8(A-H,O-Z)                                          
-      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)                          
+cx      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)                          
+      DIMENSION  H1(N1,IPOS),H2(N2,N2+IPOS),H3(N3),H4(N2)                          
       DATA EPS/1.D-30/                                                  
       IF(IPOS .LE. M1) GO TO 30                                         
       M1 = IPOS                                                         
@@ -2207,14 +2231,15 @@ cc      SUBROUTINE SETX(H1,N1,H2,N2,M1,ICOUNT,FTRN,N,H,NH,WT,Y,NDATA,RLIM,
 cc     *                 WEEK,IY,ALNDTD,F,DD,IART,ARFT)                   
       SUBROUTINE SETX(H1,N1,H2,N2,M1,ICOUNT,FTRN,N,H,NH,WT,Y,
      *                   NDATA,RLIM,WEEK,IY,ALNDTD,F,DD,IART,ARFT,
-     *                   ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR)
+     *                   ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR,NPF)
       IMPLICIT REAL*8 (A-H,O-Z)                                         
       INTEGER*4 YEAR                                                    
 cc      DIMENSION H1(N1,1),H2(N2,1),Y(1),WEEK(IY,1),H3(200),H4(50)
 cc      DIMENSION FTRN(1),H(NH,1),TI(10),T0(10),F(1),ARFT(1)              
-      DIMENSION H1(N1,1),H2(N2,1),Y(1),WEEK(IY,1),H3(N1),H4(N2)
-      DIMENSION FTRN(1),H(NH,1),TI(ID+IART),T0(2*(ID+IART+1)),
-     *           F(1),ARFT(1)
+cx      DIMENSION H1(N1,1),H2(N2,1),Y(NDATA),WEEK(IY,1),H3(N1),H4(N2)
+      DIMENSION H1(N1,1),H2(N2,N+8),Y(NDATA),WEEK(IY,N),H3(N1),H4(N2)
+      DIMENSION FTRN(ID+3),H(NH,N),TI(ID+IART),T0(2*(ID+IART+1)),
+     *           F(NPF+1),ARFT(3)
 cc      COMMON/IDATA/IP,ID,IS,YEAR                                        
 cc      COMMON/ RDATA/ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA                
       DO 600 I=1,N2                                                     
@@ -2321,14 +2346,18 @@ C
 cc      SUBROUTINE SETDC(H1,N1,H2,M1,FSEAS,N,WS,WZ,IARS,ARFS,IARN,ARFN)   
 cc     *                 ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR)
       SUBROUTINE SETDC(H1,N1,H2,M1,FSEAS,N,WS,WZ,IARS,ARFS,IARN,
-     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR)
+cx     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR)
+     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR,NPF)
       IMPLICIT REAL*8 (A-H,O-Z)                                         
       INTEGER*4 YEAR                                                    
 cc      DIMENSION  H1(N1,1),H2(1),FSEAS(1),H3(100),S0(100),ARFS(1),ARFN(1)
 cc      DIMENSION  Z0(50),SI(100),ZI(50),H4(50)                           
-      DIMENSION  H1(N1,1),H2(1),FSEAS(1),H3((IS+IARS)*IP+IARN+1),
-     *            S0((IS+IARS+1)*IP+IARN+1),ARFS(1),ARFN(1)
-      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),H4(1)
+cx      DIMENSION  H1(N1,1),H2(1),FSEAS(1),H3((IS+IARS)*IP+IARN+1),
+cx     *            S0((IS+IARS+1)*IP+IARN+1),ARFS(1),ARFN(1)
+cx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),H4(1)
+      DIMENSION  H1(N1,1),H2(NPF+1),H3((IS+IARS)*IP+IARN+1),h4(1)
+      DIMENSION  FSEAS((IS+IARS)*IP + IARN),S0((IS+IARS+1)*IP+IARN+1)
+      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),ARFS(3),ARFN(3)
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA               
 cc      COMMON /IDATA/ IP,ID,IS,YEAR                                      
       IPIS = (IS+IARS)*IP + IARN                                        
@@ -2423,7 +2452,8 @@ C **** PARCOR R TO AR ********
 cc      SUBROUTINE SOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)                   
       SUBROUTINE BSOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)
       IMPLICIT REAL*8 (A-H,O-Z)                                         
-      DIMENSION  H1(N1,1), H2(N2,1), A(1), ERR(1)                       
+cx      DIMENSION  H1(N1,1), H2(N2,1), A(1), ERR(1)                       
+      DIMENSION  H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), ERR(NANS)                       
 C                                                                       
       DO 30 I=1,NANS                                                    
    30 ERR(I)=0.D0                                                       

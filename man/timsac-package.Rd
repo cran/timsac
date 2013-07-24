@@ -17,12 +17,7 @@ For a complete list of functions, use library(help="timsac").
 
  For overview of models and information criteria for model selection, see \url{../doc/timsac-guide_e.pdf}
  or \url{../doc/timsac-guide_j.pdf} (in Japanese).
- PDF version of reference manual is  available in \url{../doc/timsac-manual.pdf}
-}
-
-\author{
-  The Institute of Statistical Mathematics
-  Maintainer: The Institute of Statistical Mathematics <timsac@jasp.ism.ac.jp>
+ PDF version of reference manual is available in \url{../doc/timsac-manual.pdf}
 }
 
 \references{
@@ -42,9 +37,6 @@ H.Akaike, T.Ozaki, M.Ishiguro, Y.Ogata, G.Kitagawa, Y-H.Tamura, E.Arahata, K.Kat
 
 H.Akaike and T.Nakagawa (1988)
  \emph{Statistical Analysis and Control of Dynamic Systems.} Kluwer Academic publishers.
-
-G.Kitagawa (1993)
- \emph{Time series analysis programing (in Japanese)}. The Iwanami Computer Science Series.
 }
 
 \keyword{package}

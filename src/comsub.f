@@ -2048,7 +2048,7 @@ cx      DIMENSION  X(MJ1,1) , D(MJ1) , IND(1) , JND(1)
       DIMENSION  X(MJ1,K) , D(MJ1) , IND(K) , JND(K)                    
 C                                                                       
       TOL = 1.0D-60                                                     
-C                                                                       
+C
       NN = 0                                                            
       DO  100     II=M,L                                                
       JJ = JND(II)                                                      
@@ -2334,7 +2334,8 @@ C
 cc      DIMENSION  X(MJ1,1) , Y(MJ4,1) , D(1) , E(MJ2,1) , B(MJ2,MJ2,MJ3) 
 cc      DIMENSION  C(1) , A(100) , AIC(51) , SD(51) , EX(1)               
 cc      DIMENSION  IND(100) , JND(100) , KND(100)                         
-      DIMENSION  X(MJ1,1), Y(MJ4,MJ4), E(ID,ID), B(ID,ID,M) 
+cxx      DIMENSION  X(MJ1,1), Y(MJ4,MJ4), E(ID,ID), B(ID,ID,M) 
+      DIMENSION  X(MJ1,MJ4), Y(MJ4,MJ4), E(ID,ID), B(ID,ID,M) 
       DIMENSION  C(ID), A(MJ4)
       DIMENSION  AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID), EX(ID)
       DIMENSION  AICM(ID), SDM(ID), IM(ID)
@@ -2359,6 +2360,7 @@ C
    10 B(I,J,K) = 0.D0                                                   
    20 E(I,J) = 0.D0                                                     
       DO 30  I=1,MD2                                                    
+      IND(I) = I
    30 JND(I) = I                                                        
 C                                                                       
       CALL  COPY( X,MD2,0,MD2,MJ1,MJ1,X )                               
@@ -2668,7 +2670,6 @@ cc      CALL  MCOEF( B,C,E,EX,ID,LMAX,NSW,IPR,MJ2,MJ3 )
 cc      IF(IPR.GE.1)  WRITE( 6,611 )  AICSUM                              
 C                                                                       
       AICS = AICSUM                                                     
-C                                                                       
 C                                                                       
       RETURN                                                            
     3 FORMAT( 1H ,132(1H-) )                                            

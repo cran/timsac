@@ -1,12 +1,12 @@
-\name{Airpolution}
+\name{Airpollution}
 \docType{data}
-\alias{Airpolution}
-\title{Airpolution Data}
+\alias{Airpollution}
+\title{Airpollution Data}
 \description{
-  An airpolution data for testing \code{\link{perars}}.
+  An airpollution data for testing \code{\link{perars}}.
 }
 \usage{
-  data(Airpolution)
+  data(Airpollution)
 }
 \format{
   A time series of 372 observations.

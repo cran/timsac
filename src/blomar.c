@@ -2,17 +2,17 @@
 #include <Rdefines.h>
 #include "timsac.h"
 
-extern void  F77_NAME(blomarf) (double*,int*,int*,double*,int*,int*,int*,double*,double*,double*,double*,double*,double*,double*,int*,int*);
+extern void  F77_NAME(blomarf) (double*,int*,int*,double*,int*,int*,int*,double*,double*,double*,double*,double*,double*,double*,int*,int*,int*);
 
 SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
-    int    *i1,*i2,*i3,*i4,*i5,*i6,*i7;
+    int    *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8;
     int    i, nd, nd2, odr, nsp, nsp2;
 
-    SEXP ans =  R_NilValue, mean = R_NilValue, var = R_NilValue, bw = R_NilValue, raic = R_NilValue, a = R_NilValue, e = R_NilValue, aic = R_NilValue, ks = R_NilValue, ke = R_NilValue;
+    SEXP ans =  R_NilValue, mean = R_NilValue, var = R_NilValue, bw = R_NilValue, raic = R_NilValue, a = R_NilValue, e = R_NilValue, aic = R_NilValue, ks = R_NilValue, ke = R_NilValue, nns = R_NilValue;
     double *xmean, *xvar, *xbw, *xraic, *xa, *xe, *xaic = NULL;
-    int   *xks, *xke = NULL;
+    int   *xks, *xke, *xnns = NULL;
 
     d1 = NUMERIC_POINTER(y);
     i1 = INTEGER_POINTER(n);
@@ -27,7 +27,7 @@ SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
     odr = *i3;
     nsp = *i5;
     nsp2 = nsp * nsp;
-    PROTECT(ans = allocVector(VECSXP, 9));
+    PROTECT(ans = allocVector(VECSXP, 10));
     SET_VECTOR_ELT(ans, 0, mean = allocVector(REALSXP, nd));
     SET_VECTOR_ELT(ans, 1, var = allocVector(REALSXP, nd));
     SET_VECTOR_ELT(ans, 2, bw = allocVector(REALSXP, nsp2));
@@ -37,6 +37,7 @@ SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
     SET_VECTOR_ELT(ans, 6, aic = allocVector(REALSXP, nsp)); 
     SET_VECTOR_ELT(ans, 7, ks = allocVector(INTSXP, nsp));
     SET_VECTOR_ELT(ans, 8, ke = allocVector(INTSXP, nsp));
+    SET_VECTOR_ELT(ans, 9, nns = allocVector(INTSXP, 1));
 
     d3 = NUMERIC_POINTER(mean);
     d4 = NUMERIC_POINTER(var);
@@ -47,8 +48,9 @@ SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
     d9 = NUMERIC_POINTER(aic);
     i6 = INTEGER_POINTER(ks);
     i7 = INTEGER_POINTER(ke);
+    i8 = INTEGER_POINTER(nns);
 
-    F77_CALL(blomarf) (d1,i1,i2,d2,i3,i4,i5,d3,d4,d5,d6,d7,d8,d9,i6,i7);
+    F77_CALL(blomarf) (d1,i1,i2,d2,i3,i4,i5,d3,d4,d5,d6,d7,d8,d9,i6,i7,i8);
 
     xmean = REAL(mean);
     xvar = REAL(var);
@@ -59,6 +61,7 @@ SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
     xaic = REAL(aic);
     xks = INTEGER(ks);
     xke = INTEGER(ke);
+    xnns = INTEGER(nns);
 
     for(i=0; i<nd; i++) xmean[i] = d3[i];
     for(i=0; i<nd; i++) xvar[i] = d4[i];
@@ -69,6 +72,7 @@ SEXP blomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP ns)
     for(i=0; i<nsp; i++) xaic[i] = d9[i];
     for(i=0; i<nsp; i++) xks[i] = i6[i];
     for(i=0; i<nsp; i++) xke[i] = i7[i];
+    *xnns = *i8;
 
     UNPROTECT(1);
 

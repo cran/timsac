@@ -1,5 +1,6 @@
       SUBROUTINE  BLOMARF( ZS,N,ID,C,LAG,NS0,KMAX,ZMEAN,ZVARI,BW,AIC,A,
-     *                     E,AICB,LKS,LKE )
+cxx     *                     E,AICB,LKS,LKE )
+     *                     E,AICB,LKS,LKE,M )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -71,6 +72,8 @@ cc      DIMENSION  G(10,10,50) , H(10,10,50) , E(10,10)
       DIMENSION  BW(KMAX,KMAX), AIC(KMAX,KMAX)
       DIMENSION  AICB(KMAX), LKS(KMAX), LKE(KMAX)
       DIMENSION  F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX)
+cxx      DIMENSION  X(NS0+LAG+1,(LAG+1)*ID)
+      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
 C
 C       PARAMETERS:                                                     
 C          MJ:    ABSOLUTE DIMENSION FOR SUBROUTINE CALL                
@@ -92,16 +95,21 @@ cc      MJ1 = 200
 cc      MJ3 = 10                                                          
 cc      KMAX = 10                                                         
       MJ = N
-      MJ1 = NS0+LAG+1
+cxx      MJ1 = NS0+LAG+1
+      MJ1 = (LAG+1)*ID*2
       MJ3 = ID
       KSW = 0                                                           
-C                                                                       
-      DO 100 I = 1,LAG*ID
-      DO 100 J = 1,ID
-      DO 100 K = 1,KMAX
-         F1(I,J,K) = 0.0D0
-         F2(I,J,K) = 0.0D0
-  100 CONTINUE
+C
+      BW = 0.0D0
+      AIC = 0.0D0
+      A = 0.0D0
+      E = 0.0D0
+      AICB = 0.0D0
+      LKS = 0
+      LKE = 0                                                       
+      F1 = 0.0D0
+      F2 = 0.0D0
+      X = 0.0D0
 C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
@@ -125,16 +133,19 @@ C
 C                                                                       
       M = 0
   111 CONTINUE                                                          
-      M = M+1
+cxx      M = M+1
       LK = L + LAG                                                      
       LK1 = LK + 1                                                      
-      IF( LK1 .GE. N )     GO TO 300                                    
+      IF( LK1 .GE. N )     GO TO 300
+      M = M+1
       IF( N-LK1 .LE. NS )     NS = N - LK                               
       IF( N-LK1-NS .LT. MX )     NS = N - LK                            
 C                                                                       
 cc      CALL MNONSB( Z,X,D,G,H,E,KSW,LAG,L,NS,ID,KMAX,MJ,MJ1,MJ3,A,B,AIC )
-      CALL MNONSB( Z,G,H,E(1,1,M),KSW,LAG,L,NS,ID,KMAX,KC,MJ,MJ1,MJ3,
-     *             BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M),F1,F2 )
+cxx      CALL MNONSB( Z,G,H,E(1,1,M),KSW,LAG,L,NS,ID,KMAX,KC,MJ,MJ1,MJ3,
+cxx     *             BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M),F1,F2 )
+      CALL MNONSB( Z,X,G,H,E(1,1,M),KSW,LAG,L,NS,ID,KMAX,KC,MJ,MJ1,
+     *             MJ3,BW(1,M),AIC(1,M),A(1,1,1,M),B,AICB(M),F1,F2 )
 C                                                                       
       L = L + NS                                                        
 C                                                                       
@@ -209,8 +220,10 @@ cc  999 CONTINUE
       END                                                               
 cc      SUBROUTINE  MNONSB( Z,X,D,G,H,E,KSW,LAG,N0,NS,ID,KMAX,MJ,MJ1,MJ3,A
 cc     *,B,AICB )                                                         
-      SUBROUTINE  MNONSB( Z,G,H,E,KSW,LAG,N0,NS,ID,KMAX1,KC,MJ,MJ1,MJ3,
-     *                    C,AIC,A,B,AICB,F1,F2 )
+cxx      SUBROUTINE  MNONSB( Z,G,H,E,KSW,LAG,N0,NS,ID,KMAX1,KC,MJ,MJ1,MJ3,
+cxx     *                    C,AIC,A,B,AICB,F1,F2 )
+      SUBROUTINE  MNONSB( Z,X,G,H,E,KSW,LAG,N0,NS,ID,KMAX1,KC,MJ,MJ1,
+     *                    MJ3,C,AIC,A,B,AICB,F1,F2 )
 C       ----------------------------------------------------------------
 C       THE FOLLOWING SUBROUTINES ARE DIRECTLY CALLED BY THIS SUBROUTINE
 C             DMIN                                                      
@@ -334,7 +347,7 @@ C
 C          ------------------------                                     
 C          AVERAGING OF THE MODELS                                      
 C          -----------------------                                      
-      EK = EK*C(1)**2                                                   
+      EK = EK*C(1)**2                   
       DO 70  II=1,LAG                                                   
       DO 70  I=1,ID                                                     
       DO 70  J=1,ID                                                     

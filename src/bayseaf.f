@@ -1098,10 +1098,12 @@ cx      CALL BCOPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
       CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,7)                      
    20 CONTINUE                                                          
       CALL ADD(EST0,N,TREND0,N,SEAS0,N)                                 
-      IF(YEAR .NE. 0) CALL ADD(EST0,N,EST0,N,TDC0,N)                    
-      CALL SBTRCT(ADJ0,N,Y,N,SEAS0,N)                                   
+      IF(YEAR .NE. 0) CALL ADD(EST0,N,EST0,N,TDC0,N)
+cxx      CALL SBTRCT(ADJ0,N,Y,N,SEAS0,N)
+      CALL SBTRCT(ADJ0,N,Y,NN,SEAS0,N)
       IF(YEAR .NE. 0) CALL SBTRCT(ADJ0,N,ADJ0,N,TDC0,N)                 
-      CALL SBTRCT(IRREG0,N,Y,N,EST0,N)                                  
+cxx      CALL SBTRCT(IRREG0,N,Y,N,EST0,N)                                  
+      CALL SBTRCT(IRREG0,N,Y,NN,EST0,N)                                  
       RETURN                                                            
       END                                                               
 cc      SUBROUTINE  HUSHLD( X,N,K,MJ1,ICNT )                              
@@ -1227,7 +1229,7 @@ C       Z:     MZ-VECTOR
 C                                                                       
       IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cc      DIMENSION X(1), Y(1), Z(1)                                        
-      DIMENSION X(MX), Y(MY), Z(MZ)                                        
+      DIMENSION X(MX), Y(MY), Z(MZ)
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       

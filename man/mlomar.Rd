@@ -11,8 +11,10 @@
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
-  \item{span}{length of basic local span.}
+  \item{max.order}{upper limit of the order of AR model, less than or equal to \eqn{n/(2*d)} where \eqn{n} is the length and \eqn{d} is the dimension of the time series \code{y}.
+ Default is \eqn{min(2 \sqrt{n}, n/(2*d))}{min(2*sqrt(n), n/(2*d))}.}
+  \item{span}{length of basic local span.
+ If \eqn{n}-\code{max.order}-1 is less than or equal to \code{span} or \eqn{n}-\code{max.order}-1-\code{span} is less than 2*(\code{max.order}*\eqn{d}+\code{const}), \code{span} is \eqn{n}-\code{max.order}.}
   \item{const}{integer. \code{0} denotes constant vector is not included as a regressor
         and \code{1} denotes constant vector is included as the first regressor.}
 }

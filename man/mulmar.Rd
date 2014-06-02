@@ -11,8 +11,9 @@ mulmar(y, max.order=NULL, plot=FALSE)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
-  \item{plot}{logical. If TRUE \code{daic[[1]],...,daic[[d]]} are plotted, where \eqn{d} is the dimension of the multivariate time series.}
+  \item{max.order}{upper limit of the order of AR model, less than or equal to \eqn{n/(2*d)} where \eqn{n} is the length and \eqn{d} is the dimension of the time series \code{y}.
+ Default is \eqn{min(2 \sqrt{n}, n/(2*d))}{min(2*sqrt(n), n/(2*d))}.}
+  \item{plot}{logical. If TRUE \code{daic[[1]],...,daic[[d]]} are plotted.}
 }
 \value{
   \item{mean}{mean.}

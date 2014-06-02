@@ -24,7 +24,7 @@ markov(y)
   \item{matG}{input matrix \eqn{G}.}
   \item{davvar}{DAVIDON variance.}
   \item{arcoef}{AR coefficient matrices. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
-  \item{impuls}{impulse response matrices.}
+  \item{impulse}{impulse response matrices.}
   \item{macoef}{MA coefficient matrices. \code{macoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
   \item{v}{innovation variance.}
   \item{aic}{AIC.}

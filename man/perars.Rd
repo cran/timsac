@@ -52,8 +52,8 @@
 }
 
 \examples{
-  data(Airpolution)
-  perars(Airpolution, ni=6, lag=2, ksw=1)
+  data(Airpollution)
+  perars(Airpollution, ni=6, lag=2, ksw=1)
 }
 
 \keyword{ts}

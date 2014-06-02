@@ -8,7 +8,7 @@ Time Series Analysis and Control Program Package
 }
 
 \description{
-R functions for statistical analysis and control of time series
+R functions for statistical analysis and control of time series.
 }
 
 \details{

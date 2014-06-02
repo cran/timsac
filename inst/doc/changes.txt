@@ -1,84 +1,110 @@
 
-             *************************************
+            ***************************************
 
-                Changes To TIMSAC For R Package
+            Changes To TIMSAC For R Package
 
-             *************************************
-
-  timsac_1.3.0
- ==============
- * Set the correct dimension for array bounds (1) and (*) in Fortran souce files.
-
- * Delete the functions armaimp(), lsar2(), ngsmth(), tsmooth(), tvvar(), tvar() and tvspc().
-
- * Delete a document "f77program.pdf" in doc directory.
+            ***************************************
 
 
-  timsac_1.2.8
- ==============
+ timsac_1.3.2
+================
+ * Fixed a bug in mulmar().
+When max.order (upper limit of the order of AR model) is too large, output results are incorrect.
+In such a case, max.order is changed to the appropriate value.
+
+  (Reported by Jiri Baum)
+
+ * Fixed bug in armafit(), baysea(), bispec(), decomp(), mlomar(), mulmar() and perars() for memory access issues under Valgrind.
+
+  (Reported by Brian Ripley)
+
+ * Fixed a bug in simcon.c.
+
+  (Reported by Kurt Hornik and Brian Ripley)
+
+
+ timsac_1.3.1
+================
+ * Corrected spelling errors of 'Airpollution'.
+
+  (Reported by Vivek Rao)
+
+
+ timsac_1.3.0
+================
+ * Set the correct dimension for array bounds (1) and (*) in Fortran source files.
+
+ * Deleted the functions armaimp(), lsar2(), ngsmth(), tsmooth(), tvvar(), tvar() and tvspc().
+  These functions have been added to another R package "TSSS".
+
+ * Deleted a document "f77program.pdf" in doc directory.
+
+
+ timsac_1.2.8
+================
  * Added function lsar2().
 
- * Define the functions print.blocar(), print.mlocar(), print.nonst() and print.tvvar() using S3method ditective.
+ * Defined the functions print.blocar(), print.mlocar(), print.nonst() and print.tvvar() using S3method detective.
 
- * Rename the argument 'ord' in perars() to 'subset'.
+ * Renamed the argument 'ord' in perars() to 'subset'.
 
- * Delete the argument 'ar.order' in tvspc().
+ * Deleted the argument 'ar.order' in tvspc().
 
  * Added a document "f77program.pdf" to doc directory.
 
- * Fixed a bug in autoarmafit() and armafit().
-  Add a array "CXY" equivalent to "CXX" to subroutine SC0GRH in autarmf.f.
+ * Fixed bug in autoarmafit() and armafit().
+  Added a array "CXY" equivalent to "CXX" to subroutine SC0GRH in autarmf.f.
 
- * Delete the default value for delta in function tvvar() and tvar().
+ * Deleted the default value for delta in function tvvar() and tvar().
 
  * Fixed a bug in decomp().
-  If argument "log" is TRUE and there is zero or nagative number in input data y, output error message.
+  If argument "log" is TRUE and there is zero or negative number in input data y, output error message.
 
  * Fixed a bug in mulcor().
   In mulcor.c, size of allocVector are not enough.
 
 
-  timsac_1.2.7
- ==============
+ timsac_1.2.7
+================
  * Fixed a bug in mulmar().
   Mulmar() did not work for certain types of data.   
 
-   (Reported by William Pleasant)
+  (Reported by William Pleasant)
 
- * Change the maintainer address from "timsac at jasp.ism.ac.jp" to "ismrp at jasp.ism.ac.jp".
+ * Changed the maintainer address from "timsac at jasp.ism.ac.jp" to "ismrp at jasp.ism.ac.jp".
 
 
-  timsac_1.2.6
- ==============
- * Add C wrapper functions to call Fortran subroutines.
+ timsac_1.2.6
+================
+ * Added C wrapper functions to call Fortran subroutines.
 
- * Delete arguments 'tmp.file' in autoarmafit(), armafit(), exsar(), markov(), mulmar() and unimar().
+ * Deleted arguments 'tmp.file' in autoarmafit(), armafit(), exsar(), markov(), mulmar() and unimar().
 
- * Change the type of argument 'smt' from "single" to "double" to use the type SEXP in ngsmth().
+ * Changed the type of argument 'smt' from "single" to "double" to use the type SEXP in ngsmth().
 
  * Fixed a bug in bsubst().
   In the case of mtype=3, the argument 'nreg'(number of regressors) of bsubst() is not invalid.
   It is computed automatically in R function.
 
 
-  timsac_1.2.5
- ==============
+ timsac_1.2.5
+================
  * Fixed a bug in markov().
   Add arguments 'nh' to SUBROUTINE C0GR and SUBROUTINE NSUBX1 in markovf.f.
 
-  Found the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
+  Founded the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
   Warning: Rank mismatch in argument 'nh' at (1) (rank-1 and scalar)
 
- * Delete arguments 'param' from FUNCTION UNIF and FUNCTION DBLEXP in ngsmthf.f.
+ * Deleted arguments 'param' from FUNCTION UNIF and FUNCTION DBLEXP in ngsmthf.f.
 
-  Found the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
+  Founded the following warnings in 00install.out (GNU Fortran (GCC) 4.7.0) :
   Warning: Rank mismatch in argument 'param' at (1) (scalar and rank-1)
   Warning: Rank mismatch in argument 'param' at (1) (scalar and rank-1)
 
 
-  timsac_1.2.4
- ==============
- * Delete the value 'spec' from tvar().
+ timsac_1.2.4
+================
+ * Deleted the value 'spec' from tvar().
 
  * Added function tvspc().
 
@@ -87,76 +113,80 @@
    This often causes the abnormal termination of a routine process in which the argument "trend.order" is equal to 1.
 
 
-  timsac_1.2.3
- ==============
- * Delete the arguments 'ncon', 'nman' and 'inw' then add the arguments 'control' and 'manip' in fpec() and mulnos().
+ timsac_1.2.3
+================
+ * Deleted the arguments 'ncon', 'nman' and 'inw' then add the arguments 'control' and 'manip' in fpec() and mulnos().
 
- * Delete the argument 'niv' in mulfrf().
+ * Deleted the argument 'niv' in mulfrf().
 
- * Change the allowed values of 'initd' from {0,1,2} to {1,2,3} in ngsmth().
+ * Changed the allowed values of 'initd' from {0,1,2} to {1,2,3} in ngsmth().
 
- * Delete C sources and call .Fortran in timsac.R.
+ * Deleted C sources and call .Fortran in timsac.R.
 
 
-  timsac_1.2.2
- ==============
+ timsac_1.2.2
+================
  * Fixed a bug in decomp(). In subroutine smoth3, the working array "D" is not long enough.
    This often causes the abnormal termination of a routine process in which the argument "seasonal.order" is equal to zero.
 
-   (Reported by Seisho Sato)
+  (Reported by Seisho Sato)
 
- * Define default value for 'outlier' as NULL in tvar().
+ * Defined default value for 'outlier' as NULL in tvar().
  
- * Add an overview help page 'timsac-package'.
+ * Added an overview help page 'timsac-package'.
 
 
-  timsac_1.2.1
- ==============
+ timsac_1.2.1
+================
  * In decomp() an argument 'imiss' is renamed 'miss' and given a detailed description. 
 
 
-  timsac_1.2.0
- ==============
+ timsac_1.2.0
+================
  * Added function baysea().
- * Add 'lag' to arguments of function canarm() in timsac.R.
+
+ * Added 'lag' to arguments of function canarm() in timsac.R.
 
 
-  timsac_1.1.4
- ==============
- * Use a set of macros (F77_NAME(name), F77_CALL(name)) in all C source files (arma.c, auspec.c, ..., xsarma.c) 
- * Fixed a bug in fpec().  aperm(arcoef, c(2,3,1)) give an error if z$ordermin = 1. (Reported by Seisho Sato)
+ timsac_1.1.4
+================
+ * Added a set of macros (F77_NAME(name), F77_CALL(name)) in all C source files (arma.c, auspec.c, ..., xsarma.c) 
+
+ * Fixed a bug in fpec().
+  aperm(arcoef, c(2,3,1)) give an error if z$ordermin = 1. (Reported by Seisho Sato)
 
 
-  timsac_1.1.3
- ==============
- * Fixed a bug in blomar(). Add 'F1' and 'F2' to arguments of subroutine MNONSB in blomarf.f.
- * Fixed a bug in mlomar(). Add 'X' and 'U' to arguments of subroutine MNONST in mlomarf.f.
+ timsac_1.1.3
+================
+ * Fixed a bug in blomar(). Added 'F1' and 'F2' to arguments of subroutine MNONSB in blomarf.f.
+
+ * Fixed a bug in mlomar(). Added 'X' and 'U' to arguments of subroutine MNONST in mlomarf.f.
 
 
-  timsac_1.1.2
- ==============
+ timsac_1.1.2
+================
  * Added function tsmooth().
 
 
-  timsac_1.1.1
- ==============
- * Change the type of argument 'smt' from "double" to "single" in ngsmth().
- * Change the function name "arma()" to "armaimp()".
+ timsac_1.1.1
+================
+ * Changed the type of argument 'smt' from "double" to "single" in ngsmth().
+
+ * Changed the function name "arma()" to "armaimp()".
 
 
-  timsac_1.1.0
- ==============
+ timsac_1.1.0
+================
  * Added functions arma(), tvvar(), tvar() and ngsmth().
 
 
-  timsac_1.0.1
- ==============
+ timsac_1.0.1
+================
  * Fixed a bug in decomp() where both seasonal component and trading day effect
     are no consideration. The following example demonstrates the problem:
 
         data(Blsallfood)
         decomp(Blsallfood, seasonal.order=0)   # trade=FALSE (default)
 
-    (Reported by Makoto Kodama)
-
+  (Reported by Makoto Kodama)
 

@@ -35,7 +35,7 @@
   \item{aic.const}{AIC of the constant model.}
 }
 \details{
-  The data of length \eqn{n} are devided into \eqn{k} locally stationary spans,
+  The data of length \eqn{n} are divided into \eqn{k} locally stationary spans,
 
     \deqn{|<-- n_1 -->|<-- n_2 -->|<-- n_3 -->| ..... |<-- n_k -->|}{  |<-- n1 -->|<-- n2 -->|<-- n3 -->| ..... |<-- nk -->|}
 

@@ -145,6 +145,7 @@ C
 C          REDUCTION TO AN UPPER TRIANGULAR FORM                        
 C                                                                       
 cc      CALL  MREDCT( Y,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
+      X = 0.0D0
       CALL  MREDCT( Y,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
 C                                                                       
 C          INSTANTANEOUS RESPONSE MODEL FITTING                         

@@ -5,14 +5,14 @@
   Produce optimal controller gain and simulate the controlled process.
 }
 \usage{
-simcon(span, len, r, arcoef, impuls, v, weight)
+simcon(span, len, r, arcoef, impulse, v, weight)
 }
 \arguments{
   \item{span}{span of control performance evaluation.}
   \item{len}{length of experimental observation.}
   \item{r}{dimension of control input, less than or equal to \eqn{d} (dimension of a vector).}
   \item{arcoef}{matrices of autoregressive coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
-  \item{impuls}{impulse response matrices.}
+  \item{impulse}{impulse response matrices.}
   \item{v}{covariance matrix of innovation.}
   \item{weight}{weighting matrix of performance.}
 }
@@ -58,7 +58,7 @@ simcon(span, len, r, arcoef, impuls, v, weight)
   z <- markov(y)
   weight <-  matrix(c(0.0002,  0.0,
                       0.0,    2.9 ), 2,2,byrow=TRUE)
-  simcon(span=50, len=700, r=1, z$arcoef, z$impuls, z$v, weight)
+  simcon(span=50, len=700, r=1, z$arcoef, z$impulse, z$v, weight)
 }
 
 \keyword{ts}

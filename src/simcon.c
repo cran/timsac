@@ -54,9 +54,9 @@ SEXP simcon(SEXP d, SEXP k, SEXP span, SEXP len, SEXP r, SEXP arcoef, SEXP impul
     for(i=0; i<nr*nkd; i++) xbc[i] = d5[i];
     for(i=0; i<nkd*(nd-nr); i++) xbd[i] = d6[i];
     for(i=0; i<nr*nkd; i++) xg[i] = d7[i];
-    for(i=0; i<nkd; i++) xav[i] = d8[i];
-    for(i=0; i<nkd; i++) xsi[i] = d9[i];
-    for(i=0; i<nkd; i++) xs2[i] = d10[i];
+    for(i=0; i<nd; i++) xav[i] = d8[i];
+    for(i=0; i<nd; i++) xsi[i] = d9[i];
+    for(i=0; i<nd; i++) xs2[i] = d10[i];
 
     UNPROTECT(1);
 

@@ -451,7 +451,7 @@ c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG
       COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 cc      common    /cccout/  IMIS(3000)      
 C                                                                       
-cc      IFG = 0                                                           
+      IFG = 0                                                           
 cc      K = K1 + K2 + K3 + K4 + K5                                        
 cc      K12 = K1 + K2
 cc      LK1 = L + K + 1                                    

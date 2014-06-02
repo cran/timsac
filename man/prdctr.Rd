@@ -6,7 +6,7 @@
   Operate on a real record of a vector process and compute predicted values.
 }
 \usage{
-prdctr(y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
+prdctr(y, r, s, h, arcoef, macoef=NULL, impulse=NULL, v, plot=TRUE)
 }
 \arguments{
   \item{y}{a univariate time series or a multivariate time series.}
@@ -15,7 +15,7 @@ prdctr(y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
   \item{h}{maximum span of long range forecast \eqn{H}.}
   \item{arcoef}{AR coefficient matrices.}
   \item{macoef}{MA coefficient matrices.}
-  \item{impuls}{impulse response matrices.}
+  \item{impulse}{impulse response matrices.}
   \item{v}{innovation variance.}
   \item{plot}{logical. If TRUE (default) the real data and predicted values are plotted.}
 }

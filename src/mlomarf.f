@@ -1,5 +1,6 @@
       SUBROUTINE  MLOMARF( ZS,N,ID,C,LAG,NS0,KSW,K,ZMEAN,ZVARI,NF,NS,MS,
-     *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE )
+cxx     *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE )
+     *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE,M )
 C
       INCLUDE 'timsac_f.h'
 C
@@ -80,7 +81,8 @@ cc      DIMENSION  A(5,5,50) , B(5,5,50) , E(5,5)
       DIMENSION  NF(K), NS(K), MS(K), MP(K), MF(K)
       DIMENSION  AIC(K), AICP(K), AICF(K)
       DIMENSION  LK0(K), LKE(K)
-      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
+cxx      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
+      DIMENSION  X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2)
       DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
@@ -105,15 +107,21 @@ cc      MJ3 = 5
       MJ2 = ((LAG+1)*ID+KSW)*2
       MJ1 = MJ2*2
       MJ3 = ID
-C                                                                       
-      DO 102 J = 1,MJ2
-         DO 100 I = 1,MJ1
-            X(I,J) = 0.0D0
-  100    CONTINUE
-         DO 101 I = 1,MJ2
-            U(I,J) = 0.0D0
-  101   CONTINUE
-  102 CONTINUE
+C
+      NF = 0
+      NS = 0
+      MS = 0
+      AIC = 0.0D0
+      MP = 0
+      AICP = 0.0D0
+      MF = 0
+      AICF = 0.0D0
+      A = 0.0D0
+      E = 0.0D0
+      LK0 = 0
+      LKE = 0
+      X = 0.0D0
+      U = 0.0D0
 C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
@@ -138,10 +146,11 @@ C
       M = 0
       NF(1) = 0
   111 CONTINUE                                                          
-      M = M+1
+cxx      M = M+1
       LK = L + LAG                                                      
       LK1 = LK + 1                                                      
       IF( LK1 .GE. N )     GO TO 300                                    
+      M = M+1
 cc      IF( N-LK1 .LE. NS )     NS = N - LK                               
 cc      IF( N-LK1-NS .LT. MX )     NS = N - LK                            
       IF( M. NE. 1 )  THEN
@@ -328,7 +337,8 @@ C       AR-MODEL FITTING BY THE MINIMUM AIC PROCEDURE
 C                                                                       
 cc      CALL  MARFIT( X,Y,D,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,B,E,EX,C, 
 cc     *             MS,AICS )                                            
-      CALL  MARFIT( X,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC,
+cxx      CALL  MARFIT( X,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC,
+      CALL  MARFIT( X,NS,ID,LAG,KSW,MJ1,MJ3,MJ4,KD1,0,IPR,AIC,SD,DIC,
 cx     *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC,IFG,LU )
      *AICM,SDM,M,BI,EI,B,E,EX,C,MS,AICS,JNDF,AF,NPR,AAIC )
 C                                                                       
@@ -362,7 +372,8 @@ C
       NP = NNF + NS                                                     
 cc      CALL  MARFIT( X,Y,D,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,A,E,EX,C, 
 cc     *              MP,AICP )                                           
-      CALL  MARFIT( X,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC, 
+cxx      CALL  MARFIT( X,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,MJ2,0,IPR,AIC,SD,DIC, 
+      CALL  MARFIT( X,NP,ID,LAG,KSW,MJ1,MJ3,MJ4,KD1,0,IPR,AIC,SD,DIC, 
 cx     *AICM,SDM,M,AI,EI,A,E,EX,C,MP,AICP,JNDF,AF,NPR,AAIC,IFG,LU )
      *AICM,SDM,M,AI,EI,A,E,EX,C,MP,AICP,JNDF,AF,NPR,AAIC )
 C                                                                       

@@ -1221,7 +1221,7 @@ function (y)
 
     markov.out <- list( id=z[[1L]], ir=z[[2L]], ij=z[[3L]], ik=z[[4L]], grad=z[[6L]][1:ngr], matFi=array(z[[7L]], dim=c(k,k)),
 			matF=array(z[[8L]], dim=c(k,k)), matG=array(z[[9L]], dim=c(k,d)), davvar=vd[(1:ngr),(1:ngr)],
-			arcoef=arcoef, impuls=array(au, dim=c(d,d,iqm-1)),
+			arcoef=arcoef, impulse=array(au, dim=c(d,d,iqm-1)),
 			macoef=macoef, v=array(z[[15L]], dim=c(d,d)), aic=z[[16L]] )
     return( markov.out )
 }
@@ -1288,7 +1288,7 @@ print.nonst <- function(x, ...)
 
 
 prdctr <-
-function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
+function (y, r, s, h, arcoef, macoef=NULL, impulse=NULL, v, plot=TRUE)
 {
     if (is.array(y)) {
       n <- nrow(y)      # length of data
@@ -1308,15 +1308,15 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
         arcoef <- array(-arcoef, dim=c(1,1,p))
     }
 
-    if( is.null(macoef) && is.null(impuls) ) stop( "'macoef' or ' impuls' must be numeric" )
+    if( is.null(macoef) && is.null(impulse) ) stop( "'macoef' or ' impulse' must be numeric" )
     jsw <- 0
     if( is.null(macoef) ) {
       jsw <- 1
-      if( is.array(impuls) ) {	# impulse response matrices
-        q <- dim(impuls)[3]
+      if( is.array(impulse) ) {	# impulse response matrices
+        q <- dim(impulse)[3]
       } else {
-        q <- length(impuls)
-        impuls <- array(impuls,dim=c(1,1,q))
+        q <- length(impulse)
+        impulse <- array(impulse,dim=c(1,1,q))
       }
       macoef <- array(0, dim=c(d,d,q))
     } else {
@@ -1327,7 +1327,7 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
         q <- length(macoef)
         macoef <- array(-macoef,dim=c(1,1,q))
       }
-      if( is.null(impuls) ) impuls <- array(0, dim=c(d,d,q))
+      if( is.null(impulse) ) impulse <- array(0, dim=c(d,d,q))
     }
 
     z <- .Call("prdctr",
@@ -1342,7 +1342,7 @@ function (y, r, s, h, arcoef, macoef=NULL, impuls=NULL, v, plot=TRUE)
 	as.double(y),
 	as.double(arcoef),
 	as.double(macoef),
-	as.double(impuls),
+	as.double(impulse),
 	as.double(v))
 
 #    yreal <- array(z$yreal, dim=c(s+h,d))
@@ -1418,7 +1418,7 @@ print.prdctr <- function(x, ...)
 
 
 simcon <-
-function (span, len, r, arcoef, impuls, v, weight)
+function (span, len, r, arcoef, impulse, v, weight)
 {
     arcoef <- -arcoef	# matrices of autoregressive coefficients
     d <- dim(arcoef)[1]		# dimension of Y(I)
@@ -1431,7 +1431,7 @@ function (span, len, r, arcoef, impuls, v, weight)
 	as.integer(len),
 	as.integer(r),
 	as.double(arcoef),
-	as.double(impuls),
+	as.double(impulse),
 	as.double(v),
 	as.double(weight))
 
@@ -1568,10 +1568,13 @@ print.blocar <- function(x, ...)
 
 blomar <-
 function (y, max.order=NULL, span)
-{
+{max.order
     n <- nrow(y)
     d <- ncol(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of the order of AR-model
+    icflag <- 0
+    if( max.order > n/(2*d) )  icflag <- -1
+    max.order <- as.integer(min(max.order, n/(2*d)))
     morder <- max.order
 
     calb<-rep(1,d)   # calibration constant for channel j (j=1,d)
@@ -1587,27 +1590,41 @@ function (y, max.order=NULL, span)
 	as.integer(span),
 	as.integer(ns))
 
+    nns <- z[[10L]]
     bw <- array(z[[3L]], dim=c(ns,ns))
     bweight <- list()
     bweight[[1]] <- NA
-    for( i in 2:ns ) bweight[[i]] <- bw[1:i,i]
+##    for( i in 2:ns ) bweight[[i]] <- bw[1:i,i]
+    if( nns > 1 ) for( i in 2:nns ) bweight[[i]] <- bw[1:i,i]
 
     raic <- array(z[[4L]], dim=c(ns,ns))
     aic <- list()
     aic[[1]] <- NA
-    for( i in 2:ns ) aic[[i]] <- raic[1:i,i]
+##    for( i in 2:ns ) aic[[i]] <- raic[1:i,i]
+    if( nns > 1 ) for( i in 2:nns ) aic[[i]] <- raic[1:i,i]
 
     a <- array(z[[5L]], dim=c(d,d,morder,ns))
     arcoef <- list()
-    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i], dim=c(d,d,morder))
+##    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i], dim=c(d,d,morder))
+    for( i in 1:nns ) arcoef[[i]] <- array(a[,,,i], dim=c(d,d,morder))
 
     e <- array(z[[6L]], dim=c(d,d,ns))
     v <- list()
-    for( i in 1:ns ) v[[i]] <- array(e[,,i], dim=c(d,d))
+##    for( i in 1:ns ) v[[i]] <- array(e[,,i], dim=c(d,d))
+    for( i in 1:nns ) v[[i]] <- array(e[,,i], dim=c(d,d))
 
-    blomar.out <- list( mean=z[[1L]], var=z[[2L]], bweight=bweight, aic=aic, arcoef=arcoef, v=v, eaic=z[[7L]],
-			init=z[[8L]], end=z[[9]] )
+    aicbay <- z[[7L]][1:nns]
+    start <- z[[8L]][1:nns]
+    end <- z[[9]][1:nns]
+
+##    blomar.out <- list( mean=z[[1L]], var=z[[2L]], bweight=bweight, aic=aic, arcoef=arcoef, v=v, eaic=z[[7L]],
+##			init=z[[8L]], end=z[[9]] )
+    blomar.out <- list( mean=z[[1L]], var=z[[2L]], bweight=bweight, aic=aic, arcoef=arcoef, v=v, eaic=aicbay,
+			init=start, end=end )
+
     class( blomar.out ) <- "blomar"
+    if( icflag == -1 ) cat(sprintf("\n ***** Warning : max.order is corrected n/(2*d) = %d\n\n", max.order))
+
     return( blomar.out )
 }
 
@@ -1888,6 +1905,9 @@ function (y, max.order=NULL, span, const=0)
     n <- nrow(y)
     d <- ncol(y)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
+    icflag <- 0
+    if( max.order > n/(2*d) )  icflag <- -1
+    max.order <- as.integer(min(max.order, n/(2*d)))
     morder <- max.order
 
     calb <- rep(1,d)   # calibration for channel j (j=1,d)
@@ -1904,12 +1924,17 @@ function (y, max.order=NULL, span, const=0)
 	as.integer(const),
 	as.integer(ns))
 
-
-    npre=z[[3L]]
-    order.mov=z[[5L]]
-    aic.mov=z[[6L]]
-    order.const=z[[7L]]
-    aic.const=z[[8L]]
+    nns <- z[[15L]]
+    npre <- z[[3L]][1:nns]
+    nnew <- z[[4L]][1:nns]
+    order.mov <- z[[5L]][1:nns]
+    aic.mov <- z[[6L]][1:nns]
+    order.const <- z[[7L]][1:nns]
+    aic.const <- z[[8L]][1:nns]
+    order <- z[[9L]][1:nns]
+    aic <- z[[10L]][1:nns]
+    start <- z[[13L]][1:nns]
+    end <- z[[14L]][1:nns]
     npre[1] <- NA
     order.mov[1] <- NA
     aic.mov[1] <- NA
@@ -1918,16 +1943,23 @@ function (y, max.order=NULL, span, const=0)
 
     a <- array(z[[11L]], dim=c(d,d,morder,ns))
     arcoef <- list()
-    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i],dim=c(d,d,z[[9L]][i]))
+##    for( i in 1:ns ) arcoef[[i]] <- array(a[,,,i],dim=c(d,d,z[[9L]][i]))
+    for( i in 1:nns ) arcoef[[i]] <- array(a[,,,i],dim=c(d,d,z[[9L]][i]))
 
     e <- array(z[[12L]], dim=c(d,d,ns))
     v <- list()
-    for( i in 1:ns ) v[[i]] <- array(e[,,i],dim=c(d,d))
+##    for( i in 1:ns ) v[[i]] <- array(e[,,i],dim=c(d,d))
+    for( i in 1:nns ) v[[i]] <- array(e[,,i],dim=c(d,d))
 
-    mlomar.out <- list( mean=z[[1L]], var=z[[2L]], ns=ns, order=z[[9L]], aic=z[[10L]], arcoef=arcoef, v=v,
-			init=z[[13L]], end=z[[14L]], npre=npre, nnew=z[[4L]], order.mov=order.mov, aic.mov=aic.mov,
+##    mlomar.out <- list( mean=z[[1L]], var=z[[2L]], ns=ns, order=z[[9L]], aic=z[[10L]], arcoef=arcoef, v=v,
+##			init=z[[13L]], end=z[[14L]], npre=npre, nnew=nnew, order.mov=order.mov, aic.mov=aic.mov,
+    mlomar.out <- list( mean=z[[1L]], var=z[[2L]], ns=nns, order=order, aic=aic, arcoef=arcoef, v=v,
+			init=start, end=end, npre=npre, nnew=nnew, order.mov=order.mov, aic.mov=aic.mov,
 			order.const=order.const, aic.const=aic.const )
+
     class( mlomar.out ) <- "mlomar"
+    if( icflag == -1 ) cat(sprintf("\n ***** Warning : max.order is corrected n/(2*d) = %d\n\n", max.order))
+
     return( mlomar.out )
 }
 
@@ -1975,6 +2007,9 @@ function (y, max.order=NULL, plot=FALSE)
     d <- ncol(y)
     calb<-rep(1,d)   # calibration of channel i (i=1,d)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))  # upper limit of the order of AR-model
+    icflag <- 0
+    if( max.order > n/(2*d) )  icflag <- -1
+    max.order <- as.integer(min(max.order, n/(2*d)))
     morder <- max.order
 
     z <- .Call("mulbar",
@@ -1989,10 +2024,13 @@ function (y, max.order=NULL, plot=FALSE)
       abline(h=0, lty=1) }
 
     mulbar.out <- list( mean=z[[1L]], var=z[[2L]], v=z[[3L]], aic=z[[4L]], aicmin=z[[7L]], daic=z[[5L]],
-			order.maice=z[[6L]], v.maice=z[[8L]], bweight=z[[9L]], integra.bweight=z[[10L]],
-			arcoef.for=array(z[[11L]], dim=c(d,d,morder)), arcoef.back=array(z[[12L]], dim=c(d,d,morder)),
-			pacoef.for=array(z[[13L]], dim=c(d,d,morder)), pacoef.back=array(z[[14L]], dim=c(d,d,morder)),
-			v.bay=array(z[[15L]], dim=c(d,d)), aic.bay=z[[16L]] )
+	order.maice=z[[6L]], v.maice=z[[8L]], bweight=z[[9L]], integra.bweight=z[[10L]],
+	arcoef.for=array(z[[11L]], dim=c(d,d,morder)), arcoef.back=array(z[[12L]], dim=c(d,d,morder)),
+	pacoef.for=array(z[[13L]], dim=c(d,d,morder)), pacoef.back=array(z[[14L]], dim=c(d,d,morder)),
+	v.bay=array(z[[15L]], dim=c(d,d)), aic.bay=z[[16L]] )
+
+    if( icflag == -1 ) cat(sprintf("\n ***** Warning : max.order is corrected n/(2*d) = %d\n\n", max.order))
+
     return( mulbar.out )
 }
 
@@ -2004,6 +2042,9 @@ function (y, max.order=NULL, plot=FALSE)
     d <- ncol(y)
     calb <- rep(1, d)
     if( is.null(max.order) ) max.order <- as.integer(2*sqrt(n))
+    icflag <- 0
+    if( max.order > n/(2*d) )  icflag <- -1
+    max.order <- as.integer(min(max.order, n/(2*d)))
 
     z <- .Call("mulmar", as.double(y), as.integer(n), as.integer(d), 
         as.double(calb), as.integer(max.order))
@@ -2034,10 +2075,14 @@ function (y, max.order=NULL, plot=FALSE)
         }
         par(mfrow=c(1,1))
     }
+
     mulmar.out <- list(mean = z[[1L]], var = z[[2L]], v = v, aic = aic, aicmin = z[[7L]],
         daic = daic, order.maice = z[[6L]], v.maice = z[[8L]], np = z[[9L]], jnd = jnd,
         subregcoef = subregcoef, rvar = z[[12L]], aicf = z[[13L]], respns = array(z[[14L]], dim = c(d, d)),
         matv = array(z[[16L]], dim=c(d,d)), morder = z[[18L]], arcoef = array(z[[17L]], dim=c(d,d,z[[18L]])), aicsum = z[[19L]])
+
+    if( icflag == -1 ) cat(sprintf("\n ***** Warning : max.order is corrected n/(2*d) = %d\n\n", max.order))
+
     return(mulmar.out)
 }
 
@@ -2423,7 +2468,7 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
       sxx[i] <- log10(t)
     }
 
-    if( z[[8L]] == 2600 ) cat(" ***** Warning : Accuracy of computation lost\n" )
+    if( z[[8L]] == 2600 ) cat("\n ***** Warning : Accuracy of computation lost\n\n" )
 
     irregular.spec <- list(n=ndata, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]], rspec=pxx, rpspec=sxx)
 
@@ -2474,7 +2519,7 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
              as.integer(mode),
              as.integer(period))
 
-    if( z[[8L]] == 2600 ) cat(" ***** Warning : Accuracy of computation lost\n" )
+    if( z[[8L]] == 2600 ) cat("\n ***** Warning : Accuracy of computation lost\n\n" )
 
     differenced.trend <- list(n=n1, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]])
 
@@ -2498,7 +2543,7 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order, i
              as.integer(mode),
              as.integer(period))
 
-    if( z[[8L]] == 2600 ) cat(" ***** Warning : Accuracy of computation lost\n" )
+    if( z[[8L]] == 2600 ) cat("\n ***** Warning : Accuracy of computation lost\n\n" )
 
     differenced.season <- list(n=n1, acov=z[[1L]], acor=z[[2L]], mean=z[[3L]], v=z[[4L]], aic=z[[5L]], parcor=z[[6L]])
 

@@ -141,6 +141,7 @@ C
 C     --  HOUSEHOLDER REDUCTION  --                                     
 C                                                                       
 cc      CALL  MREDCT( Z,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
+      X = 0.0D0
       CALL  MREDCT( Z,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
 C                                                                       
 C     --  AR-MODEL FITTING (BAYESIAN PROCEDURE)  --                     

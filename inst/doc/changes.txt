@@ -6,6 +6,11 @@
             ***************************************
 
 
+ timsac_1.3.3
+================
+* Corrected errors in inst/doc/index.html according to the error message of the W3C Markup Validator service.
+
+
  timsac_1.3.2
 ================
  * Fixed a bug in mulmar().

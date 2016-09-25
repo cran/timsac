@@ -59,21 +59,28 @@ C            -----------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: BLOMARF
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  Z(1500,10)                                             
 cc      DIMENSION  X(200,100) , D(200)                                    
 cc      DIMENSION  A(10,10,50) , B(10,10,50)                              
 cc      DIMENSION  G(10,10,50) , H(10,10,50) , E(10,10)                   
-      DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
-      DIMENSION  ZMEAN(ID), ZVARI(ID)
-      DIMENSION  A(ID,ID,LAG,KMAX) , B(ID,ID,LAG)
-      DIMENSION  G(ID,ID,LAG) , H(ID,ID,LAG) , E(ID,ID,KMAX)
-      DIMENSION  BW(KMAX,KMAX), AIC(KMAX,KMAX)
-      DIMENSION  AICB(KMAX), LKS(KMAX), LKE(KMAX)
-      DIMENSION  F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX)
-cxx      DIMENSION  X(NS0+LAG+1,(LAG+1)*ID)
-      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
+cxx      DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
+cxx      DIMENSION  ZMEAN(ID), ZVARI(ID)
+cxx      DIMENSION  A(ID,ID,LAG,KMAX) , B(ID,ID,LAG)
+cxx      DIMENSION  G(ID,ID,LAG) , H(ID,ID,LAG) , E(ID,ID,KMAX)
+cxx      DIMENSION  BW(KMAX,KMAX), AIC(KMAX,KMAX)
+cxx      DIMENSION  AICB(KMAX), LKS(KMAX), LKE(KMAX)
+cxx      DIMENSION  F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX)
+cxxcxx      DIMENSION  X(NS0+LAG+1,(LAG+1)*ID)
+cxx      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
+      INTEGER :: N, ID, LAG, NS0, KMAX, LKS(KMAX), LKE(KMAX), M
+      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID),
+     1           BW(KMAX,KMAX), AIC(KMAX,KMAX), A(ID,ID,LAG,KMAX),
+     2           E(ID,ID,KMAX), AICB(KMAX)
+      REAL(8) :: Z(N,ID), B(ID,ID,LAG), G(ID,ID,LAG), H(ID,ID,LAG),
+     1           F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX),
+     2           X((LAG+1)*ID*2,(LAG+1)*ID)
 C
 C       PARAMETERS:                                                     
 C          MJ:    ABSOLUTE DIMENSION FOR SUBROUTINE CALL                
@@ -100,16 +107,16 @@ cxx      MJ1 = NS0+LAG+1
       MJ3 = ID
       KSW = 0                                                           
 C
-      BW = 0.0D0
-      AIC = 0.0D0
-      A = 0.0D0
-      E = 0.0D0
-      AICB = 0.0D0
-      LKS = 0
-      LKE = 0                                                       
-      F1 = 0.0D0
-      F2 = 0.0D0
-      X = 0.0D0
+      BW(1:KMAX,1:KMAX) = 0.0D0
+      AIC(1:KMAX,1:KMAX) = 0.0D0
+      A(1:ID,1:ID,1:LAG,1:KMAX) = 0.0D0
+      E(1:ID,1:ID,1:KMAX) = 0.0D0
+      AICB(1:KMAX) = 0.0D0
+      LKS(1:KMAX) = 0
+      LKE(1:KMAX) = 0
+      F1(1:LAG*ID,1:ID,1:KMAX) = 0.0D0
+      F2(1:LAG*ID,1:ID,1:KMAX) = 0.0D0
+      X(1:MJ1,1:(LAG+1)*ID) = 0.0D0
 C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
@@ -190,33 +197,33 @@ cc#endif
 ccC /* __linux__ */
 ccWRITE(6,610) IVAR,IFLNAM
 ccC
-  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//,5X,100A)
-  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
+cxx  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//,5X,100A)
+cxx  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C
 cc  999 CONTINUE
       RETURN
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( 1H ,'PROGRAM TIMSAC 78.3.4',//,'   BAYESIAN METHOD OF LOCA
-     *LLY STATIONARY MULTIVARIATE AR MODEL FITTING;',//,'  < BASIC AUTOR
-     *EGRESSIVE MODEL >' )                                              
-    3 FORMAT( //,1H ,'  UPPER LIMIT OF THE ORDER  K =',I3,/,'   BASIC LO
-     1CAL SPAN LENGTH  NS =',I4,/,'   ORIGINAL DATA INPUT DEVICE  MT =',
-     2I3 )                                                              
-    4 FORMAT( //1H ,10X,'Z(N) = A1*Z(N-1) + A2*Z(N-2) + ... + AK*Z(N-K) 
-     1+ W(N)',/,1H ,'  WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X,  
-     2'W(N):  INNOVATION' )                                             
-   11 FORMAT( 1H ,18X,5D15.5 )                                          
-   12 FORMAT( 1H ,10X,1H.,6X,'INNOVATION VARIANCE MATRIX',53X,1H. )     
-   13 FORMAT( 1H ,//11X,35(1H.),'  CURRENT MODEL  ',35(1H.) )           
-   14 FORMAT( 1H ,10X,1H.,6X,'M',7X,'AM(I,J)',30X,'DATA  Z(K,.); K=',I5,
-     11H,,I5,7X,1H. )                                                   
-   15 FORMAT( 1H ,18X,5F15.8 )                                          
-   16 FORMAT( 1H ,10X,1H.,85X,1H. )                                     
-   17 FORMAT( 1H+,10X,1H.,I7,78X,1H. )                                  
-   18 FORMAT( 1H ,10X,87(1H.) )                                         
-   19 FORMAT( 1H ,10X,1H.,6X,'ORDER =',I5,67X,1H.,/,11X,1H.,6X,'AIC =', 
-     1 F15.3,59X,1H. )                                                  
-   21 FORMAT( 1H+,10X,1H.,85X,1H. )                                     
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( 1H ,'PROGRAM TIMSAC 78.3.4',//,'   BAYESIAN METHOD OF LOCA
+cxx     *LLY STATIONARY MULTIVARIATE AR MODEL FITTING;',//,'  < BASIC AUTOR
+cxx     *EGRESSIVE MODEL >' )                                              
+cxx    3 FORMAT( //,1H ,'  UPPER LIMIT OF THE ORDER  K =',I3,/,'   BASIC LO
+cxx     1CAL SPAN LENGTH  NS =',I4,/,'   ORIGINAL DATA INPUT DEVICE  MT =',
+cxx     2I3 )                                                              
+cxx    4 FORMAT( //1H ,10X,'Z(N) = A1*Z(N-1) + A2*Z(N-2) + ... + AK*Z(N-K) 
+cxx     1+ W(N)',/,1H ,'  WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X,  
+cxx     2'W(N):  INNOVATION' )                                             
+cxx   11 FORMAT( 1H ,18X,5D15.5 )                                          
+cxx   12 FORMAT( 1H ,10X,1H.,6X,'INNOVATION VARIANCE MATRIX',53X,1H. )     
+cxx   13 FORMAT( 1H ,//11X,35(1H.),'  CURRENT MODEL  ',35(1H.) )           
+cxx   14 FORMAT( 1H ,10X,1H.,6X,'M',7X,'AM(I,J)',30X,'DATA  Z(K,.); K=',I5,
+cxx     11H,,I5,7X,1H. )                                                   
+cxx   15 FORMAT( 1H ,18X,5F15.8 )                                          
+cxx   16 FORMAT( 1H ,10X,1H.,85X,1H. )                                     
+cxx   17 FORMAT( 1H+,10X,1H.,I7,78X,1H. )                                  
+cxx   18 FORMAT( 1H ,10X,87(1H.) )                                         
+cxx   19 FORMAT( 1H ,10X,1H.,6X,'ORDER =',I5,67X,1H.,/,11X,1H.,6X,'AIC =', 
+cxx     1 F15.3,59X,1H. )                                                  
+cxx   21 FORMAT( 1H+,10X,1H.,85X,1H. )                                     
       END                                                               
 cc      SUBROUTINE  MNONSB( Z,X,D,G,H,E,KSW,LAG,N0,NS,ID,KMAX,MJ,MJ1,MJ3,A
 cc     *,B,AICB )                                                         
@@ -260,21 +267,28 @@ C          A:     AUTOREGRESSIVE COEFFICIENT MATRIX OF FORWARD MODEL
 C          B:     AUTOREGRESSIVE COEFFICIENT MATRIX OF BACKWARD MODEL   
 C          AICB:  AIC OF THE CURRENT MODEL                              
 C                                                                       
-      IMPLICIT  REAL *8  ( A-H , O-Z )                                  
+cxx      IMPLICIT  REAL *8  ( A-H , O-Z )                                  
 CC      REAL*4     Z(MJ,1) , F1(100,10,11) , F2(100,10,11)
 cc      DIMENSION  X(MJ1,1) , D(1) , A(MJ3,MJ3,1) , B(MJ3,MJ3,1)          
 cx      DIMENSION  Z(MJ,1) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
 cx      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,1) , B(MJ3,MJ3,1)
 cx      DIMENSION  G(MJ3,MJ3,1) , H(MJ3,MJ3,1) , E(MJ3,1)                 
 cc      DIMENSION  Y(100,10) , AIC(11) , C(11)                            
-      DIMENSION  Z(MJ,ID) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
-      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,LAG) , B(MJ3,MJ3,LAG)
-      DIMENSION  G(MJ3,MJ3,LAG) , H(MJ3,MJ3,LAG) , E(MJ3,ID) 
-      DIMENSION  AIC(KMAX1) , C(KMAX1)
+cxx      DIMENSION  Z(MJ,ID) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
+cxx      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,LAG) , B(MJ3,MJ3,LAG)
+cxx      DIMENSION  G(MJ3,MJ3,LAG) , H(MJ3,MJ3,LAG) , E(MJ3,ID) 
+cxx      DIMENSION  AIC(KMAX1) , C(KMAX1)
+      INTEGER :: KSW, LAG, N0, NS, ID, KMAX1, KC, MJ, MJ1, MJ3
+      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID), G(MJ3,MJ3,LAG),
+     1           H(MJ3,MJ3,LAG), E(MJ3,ID), C(KMAX1), AIC(KMAX1),
+     2           A(MJ3,MJ3,LAG), B(MJ3,MJ3,LAG), AICB,
+     3           F1(LAG*ID,ID,KMAX1), F2(LAG*ID,ID,KMAX1)
 cc      DATA     KC  / 0 /                                                
 C
-      DIMENSION  SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1)
-      DIMENSION  BW1(LAG+1), BW2(LAG)
+cxx      DIMENSION  SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1)
+cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
+      REAL(8) :: SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1),
+     1           BW1(LAG+1), BW2(LAG), AICM, EK, SD, SDMIN
 C                                                                       
       KMAX = KMAX1-1
 cc      MJ5 = 100                                                         
@@ -290,7 +304,8 @@ C          -------------------------------------
 C          BAYESIAN MODEL FITTED TO THE NEW SPAN                        
 C          -------------------------------------                        
 cc      CALL  MBYSAR( X,D,NS,LAG,ID,KSW,IPR,MJ1,MJ3,A,B,G,H,E,AICB,EK )   
-      CALL  MBYSAR( X,NS,LAG,ID,KSW,IPR,MJ1,MJ3,SD1,AIC1,DIC1,
+cxx      CALL  MBYSAR( X,NS,LAG,ID,KSW,IPR,MJ1,MJ3,SD1,AIC1,DIC1,
+      CALL  MBYSAR( X,NS,LAG,ID,KSW,MJ1,MJ3,SD1,AIC1,DIC1,
      *              AICM,SDMIN,IMIN,BW1,BW2,A,B,G,H,E,AICB,EK )
 C                                                                       
       IF( KC .EQ. 0 )  GO TO 20                                         
@@ -298,19 +313,31 @@ C          -----------------------------
 C          "PARCOR'S" SHIFTED AND STORED                                
 C          -----------------------------                                
       KC1 = KC+1                                                        
-      DO 10  JJ=1,KC                                                    
+cxx      DO 10  JJ=1,KC
+      DO 12  JJ=1,KC
         II = KC1 - JJ                                                   
-        DO 10  I=1,KD                                                   
+cxx        DO 10  I=1,KD                                                   
+        DO 11  I=1,KD                                                   
         DO 10  J=1,ID                                                   
       F1(I,J,II+1) = F1(I,J,II)                                         
-   10 F2(I,J,II+1) = F2(I,J,II)                                         
+cxx   10 F2(I,J,II+1) = F2(I,J,II)
+      F2(I,J,II+1) = F2(I,J,II)
+   10 CONTINUE
+   11 CONTINUE
+   12 CONTINUE                                         
    20 IM = 0                                                            
-      DO 30  II=1,LAG                                                   
-      DO 30  I=1,ID                                                     
+cxx      DO 30  II=1,LAG                                                   
+cxx      DO 30  I=1,ID
+      DO 32  II=1,LAG                                                   
+      DO 31  I=1,ID                                                      
       IM = IM+1                                                         
       DO 30  J=1,ID                                                     
-      F1(IM,J,1) = G(I,J,II)                                            
-   30 F2(IM,J,1) = H(I,J,II)                                            
+      F1(IM,J,1) = G(I,J,II)
+cxx   30 F2(IM,J,1) = H(I,J,II)
+      F2(IM,J,1) = H(I,J,II)
+   30 CONTINUE
+   31 CONTINUE
+   32 CONTINUE                                            
       IF( KC .EQ. 0 )  GO TO 100                                        
 C          ---------------------------------------------------------    
 C          PREDICTION ERROR VARIANCES AND AIC'S OF THE FORMER MODELS    
@@ -318,17 +345,26 @@ C          ---------------------------------------------------------
       AIC(1) = AICB                                                     
       DO 50  JJ=1,KC                                                    
         IM = 0                                                          
-        DO 40  II=1,LAG                                                 
-        DO 40  I=1,ID                                                   
+cxx        DO 40  II=1,LAG                                                 
+cxx        DO 40  I=1,ID                                                   
+        DO 42  II=1,LAG                                                 
+        DO 41  I=1,ID
           IM = IM+1                                                     
           DO 40  J=1,ID                                                 
         G(I,J,II) = F1(IM,J,JJ+1)                                       
-   40   H(I,J,II) = F2(IM,J,JJ+1)                                       
+cxx   40   H(I,J,II) = F2(IM,J,JJ+1)                                       
+        H(I,J,II) = F2(IM,J,JJ+1)
+   40     CONTINUE
+   41   CONTINUE
+   42   CONTINUE 
 C                                                                       
         CALL  MARCOF( G,H,ID,LAG,MJ3,A,B )                              
 cc      CALL  MSDCOM( X,A,Y,D,NS,LAG,ID,KSW,IPR,MJ1,MJ3,MJ5,E,SD )        
-      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,IPR,MJ1,E,SD )        
-   50 AIC(JJ+1) = NS*DLOG( SD ) + ID*(ID+1)                             
+cxx      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,IPR,MJ1,E,SD )        
+      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,MJ1,E,SD )        
+cxx   50 AIC(JJ+1) = NS*DLOG( SD ) + ID*(ID+1)
+      AIC(JJ+1) = NS*DLOG( SD ) + ID*(ID+1)                             
+   50 CONTINUE
 C          ----------------------------------------                     
 C          BAYESIAN WEIGHTS OF THE PRECEDING MODELS                     
 C          ----------------------------------------                     
@@ -336,7 +372,9 @@ c-----------------------------  06/11/01
 ccx      AICM = DMIN( AIC,KC )                                             
       AICM = AIC(1)
       DO 55  I=1,KC
-   55 IF( AIC(I) .LT. AICM )  AICM = AIC(I)
+cxx   55 IF( AIC(I) .LT. AICM )  AICM = AIC(I)
+      IF( AIC(I) .LT. AICM )  AICM = AIC(I)
+   55 CONTINUE
 c-----------------------------
       CALL  BAYSWT( AIC,AICM,KC,2,C )                                   
 cc      WRITE( 6,3 )     C(1) , AIC(1)                                    
@@ -348,41 +386,64 @@ C          ------------------------
 C          AVERAGING OF THE MODELS                                      
 C          -----------------------                                      
       EK = EK*C(1)**2                   
-      DO 70  II=1,LAG                                                   
-      DO 70  I=1,ID                                                     
+cxx      DO 70  II=1,LAG                                                   
+cxx      DO 70  I=1,ID                                                     
+      DO 72  II=1,LAG                                                   
+      DO 71  I=1,ID
       DO 70  J=1,ID                                                     
-   70 B(I,J,II) = A(I,J,II)*C(1)                                        
-      DO 80  I=1,KD                                                     
+cxx   70 B(I,J,II) = A(I,J,II)*C(1)                                        
+      B(I,J,II) = A(I,J,II)*C(1)
+   70 CONTINUE
+   71 CONTINUE
+   72 CONTINUE
+cxx      DO 80  I=1,KD                                                     
+      DO 81  I=1,KD
       DO 80  J=1,ID                                                     
       F1(I,J,1) = F1(I,J,1)*C(1)                                        
-   80 F2(I,J,1) = F2(I,J,1)*C(1)                                        
+cxx   80 F2(I,J,1) = F2(I,J,1)*C(1)                                        
+      F2(I,J,1) = F2(I,J,1)*C(1)                                        
+   80 CONTINUE
+   81 CONTINUE
 C                                                                       
-      DO 90  JJ=1,KC                                                    
-        DO 90  I=1,KD                                                   
+cxx      DO 90  JJ=1,KC                                                    
+cxx        DO 90  I=1,KD                                                   
+      DO 92  JJ=1,KC                                                    
+        DO 91  I=1,KD                                                   
         DO 90  J=1,ID                                                   
         F1(I,J,1) = F1(I,J,1) + F1(I,J,JJ+1)*C(JJ+1)                    
-   90   F2(I,J,1) = F2(I,J,1) + F2(I,J,JJ+1)*C(JJ+1)                    
+cxx   90   F2(I,J,1) = F2(I,J,1) + F2(I,J,JJ+1)*C(JJ+1)
+        F2(I,J,1) = F2(I,J,1) + F2(I,J,JJ+1)*C(JJ+1)                    
+   90   CONTINUE
+   91   CONTINUE
+   92 CONTINUE
 C          -----------------------------------------                    
 C          PREDICTION ERROR VARIANCE MATRIX COMPUTED                    
 C          -----------------------------------------                    
   100 IM = 0                                                            
       KC = KC + 1                                                       
       IF( KC .GT. KMAX )     KC = KMAX                                  
-      DO 110  II=1,LAG                                                  
-      DO 110  I=1,ID                                                    
+cxx      DO 110  II=1,LAG                                                  
+cxx      DO 110  I=1,ID                                                    
+      DO 112  II=1,LAG                                                  
+      DO 111  I=1,ID
         IM = IM+1                                                       
         DO 110  J=1,ID                                                  
         G(I,J,II) = F1(IM,J,1)                                          
-  110   H(I,J,II) = F2(IM,J,1)                                          
+cxx  110   H(I,J,II) = F2(IM,J,1)                                          
+        H(I,J,II) = F2(IM,J,1)
+  110   CONTINUE
+  111 CONTINUE
+  112 CONTINUE
 C                                                                       
       CALL  MARCOF( G,H,ID,LAG,MJ3,A,B )                                
 cc      CALL  MSDCOM( X,A,Y,D,NS,LAG,ID,KSW,IPR,MJ1,MJ3,MJ5,E,SD )        
-      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,IPR,MJ1,E,SD )        
+cxx      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,IPR,MJ1,E,SD )
+      CALL  MSDCOM( X,A,NS,LAG,ID,KSW,MJ1,E,SD )
       AICB = NS*DLOG( SD ) + 2.D0*(EK + KSW*ID) + ID*(ID+1)             
 C                                                                       
       RETURN                                                            
-    3 FORMAT( ///1H ,13X,'AR-MODEL FITTED TO  !  BAYESIAN WEIGHTS  ! AIC
-     1 WITH RESPECT TO THE PRESENT DATA',/,10X,83(1H-),/,1H ,11X,'CURREN
-     2T BLOCK',9X,'!',F13.5,7X,'!',F21.3 )                              
-    4 FORMAT( 1H ,6X,I5,' PERIOD FORMER BLOCK  !',F13.5,7X,'!',F21.3 )  
-      E N D                                                             
+cxx    3 FORMAT( ///1H ,13X,'AR-MODEL FITTED TO  !  BAYESIAN WEIGHTS  ! AIC
+cxx     1 WITH RESPECT TO THE PRESENT DATA',/,10X,83(1H-),/,1H ,11X,'CURREN
+cxx     2T BLOCK',9X,'!',F13.5,7X,'!',F21.3 )
+cxx    4 FORMAT( 1H ,6X,I5,' PERIOD FORMER BLOCK  !',F13.5,7X,'!',F21.3 )
+      E N D

@@ -8,29 +8,34 @@ cc      !DEC$ ATTRIBUTES DLLEXPORT :: DECOMPF
 C
       PARAMETER (IOPT=1)
       PARAMETER (NIP=9, NPA=26)
-      REAL*8    DATA(N), para(NPA), omaxx
-      INTEGER   IPAR(NIP)
-      REAL*8    TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
-      INTEGER   PERIOD, SORDER
+cxx      REAL*8    DATA(N), para(NPA), omaxx
+cxx      INTEGER   IPAR(NIP)
+cxx      REAL*8    TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
+cxx      INTEGER   PERIOD, SORDER
+      INTEGER :: N,  IPAR(NIP), imiss, ier
+      REAL(8) :: DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N), NOISE(N),
+     1           para(NPA), omaxx
+      INTEGER :: PERIOD, SORDER
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
      *                    NYEAR, nmonth
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH
 c
-      do 100 i = 1,NPA
-         para(i) = 0.0D0
-  100 continue
-c
-      CALL  SPARAM0( N,IPAR,NIP,para,NPA )
+      para(1:NPA) = 0.0D0
+cxx      CALL  SPARAM0( N,IPAR,NIP,para,NPA )
+      CALL  SPARAM0( IPAR,NIP )
       LM1 = L+M+1
 c
-      call decompff (DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
+cxx      call decompff (DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
+      call decompff (DATA,N,TREND,SEASNL,AR,TRAD,NOISE,
 cx     *               para,iopt,imiss,omaxx,LM1)
      *               para,iopt,imiss,omaxx,LM1,ier)
 c
       return
       end
 c
-      SUBROUTINE  DECOMPFF(DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
+cxx      SUBROUTINE  DECOMPFF(DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
+      SUBROUTINE  DECOMPFF(DATA,N,TREND,SEASNL,AR,TRAD,NOISE,
 cx     *                     para,iopt,imiss,omaxx,LM1 )
      *                     para,iopt,imiss,omaxx,LM1,ier )
 C
@@ -154,34 +159,42 @@ C
 C     -----  WRITTEN BY GENSHIRO KITAGAWA  ----END S                    
 C                                                                       
 
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 c
 cc      DIMENSION  DATA(N) ,IPAR(11) 
 cc      real*4     title(20)
 cc      REAL*8     A(40), YMEAN ,para(26)
       PARAMETER (NIP=9, NPA=26)
-      DIMENSION  DATA(N) ,IPAR(NIP)
-      REAL*8     A(L+M2), YMEAN ,para(NPA)
-      REAL*8     TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
-      INTEGER    IMIS(N), PERIOD, SORDER
+cxx      DIMENSION  DATA(N) ,IPAR(NIP)
+cxx      DIMENSION  DATA(N)
+cxx      REAL*8     A(L+M2), YMEAN ,para(NPA)
+cxx      REAL*8     TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
+cxx      INTEGER    IMIS(N), PERIOD, SORDER
 cc      COMMON     /COMSM1/  WORK(300000)
-      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7)
+cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7)
+      INTEGER :: N, iopt, imiss, LM1, ier 
+      REAL(8) :: DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N), NOISE(N),
+     1           para(NPA), omaxx
+      INTEGER :: IMIS(N), PERIOD, SORDER
+      REAL(8) :: A(L+M2), YMEAN, Z(N), E(L,LM1,N), TDAY(N,7), FF
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,
 cc     *               NS, NI, MISING, IOUT, LL, NN, NYEAR,nmonth, 
 cc     *                     NPREDS, NPREDE, IPRED 
-      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                     NYEAR, nmonth
 cc      COMMON     /COMSM4/  NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8       
 c      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG                    
-      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+cxx      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 cc      common     /cccout/  IMIS(3000)
+      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                     NYEAR, nmonth
+      COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
 C           ...  set control parameters  ...                            
 C
 cc      NN = N
 cc      CALL  SPARAM( MT,A,IPAR,para,iopt )
       LLL = L+M2
-      CALL  SPARAM( N,A,LLL,IPAR,NIP,para,NPA,iopt )
+cxx      CALL  SPARAM( N,A,LLL,IPAR,NIP,para,NPA,iopt )
+      CALL  SPARAM( A,LLL,para,NPA,iopt )
 c      outmax = omaxx                      
       do 123 i=1,n                      
       imis(i) = 0
@@ -196,7 +209,8 @@ C
 C           ...  read original data  ...                                
 C                                                                       
 cc      CALL  REDATA( MT,DATA,ISW,IPR,WORK,N,TITLE,YMEAN )                     
-      CALL  REDATAD( DATA,ISW,IPR,Z,N,YMEAN )
+cxx      CALL  REDATAD( DATA,ISW,IPR,Z,N,YMEAN )
+      CALL  REDATAD( DATA,ISW,Z,N,YMEAN )
 C                                                                       
 C           ...  allocation of working area  ...                        
 C                                                                       
@@ -236,7 +250,7 @@ C
       ISMT = 1                                                          
 cc      LLL = L+M2
 cc      CALL  FUNCSA( 1,A,FF,IFG )                                        
-	CALL  FUNCSA( Z,E,TDAY,IMIS,N,LM1,LLL,A,FF,IFG)
+       CALL  FUNCSA( Z,E,TDAY,IMIS,N,LM1,LLL,A,FF,IFG)
 C                                                                       
 C           ...  plot estimated components  ...                         
 C                                   
@@ -270,9 +284,11 @@ C       OUTPUTS:
 C         AR:   VECTOR OF AR-COEFFICIENTS                               
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  AR(K) , PAC(K) , W(100)
-      DIMENSION  AR(K) , PAC(K) , W(K)
+cxx      DIMENSION  AR(K) , PAC(K) , W(K)
+      INTEGER :: K
+      REAL(8) :: PAC(K), AR(K), W(K)
 C                                                                       
       DO  30     II=1,K                                                 
       AR(II) = PAC(II)                                                  
@@ -281,11 +297,15 @@ C
       IF( IM1 .LE. 0 )     GO TO 30                                     
       DO  10     J=1,IM1                                                
       JJ = II - J                                                       
-   10 AR(J) = W(J) - PAC(II)*W(JJ)                                      
+cxx   10 AR(J) = W(J) - PAC(II)*W(JJ)                                      
+      AR(J) = W(J) - PAC(II)*W(JJ)
+   10 CONTINUE
       IF( II .EQ. K )     GO TO 40                                      
       DO  20     J=1,IM1                                                
 c   20 W(J) = PAC(J)  # modified  97/10/17                            
-   20 W(J) = ar(J)                                                     
+cxx   20 W(J) = ar(J)                                                     
+      W(J) = ar(J)
+   20 CONTINUE
    30 CONTINUE                                                          
    40 CONTINUE                                                          
       RETURN                                                            
@@ -295,36 +315,45 @@ cc      SUBROUTINE  EPARAM( A,TITLE ,iopt)
 C                                                                       
 C  ...  Estimation of parameters  ...                                   
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION  A(40), AI(20)                                          
-      DIMENSION  A(L+M2), AI(L+M2)
-      DIMENSION  Z(N), E(L,L+M+1,N), TDAY(N,7), IMIS(N)
-      INTEGER    PERIOD, SORDER
+cxx      DIMENSION  A(L+M2), AI(L+M2)
+cxx      DIMENSION  Z(N), E(L,L+M+1,N), TDAY(N,7), IMIS(N)
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: IMIS(N), N, iopt
+      REAL(8) :: Z(N), E(L,L+M+1,N), TDAY(N,7), A(L+M2)
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: AI(L+M2), 
+     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF,
+     2           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
 cc      REAL*4     CPUS, CPUE, TITLE(20), TIME(3)
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *                  NS, NI, MISING, IOUT,LL,N,NYEAR,nmonth,NPREDS,      
 cc     *                     NPREDE, NPRED
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)                            
 cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG                   
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                    NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
+     *                   ,DI, UI(3), TDF(7)                            
       COMMON /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH
       EXTERNAL   FUNCSA                                                 
 C                                                                       
       LM = L + M2                                                       
       ISMT = 0                                                          
 C      CALL  CLOCK( CPUS,3 )                                             
       DO 10 I=1,LM                                                      
-   10 AI(I) = A(I)                                                      
+cxx   10 AI(I) = A(I)                                                      
+      AI(I) = A(I)
+   10 CONTINUE
 C                                                                       
       CALL  SETFGH                                                      
       if(iopt .ge. 0) then
-cc      CALL  OPTMIZ( FUNCSA,A,L+M2 )                                     
+cc      CALL  OPTMIZ( FUNCSA,A,L+M2 )
       CALL  OPTMIZ( FUNCSA,Z,E,TDAY,IMIS,N,A,LM,L,L+M+1 )               
       end if
 C                                                                       
@@ -354,32 +383,37 @@ C      WRITE(6,670)   CPU
 c      WRITE(6,650)                                                      
 C                                                                       
       RETURN                                                            
-  600 FORMAT( ////10X,'---  DATA  ---',/,10X,10A4,5X,'N =',I4 )         
-  610 FORMAT( /10X,'---  MODEL  ---',/,10X,'M1 =',I2,5X,'M2 =',I2,5X,   
-     *        'M3 =',I3,5X,'M4 =',I2,5X,'M5 =',I2 )                     
-  620 FORMAT( /,10X,'---  PROGRAM  DECOMP  ---',/,10X,'DATE: ',A8,5X,   
-     *        'TIME: ',3A4 )                                            
-  630 FORMAT( ///15X,'<<<  INITIAL ESTIMATES  >>>' )                    
-  640 FORMAT( ///15X,'<<<  FINAL ESTIMATES  >>>' )                      
-  660 FORMAT( 10X,'***  LOG TRANSFORMED  ***   LOG-JACOBIAN =',         
-     *        F12.4 )                                                   
-  650 FORMAT( 1H1 )                                                     
-  670 FORMAT( //,10X,'CPU TIME =',F10.2 )                               
-  680 FORMAT( //,T20,'TRADING DAY',/,T15,'I',T22,'FACTOR' )             
-  690 FORMAT( 14X,I1,D16.8 )                                            
+cxx  600 FORMAT( ////10X,'---  DATA  ---',/,10X,10A4,5X,'N =',I4 )
+cxx  610 FORMAT( /10X,'---  MODEL  ---',/,10X,'M1 =',I2,5X,'M2 =',I2,5X,   
+cxx     *        'M3 =',I3,5X,'M4 =',I2,5X,'M5 =',I2 )                     
+cxx  620 FORMAT( /,10X,'---  PROGRAM  DECOMP  ---',/,10X,'DATE: ',A8,5X,   
+cxx     *        'TIME: ',3A4 )                                            
+cxx  630 FORMAT( ///15X,'<<<  INITIAL ESTIMATES  >>>' )                    
+cxx  640 FORMAT( ///15X,'<<<  FINAL ESTIMATES  >>>' )                      
+cxx  660 FORMAT( 10X,'***  LOG TRANSFORMED  ***   LOG-JACOBIAN =',         
+cxx     *        F12.4 )                                                   
+cxx  650 FORMAT( 1H1 )                                                     
+cxx  670 FORMAT( //,10X,'CPU TIME =',F10.2 )                               
+cxx  680 FORMAT( //,T20,'TRADING DAY',/,T15,'I',T22,'FACTOR' )             
+cxx  690 FORMAT( 14X,I1,D16.8 )                                            
       E N D                                                             
 cc      SUBROUTINE  FUNCND( FUNCT,M,A,F,G,IFG )                           
       SUBROUTINE  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,M,A,F,G,IFG,L,LM1 )
 C                                                                       
 C  ...  FUNCTION EVALUATION AND NUMERICAL DIFFERENCING  ...             
 C                                                                       
-      IMPLICIT   REAL*8( A-H,O-Z )
-      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
+cxx      IMPLICIT   REAL*8( A-H,O-Z )
+cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
 cc      DIMENSION  A(M) , G(M) , B(20)
-      DIMENSION  A(M) , G(M) , B(M)
+cxx      DIMENSION  A(M) , G(M) , B(M)
+      INTEGER :: IMIS(N), N, M, IFG, L, LM1
+      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), A(M), F, G(M)
+      REAL(8) :: B(M), CONST, FB, FF,
+     1           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
 c      COMMON     / CCC /  ISW , IPR, ISMT, IDIF, log
-      COMMON     /CCC/    ISW, IPR, ISMT, IDIF, LOG, MESH              
+cxx      COMMON     /CCC/    ISW, IPR, ISMT, IDIF, LOG, MESH              
 ccx      COMMON     /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON     /CCC/    ISW, ISMT, IDIF, LOG, MESH              
       COMMON   /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
 
       DATA       ICNT /0/                                               
@@ -392,7 +426,9 @@ cc      CALL  FUNCT( M,A,F,IFG )
 C                                                                       
 c      WRITE( 6,600 )   (A(I),I=1,M)                                     
       DO 10  I=1,M                                                      
-   10 B(I) = A(I)                                                       
+cxx   10 B(I) = A(I)                                                       
+      B(I) = A(I)
+   10 CONTINUE
 C                                                                       
       DO 30  II=1,M                                                     
       B(II) = A(II) + CONST                                             
@@ -406,11 +442,15 @@ cc      CALL  FUNCT( M,B,FB,IFG )
       IF( G(II) .GT. 1.0D20 )  G(II) = (F-FB)/CONST                     
       IF( G(II) .LT.-1.0D20 )  G(II) = (FF-F)/CONST                     
       IF( FB.GT.F .AND. FF.GT.F )  G(II) = 0.0D0                        
-   30 B(II) = A(II)                                                     
+cxx   30 B(II) = A(II)                                                     
+      B(II) = A(II)
+   30 CONTINUE
 C                                                                       
 c      WRITE( 6,610 )   (G(I),I=1,M)                                     
       DO 40 I=1,M                                                       
-   40 GC(I) = G(I)                                                      
+cxx   40 GC(I) = G(I)                                                      
+      GC(I) = G(I)
+   40 CONTINUE
       ICNT = ICNT + 1                                                   
       IF(ICNT .GT. 1)  RETURN                                           
 C                                                                       
@@ -418,38 +458,46 @@ C
       SIG2I = SIG2                                                      
       FI    = FC                                                        
       DO 50 I=1,M                                                       
-   50 GI(I) = G(I)                                                      
+cxx   50 GI(I) = G(I)                                                      
+      GI(I) = G(I)
+   50 CONTINUE
       RETURN                                                            
-  600 FORMAT( 3X,'---  PARAMETER  ---',(/,3X,5D13.5) )                  
-  610 FORMAT( 3X,'---  GRADIENT  ---',(/,3X,5D13.5) )                   
+cxx  600 FORMAT( 3X,'---  PARAMETER  ---',(/,3X,5D13.5) )                  
+cxx  610 FORMAT( 3X,'---  GRADIENT  ---',(/,3X,5D13.5) )                   
       E N D                                                             
 cc      SUBROUTINE  FUNCSA( KK,A,FF,IFG )                                 
       SUBROUTINE  FUNCSA( Z,E,TDAY,IMIS,N,LM1,KK,A,FF,IFG )
 C                                                                       
 C  ...  Initial setting, filtering and smoothing  ...                   
 C                                                                       
-      IMPLICIT REAL*8( A-H,O-Z )                                        
+cxx      IMPLICIT REAL*8( A-H,O-Z )                                        
 
 cc      DIMENSION  Y(40), S(40,40), R(40,40), A(KK)
 cc      REAL*8     ZZ(3000)
 cc      dimension   imisr(3000)
-      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N), A(KK)
+cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N), A(KK)
 C
-      DIMENSION  IMISR(N), ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1)
-      INTEGER    PERIOD, SORDER
+cxx      DIMENSION  IMISR(N), ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1)
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: IMIS(N), N, LM1, KK, IFG 
+      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), A(KK), FF
+      INTEGER :: PERIOD, SORDER, IMISR(N)
+      REAL(8) :: ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1),
+     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF, TAU2, SUM
 cc      COMMON    /COMSM1/  WORK(300000)
 cc      COMMON    /COMSM2/  K1, K2, K3, K4, K5, M, L, ISEA, KSEA,
 cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,  
 cc     *                    NPREDE, NPRED
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)
 cc      COMMON    /COMSM4/  NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG       
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 cc      common    /cccout/  IMIS(3000)      
+      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                    NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
+     *                   ,DI, UI(3), TDF(7)
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
       IFG = 0                                                           
 cc      K = K1 + K2 + K3 + K4 + K5                                        
@@ -469,37 +517,48 @@ cc      if(ni .gt. n) ni=n
       DO 10  I=1,NI                                                     
       imisr(i) = imis(NI-I+1)
 cc   10 ZZ(I) = WORK(NI-I+1)                                              
-   10 ZZ(I) = Z(NI-I+1)                                              
+cxx   10 ZZ(I) = Z(NI-I+1)                                              
+      ZZ(I) = Z(NI-I+1)
+   10 CONTINUE
       DO 20  I=1,L                                                      
       TAU2 = 0.5D0*(1.0D0 + DSIN( A(I) ))  + 0.0001
       IF(TAU2 .LT. 1.0D-20)  TAU2 = 1.0D-20                             
-   20 UI(I) = 1.0D0/DSQRT( TAU2 )                                     
+cxx   20 UI(I) = 1.0D0/DSQRT( TAU2 )                                     
+      UI(I) = 1.0D0/DSQRT( TAU2 )
+   20 CONTINUE
 cc      IF( K2 .EQ. 0 )  GO TO 40
 cc      DO 30  I=1,K2
       IF( M2 .EQ. 0 )  GO TO 40
       DO 30  I=1,M2                                                     
-   30 Y(I) = 0.90D0*DSIN( A(L+I) )                                      
+cxx   30 Y(I) = 0.90D0*DSIN( A(L+I) )                                      
+      Y(I) = 0.90D0*DSIN( A(L+I) )
+   30 CONTINUE
 cc      CALL  ARCOEF( Y,K2,A2 )                                           
       CALL  ARCOEFD( Y,M2,A2 )
 C                                                                       
-   40 DO 50  I=1,MJ                                                     
-      DO 50  J=1,MJ                                                     
+cxx   40 DO 50  I=1,MJ
+cxx      DO 50  J=1,MJ                                                     
 cc      R(I,J) = 0.0D0                                                    
-   50 S(I,J) = 0.0D0                                                    
-      DO 55 I = 1,LM1+1      
-	DO 55 J = 1,LM1
-   55 R(I,J) = 0.0D0
+cxx   50 S(I,J) = 0.0D0
+cxx      DO 55 I = 1,LM1+1      
+cxx         DO 55 J = 1,LM1
+cxx   55 R(I,J) = 0.0D0
+   40 CONTINUE
+      S(1:MJ,1:MJ) = 0.0D0
+      R(1:LM1+1,1:LM1) = 0.0D0
       DI = 1.0D0                                                        
 cc   70 IF( K2 .EQ. 0 )  GO TO 90                                         
 cc      F2(1) = 1.0D0/A2(K2)                                              
 cc      IF(K2.EQ.1)  GO TO 90                                             
 cc      DO 80  I=2,K2                                                     
 cc   80 F2(I) = -A2(I-1)/A2(K2)                                           
-   70 IF( M2 .EQ. 0 )  GO TO 90                                         
+      IF( M2 .EQ. 0 )  GO TO 90                                         
       F2(1) = 1.0D0/A2(M2)                                              
       IF(M2.EQ.1)  GO TO 90                                             
       DO 80  I=2,M2                                                     
-   80 F2(I) = -A2(I-1)/A2(M2)                                           
+cxx   80 F2(I) = -A2(I-1)/A2(M2)                                           
+      F2(I) = -A2(I-1)/A2(M2)
+   80 CONTINUE
    90 CONTINUE                                                          
 C                                                                       
 cc      CALL  SMOTH3( ZZ,R,S,WORK(NP1),WORK(NP2),WORK(NP3),               
@@ -524,9 +583,13 @@ cc      DO 210  I=1,K
       SUM = 0.0D0                                                       
 cc      DO 220  J=I,K                                                     
       DO 220  J=I,M
-  220 SUM = SUM + S(I,J)*Y(J)                                           
+cxx  220 SUM = SUM + S(I,J)*Y(J)
+      SUM = SUM + S(I,J)*Y(J)
+  220 CONTINUE
 cc  210 S(I,K+1) = SUM
-  210 S(I,M+1) = SUM                                       
+cxx  210 S(I,M+1) = SUM
+      S(I,M+1) = SUM
+  210 CONTINUE
 C                                                                       
 C  ...  Forward Filtering and/or Smoothing  ...                         
 C                                                                       
@@ -543,13 +606,17 @@ C
 C                                                                       
 C          HOUSEHOLDER TRANSFORMATION;   TYPE 4                         
 C                                                                       
-      IMPLICIT  REAL*8( A-H,O-Z )                                       
+cxx      IMPLICIT  REAL*8( A-H,O-Z )                                       
 cc      DIMENSION  X(MJ1,K), D(50)                                        
-      DIMENSION  X(MJ1,K), D(K)
+cxx      DIMENSION  X(MJ1,K), D(K)
+      INTEGER :: MJ1, N, K, M, ISW
+      REAL(8) :: X(MJ1,K)
+      REAL(8) :: D(K), TOL, D0, D1, H, G, S
       DATA     TOL /1.0D-30/                                            
 C                                                                       
       IF( ISW .EQ. 1 )   GO TO 110                                      
-      DO 100  II=M,K                                                    
+cxx      DO 100  II=M,K                                                    
+      DO 101  II=M,K
       D0 = X(II,II)                                                     
       D1 = X(N,II)                                                      
       H = D0**2 + D1**2                                                 
@@ -569,6 +636,7 @@ C
       X(N,J) = X(N,J) - D1*S                                            
    60 CONTINUE                                                          
   100 X(II,II) = G                                                      
+  101 CONTINUE
       RETURN                                                            
 C                                                                       
 C                                                                       
@@ -578,7 +646,9 @@ C
       H = -X(J,J)*D(J)                                                  
       S = S/H                                                           
       X(J,K) = X(J,K)-D(J)*S                                            
-  120 X(N,K) = X(N,K)-X(N,J)*S                                          
+cxx  120 X(N,K) = X(N,K)-X(N,J)*S
+      X(N,K) = X(N,K)-X(N,J)*S
+  120 CONTINUE
       RETURN                                                            
 C                                                                       
       E N D                                                             
@@ -586,17 +656,23 @@ C
 C                                                                       
 C     Householder Transformation,  TYPE 7                               
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
-      DIMENSION  X(MJ1,K) , D(MJ1)                                      
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      DIMENSION  X(MJ1,K) , D(MJ1)                                      
+      INTEGER :: MJ1, K, M, KE
+      REAL(8) :: X(MJ1,K), D(MJ1)
+      REAL(8) :: TOL, H, G, F, S
 C                                                                       
            TOL = 1.0D-30                                                
 C                                                                       
-      DO 100  II=1,KE                                                   
+cxx      DO 100  II=1,KE                                                   
+      DO 101  II=1,KE
       NE = MAX(M,II) + 1                                                
          H = 0.0D00                                                     
          DO 10  I=II,NE                                                 
             D(I) = X(I,II)                                              
-   10       H = H + D(I)*D(I)                                           
+cxx   10       H = H + D(I)*D(I)
+            H = H + D(I)*D(I)
+   10    CONTINUE
          IF( H .GT. TOL )  GO TO 20                                     
          G = 0.0D00                                                     
          GO TO 100                                                      
@@ -610,19 +686,25 @@ C          FORM  (I - D*D'/H) * X, WHERE H = D'D/2
 C                                                                       
          II1 = II+1                                                     
       DO 30 I=II1,NE                                                    
-   30 X(I,II) = 0.0D0                                                   
+cxx   30 X(I,II) = 0.0D0
+      X(I,II) = 0.0D0
+   30 CONTINUE
          IF( II .EQ. K )  GO TO 100                                     
 C                                                                       
          DO 60  J=II1,K                                                 
             S = 0.0D00                                                  
             DO 40  I=II,NE                                              
-   40       S = S + D(I)*X(I,J)                                         
+cxx   40       S = S + D(I)*X(I,J)                                         
+            S = S + D(I)*X(I,J)
+   40       CONTINUE
             S = S/H                                                     
             DO 50  I=II,NE                                              
-   50      X(I,J) = X(I,J) - D(I)*S                                     
-                                                                        
+cxx   50      X(I,J) = X(I,J) - D(I)*S                                     
+            X(I,J) = X(I,J) - D(I)*S
+   50       CONTINUE
    60    CONTINUE                                                       
   100 X(II,II) = G                                                      
+  101 CONTINUE
 C                                                                       
       RETURN                                                            
 C                                                                       
@@ -642,15 +724,23 @@ cc      SUBROUTINE  LINEA1( FUNCT,X,H,RAM,EE,G,K,IG )
 C                                                                       
 C  ...  LINE SEARCH (WOLFE'S ALGORITHM)  ...                            
 C                                                                       
-      IMPLICIT  REAL  *8 ( A-H,O-Z )                                    
-      INTEGER  RETURN,SUB                                               
+cxx      IMPLICIT  REAL  *8 ( A-H,O-Z )                                    
+cxx      INTEGER  RETURN,SUB                                               
 cc      DIMENSION  X(K) , H(K) , X1(20)                                   
 cc      DIMENSION  G(20)                                                  
-      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
-      DIMENSION  X(K) , H(K) , G(K), X1(K)
+cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
+cxx      DIMENSION  X(K) , H(K) , G(K), X1(K)
+      INTEGER :: IMIS(N), N, L, LM1, K, IG
+      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), X(K), H(K), RAM,
+     1           EE, G(K)
+      INTEGER :: RETURN, SUB
+      REAL(8) :: X1(K), C1, C2, F0, SUM0, CONST2, HNORM,
+     1           RAM1, RAM2, RAM3, A1, A2, A3, B1, B2, E1, E2,
+     2           E3, H1, H2, SUM
 c      COMMON     / CCC /  ISW , IPR                          
 c      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG
-      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+cxx      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
+      COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH
       EXTERNAL   FUNCT              
       C1 = 0.01D0                                                       
       C2 = 0.5D0                                                        
@@ -661,13 +751,17 @@ cc
       F0 = EE                                                           
       SUM0 = 0.0D0                                                      
       DO 15 I=1,K                                                       
-   15 SUM0 = SUM0 + G(I)*H(I)                                           
+cxx   15 SUM0 = SUM0 + G(I)*H(I)                                           
+      SUM0 = SUM0 + G(I)*H(I)
+   15 CONTINUE
       ISW = 1                                                           
       RAM = 0.5D0                                                       
       CONST2 = 1.0D-60                                                  
       HNORM = 0.D0                                                      
       DO 10  I=1,K                                                      
-   10 HNORM = HNORM + H(I)**2                                           
+cxx   10 HNORM = HNORM + H(I)**2                                           
+      HNORM = HNORM + H(I)**2
+   10 CONTINUE
       HNORM = DSQRT( HNORM )                                            
 C                                                                       
       RAM2 = RAM                                                        
@@ -676,7 +770,9 @@ C
 C                                                                       
       IF( RAM2*HNORM .GT. 5.0D0 )  GO TO 48                             
       DO 20  I=1,K                                                      
-   20 X1(I) = X(I) + RAM2*H(I)                                          
+cxx   20 X1(I) = X(I) + RAM2*H(I)                                          
+      X1(I) = X(I) + RAM2*H(I)
+   20 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,E2,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,E2,G,IG,L,LM1 )
 c      IF(IPR.GE.7)  WRITE(6,2)  RAM2,E2                                 
@@ -687,13 +783,17 @@ CCCCCCCCCCCCCCCCCCCCCCC
       H1 = E2 - F0 - C1*RAM2*SUM0                                       
       SUM = 0.0D0                                                       
       DO 25 I=1,K                                                       
-   25 SUM = SUM + G(I)*H(I)                                             
+cxx   25 SUM = SUM + G(I)*H(I)                                             
+      SUM = SUM + G(I)*H(I)
+   25 CONTINUE
       H2 = SUM - C2*SUM0                                                
       IF(H1.LE.0.0D0 .AND. H2.GE.0.0D0)  RETURN                         
 CCCCCCCCCCCCCCCCCCCCCCC                                                 
    30 RAM3 = RAM2*4.D0                                                  
       DO 40  I=1,K                                                      
-   40 X1(I) = X(I) + RAM3*H(I)                                          
+cxx   40 X1(I) = X(I) + RAM3*H(I)
+      X1(I) = X(I) + RAM3*H(I)
+   40 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,E3,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,E3,G,IG,L,LM1 )
       IF( IG.EQ.1 )  GO TO  500                                         
@@ -721,7 +821,9 @@ C
       RAM2 = RAM3*0.1D0                                                 
       IF( RAM2*HNORM .LT. CONST2 )  GO TO  400                          
       DO 60  I=1,K                                                      
-   60 X1(I) = X(I) + RAM2*H(I)                                          
+cxx   60 X1(I) = X(I) + RAM2*H(I)                                          
+      X1(I) = X(I) + RAM2*H(I)
+   60 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,E2,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,E2,G,IG,L,LM1 )
 c      IF(IPR.GE.7)  WRITE(6,4)  RAM2,E2                                 
@@ -730,7 +832,9 @@ CCCCCCCCCCCCCCCCCCCCCCC
       H1 = E2 - F0 - C1*RAM2*SUM0                                       
       SUM = 0.0D0                                                       
       DO 65 I=1,K                                                       
-   65 SUM = SUM + G(I)*H(I)                                             
+cxx   65 SUM = SUM + G(I)*H(I)                                             
+      SUM = SUM + G(I)*H(I)
+   65 CONTINUE
       H2 = SUM - C2*SUM0                                                
       IF(H1.GT.0.0D0 .OR. H2.LT.0.0D0)  GO TO 70                        
       RAM = RAM2                                                        
@@ -742,7 +846,9 @@ cc   70 ASSIGN 80 TO RETURN
       GO TO 200                                                         
 C                                                                       
    80 DO 90  I=1,K                                                      
-   90 X1(I) = X(I) + RAM*H(I)                                           
+cxx   90 X1(I) = X(I) + RAM*H(I)                                           
+      X1(I) = X(I) + RAM*H(I)
+   90 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,EE,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,EE,G,IG,L,LM1 )
 c      IF(IPR.GE.7)  WRITE(6,5)  RAM,EE                                  
@@ -786,7 +892,9 @@ cc      GO TO  SUB,( 200,300 )
       IF( SUB .EQ. 300 ) GO TO 300
 C                                                                       
   130 DO 140  I=1,K                                                     
-  140 X1(I) = X(I) + RAM*H(I)                                           
+cxx  140 X1(I) = X(I) + RAM*H(I)                                           
+      X1(I) = X(I) + RAM*H(I)
+  140 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,EE,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,EE,G,IG,L,LM1 )
 c      IF( IPR.GE.7 )  WRITE(6,6)  RAM,EE                                
@@ -798,7 +906,9 @@ C
       H1 = EE - F0 - C1*RAM*SUM0                                        
       SUM = 0.0D0                                                       
       DO 145 I=1,K                                                      
-  145 SUM = SUM + G(I)*H(I)                                             
+cxx  145 SUM = SUM + G(I)*H(I)                                             
+      SUM = SUM + G(I)*H(I)
+  145 CONTINUE
       H2 = SUM - C2*SUM0                                                
       IF( H1.LE.0.0D0 .AND. H2.LE.0.0D0 )  GO TO 150                    
       IF( IFG .LE. 20 )  GO TO 95                                       
@@ -852,7 +962,9 @@ C ------------------------------------------------------------
 C                                                                       
   500 RAM = (RAM2+RAM3)*0.5D0                                           
   510 DO 520  I=1,K                                                     
-  520 X1(I) = X(I) + RAM*H(I)                                           
+cxx  520 X1(I) = X(I) + RAM*H(I)                                           
+      X1(I) = X(I) + RAM*H(I)
+  520 CONTINUE
 cc      CALL  FUNCND( FUNCT,K,X1,E3,G,IG )                                
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,N,K,X1,E3,G,IG,L,LM1 )
 c      IF( IPR.GE.7 )  WRITE(6,7)  RAM,E3                                
@@ -871,13 +983,13 @@ C
       GO TO 510                                                         
 C                                                                       
 C ------------------------------------------------------------          
-    1 FORMAT( 5X ,'RAM =',D10.3, 5X,'E1 =',F10.3 )                      
-    2 FORMAT( 5X ,'RAM =',D10.3, 5X,'E2 =',F10.3 )                      
-    3 FORMAT( 5X ,'RAM =',D10.3, 5X,'E3 =',F10.3 )                      
-    4 FORMAT( 5X ,'RAM =',D10.3, 5X,'E4 =',F10.3 )                      
-    5 FORMAT( 5X ,'RAM =',D10.3, 5X,'E5 =',F10.3 )                      
-    6 FORMAT( 5X ,'RAM =',D10.3, 5X,'E6 =',F10.3 )                      
-    7 FORMAT( 5X ,'RAM =',D10.3, 5X,'E7 =',F10.3 )                      
+cxx    1 FORMAT( 5X ,'RAM =',D10.3, 5X,'E1 =',F10.3 )                      
+cxx    2 FORMAT( 5X ,'RAM =',D10.3, 5X,'E2 =',F10.3 )                      
+cxx    3 FORMAT( 5X ,'RAM =',D10.3, 5X,'E3 =',F10.3 )                      
+cxx    4 FORMAT( 5X ,'RAM =',D10.3, 5X,'E4 =',F10.3 )                      
+cxx    5 FORMAT( 5X ,'RAM =',D10.3, 5X,'E5 =',F10.3 )                      
+cxx    6 FORMAT( 5X ,'RAM =',D10.3, 5X,'E6 =',F10.3 )                      
+cxx    7 FORMAT( 5X ,'RAM =',D10.3, 5X,'E7 =',F10.3 )                      
       E N D                                                             
 cc      SUBROUTINE  LOGTRF( Z,N,ilog )                                         
 cx      SUBROUTINE  LOGTRF( Z,IMIS,N,ilog )
@@ -885,9 +997,11 @@ cx      SUBROUTINE  LOGTRF( Z,IMIS,N,ilog )
 C                                                                       
 C ... LOG TRANSFORMATION ...                                            
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
-      REAL*8   Z(N)
-      DIMENSION   IMIS(N)                                               
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      REAL*8   Z(N)
+cxx      DIMENSION   IMIS(N)                                               
+      INTEGER :: IMIS(N), N, ilog, ier
+      REAL(8) :: Z(N), DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
 C      COMMON     /CMFUNC/  DJACOB                                       
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 cc      common     /cccout/  IMIS(3000)
@@ -915,27 +1029,34 @@ c      WRITE(6,600)  DJACOB
 C     WRITE(6,610) (Z(I),I=1,N)                                         
       RETURN                                                            
 C                                                                       
-  600 FORMAT(1H0,'OPTION = 1, (LOG TRANSFORMATION),     LOG-JACOBIAN =',
-     1       D15.7)                                                     
-  610 FORMAT(1H ,10D13.6)                                               
-      END                                                               
+cxx  600 FORMAT(1H0,'OPTION = 1, (LOG TRANSFORMATION),     LOG-JACOBIAN =',
+cxx     1       D15.7)                                                     
+cxx  610 FORMAT(1H ,10D13.6)                                               
+      END
 cc      SUBROUTINE  OPTMIZ( FUNCT,X,N )                                   
       SUBROUTINE  OPTMIZ( FUNCT,Z,E,TDAY,IMIS,NN,X,N,L,LM1 )
 C                                                                       
 C  ...  NUMERICAL OPTIMIZATION  ...                                     
 C            LATEST REVISION:  JUNE 20, 1983                            
 C                                                                       
-      IMPLICIT  REAL*8 (A-H,O-Z)
+cxx      IMPLICIT  REAL*8 (A-H,O-Z)
 cc      DIMENSION  X(20) , DX(20) , G(20) , G0(20) , Y(20)                
 cc      DIMENSION  H(20,20) , WRK(20) , S(20)
-      DIMENSION  Z(NN), E(L,LM1,NN), TDAY(NN,7), IMIS(NN), X(N)
-      DIMENSION  DX(N) ,G(N) ,G0(N) ,Y(N) ,H(N,N), WRK(N), S(N)
+cxx      DIMENSION  Z(NN), E(L,LM1,NN), TDAY(NN,7), IMIS(NN), X(N)
+cxx      DIMENSION  DX(N) ,G(N) ,G0(N) ,Y(N) ,H(N,N), WRK(N), S(N)
+      INTEGER :: IMIS(NN), NN, N, L, LM1
+      REAL(8) :: Z(NN), E(L,LM1,NN), TDAY(NN,7), X(N)
+      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     2           TAU2, EPS1, EPS2, CONST1, XM, SUM, S1, S2, STEM,
+     3           SS, DS2, GTEM, ED, RAMDA, XMB
 c      COMMON     / CCC /  ISW, IPR                                      
 c      COMMON     /CMFUNC/  DJACOB, F, SD, AIC                           
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,
 cc     *                   GI(20),GDUM(20) 
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
       EXTERNAL   FUNCT
 cc      DATA  TAU1 , TAU2  /  1.0D-1 , 1.0D-1  /             
@@ -952,12 +1073,19 @@ C          INITIAL ESTIMATE OF INVERSE OF HESSIAN
 C                                                                       
       ICOUNT=0
 
- 1000 DO 20  I=1,N                                                      
-      DO 10  J=1,N                                                      
-   10 H(I,J) = 0.0D0                                                    
-      S(I)   = 0.0D0                                                    
-      DX(I)  = 0.0D0                                                    
-   20 H(I,I) = 1.0D0                                                    
+cxx 1000 DO 20  I=1,N                                                      
+cxx      DO 10  J=1,N                                                      
+cxx   10 H(I,J) = 0.0D0                                                    
+cxx      S(I)   = 0.0D0                                                    
+cxx      DX(I)  = 0.0D0                                                    
+cxx   20 H(I,I) = 1.0D0
+ 1000 CONTINUE
+      H(1:N,1:N) = 0.0D0                                                    
+      S(1:N)     = 0.0D0                                                    
+      DX(1:N)    = 0.0D0
+      DO 20  I=1,N
+      H(I,I) = 1.0D0
+   20 CONTINUE
       ICC = 0                                                           
 
       ICOUNT=ICOUNT+1
@@ -975,40 +1103,58 @@ C
       IF( ICC .EQ. 1 )   GO TO 120                                      
 C                                                                       
       DO 40  I=1,N                                                      
-   40 Y(I) = G(I) - G0(I)                                               
+cxx   40 Y(I) = G(I) - G0(I)                                               
+      Y(I) = G(I) - G0(I)
+   40 CONTINUE
       DO 60  I=1,N                                                      
       SUM = 0.0D0                                                       
       DO 50  J=1,N                                                      
-   50 SUM = SUM + Y(J)*H(I,J)                                           
-   60 WRK(I) = SUM                                                      
+cxx   50 SUM = SUM + Y(J)*H(I,J)                                           
+      SUM = SUM + Y(J)*H(I,J)
+   50 CONTINUE
+cxx   60 WRK(I) = SUM                                                      
+      WRK(I) = SUM
+   60 CONTINUE
       S1 = 0.0D0                                                        
       S2 = 0.0D0                                                        
       DO 70  I=1,N                                                      
       S1 = S1 + WRK(I)*Y(I)                                             
-   70 S2 = S2 + DX(I) *Y(I)                                             
+cxx   70 S2 = S2 + DX(I) *Y(I)                                             
+      S2 = S2 + DX(I) *Y(I)
+   70 CONTINUE
       IF( S1.LE.CONST1 .OR. S2.LE.CONST1 )  GO TO 900                   
 C                                                                       
 C  ...  BFGS FORMULA FOR UPDATING INVERSE OF HESSIAN MATRIX  ...        
 C                                                                       
       STEM = S1 / S2 + 1.0D00                                           
-      DO 110  I=1,N                                                     
+cxx      DO 110  I=1,N                                                     
+      DO 111  I=1,N
       DO 110  J=I,N                                                     
       H(I,J) = H(I,J)- (DX(I)*WRK(J)+WRK(I)*DX(J)-DX(I)*DX(J)*STEM)/S2  
-  110 H(J,I) = H(I,J)                                                   
+cxx  110 H(J,I) = H(I,J)                                                   
+      H(J,I) = H(I,J)
+  110 CONTINUE
+  111 CONTINUE
 C                                                                       
   120 SS = 0.0D0                                                        
       DO 150  I=1,N                                                     
       SUM = 0.0D0                                                       
       DO 140  J=1,N                                                     
-  140 SUM = SUM + H(I,J)*G(J)                                           
+cxx  140 SUM = SUM + H(I,J)*G(J)                                           
+      SUM = SUM + H(I,J)*G(J)
+  140 CONTINUE
       SS = SS + SUM * SUM                                               
-  150 S(I) = -SUM                                                       
+cxx  150 S(I) = -SUM                                                       
+      S(I) = -SUM
+  150 CONTINUE
 C                                                                       
       S1 = 0.0D0                                                        
       S2 = 0.0D0                                                        
       DO 170  I=1,N                                                     
       S1 = S1 + S(I)*G(I)                                               
-  170 S2 = S2 + G(I)**2                                                 
+cxx  170 S2 = S2 + G(I)**2                                                 
+      S2 = S2 + G(I)**2
+  170 CONTINUE
       DS2 = DSQRT(S2)                                                   
       GTEM = DABS(S1) / DS2                                             
 C     IF( GTEM .LE. TAU1  .AND.  DS2 .LE. TAU2 )     GO TO  900         
@@ -1027,16 +1173,20 @@ C
       DX(I) = S(I)*RAMDA                                                
       S1 = S1 + DX(I)**2                                                
       G0(I) = G(I)                                                      
-  210 X(I) = X(I) + DX(I)                                               
+cxx  210 X(I) = X(I) + DX(I)                                               
+      X(I) = X(I) + DX(I)
+  210 CONTINUE
       XMB  = XM                                                         
       ISW  = 0                                                          
 C                                                                       
-cc      CALL  FUNCND( FUNCT,N,X,XM,G,IG )                                 
+cc      CALL  FUNCND( FUNCT,N,X,XM,G,IG )
       CALL  FUNCND( FUNCT,Z,E,TDAY,IMIS,NN,N,X,XM,G,IG,L,LM1 )
 C                                                                       
       S2 = 0.D0                                                         
       DO 220  I=1,N                                                     
-  220 S2 = S2 + G(I)**2                                                 
+cxx  220 S2 = S2 + G(I)**2
+      S2 = S2 + G(I)**2
+  220 CONTINUE
       IF( DSQRT(S2) .LT. TAU2 )   GO TO 900                             
       IF( XMB-XM .LT. EPS1  .AND.  DSQRT(S1) .LT. EPS2 )  GO TO 900     
       IF( XMB-XM .LT. 0.0001 .AND. ICC .GT. N ) GO TO 900
@@ -1046,44 +1196,51 @@ C
   900 CONTINUE                                                          
       S2 = 0.0D0                                                        
       DO 230 I=1,N                                                      
-  230 S2 = S2 + G(I)**2                                                 
+cxx  230 S2 = S2 + G(I)**2                                                 
+      S2 = S2 + G(I)**2
+  230 CONTINUE
       IF( DSQRT(S2) .GT. 1.0D0 )  GO TO 1000                            
-      IF( IPR .LE. 0 )   RETURN                                         
+cxx      IF( IPR .LE. 0 )   RETURN                                         
 c      WRITE(6,620)                                                      
 c      WRITE( 6,600 )                                                    
 c      WRITE( 6,610 )     (X(I),I=1,N)                                   
 c      WRITE( 6,601 )                                                    
 c      WRITE( 6,610 )     (G(I),I=1,N)                                   
       RETURN                                                            
-  330 FORMAT( 5X ,'RAM =',D10.3,5X,'E0 =',F10.3 )                       
-  340 FORMAT( 25X,'EE =',F10.3 )                                        
-  600 FORMAT( 1H0,'--  PARAMETER  ---' )                                
-  601 FORMAT( 1H0,'--  GRADIENT  --' )                                  
-  610 FORMAT( 1H ,10D13.5 )                                             
-  620 FORMAT( 10X,'<<<  FINAL ESTIMATES  >>>' )                         
- 700  FORMAT( ' OPTIMIZATION DOES NOT SUCCEED ' )
- 701  FORMAT( ' CHECK THE MODEL ! ' )
-
+cxx  330 FORMAT( 5X ,'RAM =',D10.3,5X,'E0 =',F10.3 )                       
+cxx  340 FORMAT( 25X,'EE =',F10.3 )                                        
+cxx  600 FORMAT( 1H0,'--  PARAMETER  ---' )                                
+cxx  601 FORMAT( 1H0,'--  GRADIENT  --' )                                  
+cxx  610 FORMAT( 1H ,10D13.5 )                                             
+cxx  620 FORMAT( 10X,'<<<  FINAL ESTIMATES  >>>' )                         
+cxx 700  FORMAT( ' OPTIMIZATION DOES NOT SUCCEED ' )
+cxx 701  FORMAT( ' CHECK THE MODEL ! ' )
       E N D                                                             
+
 cc      SUBROUTINE  PLOTDD( E,LM1,TITLE,A,TRADE,REG,Z ,COMP1,COMP2,COMP3,
       SUBROUTINE  PLOTDD( N,Z,E,LM1,TRADE,COMP1,COMP2,COMP3,
      *                    COMP4,COMP5)
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 
-                                                                   
 C  ...  PLOT ESTIMATED PARAMETRS, ORIGINAL DATA AND ESTIMATED PARAMETERS
 C
-      INTEGER    PERIOD, SORDER
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: N, LM1
+      REAL(8) :: Z(N), E(L,LM1,N), TRADE(N,7),  COMP1(N), COMP2(N),
+     1           COMP3(N), COMP4(N), COMP5(N)
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: REG(N,M5), SUM, tmp
 C      COMMON   /COMSM1/  nwww, WORK                                        
 cc      COMMON     /COMSM1/  WORK(300000)
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,                  
 cc     *               NS,NI,MISING,IOUT,LL,N,NYEAR,nmonth,NPS,NPE,NPRED
+cxx      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
       COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                     NYEAR, nmonth
-      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+      COMMON     /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 cc      DIMENSION  E(L,LM1,N), Z(N), TRADE(N,7), REG(N,M5)
-      DIMENSION  E(L,LM1,N), Z(N), TRADE(N,7), REG(N,M5)
-      REAL*8     COMP1(N),COMP2(N),COMP3(N),COMP4(N),COMP5(N)
+cxx      DIMENSION  E(L,LM1,N), Z(N), TRADE(N,7), REG(N,M5)
+cxx      REAL*8     COMP1(N),COMP2(N),COMP3(N),COMP4(N),COMP5(N)
 cc      real*4     TITLE(20)
 cc      REAL*8     A(40),COMP1(N),COMP2(N),COMP3(N) 
 cc      REAL*8     COMP4(N),COMP5(N)
@@ -1137,7 +1294,9 @@ C
 C      CALL  XYAXIS( 0.0,0.0,WX,WY,X0,X1,Y0,Y1,DX,DY,2,MESH )            
 C      CALL  PLOTD( WORK,N,Y0,Y1,WX,WY,1,1,2 )                           
       DO 10 I=1,N                                                       
-   10 COMP1(I) = E(1,1,I)                                               
+cxx   10 COMP1(I) = E(1,1,I)                                               
+      COMP1(I) = E(1,1,I)
+   10 CONTINUE
 C      CALL  PLOTD( Z,N,Y0,Y1,WX,WY,1,1,2 )                              
 C      CALL  SYMBOL( WX-WC*18,WY+0.1,WC,'ORIGINAL AND TREND',0.0,18 )    
 C                                                                       
@@ -1145,7 +1304,9 @@ C  ...  PLOT SEASONAL COMPONENT  ...
 C                                                                       
       IF( SORDER .NE. 0) THEN
       DO 20 I=1,N                                                       
-   20 COMP2(I) = E(1,M1+M2+1,I)
+cxx   20 COMP2(I) = E(1,M1+M2+1,I)
+      COMP2(I) = E(1,M1+M2+1,I)
+   20 CONTINUE
       END IF
 C      CALL  MAXMIN( Z,N,ZMIN,ZMAX,DZ )                                  
 C      DY2 = DY                                                          
@@ -1175,22 +1336,33 @@ C
       DO 35 I=1,N                                                       
       SUM = 0.0D0                                                       
       DO 30 J=1,6                                                       
-   30 SUM = SUM + E(1,M123+J,N)*(TRADE(I,J)-TRADE(I,7))                 
-   35 E(2,1,I) = SUM                                                    
+cxx   30 SUM = SUM + E(1,M123+J,N)*(TRADE(I,J)-TRADE(I,7))                 
+      SUM = SUM + E(1,M123+J,N)*(TRADE(I,J)-TRADE(I,7))
+   30 CONTINUE
+cx   35 E(2,1,I) = SUM                                                    
+      E(2,1,I) = SUM
+   35 CONTINUE
       end if
       if(m4 .eq. 1) then
       DO 37 I=1,N
       tmp=trade(I,2)+trade(I,3)+trade(I,4)+trade(I,5)+trade(I,6)
- 37   e(2,1,i) = (trade(I,1)+trade(I,7)-0.4*tmp)*e(1,M123+1,n)
+cxx 37   e(2,1,i) = (trade(I,1)+trade(I,7)-0.4*tmp)*e(1,M123+1,n)
+      e(2,1,i) = (trade(I,1)+trade(I,7)-0.4*tmp)*e(1,M123+1,n)
+ 37   CONTINUE
       end if
 
-      
-   40 IF( M5 .EQ. 0 )  GO TO 60                                         
+
+cxx   40 IF( M5 .EQ. 0 )  GO TO 60                                         
+      IF( M5 .EQ. 0 )  GO TO 60                                         
       DO 55 I=1,N                                                       
       SUM = 0.0D0                                                       
       DO 50 J=1,M5                                                      
-   50 SUM = SUM + E(1,M1234+J,N)*REG(I,J)                               
-   55 E(2,2,I) = SUM                                                    
+cxx   50 SUM = SUM + E(1,M1234+J,N)*REG(I,J)                               
+      SUM = SUM + E(1,M1234+J,N)*REG(I,J)
+   50 CONTINUE
+cxx   55 E(2,2,I) = SUM                                                    
+      E(2,2,I) = SUM
+   55 CONTINUE
    60 CONTINUE                                                          
 C      CALL  PLOT( 0.0,-WY1-1.5,-3 )                                     
 C      CALL  XYAXIS( 0.0,0.0,WX,WY1,X0,X1,Y01,Y11,DX,DY1,2,MESH )        
@@ -1198,8 +1370,10 @@ C      CALL  XYAXIS( 0.0,0.0,WX,WY1,X0,X1,Y01,Y11,DX,DY1,2,MESH )
 cc      Z(I) = WORK(I) - E(1,1,I)*ID(M1) - E(1,M1+1,I)*ID(M2)             
 cc     *     - E(1,M12+1,I)*ID(M3) - E(2,1,I)*ID(M4) - E(2,2,I)*ID(M5)    
 cc 70   COMP5(I)=Z(I)
- 70   COMP5(I) = Z(I) - E(1,1,I)*ID(M1) - E(1,M1+1,I)*ID(M2)            
+cxx 70   COMP5(I) = Z(I) - E(1,1,I)*ID(M1) - E(1,M1+1,I)*ID(M2)
+      COMP5(I) = Z(I) - E(1,1,I)*ID(M1) - E(1,M1+1,I)*ID(M2)            
      *     - E(1,M12+1,I)*ID(M3) - E(2,1,I)*ID(M4) - E(2,2,I)*ID(M5)
+   70 CONTINUE
 C                                                                       
 C      CALL  PLOTD( Z,N,Y01,Y11,WX,WY1,1,1,2 )                           
 C      CALL  SYMBOL( WX-WC*5,WY1+0.1,WC,'NOISE',0.0,5 )                  
@@ -1212,7 +1386,9 @@ C  ...  PLOT AR PROCESS  ...
 C                                                                       
 C      CALL  XYAXIS( 0.0,0.0,WX,WY2,X0,X1,Y02,Y12,DX,DY2,2,MESH )        
       DO 80 I=1,N                                                       
-   80 COMP3(I) = E(1,M1+1,I)                                            
+cxx   80 COMP3(I) = E(1,M1+1,I)                                            
+      COMP3(I) = E(1,M1+1,I)
+   80 CONTINUE
 C      CALL  PLOTD( Z,N,Y02,Y12,WX,WY2,1,1,2 )                           
 C      CALL  SYMBOL( WX-WC*10,WY2+0.1,WC,'AR PROCESS',0.0,10 )           
 C                                                                       
@@ -1237,7 +1413,9 @@ C  ...  PLOT TRADING DAY EFFECT  ...
 C                                                                       
 C      CALL  XYAXIS( 0.0,0.0,WX,WY2,X0,X1,Y02,Y12,DX,DY2,2,MESH )        
       DO 110 I=1,N                                                      
-  110 COMP4(I) = E(2,1,I)                                                   
+cxx  110 COMP4(I) = E(2,1,I)                                                   
+      COMP4(I) = E(2,1,I)
+  110 CONTINUE
 C      CALL  PLOTD( Z,N,Y02,Y12,WX,WY2,1,1,2 )                           
 C      CALL  SYMBOL( WX-WC*18,WY2+0.1,WC,'TRADING DAY EFFECT',0.0,18 )   
 C                                                                       
@@ -1254,10 +1432,11 @@ C     *T',0.0,32 )
 C      CALL  PLOTE                                                       
 C      CALL  PLTCE                                                       
       RETURN                                                            
-  77  format(' ^*&$^$%#&^&*nvkdnfvafv')
+cxx  77  format(' ^*&$^$%#&^&*nvkdnfvafv')
       E N D                                                             
 cc      SUBROUTINE  REDATA( MT,DATA,ISW,IPR,X,N,TITLE,XM )                     
-      SUBROUTINE  REDATAD( DATA,ISW,IPR,X,N,XM )                     
+cxx      SUBROUTINE  REDATAD( DATA,ISW,IPR,X,N,XM )                     
+      SUBROUTINE  REDATAD( DATA,ISW,X,N,XM )                     
 C                                                                       
 C     THIS SUBROUTINE IS USED FOR THE LOADING OF ORIGINAL DATA,         
 C     THE DATA IS LOADED THROUGH THE DEVICE SPECIFIED BY @MT@.          
@@ -1282,10 +1461,13 @@ C         N:      DATA LENGTH
 C         TITLE:  TITLE OF DATA                                         
 C         XM:     MEAN                                                  
 C                                                                       
-      IMPLICIT REAL*8( A-H,O-Z )                                        
+cxx      IMPLICIT REAL*8( A-H,O-Z )                                        
 cc      REAL * 4     FORM(20), TITLE(20)
 cx      REAL*8       X(1) ,DATA(1)         
-      REAL*8       X(N) ,DATA(N)         
+cxx      REAL*8       X(N) ,DATA(N)
+      INTEGER :: ISW, N         
+      REAL(8) :: DATA(N), X(N), XM
+      REAL(8) :: FN, S1, S2, S3, S4, XX
 C                                                                       
 C       LOADING OF TITLE, DATA LENGTH, FORMAT SPECIFICATION AND DATA    
 C                                                                       
@@ -1297,8 +1479,9 @@ C
 C       ORIGINAL DATA PRINT OUT                                         
 C                                                                       
       DO 53 I=1,N
- 53      X(I)=DATA(I)
-
+cxx 53      X(I)=DATA(I)
+         X(I)=DATA(I)
+ 53   CONTINUE
 
 c      WRITE( 6,9 )     N , (FORM(I),I=1,17)                             
 c      WRITE( 6,8 )     TITLE                                            
@@ -1308,13 +1491,15 @@ C
 C       SAMPLE MOMENTS COMPUTATION                                      
 C   by Sato
 cc	return
-      
 
-                                                                       
+
+
       FN = N                                                            
       S1 = 0.0D0                                                        
       DO 10     I=1,N                                                   
-   10 S1 = S1 + X(I)                                                    
+cxx   10 S1 = S1 + X(I)                                                    
+      S1 = S1 + X(I)
+   10 CONTINUE
       XM = S1 / FN                                                      
       S2 = 0.0D0                                                        
       S3 = 0.0D0                                                        
@@ -1323,7 +1508,9 @@ cc	return
       XX = X(I) - XM                                                    
       S2 = S2 + XX**2                                                   
       S3 = S3 + XX**3                                                   
-   20 S4 = S4 + XX**4                                                   
+cxx   20 S4 = S4 + XX**4                                                   
+      S4 = S4 + XX**4
+   20 CONTINUE
 C                                                                       
       S2 = S2 / FN                                                      
       S3 = S3 / (FN*S2*DSQRT(S2))                                       
@@ -1337,34 +1524,38 @@ C
 C       MEAN DELETION                                                   
 C                                                                       
       DO 30  I=1,N                                                      
-   30 X(I) = X(I) - XM                                                  
+cxx   30 X(I) = X(I) - XM                                                  
+      X(I) = X(I) - XM
+   30 CONTINUE
 C                                                                       
       RETURN                                                            
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    3 FORMAT( 1H ,10D13.5 )                                             
-    4 FORMAT( 1H ,10F10.4 )                                             
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    3 FORMAT( 1H ,10D13.5 )                                             
+cxx    4 FORMAT( 1H ,10F10.4 )                                             
                                                                         
-    5 FORMAT ( 20A4 )                                                   
-    7 FORMAT( 1H0,'MEAN      =',D17.8,/,' VARIANCE  =',D17.8,/,         
-     *        ' SKEWNESS  =',D17.8,/,' KURTOSIS  =',D17.8 )             
-    8 FORMAT( 1H ,20A4 )                                                
-    9 FORMAT( 1H0,'<<  ORIGINAL DATA  X(I) (I=1,N)  >>',5X,'N =',I5,4X, 
-     *       'FORMAT =',17A4 )                                          
+cxx    5 FORMAT ( 20A4 )                                                   
+cxx    7 FORMAT( 1H0,'MEAN      =',D17.8,/,' VARIANCE  =',D17.8,/,         
+cxx     *        ' SKEWNESS  =',D17.8,/,' KURTOSIS  =',D17.8 )             
+cxx    8 FORMAT( 1H ,20A4 )                                                
+cxx    9 FORMAT( 1H0,'<<  ORIGINAL DATA  X(I) (I=1,N)  >>',5X,'N =',I5,4X, 
+cxx     *       'FORMAT =',17A4 )                                          
 C                                                                       
       E N D                                                             
       SUBROUTINE  SETFGH                                                
 C                                                                       
 C  ...  SET F, G AND H MATRICES OF STATE SPACE MODEL  ...               
 C                                                                       
-      IMPLICIT  REAL*8(A-H,O-Z)                                         
-      INTEGER   PERIOD, SORDER
+cxx      IMPLICIT  REAL*8(A-H,O-Z)                                         
+cxx      INTEGER   PERIOD, SORDER
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: F1, F2, F3, A1, A2, A3, DI, UI, TDF
 cc      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,  
 cc     *                    NPREDE, NPRED
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
       COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)
 C     *                   ,DI, TAU(3)                                   
@@ -1372,7 +1563,10 @@ C
       DI = 1.0D0                                                        
 C                                                                       
       IF( M1 .EQ. 0 )  GO TO 40                                         
-      GO TO (10,20,30), M1                                              
+cxx      GO TO (10,20,30), M1                                              
+      IF( M1 .EQ. 1 ) GO TO 10
+      IF( M1 .EQ. 2 ) GO TO 20
+      IF( M1 .EQ. 3 ) GO TO 30                                               
 C                                                                       
    10 F1(1) =  1.0D0                                                    
       A1(1) =  1.0D0                                                    
@@ -1397,11 +1591,16 @@ cc      IF( KSEA .EQ. -1 ) GO TO 80
       IF( SORDER .EQ. -1 ) GO TO 80                                     
       DO 70  I=1,M3                                                     
       A3(I) = -1.0D0                                                    
-   70 F3(I) = -1.0D0                                                    
+cxx   70 F3(I) = -1.0D0
+      F3(I) = -1.0D0
+   70 CONTINUE
       GO TO 150                                                         
-   80 DO 90 I=1,M3                                                      
-      A3(I) = 0.0D0                                                     
-   90 F3(I) = 0.0D0                                                     
+cxx   80 DO 90 I=1,M3                                                      
+cxx      A3(I) = 0.0D0                                                     
+cxx   90 F3(I) = 0.0D0
+   80 CONTINUE                                                      
+      A3(1:M3) = 0.0D0                                                     
+      F3(1:M3) = 0.0D0                                                     
       A3(M3)= 1.0D0                                                     
       F3(1) = 1.0D0                                                     
       GO TO 150                                                         
@@ -1412,7 +1611,9 @@ cc  130 DO 140  I=1,ISEA-1
 cc      F3(ISEA+I-1) = I - ISEA - 1                                       
 cc  140 A3(ISEA+I-1) = I - ISEA                                           
       F3(PERIOD+I-1) = I - PERIOD - 1                                   
-  140 A3(PERIOD+I-1) = I - PERIOD
+cxx  140 A3(PERIOD+I-1) = I - PERIOD
+      A3(PERIOD+I-1) = I - PERIOD
+  140 CONTINUE
   150 CONTINUE                                                          
   160 CONTINUE                                                          
 C                                                                       
@@ -1428,26 +1629,34 @@ C
 C     ...  INFORMATION SQUARE ROOT FILTER & SMOOTHER  ...               
 C          FOR SEASONAL ADJUSTMENT                                      
 C                                                                       
-      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
+cxx      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
 cc      REAL*8     Z(N), T(L,LM1,N), REG(N,M5), EPRED(N), VPRED(N), TRADE
 cc      DIMENSION  S(MJ,MJ), R(MJ,MJ), IMIS(N), TRADE(N,7)                
 cc      DIMENSION  D(100), WI(10,10), X(40), TT(40), E(40)
-      REAL*8     Z(N), T(L,LM1,N), REG(N,M5)
-      DIMENSION  S(M+1,M+1), R(LM1+1,LM1), IMIS(N), TRADE(N,7)            
-      DIMENSION  D(LM1+1), WI(3,3), X(LM1), TT(L), E(M)                
-      INTEGER    PERIOD, SORDER
+cxx      REAL*8     Z(N), T(L,LM1,N), REG(N,M5)
+cxx      DIMENSION  S(M+1,M+1), R(LM1+1,LM1), IMIS(N), TRADE(N,7)            
+cxx      DIMENSION  D(LM1+1), WI(3,3), X(LM1), TT(L), E(M)                
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: IMIS(N), N, LM1, ILKF, ISMT
+      REAL(8) :: Z(N), R(LM1+1,LM1), S(M+1,M+1), T(L,LM1,N),
+     1           TRADE(N,7), F
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: REG(N,M5), D(LM1+1), WI(3,3), X(LM1), TT(L), E(M),
+     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF,
+     2           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     3           PAI, SDET, SUM, tmpp, tmp
 cc      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *             NS, NI, MISING, IOUT, LL, NN, NYEAR,nmonth, NPREDS, 
 cc     *                    NPREDE, IPRED
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)                            
 c      COMMON    /CMFUNC/  DJACOB, FF, SIG2, AIC                        
 cc      COMMON    /CMFUNC/  DJACOB,FF,
 cc     *            SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                    NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
+     *                   ,DI, UI(3), TDF(7)                            
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
 
       DATA  PAI/3.1415926535D0/                                         
@@ -1465,103 +1674,160 @@ cc      M    = M1 + M2 + M3 + M4 + M5
       SIG2 = 0.0D0                                                      
       SDET = 0.0D0
       NNN = 0                                                      
-C                                                                       
+C
       DO 500  II=1,N
 C                                                                       
 C     ...  TIME  UPDATE (PREDICTION)  ...                               
 C                                                                       
       IF( M1 .EQ. 0 )  GO TO 140                                        
       IF(M1.EQ.1)  GO TO 115                                            
-      DO 110  J=2,M1                                                    
+cxx      DO 110  J=2,M1                                                    
+      DO 111  J=2,M1
       DO 110  I=1,J                                                     
-  110 R(L+I,L+J-1) = S(I,J)                                             
+cxx  110 R(L+I,L+J-1) = S(I,J)                                             
+      R(L+I,L+J-1) = S(I,J)
+  110 CONTINUE
+  111 CONTINUE
   115 DO 130  I=1,M1                                                    
       SUM = 0.0D0                                                       
       DO 120  J=I,M1                                                    
-  120 SUM = SUM + S(I,J)*F1(J)                                          
-  130 R(L+I,L1) = SUM                                                   
+cxx  120 SUM = SUM + S(I,J)*F1(J)                                          
+      SUM = SUM + S(I,J)*F1(J)
+  120 CONTINUE
+cxx  130 R(L+I,L1) = SUM                                                   
+      R(L+I,L1) = SUM
+  130 CONTINUE
 C                                                                       
   140 IF( M2 .EQ. 0 )  GO TO 5                                          
       IF(M2 .EQ. 1)  GO TO 155                                          
-      DO 150  J=2,M2                                                    
+cxx      DO 150  J=2,M2                                                    
+      DO 151  J=2,M2
       JJ = M1 + J                                                       
       DO 150  I=1,JJ                                                    
-  150 R(L+I,L1+J-1) = S(I,M1+J)                                         
+cxx  150 R(L+I,L1+J-1) = S(I,M1+J)                                         
+      R(L+I,L1+J-1) = S(I,M1+J)
+  150 CONTINUE
+  151 CONTINUE
   155 DO 170  I=1,M2                                                    
       SUM = 0.0D0                                                       
       DO 160  J=I,M2                                                    
-  160 SUM = SUM + S(M1+I,M1+J)*F2(J)                                    
-  170 R(L1+I,L12) = SUM                                                 
+cxx  160 SUM = SUM + S(M1+I,M1+J)*F2(J)                                    
+      SUM = SUM + S(M1+I,M1+J)*F2(J)
+  160 CONTINUE
+cxx  170 R(L1+I,L12) = SUM                                                 
+      R(L1+I,L12) = SUM
+  170 CONTINUE
       DO 190  I=1,M1                                                    
       SUM = 0.0D0                                                       
       DO 180  J=1,M2                                                    
-  180 SUM = SUM + S(I,M1+J)*F2(J)                                       
-  190 R(L+I,L12) = SUM                                                  
-  195 CONTINUE                                                          
+cxx  180 SUM = SUM + S(I,M1+J)*F2(J)                                       
+      SUM = SUM + S(I,M1+J)*F2(J)
+  180 CONTINUE
+cxx  190 R(L+I,L12) = SUM                                                  
+      R(L+I,L12) = SUM
+  190 CONTINUE
+cxx  195 CONTINUE                                                          
 C                                                                       
     5 IF( M3 .EQ. 0 )  GO TO 55                                         
-      DO 10  J=2,M3                                                     
+cxx      DO 10  J=2,M3                                                     
+      DO 11  J=2,M3
       JJ = M12 + J                                                      
       DO 10  I=1,JJ                                                     
-   10 R(L+I,L12+J-1) = S(I,M12+J)                                       
+cxx   10 R(L+I,L12+J-1) = S(I,M12+J)                                       
+      R(L+I,L12+J-1) = S(I,M12+J)
+   10 CONTINUE
+   11 CONTINUE
       DO 30  I=1,M3                                                     
       SUM = 0.0D0                                                       
       DO 20  J=I,M3                                                     
-   20 SUM = SUM + S(M12+I,M12+J)*F3(J)                                  
-   30 R(L12+I,L123) = SUM                                               
-C                                                                       
+cxx   20 SUM = SUM + S(M12+I,M12+J)*F3(J)                                  
+      SUM = SUM + S(M12+I,M12+J)*F3(J)
+   20 CONTINUE
+cxx   30 R(L12+I,L123) = SUM                                               
+      R(L12+I,L123) = SUM
+   30 CONTINUE
+C
       DO 50  I=1,M12                                                    
       SUM = 0.0D0                                                       
       DO 40  J=1,M3                                                     
-   40 SUM = SUM + S(I,M12+J)*F3(J)                                      
-   50 R(L+I,L123) = SUM                                                 
+cxx   40 SUM = SUM + S(I,M12+J)*F3(J)                                      
+      SUM = SUM + S(I,M12+J)*F3(J)
+   40 CONTINUE
+cxx   50 R(L+I,L123) = SUM                                                 
+      R(L+I,L123) = SUM
+   50 CONTINUE
 C                                                                       
    55 IF( M45 .EQ. 0 )  GO TO 70                                        
-      DO 60  J=1,M45                                                    
+cxx      DO 60  J=1,M45
+      DO 61  J=1,M45
       JJ = M123 + J                                                     
       DO 60  I=1,JJ                                                     
-   60 R(L+I,L123+J) = S(I,M123+J)                                       
+cxx   60 R(L+I,L123+J) = S(I,M123+J)
+      R(L+I,L123+J) = S(I,M123+J)
+   60 CONTINUE
+   61 CONTINUE
    70 CONTINUE                                                          
 C                                                                       
       IF( M1 .EQ. 0 )  GO TO 215                                        
       DO 210  I=1,M1                                                    
-  210 R(L+I,1) = -R(L+I,L+1)                                            
+cxx  210 R(L+I,1) = -R(L+I,L+1)                                            
+      R(L+I,1) = -R(L+I,L+1)
+  210 CONTINUE
   215 IF( M2 .EQ. 0 ) GO TO 225                                         
       DO 220  I=1,M12                                                   
-  220 R(L+I,LL2) = -R(L+I,L+M1+1)                                       
+cxx  220 R(L+I,LL2) = -R(L+I,L+M1+1)
+      R(L+I,LL2) = -R(L+I,L+M1+1)
+  220 CONTINUE
 C                                                                       
   225 IF( M3 .EQ. 0 )  GO TO 235                                        
       DO 230  I=1,M123                                                  
-  230 R(L+I,L) = -R(L+I,L+M12+1)                                        
+cxx  230 R(L+I,L) = -R(L+I,L+M12+1)                                        
+      R(L+I,L) = -R(L+I,L+M12+1)
+  230 CONTINUE
 C                                                                       
-  235 DO 250  I=1,L                                                     
-      DO 250  J=1,LM+1                                                  
-  250 R(I,J) = 0.0D0                                                    
+cxx  235 DO 250  I=1,L                                                     
+cxx      DO 250  J=1,LM+1                                                  
+cxx  250 R(I,J) = 0.0D0
+  235 CONTINUE
+      R(1:L,1:LM+1) = 0.0D0
       DO 240  I=1,M                                                     
-  240 R(L+I,L+M+1) = S(I,M+1)                                           
+cxx  240 R(L+I,L+M+1) = S(I,M+1)                                           
+      R(L+I,L+M+1) = S(I,M+1)
+  240 CONTINUE
 C                                                                       
       DO 260 I=1,L                                                      
-  260 R(I,I) = UI(I)                                                    
+cxx  260 R(I,I) = UI(I)                                                    
+      R(I,I) = UI(I)
+  260 CONTINUE
 C                                                                       
 cc      CALL  HUSHL7( R,D,MJ,L+M+1,L12+1,L+M123 )                         
       CALL  HUSHL7( R,D,LM1+1,LM1,L12+1,L+M123 )
 C                                                                       
-      DO 300  I=1,L                                                     
+cxx      DO 300  I=1,L                                                     
+      DO 301  I=1,L
       DO 300  J=1,LM+1                                                  
-  300 T(I,J,II) = R(I,J)                                                
+cxx  300 T(I,J,II) = R(I,J)
+      T(I,J,II) = R(I,J)
+  300 CONTINUE
+  301 CONTINUE
 C                                                                       
 C     ...  MEASUREMENT  UPDATE (FILTERING)  ...                         
 C                                                                       
 c    modified at 96.10 by S.S.
 c 400  continue
- 400    IF( IMIS(II) .EQ. 1 )  GO TO 420
+cxx 400    IF( IMIS(II) .EQ. 1 )  GO TO 420
+        IF( IMIS(II) .EQ. 1 )  GO TO 420
 c
       nnn=nnn+1
 C     WRITE(6,997) M,UI(1)                                              
-      DO 410  J=1,M+1                                                   
+cxx      DO 410  J=1,M+1                                                   
+      DO 411  J=1,M+1
       S(M+1,J) = 0.0D0                                                  
       DO 410  I=1,J                                                     
-  410 S(I,J) = R(L+I,L+J)                                               
+cxx  410 S(I,J) = R(L+I,L+J)                                               
+      S(I,J) = R(L+I,L+J)
+  410 CONTINUE
+  411 CONTINUE
 C                                                                       
       S(M+1,1)    = DI                                                  
       S(M+1,M1+1) = DI                                                  
@@ -1571,8 +1837,10 @@ C
       DO 414  I=1,6                                                     
       JJ = II                                                           
       IF( ILKF .EQ. 0 )  JJ = N - II + 1                                
-  414 S(M+1,M123+I) = DI*(TRADE(JJ,I) - TRADE(JJ,7))                    
-	end if
+cxx  414 S(M+1,M123+I) = DI*(TRADE(JJ,I) - TRADE(JJ,7))                    
+      S(M+1,M123+I) = DI*(TRADE(JJ,I) - TRADE(JJ,7))
+  414 CONTINUE
+      end if
 
       if(m4 .eq. 1) then
 
@@ -1581,11 +1849,14 @@ C
       tmpp=trade(jj,2)+trade(jj,3)
       tmpp=tmpp+trade(jj,4)+trade(jj,5)+trade(jj,6)
       s(m+1,m123+1)=di*(trade(jj,1)+trade(jj,7)-0.4*tmpp)
-	end if
-	
-  415 IF( M5 .EQ. 0 )  GO TO 418                                        
-      DO 417  I=1,M5                                                    
-  417 S(M+1,M123+M4+I) = REG(I,II)                                      
+      end if
+
+cxx  415 IF( M5 .EQ. 0 )  GO TO 418                                        
+      IF( M5 .EQ. 0 )  GO TO 418
+      DO 417  I=1,M5
+cxx  417 S(M+1,M123+M4+I) = REG(I,II)                                      
+      S(M+1,M123+M4+I) = REG(I,II)
+  417 CONTINUE
   418 CONTINUE                                                          
 C                                                                       
 C     CALL  PRINT2( S,M+1,M+1,MJ,1 )                                    
@@ -1599,17 +1870,22 @@ cc      IF( IPRED.EQ.1 .AND. II.GE.NPREDS )  GO TO 430
       IF(ILKF .EQ. 0)  GO TO 500                                        
       SIG2 = SIG2 + S(M+1,M+1)**2                                       
       DO 440  I=1,M                                                     
-  440 SDET = SDET + DLOG( S(I,I)**2 ) - DLOG( R(L+I,L+I)**2 )           
+cxx  440 SDET = SDET + DLOG( S(I,I)**2 ) - DLOG( R(L+I,L+I)**2 )           
+      SDET = SDET + DLOG( S(I,I)**2 ) - DLOG( R(L+I,L+I)**2 )
+  440 CONTINUE
       GO TO 500                                                         
 C                                                                       
 C  ...  LONG RANGE PREDICTION  ...                                      
 C                                                                       
 cc  430 CALL  RECOEF( R,LM,LM,MJ,X )                                      
-  430 CALL  RECOEF( R,LM,LM,LM1+1,X )
+cxx  430 CALL  RECOEF( R,LM,LM,LM1+1,X )
+      CALL  RECOEF( R,LM,LM,LM1+1,X )
       SUM = ID(M1)*X(L+1) + ID(M2)*X(L1+1) + ID(M3)*X(L12+1)            
       IF( M4 .EQ. 6 )  then
       DO 431 J=1,6                                                      
-  431 SUM = SUM + (TRADE(II,J)-TRADE(II,7))*X(L123+J)                   
+cxx  431 SUM = SUM + (TRADE(II,J)-TRADE(II,7))*X(L123+J)
+      SUM = SUM + (TRADE(II,J)-TRADE(II,7))*X(L123+J)
+  431 CONTINUE
       end if
       if(m4 .eq. 1) then
       tmp=trade(II,2)+trade(II,3)+trade(II,4)+trade(II,5)+trade(II,6)
@@ -1628,9 +1904,13 @@ cc  977 FORMAT( 1H ,I5,2F15.7 )
 C                                                                       
 C  ...  MISSING OBSERVATION  ...                                        
 C                                                                       
-  420 DO 425  I=1,M                                                     
+cxx  420 DO 425  I=1,M
+  420 DO 426  I=1,M
       DO 425  J=1,M+1                                                   
-  425 S(I,J) = R(L+I,L+J)                                               
+cxx  425 S(I,J) = R(L+I,L+J)
+      S(I,J) = R(L+I,L+J)
+  425 CONTINUE
+  426 CONTINUE
   500 CONTINUE                                                          
 C                                                                       
 C     ... LIKELIHOOD COMPUTATION  ...                                   
@@ -1645,10 +1925,10 @@ cc      FF = F
       FC = F                                                            
 c    modified 97/10/17
       AIC = -2.0D0*(F+DJACOB) + 2.0D0*(M2 + L + 1 + m)                  
-  901 FORMAT(1H ,4D16.9)                                                
+cxx  901 FORMAT(1H ,4D16.9)                                                
 C 900 FORMAT(1H ,'F =',D15.8,5X,'SIG2 =',D15.8,5X,'DET =',D15.8,        
 C    1     5X,'FF =',D15.8,5X,'SD =',D15.8,5X,'LOG V =',D15.8 )         
-  900 FORMAT(1H ,3D20.10)                                               
+cxx  900 FORMAT(1H ,3D20.10)                                               
 C                                                                       
 C                                                                       
 C                                                                       
@@ -1659,7 +1939,9 @@ cc      CALL  RECOEF( S,M,M,MJ,X )
       CALL  RECOEF( S,M,M,M+1,X )                                      
 C                                                                       
       DO 610 I=1,M                                                      
-  610 E(I) = X(I)                                                       
+cxx  610 E(I) = X(I)
+      E(I) = X(I)
+  610 CONTINUE
 C                                                                       
       DO 1200  III=1,N-1                                                
 C                                                                       
@@ -1678,77 +1960,111 @@ C
   615 DO 630  I=1,L                                                     
       SUM = T(I,LM1,II)                                                 
       DO 620  J=1,M                                                     
-  620 SUM = SUM - T(I,L+J,II)*X(J)                                      
-  630 TT(I) = SUM                                                       
+cxx  620 SUM = SUM - T(I,L+J,II)*X(J)
+      SUM = SUM - T(I,L+J,II)*X(J)
+  620 CONTINUE
+cxx  630 TT(I) = SUM
+      TT(I) = SUM
+  630 CONTINUE
 C                                                                       
       DO 650  I=1,L                                                     
       SUM = 0.0D0                                                       
       DO 640  J=I,L                                                     
-  640 SUM = SUM + WI(I,J)*TT(J)                                         
-  650 D(I) = SUM                                                        
+cxx  640 SUM = SUM + WI(I,J)*TT(J)                                         
+      SUM = SUM + WI(I,J)*TT(J)
+  640 CONTINUE
+cxx  650 D(I) = SUM
+      D(I) = SUM
+  650 CONTINUE
       X(1) = X(1) - D(1)                                                
       IF(M1.GT.0 .AND. M2.GT.0)  X(M1+1) = X(M1+1) - D(2)               
       X(M12+1) = X(M12+1) - D(L)                                        
       DO 660  I=1,M                                                     
-  660 D(I) = X(I)                                                       
+cxx  660 D(I) = X(I)
+      D(I) = X(I)
+  660 CONTINUE
 C                                                                       
       IF( M1 .EQ. 0 )  GO TO 715                                        
       DO 710  I=1,M1                                                    
-  710 X(I) = F1(I)*D(M1)                                                
+cxx  710 X(I) = F1(I)*D(M1)                                                
+      X(I) = F1(I)*D(M1)
+  710 CONTINUE
   715 IF(M1.LE.1)  GO TO  730                                           
       DO 720  I=2,M1                                                    
-  720 X(I) = X(I) + D(I-1)                                              
+cxx  720 X(I) = X(I) + D(I-1)                                              
+      X(I) = X(I) + D(I-1)
+  720 CONTINUE
 C                                                                       
   730 IF( M2 .EQ. 0 )  GO TO 760                                        
       DO 740  I=1,M2                                                    
-  740 X(M1+I) = F2(I)*D(M12)                                            
+cxx  740 X(M1+I) = F2(I)*D(M12)
+      X(M1+I) = F2(I)*D(M12)
+  740 CONTINUE
       IF(M2 .LE. 1)  GO TO 760                                          
       DO 750  I=2,M2                                                    
-  750 X(M1+I) = X(M1+I) + D(M1+I-1)                                     
+cxx  750 X(M1+I) = X(M1+I) + D(M1+I-1)                                     
+      X(M1+I) = X(M1+I) + D(M1+I-1)
+  750 CONTINUE
 C                                                                       
   760 IF( M3 .LE. 0 )  GO TO 775                                        
       DO 770  I=1,M3                                                    
-  770 X(M12+I) = F3(I)*D(M123)                                          
+cxx  770 X(M12+I) = F3(I)*D(M123)                                          
+      X(M12+I) = F3(I)*D(M123)
+  770 CONTINUE
   775 IF( M3 .LE. 1 )  GO TO 785                                        
       DO 780  I=2,M3                                                    
-  780 X(M12+I) = X(M12+I) + D(M12+I-1)                                  
+cxx  780 X(M12+I) = X(M12+I) + D(M12+I-1)
+      X(M12+I) = X(M12+I) + D(M12+I-1)
+  780 CONTINUE
 C                                                                       
   785 CONTINUE                                                          
- 2000 CONTINUE                                                          
+cxx 2000 CONTINUE                                                          
       DO 790 I=1,M                                                      
       T(1,I,II) = E(I)                                                  
-  790 E(I) = X(I)                                                       
+cxx  790 E(I) = X(I)                                                       
+      E(I) = X(I)
+  790 CONTINUE
 C                                                                       
  1200 CONTINUE                                                          
 C                                                                       
       DO 1210 I=1,M                                                     
- 1210 T(1,I,1) = E(I)                                                   
+cxx 1210 T(1,I,1) = E(I)                                                   
+      T(1,I,1) = E(I)
+ 1210 CONTINUE
       IF( M4 .EQ. 6 ) then
       SUM = 0.0D0                                                       
       DO 1220 I=1,6                                                     
       TDF(I) = X(M123+I)                                                
- 1220 SUM = SUM + TDF(I)                                                
+cxx 1220 SUM = SUM + TDF(I)                                                
+      SUM = SUM + TDF(I)
+ 1220 CONTINUE
       TDF(7) = -SUM                                                     
       end if
       IF( M4 .EQ. 1 ) then
       TDF(1) = X(M123+1)
       TDF(7) = X(M123+1)
       do 1222 i=2,6
- 1222    TDF(i) = -0.4*TDF(1)
+cxx 1222    TDF(i) = -0.4*TDF(1)
+         TDF(i) = -0.4*TDF(1)
+ 1222 continue
       end if
 C                                                                       
-	RETURN                                                            
+      RETURN                                                            
       E N D                                                             
-      SUBROUTINE  SPARAM0( N,IPAR,NIP,para,NPA )
+cxx      SUBROUTINE  SPARAM0( N,IPAR,NIP,para,NPA )
+      SUBROUTINE  SPARAM0( IPAR,NIP )
 C                                                                       
 C  ...  Set or read control parameters ...                              
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)
-      DIMENSION  IPAR(NIP), para(NPA)
-      INTEGER    PERIOD, SORDER, TRADE
+cxx      IMPLICIT REAL*8(A-H,O-Z)
+cxx      DIMENSION  IPAR(NIP), para(NPA)
+cxx      INTEGER    PERIOD, SORDER, TRADE
+      INTEGER :: IPAR(NIP), NIP
+      INTEGER :: PERIOD, SORDER, TRADE
       COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
      *                     NYEAR, nmonth
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
 C  ...  SET DEFAULT VALUES  ...                                         
 C                                                                       
@@ -1757,7 +2073,7 @@ C
       m4 = 0
       M5 = 0                        
       LOG  = IPAR(5)                            
-      IPR  = 7                                            
+cxx      IPR  = 7                                            
       ISW  = 1                                                          
       IDIF = IPAR(7)
       if(idif .gt. 2) idif=1
@@ -1765,7 +2081,7 @@ C
       MESH = 1                                                          
       PERIOD = IPAR(3)                               
       SORDER = IPAR(4)                                                 
-	TRADE  = IPAR(6)                
+      TRADE  = IPAR(6)                
       if(TRADE .EQ. 1) TRADE = 7
       IF(TRADE .GE. 1)  NYEAR=IPAR(8)
       IF(TRADE .GE. 1)  nmonth=IPAR(9)
@@ -1779,28 +2095,35 @@ C
       RETURN                                                            
       END                                                             
 cc      SUBROUTINE  SPARAM( MT,A,IPAR,para,iopt )                                        
-      SUBROUTINE  SPARAM( N,A,NA,IPAR,NIP,para,NPA,iopt )
+cxx      SUBROUTINE  SPARAM( N,A,NA,IPAR,NIP,para,NPA,iopt )
+      SUBROUTINE  SPARAM( A,NA,para,NPA,iopt )
 C                                                                       
 C  ...  Set or read control parameters ...                              
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)
+cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      REAL*8     TAU2(3), A(40), PAC(10), F1,F2,F3,A1,AR,A3,para(26)
 cc      REAL*8     ARCC(10)
 cc      INTEGER   PERIOD, SORDER, BSPAN, OUTLIR, TRADE, YEAR, PRED        
 cc      INTEGER   PREDS, PREDE ,IPAR(11),month
 cc      DIMENSION  TAU2(3), PAC(10), ARCC(10)
-      DIMENSION  A(NA), IPAR(NIP), para(NPA)
-      DIMENSION  TAU2(3), PAC(M2), ARCC(M2)
-      INTEGER    PERIOD, SORDER
+cxx      DIMENSION  A(NA), IPAR(NIP), para(NPA)
+cxx      DIMENSION  TAU2(3), PAC(M2), ARCC(M2)
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: NA, NPA, iopt
+      REAL(8) :: A(NA), para(NPA)
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: TAU2(3), PAC(M2), ARCC(M2),
+     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF
       COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
      *                     NYEAR, nmonth
 cc     *              BSPAN, ISPAN, MISING, OUTLIR, LL, N, YEAR, month,
 cc     *                    PREDS, PREDE, PRED
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)    
+cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
       COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)    
      *                   ,DI, UI(3), TDF(7)
-      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
+      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C      NAMELIST  /PARAM/  M1, M2, M5, PERIOD, SORDER, TRADE, MT, BSPAN,  
 C     *                   ISPAN, MISING, OUTLIR, TAU2, PAC, IPR, IDIF,   
 C     *                   LOG, YEAR, PRED, MESH                          
@@ -1842,11 +2165,14 @@ C 99/8/12
 C      TAU2(3) = 1.0D-5    
       if(m2 .eq. 0) tau2(2) = 0.001D0
 
-      do 18 i=1,7
- 18      TDF(i) = 0.0D00
+cxx      do 18 i=1,7
+cxx 18      TDF(i) = 0.0D00
+      TDF(1:7) = 0.0D00
 cc      DO 20  I=1,10                                                     
       DO 20  I=1,M2
-   20 PAC(I) = 0.88D0*(-0.6D0)**(I-1)                                   
+cxx   20 PAC(I) = 0.88D0*(-0.6D0)**(I-1)                                   
+      PAC(I) = 0.88D0*(-0.6D0)**(I-1)
+   20 CONTINUE
 
       if(iopt .lt. 0) then
          do 21 i=1,3
@@ -1858,7 +2184,9 @@ cc      DO 20  I=1,10
 c            write(*,*) tau2(1),tau2(2),tau2(3)
          if(m2 .gt. 0) then
             do 22 i=1,m2
- 22            arcc(i) = para(3+i)
+cxx 22            arcc(i) = para(3+i)
+               arcc(i) = para(3+i)
+ 22         continue
             call PARCOR( ARCC,m2,PAC )
 c            write(*,*) PAC(1),PAC(2)
          end if
@@ -1875,54 +2203,68 @@ cc      M = M1 + M2 + M3 + M4 + M5
 cc      L = ID(M1) + ID(M2) + ID(M3)                                      
 cc      LL= ID(M1) + ID(M2) + ID(M3) + ID(M4) + ID(M5)                    
       DO 30 I=1,L                                                       
-   30 A(I) = DASIN( TAU2(I)*2.0D0 - 1.0D0 )                             
+cxx   30 A(I) = DASIN( TAU2(I)*2.0D0 - 1.0D0 )                             
+      A(I) = DASIN( TAU2(I)*2.0D0 - 1.0D0 )
+   30 CONTINUE
 c      WRITE(6,610)                                                      
 c      WRITE(6,600) M1,M2,M3,M4,M5,M,L,PERIOD,SORDER,BSPAN,ISPAN,MISING, 
 c     *           OUTLIR, LL                                             
       IF(M2.EQ.0)  RETURN                                               
 C                                                                       
       DO 40 I=1,M2                                                      
-   40 A(L+I) = DASIN( PAC(I)/0.90D0 )                                   
+cxx   40 A(L+I) = DASIN( PAC(I)/0.90D0 )
+      A(L+I) = DASIN( PAC(I)/0.90D0 )
+   40 CONTINUE
 C                                                                       
       RETURN                                                            
-  600 FORMAT( 10X,'M1     =',I3,/,10X,'M2     =',I3,/,10X,'M3     =',   
-     *   I3,/,10X,'M4     =',I3,/,10X,'M5     =',I3,/,10X,'M      =',   
-     *   I3,/,10X,'L      =',I3,/,10X,'PERIOD =',I3,/,10X,'SORDER =',   
-     *   I3,/,10X,'BSPAN  =',I3,/,10X,'ISPAN  =',I3,/,10X,'MISING =',   
-     *   I3,/,10X,'OUTLIR =',I3,/,10X,'LL     =',I3 )                   
-  610 FORMAT( 5X,'---  PROGRAM  DECOMP  ---' )                          
+cxx  600 FORMAT( 10X,'M1     =',I3,/,10X,'M2     =',I3,/,10X,'M3     =',   
+cxx     *   I3,/,10X,'M4     =',I3,/,10X,'M5     =',I3,/,10X,'M      =',   
+cxx     *   I3,/,10X,'L      =',I3,/,10X,'PERIOD =',I3,/,10X,'SORDER =',   
+cxx     *   I3,/,10X,'BSPAN  =',I3,/,10X,'ISPAN  =',I3,/,10X,'MISING =',   
+cxx     *   I3,/,10X,'OUTLIR =',I3,/,10X,'LL     =',I3 )                   
+cxx  610 FORMAT( 5X,'---  PROGRAM  DECOMP  ---' )                          
       E N D                                                             
       SUBROUTINE  STATE( X,A,K )                                        
 C                                                                       
 C  ...  TRANSFORMATION OF STATE VECTOR FOR TIME REVERSED MODEL  ...     
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION  X(K), A(K), Y(30)                                      
-      DIMENSION  X(K), A(K), Y(K)
+cxx      DIMENSION  X(K), A(K), Y(K)
+      INTEGER :: K
+      REAL(8) :: X(K), A(K), Y(K), SUM
 C                                                                       
       IF( K .EQ. 0 )  RETURN                                            
-      DO 20  I=1,K                                                      
+cxx      DO 20  I=1,K
+      DO 21  I=1,K
       SUM = A(I)*X(1)                                                   
       IF( I .LT. K )  SUM = SUM + X(I+1)                                
       IF( I .EQ. 1 )  GO TO 20                                          
       DO 10  J=1,I-1                                                    
-   10 SUM = SUM + A(J)*Y(I-J)                                           
+cxx   10 SUM = SUM + A(J)*Y(I-J)
+      SUM = SUM + A(J)*Y(I-J)
+   10 CONTINUE
    20 Y(I) = SUM                                                        
+   21 CONTINUE
 C                                                                       
       X(1) = Y(1)                                                       
       IF( K .EQ. 1 ) RETURN                                             
       DO 40  I=2,K                                                      
       SUM = 0.0D0                                                       
       DO 30  J=I,K                                                      
-   30 SUM = SUM + A(J)*Y(J-I+2)                                         
-   40 X(I) = SUM                                                        
+cxx   30 SUM = SUM + A(J)*Y(J-I+2)                                         
+      SUM = SUM + A(J)*Y(J-I+2)
+   30 CONTINUE
+cxx   40 X(I) = SUM
+      X(I) = SUM
+   40 CONTINUE
 C                                                                       
       RETURN                                                            
       E N D                                                             
 
       SUBROUTINE  TRADE( JSYEAR,nmonth,N,TDAY )
 
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 
 C
 C  ...  This subroutine computes the number of days of the week
@@ -1930,7 +2272,10 @@ C       in each month, Nov.1981
 C    modified at '96 by S.S.
 C    This subroutine should not be used after 2099.
 C
-      DIMENSION  TDAY(N,7), IX(12)
+cxx      DIMENSION  TDAY(N,7), IX(12)
+      INTEGER :: JSYEAR, nmonth, N
+      REAL(8) :: TDAY(N,7)
+      INTEGER :: IX(12)
       DATA   IX  /3,0,3,2,3,2,3,3,2,3,2,3/
 C
 c      open(1,file='tmp.dat')
@@ -1947,15 +2292,19 @@ cc      I0 = MOD( JS+(JS-1)/4,7 ) + 1
       IF( MOD(I1+1900,400).EQ.0 )  IX(2) = 1
       DO 30  J=1,12
       DO 10  I=1,7
- 10    if( jj.gt.0 ) TDAY(JJ,I) = 4.0
+cxx 10    if( jj.gt.0 ) TDAY(JJ,I) = 4.0
+       if( jj.gt.0 ) TDAY(JJ,I) = 4.0
+ 10   CONTINUE
 C
       IE = IX(J)
       IF( IE .EQ. 0 )  GO TO 28
-	I0 = I2
+      I0 = I2
       DO 20  I=1,IE
       I2 = I0 + I
       IF( I2 .GT. 7 ) I2 = I2 - 7
- 20    if( jj.gt.0 ) TDAY(JJ,I2) = 5.0
+cxx 20    if( jj.gt.0 ) TDAY(JJ,I2) = 5.0
+       if( jj.gt.0 ) TDAY(JJ,I2) = 5.0
+ 20   CONTINUE
 cc      I0 = I2
 
 c       if(jj .gt.0) WRITE(1,*)  (TDAY(JJ,I),I=1,7)
@@ -1974,7 +2323,7 @@ C
 
       SUBROUTINE  TRADE2( JSYEAR,nquart,N,TDAY )
 
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 
 C
 C  ...  This subroutine computes the number of days of the week
@@ -1982,7 +2331,10 @@ C       in each quarter.
 C    modified at '96 by S.S.
 C    This subroutine should not be used after 2099.
 C
-      DIMENSION  TDAY(N,7), IX(4)
+cxx      DIMENSION  TDAY(N,7), IX(4)
+      INTEGER :: JSYEAR, nquart, N
+      REAL(8) :: TDAY(N,7)
+      INTEGER :: IX(4)
       DATA   IX  /6,7,8,8/
 C
 c      write(6,*) nquart, jsyear
@@ -1999,7 +2351,9 @@ cc      I0 = MOD( JS+(JS-1)/4,7 ) + 1
       IF( MOD(I1+1900,400).EQ.0 )  IX(1) = 7
       DO 30  J=1,4
       DO 10  I=1,7
- 10    if( jj.gt.0 ) TDAY(JJ,I) = 12.0
+cxx 10    if( jj.gt.0 ) TDAY(JJ,I) = 12.0
+       if( jj.gt.0 ) TDAY(JJ,I) = 12.0
+ 10   CONTINUE
 C
       IE = IX(J)
 c      write(6,*) IE, jj
@@ -2010,7 +2364,9 @@ c      write(6,*) IE, jj
       IF( I2 .GT. 7 ) I2 = I2- 7
       IF( I2 .GT. 7 ) I2 = I2- 7
 c      write(6,*) i2, tday(jj,i2)
- 20    if( jj.gt.0 ) TDAY(JJ,I2) = TDAY(JJ,I2) + 1.0
+cxx 20    if( jj.gt.0 ) TDAY(JJ,I2) = TDAY(JJ,I2) + 1.0
+       if( jj.gt.0 ) TDAY(JJ,I2) = TDAY(JJ,I2) + 1.0
+ 20   CONTINUE
 cc      I0 = I2
 c      WRITE(6,*)  (TDAY(JJ,I),I=1,7)
  28   JJ = JJ + 1
@@ -2026,22 +2382,28 @@ c      SUBROUTINE  TITLEP( TITLE,A )
 C                                                                       
 C  ...  PLOT DATA ID AND ESTIMATED PARAMETERS  ...                      
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 c      REAL*4   FM1, FM2, FM3, FM4, FM5, FAIC,FSIG2,TAU1,TAU2,TAU3       
 c      REAL*4     TITLE(20), DAY(2), TIME(3)                             
 cc      DIMENSION  A(40),para(26),a2(10),atmp(10)
-      DIMENSION  A(na),para(npa),ar(M2),atmp(M2)
-      INTEGER    PERIOD, SORDER
+cxx      DIMENSION  A(na),para(npa),ar(M2),atmp(M2)
+cxx      INTEGER    PERIOD, SORDER
+      INTEGER :: na, npa
+      REAL(8) :: A(na), para(npa)
+      INTEGER :: PERIOD, SORDER
+      REAL(8) :: ar(M2), atmp(M2), tau1, tau2, tau3,
+     1             DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     2             F1, F2, F3, A1, A2, A3, DI, UI, TDF
 cc      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,                  
 cc     *         NS,NI,MISING,IOUT,LL,N,NYEAR,nmonth,NPS,NPE,NPRED    
 c      COMMON  /CMFUNC/  DJACOB, F, SIG2, AIC                           
 cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
+ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
+ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
      *                    NYEAR, nmonth
-ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
-ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
       COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
      *                   ,DI, UI(3), TDF(7)
 C                                                                       
@@ -2077,18 +2439,23 @@ C
       para(4) = tau1
       para(5) = tau2
       para(6) = tau3
-
       IF( M2 .EQ. 0 )  GO TO 40                                         
       DO 30  I=1,M2                                                     
-   30 atmp(I) = 0.90D0*DSIN( A(L+I) )                                   
+cxx   30 atmp(I) = 0.90D0*DSIN( A(L+I) )                                   
+      atmp(I) = 0.90D0*DSIN( A(L+I) )
+   30 CONTINUE
 cc      CALL  ARCOEF( atmp,M2,A2 )
       CALL  ARCOEFD( atmp,M2,AR )
       do 35 I=1,M2
 cc 35      para(i+6) = A2(i)
- 35      para(i+6) = AR(i)
+cxx 35      para(i+6) = AR(i)
+         para(i+6) = AR(i)
+ 35   continue
  40   continue
       do 41 i=1,7
- 41      para(i+6+m2) = TDF(i)
+cxx 41      para(i+6+m2) = TDF(i)
+         para(i+6+m2) = TDF(i)
+ 41   continue
 C                                                                       
       RETURN                                                            
       E N D                                                             

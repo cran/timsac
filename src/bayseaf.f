@@ -353,11 +353,11 @@ C                             +-MOD
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT::BAYSEAF
 C
-       IMPLICIT  REAL*8( A-H,O-Z )                                      
-      INTEGER*4  ORDER, SORDER, PERIOD, SPAN, OVLAP, FOCAST, HEAD, SHIFT
+cxx       IMPLICIT  REAL*8( A-H,O-Z )                                      
+cxx      INTEGER*4  ORDER, SORDER, PERIOD, SPAN, OVLAP, FOCAST, HEAD, SHIFT
 cc     * ,TAIL,PUNCH,YEAR,SPEC                                            
-     * ,TAIL,YEAR,SPEC                                            
-      REAL*8 IRREG, IRREG0                                              
+cxx     * ,TAIL,YEAR,SPEC                                            
+cxx      REAL*8 IRREG, IRREG0                                              
 cc      DIMENSION  FTRN(200),FSEA(200),PSDS(500),PSDT(500),PSDS0(500),    
 cc     *           PSDT0(500)                                             
 cc      DIMENSION  SEASON(500), TREND(500), EST(500), ADJUST(500),        
@@ -368,20 +368,40 @@ cc      DIMENSION  Y(500),YS(500),CDATA(500),YS1(500),YO(500)
 cc      DIMENSION   DADJ(500),H(20000),F(1000)
 cc      DIMENSION  DC(40000),H2(4000),H(20000),F(1000),WEEK(2000)
 cc      DIMENSION  YS(500),YS1(500),YO(500)
-      DIMENSION  Y(NDATA),CDATA(NDATA),DMOI(NDATA),
-     *            TREND(NDATA+FOCAST),SEASON(NDATA+FOCAST),
-     *            TDCMP(NDATA+FOCAST),IRREG(NDATA),
-     *            ADJUST(NDATA),EST(NDATA+FOCAST),
-     *            PSDS(NDATA+FOCAST),PSDT(NDATA+FOCAST),
-     *            IPARA(12),PARA(8),ARFT(3),ARFS(3),ARFN(3)
+cxx      DIMENSION  Y(NDATA),CDATA(NDATA),DMOI(NDATA),
+cxx     *            TREND(NDATA+FOCAST),SEASON(NDATA+FOCAST),
+cxx     *            TDCMP(NDATA+FOCAST),IRREG(NDATA),
+cxx     *            ADJUST(NDATA),EST(NDATA+FOCAST),
+cxx     *            PSDS(NDATA+FOCAST),PSDT(NDATA+FOCAST),
+cxx     *            IPARA(12),PARA(8),ARFT(3),ARFS(3),ARFN(3)
+cxx      DIMENSION  TREND0(NDATA+FOCAST),SEAS0(NDATA+FOCAST),
+cxx     *            TDCMP0(NDATA+FOCAST),IRREG0(NDATA+FOCAST),
+cxx     *            ADJ0(NDATA+FOCAST),EST0(NDATA+FOCAST),
+cxx     *            PSDS0(NDATA+FOCAST),PSDT0(NDATA+FOCAST)
+cxx      DIMENSION  FTRN(IPARA(4)+3),FSEA((IPARA(5)+3)*IPARA(1)+3)
+cxx      DIMENSION  F(NDATA+FOCAST+1),WEEK(7,NDATA+FOCAST)
+cxx      DIMENSION  YS(NDATA),YS1(NDATA),YO(NDATA)
 c
-      DIMENSION  TREND0(NDATA+FOCAST),SEAS0(NDATA+FOCAST),
-     *            TDCMP0(NDATA+FOCAST),IRREG0(NDATA+FOCAST),
-     *            ADJ0(NDATA+FOCAST),EST0(NDATA+FOCAST),
-     *            PSDS0(NDATA+FOCAST),PSDT0(NDATA+FOCAST)
-      DIMENSION  FTRN(IPARA(4)+3),FSEA((IPARA(5)+3)*IPARA(1)+3)
-      DIMENSION  F(NDATA+FOCAST+1),WEEK(7,NDATA+FOCAST)
-      DIMENSION  YS(NDATA),YS1(NDATA),YO(NDATA)
+      INTEGER :: NDATA, FOCAST, IPARA(12), IART, IARS, IARN
+      REAL(8) :: Y(NDATA), CDATA(NDATA), DMOI(NDATA),
+     1           TREND(NDATA+FOCAST), SEASON(NDATA+FOCAST),
+     2           TDCMP(NDATA+FOCAST), IRREG(NDATA), ADJUST(NDATA),
+     3           EST(NDATA+FOCAST), PSDS(NDATA+FOCAST),
+     4           PSDT(NDATA+FOCAST), AVABIC, PARA(8), ARFT(3),
+     5           ARFS(3), ARFN(3)
+c
+      INTEGER :: ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD, SHIFT,
+     1           TAIL, YEAR, SPEC
+      REAL(8) :: TREND0(NDATA+FOCAST), SEAS0(NDATA+FOCAST),
+     1           TDCMP0(NDATA+FOCAST), IRREG0(NDATA+FOCAST),
+     2           ADJ0(NDATA+FOCAST), EST0(NDATA+FOCAST),
+     3           PSDS0(NDATA+FOCAST), PSDT0(NDATA+FOCAST),
+     4           FTRN(IPARA(4)+3), FSEA((IPARA(5)+3)*IPARA(1)+3),
+     5           F(NDATA+FOCAST+1), WEEK(7,NDATA+FOCAST),
+     6           YS(NDATA), YS1(NDATA), YO(NDATA), RLIM, RIGID,
+     7           WTRD, DD, ZERSUM, DELTA, ALPHA, BETA, GAMMA, 
+     8           AP, ZER, SMTH, SMTH2, ROUT, SY, YTEM, COUNT,
+     9           ABIC
 cc      CHARACTER*80   TITLE
 cc      COMMON /ILOGT/ LOGT,ISHRNK,PUNCH,IOUTD,ROUT                       
 cc      COMMON /IDATA/ PERIOD,ORDER,SORDER,YEAR,NDAY,IFIX                 
@@ -391,7 +411,7 @@ cc     *                  RIGID, ORDER, SORDER, ZERSUM,  LOGT, PUNCH
 cc     * ,YEAR,MONTH,WTRD,DELTA,SPEC,IOUTD,IFIX,ARFT,ARFS,ARFN,IART       
 cc     * ,IARS,IARN
 C
-C	FILE NAME INPUT 
+C      FILE NAME INPUT 
 C
 cc 	CHARACTER(100)  IFLNAM,OFLNAM,MFLNAM
 cc         CALL FLNAM3(IFLNAM,OFLNAM,MFLNAM,NFL)
@@ -524,7 +544,9 @@ cc      CLOSE(MT)
       RLIM = DLOG(RLIM)                                                 
 c-----
       DO 20 I=1,NDATA
-   20 Y(I) = DLOG(Y(I))
+cxx   20 Y(I) = DLOG(Y(I))
+      Y(I) = DLOG(Y(I))
+   20 CONTINUE
 c-----
  1212 CONTINUE                                                          
 C     -------------------                                               
@@ -571,10 +593,13 @@ c-----
  4680 CONTINUE                                                          
       YTEM = SY / AP              
       DO 8  I=1,LFTRN                                                   
-    8 FTRN(I) = YTEM                                                    
+cxx    8 FTRN(I) = YTEM                                                    
+      FTRN(I) = YTEM
+    8 CONTINUE
       IF(LFSEA .EQ. 0) GO TO 998                                        
-      DO 9  I=1,LFSEA                                                   
-    9 FSEA(I) = 0.D0                                                    
+cxx      DO 9  I=1,LFSEA                                                   
+cxx    9 FSEA(I) = 0.D0
+      FSEA(1:LFSEA) = 0.D0                                                    
   998 CONTINUE                                                          
       N = (SPAN*2-1)*PERIOD                                             
       AVABIC = 0.D0                                                     
@@ -617,18 +642,19 @@ C      --------------------
 C                                                                       
 C                                                                       
 cc      CALL COPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)           
-         CALL BCOPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)
+cxx         CALL BCOPY(YO     ,N,1,N,1,1,Y     ,N,1,NDATA,HEAD,1)
+         CALL BCOPY(YO     ,N,1,1,1,Y     ,N,1,HEAD,1)
 C                                                                       
 C     INITIALIZATION FOR THE INNER LOOP SUBSEA                          
 C                                                                       
- 6789 CONTINUE                                                          
+cxx 6789 CONTINUE                                                          
       IF(YEAR .NE. 0) CALL CALEND(WEEK,YEAR,MONTH+HEAD-1,N+FOCAST)      
 cc      WRITE(6,2) ICNT1,HEAD,TAIL                                        
-    2 FORMAT(1H ,'(',I5,' )TH SPAN  HEAD =',I6,'   TAIL =',I6 )         
+cxx    2 FORMAT(1H ,'(',I5,' )TH SPAN  HEAD =',I6,'   TAIL =',I6 )         
 cc      WRITE( 6,620 )   (FTRN(I),I=1,LFTRN)                              
-  620 FORMAT(1H ,'* INITIAL TREND  *'/,(1X,12D11.3))                    
+cxx  620 FORMAT(1H ,'* INITIAL TREND  *'/,(1X,12D11.3))                    
 cc      IF(LFSEA .NE. 0) WRITE( 6,621 )   (FSEA(I),I=1,LFSEA)             
-  621 FORMAT(1H ,'* INITIAL SEASONAL  *'/,(1X,12D11.3))                 
+cxx  621 FORMAT(1H ,'* INITIAL SEASONAL  *'/,(1X,12D11.3))                 
       NEXT = HEAD + N                                                   
       IF( IEND .EQ. 0 ) NEXT = NEXT - OVLAP*PERIOD                      
       LINKT = NEXT - LFTRN                                              
@@ -639,7 +665,8 @@ C     DO SEARCH CONTROL
 C     --------------------                                              
       IOUT=0                                                            
 cc      CALL COPY(YS,N,1,N,1,1,YO, N,1,N,1,1)                             
-      CALL BCOPY(YS,N,1,N,1,1,YO, N,1,N,1,1)
+cxx      CALL BCOPY(YS,N,1,N,1,1,YO, N,1,N,1,1)
+      CALL BCOPY(YS,N,1,1,1,YO, N,1,1,1)
  9700 CONTINUE                                                          
 C     SEASONAL DECOMPOSITION OF ICN-TH LOCAL SPAN                       
       CALL SUBSEA(ABIC,SEAS0,TREND0,EST0,ADJ0,IRREG0,TDCMP0,            
@@ -657,12 +684,15 @@ cc      CALL OUTLIR(IRREG0,N,10,2,1,YS1,RLIM)
       IOUT=IOUT+1                                                       
       CALL ADD(YS,N,EST0,N,YS1,N)                                       
 cc      IF(IOUT .EQ. 2) CALL COPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)     
-      IF(IOUT .EQ. 2) CALL BCOPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)
+cxx      IF(IOUT .EQ. 2) CALL BCOPY(YS1,N,1,N,1,1, YS,N,1,N,1,1)
+      IF(IOUT .EQ. 2) CALL BCOPY(YS1,N,1,1,1, YS,N,1,1,1)
       IF(IOUT .NE. 1) GO TO 9700                                        
       NTEM = N+1                                                        
       DO 9702 I=1,ORDER                                                 
       NTEM=NTEM-1                                                       
- 9702 YS(NTEM)=ROUT                                                     
+cxx 9702 YS(NTEM)=ROUT                                                     
+      YS(NTEM)=ROUT
+ 9702 CONTINUE
       GO TO 9700                                                        
  9600 CONTINUE                                                          
 C                                                                       
@@ -680,15 +710,24 @@ cc      CALL COPY(ADJUST,L,1,L,HEAD,1,ADJ0,L,1,L,1,1)
 cc      CALL COPY(IRREG,L,1,L,HEAD,1,IRREG0,L,1,L,1,1)                    
 cc      CALL COPY(TDCMP,LF,1,LF,HEAD,1,TDCMP0,LF,1,LF,1,1)                
 cc      CALL COPY(CDATA,L,1,L,HEAD,1,YS1,L,1,L,1,1)         
-      CALL BCOPY(PSDT,LF,1,LF,HEAD,1,PSDT0,LF,1,LF,1,1)
-      CALL BCOPY(PSDS,LF,1,LF,HEAD,1,PSDS0,LF,1,LF,1,1)
-      CALL BCOPY(SEASON,LF,1,LF,HEAD,1,SEAS0,LF,1,LF,1,1)
-      CALL BCOPY(TREND,LF,1,LF,HEAD,1,TREND0,LF,1,LF,1,1)
-      CALL BCOPY(EST,LF,1,LF,HEAD,1,EST0,LF,1,LF,1,1)
-      CALL BCOPY(ADJUST,L,1,L,HEAD,1,ADJ0,L,1,L,1,1)
-      CALL BCOPY(IRREG,L,1,L,HEAD,1,IRREG0,L,1,L,1,1)
-      CALL BCOPY(TDCMP,LF,1,LF,HEAD,1,TDCMP0,LF,1,LF,1,1)
-      CALL BCOPY(CDATA,L,1,L,HEAD,1,YS1,L,1,L,1,1)
+cxx      CALL BCOPY(PSDT,LF,1,LF,HEAD,1,PSDT0,LF,1,LF,1,1)
+cxx      CALL BCOPY(PSDS,LF,1,LF,HEAD,1,PSDS0,LF,1,LF,1,1)
+cxx      CALL BCOPY(SEASON,LF,1,LF,HEAD,1,SEAS0,LF,1,LF,1,1)
+cxx      CALL BCOPY(TREND,LF,1,LF,HEAD,1,TREND0,LF,1,LF,1,1)
+cxx      CALL BCOPY(EST,LF,1,LF,HEAD,1,EST0,LF,1,LF,1,1)
+cxx      CALL BCOPY(ADJUST,L,1,L,HEAD,1,ADJ0,L,1,L,1,1)
+cxx      CALL BCOPY(IRREG,L,1,L,HEAD,1,IRREG0,L,1,L,1,1)
+cxx      CALL BCOPY(TDCMP,LF,1,LF,HEAD,1,TDCMP0,LF,1,LF,1,1)
+cxx      CALL BCOPY(CDATA,L,1,L,HEAD,1,YS1,L,1,L,1,1)
+      CALL BCOPY(PSDT,LF,1,HEAD,1,PSDT0,LF,1,1,1)
+      CALL BCOPY(PSDS,LF,1,HEAD,1,PSDS0,LF,1,1,1)
+      CALL BCOPY(SEASON,LF,1,HEAD,1,SEAS0,LF,1,1,1)
+      CALL BCOPY(TREND,LF,1,HEAD,1,TREND0,LF,1,1,1)
+      CALL BCOPY(EST,LF,1,HEAD,1,EST0,LF,1,1,1)
+      CALL BCOPY(ADJUST,L,1,HEAD,1,ADJ0,L,1,1,1)
+      CALL BCOPY(IRREG,L,1,HEAD,1,IRREG0,L,1,1,1)
+      CALL BCOPY(TDCMP,LF,1,HEAD,1,TDCMP0,LF,1,1,1)
+      CALL BCOPY(CDATA,L,1,HEAD,1,YS1,L,1,1,1)
       AN = N                                                            
       AVABIC = AVABIC + ABIC                                            
       COUNT = COUNT + AN                                                
@@ -698,8 +737,9 @@ C     INITIAL VALUES FOR THE NEXT SPAN
 C                                                                       
       IF(IEND .EQ. 1) GO TO 1234                                        
 cc      CALL  COPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,            
-      CALL  BCOPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,
-     * LINKT,1)                                                         
+cxx      CALL  BCOPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,
+cxx     * LINKT,1)                                                         
+      CALL  BCOPY( FTRN,LFTRN,1,1,1,TREND,LFTRN,1,LINKT,1)                                                         
       ISTEM = LFSEA                                                     
       IF(LINKS .GE. 1) GO TO 1111                                       
       LINKS=1-LINKS                                                     
@@ -708,11 +748,14 @@ cc      CALL  COPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,
       DO 2222 I=1,LINKS                                                 
       I1=I1-1                                                           
       I2=I1-ISTEM                                                       
- 2222 FSEA(I1)=FSEA(I2)                                                 
+cxx 2222 FSEA(I1)=FSEA(I2)                                                 
+      FSEA(I1)=FSEA(I2)
+ 2222 CONTINUE
       LINKS=1                                                           
  1111 CONTINUE                                                          
 cc      CALL COPY(FSEA,ISTEM,1,ISTEM,1,1,SEASON,ISTEM,1,IOUT,LINKS,1)     
-      CALL BCOPY(FSEA,ISTEM,1,ISTEM,1,1,SEASON,ISTEM,1,IOUT,LINKS,1)
+cxx      CALL BCOPY(FSEA,ISTEM,1,ISTEM,1,1,SEASON,ISTEM,1,IOUT,LINKS,1)
+      CALL BCOPY(FSEA,ISTEM,1,1,1,SEASON,ISTEM,1,LINKS,1)
       IF(ICNT1 .GT. 1) GO TO 1000                                       
       ALPHA = 1.D0                                                      
       BETA = 1.D0                                                       
@@ -923,65 +966,65 @@ cc      IF ((NFL.EQ.2) .OR. (NFL.EQ.4)) CLOSE(6)
 cc      WRITE(6,693) IVAR
 cc      GO TO 999
 C
-  690 FORMAT(1H ,' !!! Output_Data_File OPEN ERROR ',I8/1H ,100A)
-  691 FORMAT(1H ,' !!! Input_Data_File OPEN ERROR ',I8/1H ,100A)
-  692 FORMAT(1H ,' !!! Intermediate_Data_File OPEN ERROR ',I8/1H ,100A)
-  693 FORMAT(1H ,' !!! baysea.out  OPEN ERROR ',I8)
+cxx  690 FORMAT(1H ,' !!! Output_Data_File OPEN ERROR ',I8/1H ,100A)
+cxx  691 FORMAT(1H ,' !!! Input_Data_File OPEN ERROR ',I8/1H ,100A)
+cxx  692 FORMAT(1H ,' !!! Intermediate_Data_File OPEN ERROR ',I8/1H ,100A)
+cxx  693 FORMAT(1H ,' !!! baysea.out  OPEN ERROR ',I8)
 C
 cc  990 CONTINUE
 cc      IF ((NFL.EQ.2) .OR. (NFL.EQ.4)) CLOSE(6)
 cc      IF (PUNCH.EQ.1) CLOSE(7)
 cc  999 CONTINUE
       RETURN
-    3 FORMAT( 1H ,'*** ABIC(',D20.10,'  ) =  ',D20.10 )                 
-  600 FORMAT(1H ,'AVABIC =',F10.2)                                      
-  602 FORMAT(1H ,12D11.3)                                               
-  614 FORMAT( 1H ,'ORIGINAL DATA',/,1H , 20A4 )                         
-  615 FORMAT(1H ,'SMOOTHED=TREND+SEASONAL+TRADING.DAY.COMP')            
-  630 FORMAT(1H ,'***  LAST ',I3,' VALUES ARE FOCASTED  ***')           
-  616 FORMAT( 1H ,'TREND')                                              
-  617 FORMAT( 1H ,'SEASONAL')                                           
-  618 FORMAT(1H ,'IRREGULAR=ORIGINAL DATA-TREND-SEASONAL-TRADING.',     
-     *'DAY.COMP')                                                       
-  619 FORMAT(1H ,'ADJUSTED=ORIGINAL DATA-SEASONAL-TRADING.DAY.COMP-OCF')
-  622 FORMAT( 1H ,'IRREGULAR ( SCALED BY THE STANDARD DEVIATION )')     
-  610 FORMAT(1H ,                                                       
-     * 'LOGT  =',I10,/,                                                 
-     *' MT    =',I10,/,                                                 
-     *' RLIM  =',D10.3,/,                                               
-     *' PERIOD=',I10,/,                                                 
-     *' SPAN  =',I10,/,                                                 
-     *' SHIFT =',I10,/,                                                 
-     *' FOCAST=',I10,/,                                                 
-     *' ORDER =',I10,/,                                                 
-     *' SORDER=',I10,/,                                                 
-     *' RIGID =',D10.3,/,                                               
-     *' YEAR  =',I10,/,                                                 
-     *' MONTH =',I10,/,                                                 
-     *' WTRD  =',D10.3,/,                                               
-     *' IOUTD =',I10,/,                                                 
-     *' SPEC  =',I10,/,                                                 
-     *' PUNCH =',I10,/,                                                 
-     *' ZERSUM=',D10.3,/,                                               
-     *' DELTA =',D10.3)                                                 
-  611 FORMAT( 1H  )                                                     
-  612 FORMAT(1H ,'D3    =',10F10.6)                                     
-  640 FORMAT(1H ,'TRADING-DAY COMPONENT')                               
-  641 FORMAT(1H ,'OUTLIER CORRECTION FACTOR')                           
-  702 FORMAT(6D12.5)                                                    
-  700 FORMAT('(6D12.5)')                                                
-  714 FORMAT(20A4)                                                      
-  715 FORMAT('SMOOTHED=TREND+SEASONAL+TRADING.DAY.COMP')                
-  716 FORMAT('TREND')                                                   
-  717 FORMAT('SEASONAL')                                                
-  718 FORMAT('IRREGULAR')                                               
-  719 FORMAT('ADJUSTED=DATA-SEASONAL-TRADING.DAY.COMP-OCF')             
-  720 FORMAT(I5)                                                        
-  721 FORMAT('OUTLIER CORRECTION FACTOR')                               
-  730 FORMAT('TRADING DAY COMPONENT')                                   
-  703 FORMAT('DADJ')                                                    
-  777 FORMAT('MISSING OBSERVATION INTERPOLATED DATA')                   
-  776 FORMAT(1H ,'MISSING OBSERVATION INTERPOLATED DATA')               
+cxx    3 FORMAT( 1H ,'*** ABIC(',D20.10,'  ) =  ',D20.10 )                 
+cxx  600 FORMAT(1H ,'AVABIC =',F10.2)                                      
+cxx  602 FORMAT(1H ,12D11.3)                                               
+cxx  614 FORMAT( 1H ,'ORIGINAL DATA',/,1H , 20A4 )                         
+cxx  615 FORMAT(1H ,'SMOOTHED=TREND+SEASONAL+TRADING.DAY.COMP')            
+cxx  630 FORMAT(1H ,'***  LAST ',I3,' VALUES ARE FOCASTED  ***')           
+cxx  616 FORMAT( 1H ,'TREND')                                              
+cxx  617 FORMAT( 1H ,'SEASONAL')                                           
+cxx  618 FORMAT(1H ,'IRREGULAR=ORIGINAL DATA-TREND-SEASONAL-TRADING.',     
+cxx     *'DAY.COMP')                                                       
+cxx  619 FORMAT(1H ,'ADJUSTED=ORIGINAL DATA-SEASONAL-TRADING.DAY.COMP-OCF')
+cxx  622 FORMAT( 1H ,'IRREGULAR ( SCALED BY THE STANDARD DEVIATION )')     
+cxx  610 FORMAT(1H ,                                                       
+cxx     * 'LOGT  =',I10,/,                                                 
+cxx     *' MT    =',I10,/,                                                 
+cxx     *' RLIM  =',D10.3,/,                                               
+cxx     *' PERIOD=',I10,/,                                                 
+cxx     *' SPAN  =',I10,/,                                                 
+cxx     *' SHIFT =',I10,/,                                                 
+cxx     *' FOCAST=',I10,/,                                                 
+cxx     *' ORDER =',I10,/,                                                 
+cxx     *' SORDER=',I10,/,                                                 
+cxx     *' RIGID =',D10.3,/,                                               
+cxx     *' YEAR  =',I10,/,                                                 
+cxx     *' MONTH =',I10,/,                                                 
+cxx     *' WTRD  =',D10.3,/,                                               
+cxx     *' IOUTD =',I10,/,                                                 
+cxx     *' SPEC  =',I10,/,                                                 
+cxx     *' PUNCH =',I10,/,                                                 
+cxx     *' ZERSUM=',D10.3,/,                                               
+cxx     *' DELTA =',D10.3)                                                 
+cxx  611 FORMAT( 1H  )                                                     
+cxx  612 FORMAT(1H ,'D3    =',10F10.6)                                     
+cxx  640 FORMAT(1H ,'TRADING-DAY COMPONENT')                               
+cxx  641 FORMAT(1H ,'OUTLIER CORRECTION FACTOR')                           
+cxx  702 FORMAT(6D12.5)                                                    
+cxx  700 FORMAT('(6D12.5)')                                                
+cxx  714 FORMAT(20A4)                                                      
+cxx  715 FORMAT('SMOOTHED=TREND+SEASONAL+TRADING.DAY.COMP')                
+cxx  716 FORMAT('TREND')                                                   
+cxx  717 FORMAT('SEASONAL')                                                
+cxx  718 FORMAT('IRREGULAR')                                               
+cxx  719 FORMAT('ADJUSTED=DATA-SEASONAL-TRADING.DAY.COMP-OCF')             
+cxx  720 FORMAT(I5)                                                        
+cxx  721 FORMAT('OUTLIER CORRECTION FACTOR')                               
+cxx  730 FORMAT('TRADING DAY COMPONENT')                                   
+cxx  703 FORMAT('DADJ')                                                    
+cxx  777 FORMAT('MISSING OBSERVATION INTERPOLATED DATA')                   
+cxx  776 FORMAT(1H ,'MISSING OBSERVATION INTERPOLATED DATA')               
       END                                                               
       SUBROUTINE  ADD(X,MX,Y,MY,Z,MZ)                                   
 C     THIS SUBROUTINE COMPUTES                                          
@@ -991,14 +1034,18 @@ C       X:     MX-VECTOR
 C       Y:     MY-VECTOR                                                
 C       Z:     MZ-VECTOR                                                
 C                                                                       
-      IMPLICIT REAL*8 ( A-H,O-Z )                                       
+cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cc      DIMENSION X(1), Y(1), Z(1)                                        
-      DIMENSION X(MX), Y(MY), Z(MZ)                                        
+cxx      DIMENSION X(MX), Y(MY), Z(MZ)                                        
+      INTEGER :: MX, MY, MZ
+      REAL(8) :: X(MX), Y(MY), Z(MZ), TEM
       DO 100 I=1,MX                                                     
-      TEM = 0.D0                                                        
+      TEM = 0.D0                              
       IF( I .LE. MY )  TEM = Y(I)                                       
       IF( I .LE. MZ )  TEM = TEM + Z(I)                                 
-  100 X(I) = TEM                                                        
+cxx  100 X(I) = TEM
+      X(I) = TEM
+  100 CONTINUE                                                        
       RETURN                                                            
       END                                                               
       SUBROUTINE CLEAR(X,M,N,MJ,I0,J0)                                  
@@ -1010,18 +1057,25 @@ C       MJ:    ABSOLUTE DIMENSION OF X
 C       I0:    ABSOLUTE POSITION OF THE FIRST ROW OF X                  
 C       J0:    ABSOLUTE POSITION OF THE FIRST COLUMN OF X               
 C                                                                       
-      IMPLICIT REAL*8 (A-H,O-Z )                                        
+cxx      IMPLICIT REAL*8 (A-H,O-Z )                                        
 cx      DIMENSION X(MJ,1)                                                 
-      DIMENSION X(MJ, I0+N-1)                                                 
+cxx      DIMENSION X(MJ, I0+N-1)                                                 
+      INTEGER :: N, MJ, I0, J0
+      REAL(8) :: X(MJ, I0+N-1)
       I0M1 = I0 - 1                                                     
       J0M1 = J0 - 1                                                     
-      DO 10 J=1,N                                                       
+cxx      DO 10 J=1,N
+      DO 20 J=1,N                                                       
       DO 10 I=1,M                                                       
-   10 X(I0M1+I,J0M1+J) = 0.D0                                           
+cxx   10 X(I0M1+I,J0M1+J) = 0.D0
+      X(I0M1+I,J0M1+J) = 0.D0
+   10 CONTINUE
+   20 CONTINUE
       RETURN                                                            
       END                                                               
 cc      SUBROUTINE COPY(X,MX,NX,MMX,IX,JX,Y,MY,NY,MMY,IY,JY)              
-      SUBROUTINE BCOPY(X,MX,NX,MMX,IX,JX,Y,MY,NY,MMY,IY,JY)
+cxx      SUBROUTINE BCOPY(X,MX,NX,MMX,IX,JX,Y,MY,NY,MMY,IY,JY)
+      SUBROUTINE BCOPY(X,MX,NX,IX,JX,Y,MY,NY,IY,JY)
 C     THIS SUBROUTINE COPIES Y INTO X.                                  
 C     INPUTS:                                                           
 C       X:     MX*NX MATRIX                                             
@@ -1033,21 +1087,25 @@ C       MMY:   ABSOLUTE DIMENSION OF Y
 C       IY:    ABSOLUTE POSITION OF THE FIRST ROW OF Y                  
 C       JY:    ABSOLUTE POSITION OF THE FIRST COLUMN OF Y               
 C                                                                       
-      IMPLICIT  REAL*8 ( A-H,O-Z )                                      
+cxx      IMPLICIT  REAL*8 ( A-H,O-Z )                                      
 cx      DIMENSION X(MMX,1), Y(MMY,1)
 cxx      DIMENSION X(MMX,JX+NX-1), Y(MMY,JY+NY-1)
-      DIMENSION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1)
+cxx      DIMENSION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1)
+      INTEGER :: MX, NX, IX, JX, MY, NY, IY, JY
+      REAL(8) :: X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1), TEM
       IXM1 = IX-1                                                       
       JXM1 = JX - 1                                                     
       IYM1 = IY - 1                                                     
       JYM1 = JY - 1                                                   
       DO 100 J=1,NX                                                     
-      DO 50 I=1,MX                                                      
+cxx      DO 50 I=1,MX
+      DO 60 I=1,MX                                                      
       TEM = 0.D0                                                        
       IF( I .GT. MY ) GO TO 50                                          
       IF( J .GT. NY ) GO TO 50                                          
       TEM = Y(IYM1+I,JYM1+J)                                            
-   50 X(IXM1+I,JXM1+J) = TEM                                            
+   50 X(IXM1+I,JXM1+J) = TEM
+   60 CONTINUE                            
   100 CONTINUE                                                          
       RETURN                                                            
       END                                                               
@@ -1061,16 +1119,22 @@ C       EST0=TREND0 + SEAS
 C       ADJ0=Y - SEAS0                                                  
 C       IRREG0=Y - EST0                                                 
 C                                                                       
-      IMPLICIT REAL*8 (A-H,O-Z )                                        
-      INTEGER*4 YEAR                                                    
-      REAL*8 IRREG0                                                     
+cxx      IMPLICIT REAL*8 (A-H,O-Z )                                        
+cxx      INTEGER*4 YEAR                                                    
+cxx      REAL*8 IRREG0                                                     
 cc      DIMENSION A(1),Y(1),SEAS0(1),TREND0(1),EST0(1),ADJ0(1),IRREG0(1)  
 cc     * ,W(1),WEEK(7,1),TDC0(1), PSDT(500),PSDS(500),ERR(1000)           
 cx      DIMENSION A(2*(NN+NF)+NDAY+6),Y(1),SEAS0(NN+NF),TREND0(NN+NF),
 cx     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(8),WEEK(7,1),
-      DIMENSION A(2*(NN+NF)+NDAY+6),Y(NN),SEAS0(NN+NF),TREND0(NN+NF),
-     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(NDAY+6),WEEK(7,NN+NF),
-     * TDC0(NN+NF), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
+cxx      DIMENSION A(2*(NN+NF)+NDAY+6),Y(NN),SEAS0(NN+NF),TREND0(NN+NF),
+cxx     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(NDAY+6),WEEK(7,NN+NF),
+cxx     * TDC0(NN+NF), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
+      INTEGER :: NN, NF, IP, YEAR, NDAY
+      REAL(8) :: SEAS0(NN+NF), TREND0(NN+NF), EST0(NN+NF),
+     1             ADJ0(NN+NF), IRREG0(NN+NF), TDC0(NN+NF), 
+     2             W(NDAY+6), A(2*(NN+NF)+NDAY+6), Y(NN), 
+     3             WEEK(7,NN+NF), ERR(2*(NN+NF)), PSDS(NN+NF),
+     4             PSDT(NN+NF), SQE, SD2
 cc      COMMON /IDATA/ IP,IDUMMY(2),YEAR,NDAY                             
 C                                                                       
       N=NN+NF                                                           
@@ -1094,7 +1158,8 @@ C
 cc      CALL COPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
 cx      CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,N7)     
 cx      CALL BCOPY(W,N7,1,8,1,1,A,N7,1,N,NTEM,1)
-      CALL BCOPY(W,N7,1,N7,1,1,A,N7,1,N,NTEM,1)
+cxx      CALL BCOPY(W,N7,1,N7,1,1,A,N7,1,N,NTEM,1)
+      CALL BCOPY(W,N7,1,1,1,A,N7,1,NTEM,1)
       CALL PRDCT(TDC0,1,N,1,W,1,N7,1,WEEK,N7,N,7)                      
    20 CONTINUE                                                          
       CALL ADD(EST0,N,TREND0,N,SEAS0,N)                                 
@@ -1128,17 +1193,21 @@ C                             MATRIX.
 C       OUTPUT:                                                         
 C          X:     IN UPPER TRIANGULAR FORM                              
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ1,1) , D(1000)                                     
 cx      DIMENSION  X(MJ1,1) , D(N)                                     
-      DIMENSION  X(MJ1,K) , D(N)
+cxx      DIMENSION  X(MJ1,K) , D(N)
+      INTEGER :: N, K, MJ1, ICNT
+      REAL(8) :: X(MJ1,K)
+      REAL(8) :: D(N), TOL, DIIO, H, ABSLD, F, G, S
 C                                                                       
       TOL=1.0D-38                                                       
       DIIO=0.0D00
 C                                                                       
       MNK=K                                                             
       IF(N.LE.K) MNK=N-1                                                
-      DO 100 II=1,MNK                                                   
+cxx      DO 100 II=1,MNK                                                   
+      DO 101 II=1,MNK 
          H = 0.0D00                                                     
       IIOTEM = II                                                       
       IITEM = II                                                        
@@ -1152,7 +1221,9 @@ C
       D(I) = X(I,IITEM)                                                 
       ABSLD=DABS(D(I))                                                  
       IF(ABSLD.LE.TOL) D(I)=0.0D-00                                     
-   10       H = H + D(I)*D(I)                                           
+cxx   10       H = H + D(I)*D(I)                                           
+            H = H + D(I)*D(I)
+   10       CONTINUE
          IF( H .GT. TOL )  GO TO 20                                     
          G = 0.0D00                                                     
          GO TO 100                                                      
@@ -1174,20 +1245,27 @@ C
       II10 = II1                                                        
       IF( ICNT .GT. 0 )   II10 = IIOTEM                                 
       DO 30 I=II10,N                                                    
-   30 X(I,IITEM) = 0.D0                                                 
+cxx   30 X(I,IITEM) = 0.D0                                                 
+      X(I,IITEM) = 0.D0
+   30 CONTINUE
          IF( II .EQ. K )  GO TO 100                                     
          DO 60  J=II1,KTEM                                              
             S = 0.0D00                                                  
          JTEM = K+1-J                                                   
       IF(ICNT .GT. 0 ) S = DIIO*X(II,JTEM)                              
       DO 40  I=IIOTEM,N                                                 
-   40 S = S + D(I)*X(I,J)                                               
+cxx   40 S = S + D(I)*X(I,J)                                               
+      S = S + D(I)*X(I,J)
+   40 CONTINUE
             S = S/H                                                     
       IF(ICNT .GT. 0) X(II,JTEM) = X(II,JTEM) - DIIO*S                  
       DO 50  I=IIOTEM,N                                                 
-   50 X(I,J) = X(I,J) - D(I)*S                                          
+cxx   50 X(I,J) = X(I,J) - D(I)*S
+      X(I,J) = X(I,J) - D(I)*S
+   50 CONTINUE
    60    CONTINUE                                                       
-  100 X(II,II) = G                                                      
+  100 X(II,II) = G
+  101 CONTINUE                                                      
 C                                                                       
       RETURN                                                            
 C                                                                       
@@ -1203,19 +1281,25 @@ C       MMY:   ABSOLUTE DIMENSION OF Y
 C       Z:     MZ*NZ MATRIX                                             
 C       MMZ:   ABSOLUTE DIMENSION OF Z                                  
 C                                                                       
-      IMPLICIT REAL*8 ( A-H,O-Z )                                       
+cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cx      DIMENSION X(MMX,1), Y(MMY,1), Z(MMZ,1)                            
-      DIMENSION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ)                            
+cxx      DIMENSION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ)
+      INTEGER :: MX, NX, MMX, MY, NY, MMY, MZ, NZ, MMZ
+      REAL(8) :: X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ), SUM
       KK = NY                                                           
       IF( KK .GT. MZ ) KK = MZ                                          
       DO 100 J=1,NX                                                     
-      DO 50 I=1,MX                                                      
+cxx      DO 50 I=1,MX
+      DO 51 I=1,MX
       SUM = 0.D0                                                        
       IF(I .GT. MY) GO TO 50                                            
       IF( J .GT. NZ ) GO TO 50                                          
       DO 20 K=1,KK                                                      
-   20 SUM = SUM + Y(I,K)*Z(K,J)                                         
-   50 X(I,J) = SUM                                                      
+cxx   20 SUM = SUM + Y(I,K)*Z(K,J)
+      SUM = SUM + Y(I,K)*Z(K,J)                             
+   20 CONTINUE
+   50 X(I,J) = SUM
+   51 CONTINUE                                                      
   100 CONTINUE                                                          
       RETURN                                                            
       END                                                               
@@ -1227,14 +1311,18 @@ C       X:     MX-VECTOR
 C       Y:     MY-VECTOR                                                
 C       Z:     MZ-VECTOR                                                
 C                                                                       
-      IMPLICIT REAL*8 ( A-H,O-Z )                                       
+cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cc      DIMENSION X(1), Y(1), Z(1)                                        
-      DIMENSION X(MX), Y(MY), Z(MZ)
+cxx      DIMENSION X(MX), Y(MY), Z(MZ)
+      INTEGER :: MX, MY, MZ
+      REAL(8) :: X(MX), Y(MY), Z(MZ), TEM
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       
       IF( I .LE. MZ )  TEM = TEM - Z(I)                                 
-  100 X(I) = TEM                                                        
+cxx  100 X(I) = TEM
+      X(I) = TEM
+  100 CONTINUE
       RETURN                                                            
       END                                                               
       SUBROUTINE SUBSEA(ABICM,SEASON,TREND,EST,ADJ,IRREG,TDC,           
@@ -1246,26 +1334,38 @@ cc     *  IARS,ARFS,IART,ARFT,IARN,ARFN,PSDT,PSDS)
 C     SEASONAL DECOMPOSITION PROCEDURE                                  
 C     FOR THE DEFINITIONS OF THE VARIABLES APPEARING IN THE ARGUMENTS,  
 C     SEE THE COMMENTS IN THE MAIN ROUTINE                              
-      IMPLICIT  REAL*8  ( A-H,O-Z )                                    
+cxx      IMPLICIT  REAL*8  ( A-H,O-Z )                                    
 cc      REAL*8  IRREG0, IRREG                                             
-      REAL*8  IRREG                                             
-      INTEGER*4 PERIOD,YEAR                                             
+cxx      REAL*8  IRREG                                             
+cxx      INTEGER*4 PERIOD,YEAR                                             
 cc      DIMENSION   FSEA(1), FTRN(1), DC(IDC,1), YS(1), H2(N2,1)
 cc     *   ,ERR(1000),PSDT(500),PSDS(500)                                 
 cc     *  ,SEASON(1),TREND(1),EST(1),ADJ(1),IRREG(1),A(1000)
 cc     * ,WEEK(7,1),TDC(1),WEEK0(8),WEEK1(8),H(NH,1),F(1)                 
 cc      DIMENSION  DTRN(500),DSEAS(500), ARFS(1), ARFT(1), ARFN(1)        
-      DIMENSION  SEASON(NPF),TREND(NPF),EST(NPF),ADJ(NPF),
-     *   IRREG(NPF),TDC(NPF),
+cxx      DIMENSION  SEASON(NPF),TREND(NPF),EST(NPF),ADJ(NPF),
+cxx     *   IRREG(NPF),TDC(NPF),
 cx     *   FSEA(LFSEA),FTRN(IORD+3),YS(N),WEEK(7,1),F(NPF+1),ARFS(1),
 cx     *   ARFT(3),ARFN(1),PSDT(NPF),PSDS(NPF)
-     *   FSEA(LFSEA),FTRN(IORD+3),YS(N),WEEK(7,1),F(NPF+1),ARFS(3),
-     *   ARFT(3),ARFN(3),PSDT(NPF),PSDS(NPF)
+cxx     *   FSEA(LFSEA),FTRN(IORD+3),YS(N),WEEK(7,1),F(NPF+1),ARFS(3),
+cxx     *   ARFT(3),ARFN(3),PSDT(NPF),PSDS(NPF)
 cx      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(8),
 cx     *   WEEK1(8),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
-      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(7),
-     *   WEEK1(7),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
-     *  DSEAS(NPF)
+cxx      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(7),
+cxx     *   WEEK1(7),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
+cxx     *  DSEAS(NPF)
+      INTEGER :: LFSEA, N, NF, IDC, NH, N2, ITRN, IARS, IART, IARN, NPF,
+     1           PERIOD, IORD, ISOD, YEAR, NDAY, LOGT
+      REAL(8) :: ABICM, SEASON(NPF), TREND(NPF), EST(NPF), ADJ(NPF),
+     1           IRREG(NPF), TDC(NPF), FSEA(LFSEA), FTRN(IORD+3),
+     2           YS(N), RLIM, WEEK(7,1),  F(NPF+1), ARFS(3), ARFT(3),
+     3           ARFN(3), PSDT(NPF), PSDS(NPF), ALPHA, BETA, GAMMA,
+     4           ZER, SMTH, SMTH2, DD, WTRD, DELTA
+      REAL(8) :: DC(IDC,2*NPF+N2), H(NH,NPF),H2(N2,2*NPF+N2), WEEK0(7),
+     1           WEEK1(7), ERR(2*(N+NF)+NDAY+7), A(2*(N+NF)+NDAY+7),
+     2           DTRN(NPF), DSEAS(NPF), DMAX0, DMIN0, RO, DMIN,
+     3           AN, ANN, ALNDTD, ALNDT0, WT, TEM, ALNDN, ALSQE,
+     4           SQE, ABIC, AJACOB, SSTR, SSEA, SSIR, SSAS, SAS
 cc      COMMON /IDATA/ PERIOD,IORD,ISOD,YEAR,NDAY,IFIX                    
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA      
 cc      COMMON /ILOGT/ LOGT,ISHRNK                                        
@@ -1303,11 +1403,14 @@ cc      CALL SETDC(H,NH,F,M1,FSEA,N+NF,SMTH2,ZER,IARS,ARFS,IARN,ARFN)
 cc     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR)
       CALL SETDC(H,NH,F,M1,FSEA,N+NF,SMTH2,ZER,IARS,ARFS,IARN,ARFN,
 cx     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR)
-     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR,NPF)
+cxx     *        ALPHA,BETA,GAMMA,WTRD,DELTA,PERIOD,ISOD,YEAR,NPF)
+     *        BETA,GAMMA,PERIOD,ISOD,NPF)
       ALNDT0=0.D0                                                       
       DO 2233 I=1,M1                                                    
       TEM=DABS(H(1,I))                                                  
- 2233 ALNDT0=ALNDT0+DLOG(TEM)                                           
+cxx 2233 ALNDT0=ALNDT0+DLOG(TEM)                                           
+      ALNDT0=ALNDT0+DLOG(TEM)
+ 2233 CONTINUE
  8888 CONTINUE                                                          
 C                                                                       
 C     CALCULATION OF LOG(DET(DC'DC))*0.5                                
@@ -1320,12 +1423,13 @@ C     --------------------
 C                                                                       
 C     CONSTRUCTION AND HOUSEHOLDER TRANSFORMATION OF MATRIX DCX         
 C                                                                       
- 4567 CONTINUE                                                          
+cxx 4567 CONTINUE                                                          
 cc      CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT                
 cc     *             ,YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT)            
       CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT,
      *   YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT,ALPHA,
-     *  BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
+cxx     *  BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
+     *  WTRD,DELTA,PERIOD,IORD,YEAR,NPF)
 C                                                                       
 C     LEAST SQUARES COMPUTATION                                         
 C                                                                       
@@ -1344,12 +1448,16 @@ C
       ALNDN=0.D0                                                        
       DO 3344 I=1,M1                                                    
       TEM=DABS(DC(1,I))                                                
- 3344 ALNDN=ALNDN + DLOG(TEM)                                           
+cxx 3344 ALNDN=ALNDN + DLOG(TEM)                                           
+      ALNDN=ALNDN + DLOG(TEM)
+ 3344 CONTINUE
       IF(N2 .EQ. 1) GO TO 3346                                          
       N2M1=N2-1                                                         
       DO 3345 I=1,N2M1                                                  
       TEM=DABS(H2(I,M1+I))                                              
- 3345 ALNDN=ALNDN+DLOG(TEM)                                             
+cxx 3345 ALNDN=ALNDN+DLOG(TEM)                                             
+      ALNDN=ALNDN+DLOG(TEM)
+ 3345 CONTINUE
  3346 CONTINUE                                                          
       ALSQE=AN*DLOG(SQE/AN)                                             
       ABIC=ALSQE + 2.D0*(ALNDN-ALNDTD)                                  
@@ -1367,7 +1475,7 @@ C
       DMIN = DD                                                         
       DD=RO*DD                                                          
       IF(IIII .EQ. 2) MODE = 1                                          
- 5678 CONTINUE                                                          
+cxx 5678 CONTINUE                                                          
       GO TO 2345                                                        
  9000 IF(MODE .EQ. 1) GO TO 6000                                        
  9001 MODE = 1                                                          
@@ -1392,7 +1500,8 @@ cc      CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT
 cc     *             ,YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT)            
       CALL SETX(DC,IDC,H2,N2,M1,ICOUNT,FTRN,N+NF,H,NH,WT,
      *    YS,N,RLIM,WEEK,N7,ALNDTD,F,DD,IART,ARFT,ALPHA,
-     *   BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
+cxx     *   BETA,GAMMA,WTRD,DELTA,PERIOD,IORD,ISOD,YEAR,NPF)
+     *   WTRD,DELTA,PERIOD,IORD,YEAR,NPF)
       NDTEM=ND + 1                                                      
 cc      CALL SOLVE(DC,IDC,H2,N2,A,M1,SQE,NDTEM,ERR)                       
       CALL BSOLVE(DC,IDC,H2,N2,A,M1,SQE,NDTEM,ERR)
@@ -1403,7 +1512,9 @@ cc     *            A,YS,N,NF,WEEK,ERR,PSDS,PSDT,SQE)
       IF(LOGT .EQ. 0) GO TO 6200                                        
       AJACOB=0.D0                                                       
       DO 6100 I=1,N                                                     
- 6100 IF(YS(I) .LT. RLIM .OR. RLIM .LE. 0.D0) AJACOB=AJACOB+YS(I)       
+cxx 6100 IF(YS(I) .LT. RLIM .OR. RLIM .LE. 0.D0) AJACOB=AJACOB+YS(I)       
+      IF(YS(I) .LT. RLIM .OR. RLIM .LE. 0.D0) AJACOB=AJACOB+YS(I)
+ 6100 CONTINUE
       AJACOB=AJACOB+AJACOB                                              
       ABICM=ABICM+AJACOB                                                
  6200 CONTINUE                                                          
@@ -1411,22 +1522,32 @@ cc     *            A,YS,N,NF,WEEK,ERR,PSDS,PSDT,SQE)
       WEEK1(I) = WEEK0(I)                                               
       IF(LOGT .NE. 0 .AND. YEAR .NE. 0) WEEK1(I) = DEXP(WEEK1(I))       
  6300 CONTINUE                                                          
-    3 FORMAT( 1H ,'    ABIC(',D20.10,'  ) =  ',F10.2,                   
+cxx    3 FORMAT( 1H ,'    ABIC(',D20.10,'  ) =  ',F10.2,                   
 cc     *3X,'ALSQE=',D13.5,3X,'ALNDN=',D13.5,3X,'ALNDTD='D13.5)            
-     *3X,'ALSQE=',D13.5,3X,'ALNDN=',D13.5,3X,'ALNDTD=',D13.5)           
+cxx     *3X,'ALSQE=',D13.5,3X,'ALNDN=',D13.5,3X,'ALNDTD=',D13.5)           
       DO 3320 I=1,N                                                     
       DTRN(I)=TREND(I)                                                  
- 3320 DSEAS(I)=SEASON(I)                                                
+cxx 3320 DSEAS(I)=SEASON(I)
+      DSEAS(I)=SEASON(I)
+ 3320 CONTINUE
       IF(IORD .EQ. 0) GO TO 3323                                        
-      DO 3321 J=1,IORD                                                  
+cxx      DO 3321 J=1,IORD
+      DO 3322 J=1,IORD
       NMJ=N-J                                                           
       DO 3321 I=1,NMJ                                                   
- 3321 DTRN(I)=DTRN(I+1)-DTRN(I)                                         
+cxx 3321 DTRN(I)=DTRN(I+1)-DTRN(I)
+      DTRN(I)=DTRN(I+1)-DTRN(I)
+ 3321 CONTINUE
+ 3322 CONTINUE
  3323 IF(ISOD .EQ. 0) GO TO 3325                                        
-      DO 3324 J=1,ISOD                                                  
+cxx      DO 3324 J=1,ISOD                                                  
+      DO 3327 J=1,ISOD
       NMJ=N-J*PERIOD                                                    
       DO 3324 I=1,NMJ                                                   
- 3324 DSEAS(I)=DSEAS(I+PERIOD)-DSEAS(I)                                 
+cxx 3324 DSEAS(I)=DSEAS(I+PERIOD)-DSEAS(I)
+      DSEAS(I)=DSEAS(I+PERIOD)-DSEAS(I)
+ 3324 CONTINUE
+ 3327 CONTINUE
  3325 SSTR=0.D0                                                         
       SSEA=0.D0                                                         
       SSIR=0.D0                                                         
@@ -1434,39 +1555,46 @@ cc     *3X,'ALSQE=',D13.5,3X,'ALNDN=',D13.5,3X,'ALNDTD='D13.5)
       SAS=0.D0                                                          
       IPM1=PERIOD-1                                                     
       DO 3326 I=1,IPM1                                                  
- 3326 SAS=SAS+SEASON(I)                                                 
+cxx 3326 SAS=SAS+SEASON(I)
+      SAS=SAS+SEASON(I)
+ 3326 CONTINUE
       DO 3400 I=1,N                                                     
       IF(RLIM .GT. 0.D0 .AND. IRREG(I) .GT. RLIM) GO TO 3400            
       SSIR=SSIR+IRREG(I)**2                                             
  3400 CONTINUE                                                          
       NMJ=N-IORD                                                        
       DO 3410 I=1,NMJ                                                   
- 3410 SSTR=SSTR+DTRN(I)**2                                              
+cxx 3410 SSTR=SSTR+DTRN(I)**2                                              
+      SSTR=SSTR+DTRN(I)**2
+ 3410 CONTINUE
       NMJ=N-ISOD*PERIOD                                                 
       DO 3420 I=1,NMJ                                                   
       SAS=SAS+SEASON(I+IPM1)                                            
       SSAS=SSAS+SAS**2                                                  
       SAS=SAS-SEASON(I)                                                 
- 3420 SSEA=SSEA+DSEAS(I)**2                                             
+cxx 3420 SSEA=SSEA+DSEAS(I)**2                                             
+      SSEA=SSEA+DSEAS(I)**2
+ 3420 CONTINUE
       APRD=PERIOD                                                       
       SSAS=SSAS/APRD                                                    
 cc      WRITE(6,3450) SSIR,SSTR,SSEA,SSAS                                 
- 3450 FORMAT(1H ,'SS IRREGULAR =',D13.5,5X,'SS TREND =',D13.5,5X,'SS    
-     * SEASONAL =',D13.5,5X,'SS AVSEAS =',D13.5,/,1H )                  
+cxx 3450 FORMAT(1H ,'SS IRREGULAR =',D13.5,5X,'SS TREND =',D13.5,5X,'SS    
+cxx     * SEASONAL =',D13.5,5X,'SS AVSEAS =',D13.5,/,1H )                  
 cc      IF(YEAR .NE. 0) WRITE(6,602)  (WEEK1(I),I=1,7)                    
 cc      WRITE(6,606)  ABICM, DMIN                                         
-  606 FORMAT(1H ,'MINIMUM ABIC =',F10.2,'  ATTAINED AT D =',D20.10 )    
+cxx  606 FORMAT(1H ,'MINIMUM ABIC =',F10.2,'  ATTAINED AT D =',D20.10 )    
 cc      IF(IFLAG .EQ. 1) WRITE(6,600) DMAX0                               
 cc      IF(IFLAG .EQ. -1) WRITE(6,601) DMIN0                              
- 9876 RETURN                                                            
-  600 FORMAT(1H ,'**** D IS HITTING THE UPPER BOUND ',D13.5,' ----- TRY'
-     * ,  ' LOWER VALUES OF ORDER AND/OR SORDER')                       
-  601 FORMAT(1H ,'**** D IS HITTING THE LOWER BOUND ',D13.5,' ----- TRY'
-     * ,   ' HIGHER VALUES OF ORDER AND/OR SORDER')                     
-  602 FORMAT(1H ,4X,'MON',9X,'TUE',9X,'WED',9X,'THU',9X,                
-     *  'FRI',9X,'SAT',9X,'SUN',/,1H ,7D12.4)                           
-  603 FORMAT(1H ,'SHRINKAGE FACTORS ARE  ',D12.5,' FOR TREND, ',        
-     *  D12.5,' FOR SEASONAL.')                                         
+cxx 9876 RETURN                                                            
+      RETURN                                                            
+cxx  600 FORMAT(1H ,'**** D IS HITTING THE UPPER BOUND ',D13.5,' ----- TRY'
+cxx     * ,  ' LOWER VALUES OF ORDER AND/OR SORDER')                       
+cxx  601 FORMAT(1H ,'**** D IS HITTING THE LOWER BOUND ',D13.5,' ----- TRY'
+cxx     * ,   ' HIGHER VALUES OF ORDER AND/OR SORDER')                     
+cxx  602 FORMAT(1H ,4X,'MON',9X,'TUE',9X,'WED',9X,'THU',9X,                
+cxx     *  'FRI',9X,'SAT',9X,'SUN',/,1H ,7D12.4)                           
+cxx  603 FORMAT(1H ,'SHRINKAGE FACTORS ARE  ',D12.5,' FOR TREND, ',        
+cxx     *  D12.5,' FOR SEASONAL.')                                         
       END                                                               
       SUBROUTINE CALEND(WEEK,YEAR0,MONTH0,N)                            
 C      THIS SUBROUTINE COMPUTES THE DAYS-OF-WEEK DISTRIBUTION OF        
@@ -1474,9 +1602,13 @@ C     N SUCCESSIVE MONTHS STARTING AT MONTH0 OF YEAR0
 C     NOTE:  THIS SUBROUTINE WORKS FOR YEARS                            
 C              AD.1901 - AD.2099                                        
 C                                                                       
-      IMPLICIT INTEGER*4 (A-Z)                                          
+cxx      IMPLICIT INTEGER*4 (A-Z)                                          
 cx      REAL*8 WEEK(7,1),W0(8)                                            
-      REAL*8 WEEK(7,N),W0(8)
+cxx      REAL*8 WEEK(7,N),W0(8)
+      INTEGER :: YEAR0, MONTH0, N
+      REAL(8) :: WEEK(7,N)
+      INTEGER :: DYEAR, YEAR, LEAP, Y, L, D, DAY, MONTH, DIFF, WDAY
+      REAL(8) :: W0(8)
 C                                                                       
       DYEAR=(MONTH0-1)/12                                               
       IF(MONTH0 .GE. 1) GO TO 20                                        
@@ -1493,26 +1625,48 @@ C  DAY-OF-WEEK OF THE FIRST DAY OF 'YEAR'
       D=Y+L+2                                                           
       DAY=MOD(D,7) + 1                                                  
 C  DAY-OF-WEEK OF THE FIRST DAY OF 'MONTH' OF 'YEAR'                    
-      GO TO (200,203,203,206,201,204,206,202,205,200,203,205), MONTH    
-  201 DAY=DAY+1                                                         
-      GO TO 200                                                         
-  202 DAY=DAY+2                                                         
-      GO TO 200                                                         
-  203 DAY=DAY+3                                                         
-      GO TO 200                                                         
-  204 DAY=DAY+4                                                         
-      GO TO 200                                                         
-  205 DAY=DAY+5                                                         
-      GO TO 200                                                         
-  206 DAY=DAY+6                                                         
+cxx      GO TO (200,203,203,206,201,204,206,202,205,200,203,205), MONTH    
+cxx  201 DAY=DAY+1                                                         
+cxx      GO TO 200                                                         
+cxx  202 DAY=DAY+2                                                         
+cxx      GO TO 200                                                         
+cxx  203 DAY=DAY+3                                                         
+cxx      GO TO 200                                                         
+cxx  204 DAY=DAY+4                                                         
+cxx      GO TO 200                                                         
+cxx  205 DAY=DAY+5                                                         
+cxx      GO TO 200                                                         
+cxx  206 DAY=DAY+6                                                         
+      IF (MONTH .EQ. 1 .OR. MONTH .EQ. 10) GO TO 200
+      IF (MONTH .EQ. 5) THEN
+         DAY=DAY+1                                                         
+      ELSE IF (MONTH .EQ. 8) THEN
+         DAY=DAY+2                                                         
+      ELSE IF (MONTH .EQ. 6) THEN
+         DAY=DAY+4                                                         
+      ELSE IF (MONTH .EQ. 9 .OR. MONTH .EQ. 12) THEN
+         DAY=DAY+5                                                         
+      ELSE IF (MONTH .EQ. 7 .OR. MONTH .EQ. 4) THEN
+         DAY=DAY+6                                                         
+      ELSE
+C       IF(MONTH .EQ. 2 .OR. MONTH .EQ. 3 .OR. MONTH .EQ. 11)
+         DAY=DAY+3                                                         
+      END IF
   200 IF(LEAP .EQ. 0 .AND. MONTH .GE. 3) DAY=DAY+1                      
       IF(DAY .GT. 7) DAY=DAY-7                                          
 C  ITERATION                                                            
       DO 100 I=1,N                                                      
-      DO 10 J=1,7                                                       
-   10 W0(J) = 4.D0                                                      
-      GO TO (331,328,331,330,331,330,331,331,330,331,330,331), MONTH    
-  331 DIFF=3                                                            
+cxx      DO 10 J=1,7                                                       
+cxx   10 W0(J) = 4.D0
+      W0(1:7) = 4.D0
+cxx      GO TO (331,328,331,330,331,330,331,331,330,331,330,331), MONTH    
+      IF (MONTH .EQ. 2) GO TO 328
+      IF (MONTH .EQ. 4 .OR. MONTH .EQ. 6 .OR.
+     1    MONTH .EQ. 9 .OR. MONTH .EQ. 11) GO TO 330
+C    IF (MONTH .EQ. 1 .OR. MONTH .EQ. 3 .OR. MONTH .EQ. 5 .OR. MONTH .EQ. 7
+C        .OR. MONTH .EQ. 8 .OR. MONTH .EQ. 10 .OR. MONTH .EQ. 12) GO TO 331
+cxx  331 DIFF=3                                                            
+      DIFF=3                                                            
       W0(8)=31.D0                                                       
       GO TO 300                                                         
   330 DIFF=2                                                            
@@ -1528,10 +1682,14 @@ C  ITERATION
       W0(WDAY) = 5.D0                                                   
       IF(J .EQ. DIFF) GO TO 50                                          
       WDAY=WDAY-1                                                       
-  400 IF(WDAY .EQ. 0) WDAY=7                                            
+cxx  400 IF(WDAY .EQ. 0) WDAY=7
+      IF(WDAY .EQ. 0) WDAY=7
+  400 CONTINUE
    50 CONTINUE                                                          
       DO 410 J=1,7                                                      
-  410 WEEK(J,I)=W0(J)-30.4375D0/7.D0                                    
+cxx  410 WEEK(J,I)=W0(J)-30.4375D0/7.D0
+      WEEK(J,I)=W0(J)-30.4375D0/7.D0
+  410 CONTINUE
       IF(I .EQ. N) GO TO 900                                            
       DAY = DAY + DIFF                                                  
       IF(DAY .GT. 7) DAY = DAY - 7                                      
@@ -1584,19 +1742,28 @@ C     OUTPUTS:
 C        (X(I),I=1,K): VECTOR OF MINIMIZING SOLUTION                    
 C        SD1:          MINIMUM OF F(X;Z)                                
 C                                                                       
-      IMPLICIT  REAL*8( A-H,O-Z )                                       
+cxx      IMPLICIT  REAL*8( A-H,O-Z )                                       
 cc      DIMENSION  Z(K), X(K), Y(20)                                      
-      DIMENSION  Z(K), X(K), Y(K)                                      
+cxx      DIMENSION  Z(K), X(K), Y(K)                                      
+      INTEGER :: K
+      REAL(8) :: Z(K), X(K), SD1
+      REAL(8) :: Y(K), SUM
       DO 10  I=1,K                                                      
-   10 X(I) = Z(I)                                                       
+cxx   10 X(I) = Z(I)                                                       
+      X(I) = Z(I)
+   10 CONTINUE
 C                                                                       
   100 DO 20  I=2,K                                                      
-   20 IF( X(I-1) .GT. X(I) )  GO TO 30                                  
+cxx   20 IF( X(I-1) .GT. X(I) )  GO TO 30
+      IF( X(I-1) .GT. X(I) )  GO TO 30
+   20 CONTINUE
       GO TO 300                                                         
 C                                                                       
    30 IFG = 0                                                           
       DO 40  I=1,K                                                      
-   40 Y(I) = X(I)                                                       
+cxx   40 Y(I) = X(I)                                                       
+      Y(I) = X(I)
+   40 CONTINUE
 C
       N0=1                                                                       
       DO 200  I=1,K-1
@@ -1619,22 +1786,30 @@ C
       SUM = 0.D0                                                        
 CC      DO 120  J=N0,I
       DO 120 J=N0,I0
-  120 SUM = SUM + Y(J)                                                  
+cxx  120 SUM = SUM + Y(J)                                                  
+      SUM = SUM + Y(J)
+  120 CONTINUE
 CC      SUM = SUM/(I-N0+1)
       SUM = SUM/(I0-N0+1)
 CC      DO 130  J=N0,I
       DO 130  J=N0,I0                                             
-  130 Y(J) = SUM                                                        
+cxx  130 Y(J) = SUM                                                        
+      Y(J) = SUM
+  130 CONTINUE
 C                                                                       
   200 CONTINUE                                                          
 C                                                                       
       DO 210  I=1,K                                                     
-  210 X(I) = Y(I)                                                       
+cxx  210 X(I) = Y(I)                                                       
+      X(I) = Y(I)
+  210 CONTINUE
       GO TO 100                                                         
   300 SD1 = 0.D0                                                        
       DO 310  I=1,K                                                     
-  310 SD1 = SD1 + (X(I) - Z(I))**2                                      
-    2 FORMAT( 1H ,10F13.5 )                                             
+cxx  310 SD1 = SD1 + (X(I) - Z(I))**2                                      
+      SD1 = SD1 + (X(I) - Z(I))**2
+  310 CONTINUE
+cxx    2 FORMAT( 1H ,10F13.5 )                                             
       RETURN                                                            
       E N D                                                             
       SUBROUTINE  LKOUT1( X,N,IND,JSW,F,W )                             
@@ -1655,9 +1830,13 @@ C     OUTPUTS:
 C        F:            LIKELIHOOD OF THE MODEL                          
 C        W:                                                             
 C                                                                       
-      IMPLICIT REAL*8  ( A-H,O-Z )                                      
+cxx      IMPLICIT REAL*8  ( A-H,O-Z )                                      
 cc      DIMENSION  X(N), Y(10), Z(10), ZE(10), IND(N), JND(10)            
-      DIMENSION  X(N), Y(N), Z(N), ZE(N), IND(N), JND(N)            
+cxx      DIMENSION  X(N), Y(N), Z(N), ZE(N), IND(N), JND(N)            
+      INTEGER :: N, IND(N), JSW
+      REAL(8) :: X(N), F, W
+      INTEGER :: JND(N)
+      REAL(8) :: Y(N), Z(N), ZE(N), SUM, XMEAN, SIG2, SD
 C                                                                       
       L = 0                                                             
       SUM = 0.D0                                                        
@@ -1671,7 +1850,9 @@ C
 C                                                                       
       SUM = 0.D0                                                        
       DO 20  I=1,N                                                      
-   20 IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2                   
+cxx   20 IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2                   
+      IF( IND(I) .EQ. 0 )   SUM = SUM+(X(I)-XMEAN)**2
+   20 CONTINUE
       SIG2 = SUM/N                                                      
       W = 1.D0                                                          
       F = -0.5D0*N*DLOG(SIG2)                                           
@@ -1688,11 +1869,15 @@ C
 C                                                                       
       W = 0.D0                                                          
       DO 40  I=1,K                                                      
-   40 JND(I) = I                                                        
+cxx   40 JND(I) = I                                                        
+      JND(I) = I
+   40 CONTINUE
 C                                                                       
    50 DO 60  I=1,K                                                      
       J = JND(I)                                                        
-   60 Z(I) = Y(J)                                                       
+cxx   60 Z(I) = Y(J)                                                       
+      Z(I) = Y(J)
+   60 CONTINUE
       CALL  POOLAV( Z,K,ZE,SD )                                         
 C                                                                       
       W = W + 1.D0/DSQRT(1.D0+SD/SUM)**N                                
@@ -1701,8 +1886,8 @@ C
       IF( IFG .EQ. 0 )   GO TO 50                                       
 C                                                                       
       RETURN                                                            
-  600 FORMAT( 1H ,'IND',40I3 )                                          
-  601 FORMAT( 1H ,'F =',D13.5,5X,'FSUM =',D13.5 )                       
+cxx  600 FORMAT( 1H ,'IND',40I3 )                                          
+cxx  601 FORMAT( 1H ,'F =',D13.5,5X,'FSUM =',D13.5 )                       
       E N D                                                             
 cc      SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)                    
       SUBROUTINE  PRPOST( POST,X,IND,JND,KND,IC,N,L)
@@ -1726,9 +1911,12 @@ C        L:                  NUMBER OF POSSIBLE OUTLIERS IN BOTH SIDES
 C        EPS:                LOWEST LIMIT OF POSTERIOR PROBABILITY TO BE
 C                            PRINTED                                    
 C                                                                       
-      REAL*8  POST, X(N)                                                
+cxx      REAL*8  POST, X(N)                                                
 cc      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(10)               
-      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(N)
+cxx      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(N)
+      INTEGER :: IND(N), JND(IC), KND(IC), IC, N, L
+      REAL(8) :: POST(IC), X(N)
+      REAL(8) :: Y(N), PMAX
 cc      COMMON /CSPRSS/ ISPRSS                                            
 C                                                                       
       DO 20  I=1,IC                                                     
@@ -1749,10 +1937,13 @@ C
       JND(IMAX) = JJ                                                    
       KND(IMAX) = KK                                                    
    20 CONTINUE                                                          
-   30 IC1 = IC                                                          
+cxx   30 IC1 = IC                                                          
+       IC1 = IC                                                          
       NML1 = N-L+1                                                      
       DO 40  I=1,N                                                      
-   40 IND(I) = 0                                                        
+cxx   40 IND(I) = 0                                                        
+      IND(I) = 0
+   40 CONTINUE
 C                                                                       
 cc      IF(ISPRSS .EQ. 0) WRITE( 6,4 )                                    
       DO 100  J=1,IC1                                                   
@@ -1769,9 +1960,9 @@ cc      IF( ID .GE. 1 )   WRITE( 6,5 )   J, POST(J), (Y(I),I=1,ID)
 cc      IF( ID .EQ. 0 )   WRITE( 6,6 )   J, POST(J)                       
   100 CONTINUE                                                          
       RETURN                                                            
-    4 FORMAT( 1H ,10X,'POSTERIOR',10X,'OUTLIERS' )                      
-    5 FORMAT( 1H ,I5,F13.5,5X,10F10.3 )                                 
-    6 FORMAT( 1H ,I5,F13.5,9X,'NONE' )                                  
+cxx    4 FORMAT( 1H ,10X,'POSTERIOR',10X,'OUTLIERS' )                      
+cxx    5 FORMAT( 1H ,I5,F13.5,5X,10F10.3 )                                 
+cxx    6 FORMAT( 1H ,I5,F13.5,9X,'NONE' )                                  
       E N D                                                             
       SUBROUTINE PERMUT( IND,K,IFG )                                    
 C                                                                       
@@ -1787,7 +1978,8 @@ C        (IND(I),I=1,K): NEW CONFIGURATION
 C        IFG:            = 0 ; IF THE NEW CONFIGURATION IS OBTAINED     
 C                        = 1 ; SEARCH FOR THE CONFIGURATION COMPLETED.  
 C                                                                       
-      DIMENSION  IND(K)                                                 
+cxx      DIMENSION  IND(K)
+      INTEGER ::  IND(K), K, IFG
 C                                                                       
       I1 = 1                                                            
       I2 = 2                                                            
@@ -1805,7 +1997,9 @@ C
 C                                                                       
       I2M1 = I2-1                                                       
       DO 30  I=1,I2M1                                                   
-   30 IF( IND(I) .LE. IND(I2) )   GO TO 40                              
+cxx   30 IF( IND(I) .LE. IND(I2) )   GO TO 40                              
+      IF( IND(I) .LE. IND(I2) )   GO TO 40
+   30 CONTINUE
       GO TO 20                                                          
 C                                                                       
    40 IMAX = 0                                                          
@@ -1838,7 +2032,8 @@ C
 C     OUTPUT:                                                           
 C        (IND(I),I=1,N): REORDERED DATA                                 
 C                                                                       
-      DIMENSION  IND(N)                                                 
+cxx      DIMENSION  IND(N)                                                 
+      INTEGER :: IND(N), N                                                 
 C                                                                       
       NM1 = N-1                                                         
       DO 20  II=1,NM1                                                   
@@ -1868,13 +2063,16 @@ C       OUTPUT:
 C          MB:    NUMBER IN BINARY REPRESENTATION                       
 C                                                                       
 cx      DIMENSION  MB(1)
-      DIMENSION  MB(K)
+cxx      DIMENSION  MB(K)
+      INTEGER :: M, K, MB(K)
 C                                                                       
       N = M                                                             
       DO 10  I=1,K                                                      
         L = N / 2                                                       
         MB(I) = N - L*2                                                 
-   10 N = L                                                             
+cxx   10 N = L
+        N = L
+   10 CONTINUE                                                             
       RETURN                                                            
 C                                                                       
       E N D                                                             
@@ -1891,9 +2089,11 @@ C       OUTPUTS:
 C          X:   ARRANGED VECTOR                                         
 C          IND: INDEX OF ARRANGED VECTOR                                
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(1) , IX(1)                                           
-      DIMENSION  X(N) , IX(N)
+cxx      DIMENSION  X(N) , IX(N)
+      INTEGER :: N, IX(N)
+      REAL(8) :: X(N), XMIN, XT
 C                                                                       
       NM1 = N - 1                                                       
       DO  20     II=1,NM1                                               
@@ -1946,13 +2146,19 @@ C        (KND(I),I=1,IC):    SPECIFICATION OF THE OUTLIERS IN HIGH SIDE
 C                            (CODED IN DECIMAL)                         
 C        IC:                 NUMBER OF RECORDED MODELS                  
 C                                                                       
-      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
+cxx      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
 cc      DIMENSION  X(500), F(501), PM(500), Z(500), C(20)                 
 cc      DIMENSION  IX(500) , IND(500) , JND(1000) , KND(1000) , POST(1000)
 cc      DIMENSION  Y(500)                                                 
-      DIMENSION  X(NN), F(NN+1), PM(NN), Z(NN), C(K+1)                 
-      DIMENSION  IX(NN) , IND(NN) , JND(2**K) , KND(2**K) , POST(2**K)
-      DIMENSION  Y(NN)                                                 
+cxx      DIMENSION  X(NN), F(NN+1), PM(NN), Z(NN), C(K+1)                 
+cxx      DIMENSION  IX(NN) , IND(NN) , JND(2**K) , KND(2**K) , POST(2**K)
+cxx      DIMENSION  Y(NN)                     
+      INTEGER :: NN, K, ISW, JSW, IOUTD
+      REAL(8) :: Z(NN), Y(NN), RLIM, ROUT
+      INTEGER :: IX(NN), IND(NN), JND(2**K), KND(2**K)
+      REAL(8) :: X(NN), F(NN+1), PM(NN), C(K+1), POST(2**K), EPS,
+     1           DI, SUMF, DLK0, F0, TEM, FF, EXPF, W
+
 cc      COMMON /CSPRSS/ ISPRSS                                            
       ISPRSS = 1                                                        
 C                                                                       
@@ -1978,10 +2184,14 @@ cc      CALL  SRTMIN( X,N,IX )
       IND(I) = 0                                                        
       PM(I) = 0.D0                                                      
       DI = I                                                            
-   10 F(I+1) = F(I)+DLOG(DI)                                            
+cxx   10 F(I+1) = F(I)+DLOG(DI)                                            
+      F(I+1) = F(I)+DLOG(DI)
+   10 CONTINUE
       C(1) = DFLOAT(N*2)/DFLOAT(N-3)                                    
       DO 20  I=1,K                                                      
-   20 C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)            
+cxx   20 C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)            
+      C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)
+   20 CONTINUE
 C                                                                       
       IL = 2**L                                                         
       IF(JSW.EQ.1)  IL=K+1                                              
@@ -1995,7 +2205,9 @@ C
       CALL  BINARY( II,L,IND )                                          
       K1 = 0                                                            
       DO 30  I=1,L                                                      
-   30 K1 = K1+IND(I)                                                    
+cxx   30 K1 = K1+IND(I)                                                    
+      K1 = K1+IND(I)
+   30 CONTINUE
       IF( K1 .GT. K )   GO TO 101                                       
 C                                                                       
       DO 100  JJ1=1,IL                                                  
@@ -2004,7 +2216,9 @@ C
       CALL  BINARY( JJ,L,IND(NML1) )                                    
       K2 = K1                                                           
       DO 40  I=NML1,N                                                   
-   40 K2 = K2+IND(I)                                                    
+cxx   40 K2 = K2+IND(I)                                                    
+      K2 = K2+IND(I)
+   40 CONTINUE
       IF( K2 .GT. K )   GO TO 100                                       
 C                                                                       
       CALL  LKOUT1( X,N,IND,JSW,FF,W )                                  
@@ -2017,15 +2231,21 @@ C
       TEM=DEXP(-F0)                                                     
       SUMF=SUMF*TEM                                                     
       DO 46 I=1,N                                                       
-   46 PM(I)=PM(I)*TEM                                                   
+cxx   46 PM(I)=PM(I)*TEM                                                   
+      PM(I)=PM(I)*TEM
+   46 CONTINUE
       DO 47 I=1,IC                                                      
-   47 POST(I)=POST(I)*TEM                                               
+cxx   47 POST(I)=POST(I)*TEM                                               
+      POST(I)=POST(I)*TEM
+   47 CONTINUE
       F0=0.D0                                                           
    45 CONTINUE                                                          
       EXPF = DEXP( F0 )*W                                               
       SUMF = SUMF+EXPF                                                  
       DO 50  I=1,N                                                      
-   50 PM(I) = PM(I) + IND(I)*EXPF                                       
+cxx   50 PM(I) = PM(I) + IND(I)*EXPF                                       
+      PM(I) = PM(I) + IND(I)*EXPF
+   50 CONTINUE
       IF( EXPF/SUMF .LT. EPS )   GO TO 100                              
 C                                                                       
       IC = IC+1                                                         
@@ -2037,10 +2257,14 @@ C
 C                                                                       
   101 CONTINUE                                                          
       DO 110  I=1,N                                                     
-  110 PM(I) = PM(I)/SUMF                                                
+cxx  110 PM(I) = PM(I)/SUMF                                                
+      PM(I) = PM(I)/SUMF
+  110 CONTINUE
 C                                                                       
       DO 120  I=1,IC                                                    
-  120 POST(I) = POST(I)/SUMF                                            
+cxx  120 POST(I) = POST(I)/SUMF                                            
+      POST(I) = POST(I)/SUMF
+  120 CONTINUE
 C                                                                       
       CALL  PRPOST( POST,X,IND,JND,KND,IC,N,L)                          
 C                                                                       
@@ -2050,14 +2274,14 @@ cc      IF( ISW .GE. 1 )   CALL  MODIFY( N,L,IX,PM,JND,KND,Y,IC )
 cc      IF(ISW .GE. 1 .AND. ISPRSS .EQ. 0) WRITE(6,603)(Y(I),I=1,NN)      
 C                                                                       
       RETURN                                                            
-  600 FORMAT( 1H ,'N    =',I6,5X,'(NUMBER OF DATA)',/,                  
-     1' K    =',I6,5X,'(MAXIMUM NUMBER OF OUTLIERS)',/,                 
-     2' L    =',I6,5X,'(RANGE OF SEARCH ON BOTH SIDES)',/,              
-     3' ISW  =',I6,/,' JSW  =',I6 )                                     
-  601 FORMAT( 1H ,'**  DATA  **',/,(1X,12D11.3) )                       
-  602 FORMAT( 1H ,'**  MARGINAL POSTERIOR PROBABILITIES  **',/,(1X,12D11
-     *.3) )                                                             
-  603 FORMAT(1H ,'** MODIFIED DATA **',/,(1X,12D11.3) )                 
+cxx  600 FORMAT( 1H ,'N    =',I6,5X,'(NUMBER OF DATA)',/,                  
+cxx     1' K    =',I6,5X,'(MAXIMUM NUMBER OF OUTLIERS)',/,                 
+cxx     2' L    =',I6,5X,'(RANGE OF SEARCH ON BOTH SIDES)',/,              
+cxx     3' ISW  =',I6,/,' JSW  =',I6 )                                     
+cxx  601 FORMAT( 1H ,'**  DATA  **',/,(1X,12D11.3) )                       
+cxx  602 FORMAT( 1H ,'**  MARGINAL POSTERIOR PROBABILITIES  **',/,(1X,12D11
+cxx     *.3) )                                                             
+cxx  603 FORMAT(1H ,'** MODIFIED DATA **',/,(1X,12D11.3) )                 
       E N D                                                             
 cc      SUBROUTINE  MODIFY( N,L,IX,POST,JND,KND,Y,IC )                    
       SUBROUTINE  MODIFY( N,L,IX,POST,JND,KND,Y,IC,IOUTD,CONST )
@@ -2084,17 +2308,21 @@ C
 C     OUTPUT:                                                           
 C        (Y(I),I=1,N):   MODIFIED DATA                                  
 C                                                                       
-      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
+cxx      IMPLICIT  REAL*8  ( A-H,O-Z )                                     
 cx      DIMENSION   IX(N),  POST(1), JND(1), KND(1), Y(N)                 
 cc      DIMENSION  IND(500)                                               
-      DIMENSION   IX(N),  POST(N), JND(IC), KND(IC), Y(N)                 
-      DIMENSION  IND(N)                                               
+cxx      DIMENSION   IX(N),  POST(N), JND(IC), KND(IC), Y(N)                 
+cxx      DIMENSION  IND(N)              
+      INTEGER :: N, L, IX(N), JND(IC), KND(IC), IC ,IOUTD
+      REAL(8) :: POST(N), Y(N), CONST 
+      INTEGER :: IND(N)              
 cc      COMMON /CSPRSS/ ISPRSS                                            
 cc      COMMON /ILOGT/ IDUMMY(3),IOUTD,CONST                              
       ICTEM = IC                                                        
       IF(IOUTD .EQ. 1) ICTEM=1                                          
-      DO 110 I=1,N                                                      
-  110 IND(I) = 0                                                        
+cxx      DO 110 I=1,N                                                      
+cxx  110 IND(I) = 0                                                        
+      IND(1:N) = 0
       NML1 = N-L+1                                                      
       DO 200 K=1,ICTEM                                                  
       CALL  BINARY( JND(K),L,IND )                                      
@@ -2112,72 +2340,96 @@ C
   200 CONTINUE                                                          
   201 CONTINUE                                                          
       RETURN                                                            
-  600 FORMAT( 1H ,'**  MODIFIED DATA (ISW=1)  **',/,(1X,10F13.5) )      
-  601 FORMAT( 1H ,'**  MODIFIED DATA (ISW=2)  **',/,(1X,10F13.5) )      
-  602 FORMAT( 1H ,'**  MODIFIED DATA (ISW=3)  **',/,(1X,10F13.5) )      
-  605 FORMAT( 1H ,'LOCATION PARAMETER;   XM =',F13.5 )                  
+cxx  600 FORMAT( 1H ,'**  MODIFIED DATA (ISW=1)  **',/,(1X,10F13.5) )      
+cxx  601 FORMAT( 1H ,'**  MODIFIED DATA (ISW=2)  **',/,(1X,10F13.5) )      
+cxx  602 FORMAT( 1H ,'**  MODIFIED DATA (ISW=3)  **',/,(1X,10F13.5) )      
+cxx  605 FORMAT( 1H ,'LOCATION PARAMETER;   XM =',F13.5 )                  
       E N D                                                             
       SUBROUTINE SETD(W,IP,ID,C,IAR,AR)                                 
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION W(IP,10), WW(10), AR(10)                                
-      DIMENSION W(IP,ID+IAR+1), WW(ID+IAR+1), AR(1)
+cxx      DIMENSION W(IP,ID+IAR+1), WW(ID+IAR+1), AR(1)
+      INTEGER :: IP, ID, IAR
+      REAL(8) :: W(IP,ID+IAR+1), C, AR(1), WW(ID+IAR+1)
       IDAR = ID + IAR                                                   
       IDP1 = IDAR + 1                                                   
       W(1,IDP1) = C                                                     
       WW(IDP1) = C                                                      
       IF(IDAR .EQ. 0) GO TO 998                                         
-      DO 10 J=1,IDAR                                                    
-      WW(J)=0.D0                                                        
-      DO 10 I=1,IP                                                      
-   10 W(I,J) = 0.D0                                                     
+cxx      DO 10 J=1,IDAR                                                    
+cxx      WW(J)=0.D0                                                        
+cxx      DO 10 I=1,IP                                                      
+cxx   10 W(I,J) = 0.D0
+      WW(1:IDAR)=0.D0
+      W(1:IP,1:IDAR) = 0.D0
       IF(ID .EQ. 0) GO TO 997                                           
-      DO 50 J=1,ID                                                      
+cxx      DO 50 J=1,ID                                                      
+      DO 51 J=1,ID
       I = IDP1 - J - 1                                                  
       DO 50 K=1,J                                                       
       I = I + 1                                                         
-   50 WW(I) = WW(I) - WW(I+1)                                           
+cxx   50 WW(I) = WW(I) - WW(I+1)
+      WW(I) = WW(I) - WW(I+1)
+   50 CONTINUE
+   51 CONTINUE
   997 CONTINUE                                                          
       DO 500 J=1,IDAR                                                   
       W(1,J) = WW(J)                                                    
       JLX = MIN0(IAR,IDP1 - J)                                          
       IF(IAR .EQ. 0) GO TO 500                                          
       DO 400 JY=1,JLX                                                   
-  400 W(1,J) = W(1,J) - AR(JY)*WW(J+JY)                                 
+cxx  400 W(1,J) = W(1,J) - AR(JY)*WW(J+JY)                                 
+      W(1,J) = W(1,J) - AR(JY)*WW(J+JY)
+  400 CONTINUE
   500 CONTINUE                                                          
   998 CONTINUE                                                          
       RETURN                                                            
       END                                                               
       SUBROUTINE  INIT(W,LENGTH,DOP,ISTEP)                              
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION  W(100), DDOP(100), DOP(100)                            
-      DIMENSION  W(LENGTH), DDOP(LENGTH), DOP((LENGTH-1)*ISTEP+1)
+cxx      DIMENSION  W(LENGTH), DDOP(LENGTH), DOP((LENGTH-1)*ISTEP+1)
+      INTEGER :: LENGTH, ISTEP
+      REAL(8) :: W(LENGTH), DOP((LENGTH-1)*ISTEP+1)
+      REAL(8) :: DDOP(LENGTH), SUM
       J=1                                                               
       DO 1 I=1,LENGTH                                                   
       DDOP(I)=DOP(J)                                                    
-    1 J=J+ISTEP                                                         
+cxx    1 J=J+ISTEP
+      J=J+ISTEP
+    1 CONTINUE
       DO 20 J=1,LENGTH                                                  
       SUM = 0.D0                                                        
       ITEM = 0                                                          
       DO 10 K=J,LENGTH                                                  
       ITEM=ITEM+1                                                       
-   10 SUM=SUM-W(K)*DDOP(ITEM)                                           
-   20 W(J)=SUM                                                          
+cxx   10 SUM=SUM-W(K)*DDOP(ITEM)
+      SUM=SUM-W(K)*DDOP(ITEM)
+   10 CONTINUE
+cxx   20 W(J)=SUM
+      W(J)=SUM
+   20 CONTINUE
       RETURN                                                            
       END                                                               
 C                                                                       
 C                                                                       
 C                                                                       
       SUBROUTINE  EXHSLD(H1,N1,H2,N2,H3,N3,H4,M1,IPOS)                  
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cx      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)                          
-      DIMENSION  H1(N1,IPOS),H2(N2,N2+IPOS),H3(N3),H4(N2)                          
+cxx      DIMENSION  H1(N1,IPOS),H2(N2,N2+IPOS),H3(N3),H4(N2)                          
+      INTEGER :: N1, N2, N3, M1, IPOS
+      REAL(8) :: H1(N1,IPOS), H2(N2,N2+IPOS), H3(N3), H4(N2)
+      REAL(8) :: EPS, SQD, C, D, F
       DATA EPS/1.D-30/                                                  
       IF(IPOS .LE. M1) GO TO 30                                         
       M1 = IPOS                                                         
-      DO 10 J=1,N1                                                      
-   10 H1(J,M1) = 0.D0                                                   
-      DO 20 J=1,N2                                                      
-   20 H2(J,M1+N2) = 0.D0                                                
+cxx      DO 10 J=1,N1                                                      
+cxx   10 H1(J,M1) = 0.D0
+cxx      DO 20 J=1,N2                                                      
+cxx   20 H2(J,M1+N2) = 0.D0
+      H1(1:N1,M1) = 0.D0
+      H2(1:N2,M1+N2) = 0.D0
    30 CONTINUE                                                          
       IF(N3 .LT. 0) RETURN                                              
       M0 = IPOS - N3                                                    
@@ -2199,13 +2451,17 @@ cx      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)
       F = D*H1(M,MM) + H3(J)*H3(K)                                      
       F = F/C                                                           
       H1(M,MM) = H1(M,MM) - D*F                                         
-   50 H3(K) = H3(K) - H3(J)*F                                           
+cxx   50 H3(K) = H3(K) - H3(J)*F                                           
+      H3(K) = H3(K) - H3(J)*F
+   50 CONTINUE
    60 CONTINUE                                                          
       DO 70 K=1,N2                                                      
       F = D*H2(K,MM) + H3(J)*H4(K)                                      
       F = F/C                                                           
       H2(K,MM) = H2(K,MM) - D*F                                         
-   70 H4(K) = H4(K) - H3(J)*F                                           
+cxx   70 H4(K) = H4(K) - H3(J)*F                                           
+      H4(K) = H4(K) - H3(J)*F
+   70 CONTINUE
   100 CONTINUE                                                          
       DO 200 J=1,N2                                                     
       MM = M1 + J                                                       
@@ -2222,7 +2478,9 @@ cx      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)
       F = D*H2(K,MM) + H4(J)*H4(K)                                      
       F = F/C                                                           
       H2(K,MM) = H2(K,MM) - D*F                                         
-  150 H4(K) = H4(K) - H4(J)*F                                           
+cxx  150 H4(K) = H4(K) - H4(J)*F                                           
+      H4(K) = H4(K) - H4(J)*F
+  150 CONTINUE
   200 CONTINUE                                                          
       RETURN                                                            
       END                                                               
@@ -2233,45 +2491,65 @@ cc      SUBROUTINE SETX(H1,N1,H2,N2,M1,ICOUNT,FTRN,N,H,NH,WT,Y,NDATA,RLIM,
 cc     *                 WEEK,IY,ALNDTD,F,DD,IART,ARFT)                   
       SUBROUTINE SETX(H1,N1,H2,N2,M1,ICOUNT,FTRN,N,H,NH,WT,Y,
      *                   NDATA,RLIM,WEEK,IY,ALNDTD,F,DD,IART,ARFT,
-     *                   ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR,NPF)
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
-      INTEGER*4 YEAR                                                    
+cxx     *                   ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR,NPF)
+     *                   ALPHA,WTRD,DELTA,IP,ID,YEAR,NPF)
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      INTEGER*4 YEAR                                                    
 cc      DIMENSION H1(N1,1),H2(N2,1),Y(1),WEEK(IY,1),H3(200),H4(50)
 cc      DIMENSION FTRN(1),H(NH,1),TI(10),T0(10),F(1),ARFT(1)              
 cx      DIMENSION H1(N1,1),H2(N2,1),Y(NDATA),WEEK(IY,1),H3(N1),H4(N2)
-      DIMENSION H1(N1,1),H2(N2,N+8),Y(NDATA),WEEK(IY,N),H3(N1),H4(N2)
-      DIMENSION FTRN(ID+3),H(NH,N),TI(ID+IART),T0(2*(ID+IART+1)),
-     *           F(NPF+1),ARFT(3)
+cxx      DIMENSION H1(N1,1),H2(N2,N+8),Y(NDATA),WEEK(IY,N),H3(N1),H4(N2)
+cxx      DIMENSION FTRN(ID+3),H(NH,N),TI(ID+IART),T0(2*(ID+IART+1)),
+cxx     *           F(NPF+1),ARFT(3)
+      INTEGER :: N1, N2, M1, ICOUNT, N, NH, NDATA, IY, IART,
+     1           IP, ID, YEAR, NPF
+      REAL(8) :: H1(N1,1), H2(N2,N+8), FTRN(ID+3), H(NH,N),TI(ID+IART),
+     1           WT, Y(NDATA), RLIM, WEEK(IY,N), ALNDTD, F(NPF+1),
+     2           DD, ARFT(3), ALPHA, WTRD, DELTA
+      REAL(8) :: H3(N1), H4(N2), T0(2*(ID+IART+1)), TEM, TEMO
 cc      COMMON/IDATA/IP,ID,IS,YEAR                                        
 cc      COMMON/ RDATA/ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA                
-      DO 600 I=1,N2                                                     
-  600 H2(I,N2)=0.D0                                                     
+cxx      DO 600 I=1,N2                                                     
+cxx  600 H2(I,N2)=0.D0
+      H2(1:N2,N2)=0.D0
       IF(YEAR .EQ. 0) GO TO 200                                         
       TEMO=WTRD                                                         
       TEM=-TEMO/7.D0                                                    
       DO 300 J=1,7                                                      
       DO 400 I=1,7                                                      
-  400 H2(I,J)=TEM                                                       
+cxx  400 H2(I,J)=TEM                                                       
+      H2(I,J)=TEM
+  400 CONTINUE
       H2(8,J)=TEM*DELTA                                                 
-  300 H2(J,J)=H2(J,J)+TEMO                                              
+cxx  300 H2(J,J)=H2(J,J)+TEMO                                              
+      H2(J,J)=H2(J,J)+TEMO
+  300 CONTINUE
 cc      CALL HUSHLD(H2,8,8,8,0)                                           
       CALL BHUSHLD(H2,8,8,8,0)
-      DO 500 I=1,N2                                                     
+cxx      DO 500 I=1,N2                                                     
+      DO 501 I=1,N2
       DO 500 J=1,I                                                      
       TEM=H2(I,J)                                                       
       H2(I,J)=H2(J,I)                                                   
-  500 H2(J,I)=TEM                                                       
+cxx  500 H2(J,I)=TEM                                                       
+      H2(J,I)=TEM
+  500 CONTINUE
+  501 CONTINUE
       N2M1=N2-1                                                         
       DO 550 J=1,N2M1                                                   
       TEM=DABS(H2(J,J))                                                 
-  550 ALNDTD=ALNDTD+DLOG(TEM)                                           
+cxx  550 ALNDTD=ALNDTD+DLOG(TEM)                                           
+      ALNDTD=ALNDTD+DLOG(TEM)
+  550 CONTINUE
   200 CONTINUE                                                          
       ITEM=2                                                            
       IF(IP.EQ.1)ITEM=1                                                 
       CALL SETD(T0,ITEM,ID,WT,IART,ARFT)                                
       IDAR = ID + IART                                                  
       DO 10 I=1,IDAR                                                    
-   10 TI(I) = FTRN(I)*ALPHA                                             
+cxx   10 TI(I) = FTRN(I)*ALPHA
+      TI(I) = FTRN(I)*ALPHA
+   10 CONTINUE
       CALL INIT(TI,IDAR,T0,ITEM)                                        
       ICOUNT=0                                                          
       M1=0                                                              
@@ -2285,13 +2563,18 @@ cc      CALL HUSHLD(H2,8,8,8,0)
       JTEM = ID0 - N3                                                   
       DO 110 J=1,N3                                                     
       JTEM = JTEM + 1                                                   
-  110 H3(J) = T0(JTEM)                                                  
-      DO 120 J=1,N2                                                     
-  120 H4(J) = 0.D0                                                      
+cxx  110 H3(J) = T0(JTEM)                                                  
+      H3(J) = T0(JTEM)
+  110 CONTINUE
+cxx      DO 120 J=1,N2                                                     
+cxx  120 H4(J) = 0.D0                                                      
+      H4(1:N2) = 0.D0
       IF(I .GT. IDAR) GO TO 125                                         
       H4(N2)=TI(I)                                                      
       DO 121 J=1,N3                                                     
-  121 H3(J)=H3(J)*ALPHA                                                 
+cxx  121 H3(J)=H3(J)*ALPHA
+      H3(J)=H3(J)*ALPHA
+  121 CONTINUE
   125 CONTINUE                                                          
       CALL EXHSLD(H1,N1,H2,N2,H3,N3,H4,M1,IPOS)                         
       N3 = -1                                                           
@@ -2318,8 +2601,9 @@ cc      CALL HUSHLD(H2,8,8,8,0)
       GO TO 91                                                          
   911 H3(J)=0.D0                                                        
    91 CONTINUE                                                          
-      DO 92 J=1,N2                                                      
-   92 H4(J)=0.D0                                                        
+cxx      DO 92 J=1,N2                                                      
+cxx   92 H4(J)=0.D0                                                        
+      H4(1:N2)=0.D0
       H4(N2)=F(K)*DD                                                    
       CALL EXHSLD(H1,N1,H2,N2,H3,N1,H4,M1,IPOS)                         
   100 CONTINUE                                                          
@@ -2336,10 +2620,13 @@ cc      CALL HUSHLD(H2,8,8,8,0)
       GO TO 96                                                          
    93 H3(J)=0.D0                                                        
    96 CONTINUE                                                          
-      DO 97 L=1,N2                                                      
-   97 H4(L)=0.D0                                                        
+cxx      DO 97 L=1,N2                                                      
+cxx   97 H4(L)=0.D0
+      H4(1:N2)=0.D0
       H4(N2)=F(K)*DD                                                    
-   95 CALL EXHSLD(H1,N1,H2,N2,H3,NMK,H4,M1,M1)                          
+cxx   95 CALL EXHSLD(H1,N1,H2,N2,H3,NMK,H4,M1,M1)                          
+      CALL EXHSLD(H1,N1,H2,N2,H3,NMK,H4,M1,M1)
+   95 CONTINUE
       RETURN                                                            
       END                                                               
 C                                                                       
@@ -2349,17 +2636,23 @@ cc      SUBROUTINE SETDC(H1,N1,H2,M1,FSEAS,N,WS,WZ,IARS,ARFS,IARN,ARFN)
 cc     *                 ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,ID,IS,YEAR)
       SUBROUTINE SETDC(H1,N1,H2,M1,FSEAS,N,WS,WZ,IARS,ARFS,IARN,
 cx     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR)
-     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR,NPF)
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
-      INTEGER*4 YEAR                                                    
+cxx     *                  ARFN,ALPHA,BETA,GAMMA,WTRD,DELTA,IP,IS,YEAR,NPF)
+     *                  ARFN,BETA,GAMMA,IP,IS,NPF)
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      INTEGER*4 YEAR                                                    
 cc      DIMENSION  H1(N1,1),H2(1),FSEAS(1),H3(100),S0(100),ARFS(1),ARFN(1)
 cc      DIMENSION  Z0(50),SI(100),ZI(50),H4(50)                           
 cx      DIMENSION  H1(N1,1),H2(1),FSEAS(1),H3((IS+IARS)*IP+IARN+1),
 cx     *            S0((IS+IARS+1)*IP+IARN+1),ARFS(1),ARFN(1)
 cx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),H4(1)
-      DIMENSION  H1(N1,1),H2(NPF+1),H3((IS+IARS)*IP+IARN+1),h4(1)
-      DIMENSION  FSEAS((IS+IARS)*IP + IARN),S0((IS+IARS+1)*IP+IARN+1)
-      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),ARFS(3),ARFN(3)
+cxx      DIMENSION  H1(N1,1),H2(NPF+1),H3((IS+IARS)*IP+IARN+1),h4(1)
+cxx      DIMENSION  FSEAS((IS+IARS)*IP + IARN),S0((IS+IARS+1)*IP+IARN+1)
+cxx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),ARFS(3),ARFN(3)
+      INTEGER :: N1, M1, N, IARS, IARN, IP, IS, NPF
+      REAL(8) :: H1(N1,1), H2(NPF+1), FSEAS((IS+IARS)*IP + IARN), WS,
+     1           WZ, ARFS(3), ARFN(3), BETA, GAMMA
+      REAL(8) :: H3((IS+IARS)*IP+IARN+1), h4(1), Z0(IP),  ZI(IP), SUM,
+     1           S0((IS+IARS+1)*IP+IARN+1), SI((IS+IARS)*IP+IARN), DT
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA               
 cc      COMMON /IDATA/ IP,ID,IS,YEAR                                      
       IPIS = (IS+IARS)*IP + IARN                                        
@@ -2367,37 +2660,50 @@ cc      COMMON /IDATA/ IP,ID,IS,YEAR
       ITEM = IP*(IS-1) + 1                                              
       DO 30 I=1,IPM1                                                    
       ITEM = ITEM + 1                                                   
-   30 ZI(I) = FSEAS(ITEM)*WZ*GAMMA                                      
+cxx   30 ZI(I) = FSEAS(ITEM)*WZ*GAMMA                                      
+      ZI(I) = FSEAS(ITEM)*WZ*GAMMA
+   30 CONTINUE
       SUM = 0.D0                                                        
       ITEM = IP                                                         
       DO 40 I=1,IPM1                                                    
       ITEM = ITEM - 1                                                   
       SUM = SUM - ZI(ITEM)                                              
-   40 ZI(ITEM) = SUM                                                    
+cxx   40 ZI(ITEM) = SUM                                                    
+      ZI(ITEM) = SUM 
+   40 CONTINUE
       CALL SETD(S0,IP,IS,WS,IARS,ARFS)                                  
       IF(IARN .EQ. 0) GO TO 49                                          
       LENGTH = IPIS + 1                                                 
       LTEM = LENGTH - IARN                                              
       DO 41 I=1,LTEM                                                    
       S0(LENGTH)=S0(LENGTH - IARN)                                      
-   41 LENGTH = LENGTH - 1                                               
-      DO 42 I=1,IARN                                                    
-   42 S0(I)=0.D0                                                        
+cxx   41 LENGTH = LENGTH - 1                                               
+      LENGTH = LENGTH - 1 
+   41 CONTINUE
+cxx      DO 42 I=1,IARN                                                    
+cxx   42 S0(I)=0.D0
+      S0(1:IARN)=0.D0
       LENGTH = IPIS + 1                                                 
       DO 400 I=1,LENGTH                                                 
       DT=S0(I)                                                          
       DO 410 J=1,IARN                                                   
-  410 IF(I+J .LE. LENGTH) DT=DT-ARFN(J)*S0(I+J)                         
-  400 S0(I)=DT                                                          
+cxx  410 IF(I+J .LE. LENGTH) DT=DT-ARFN(J)*S0(I+J)                         
+      IF(I+J .LE. LENGTH) DT=DT-ARFN(J)*S0(I+J)
+  410 CONTINUE
+cxx  400 S0(I)=DT                                                          
+      S0(I)=DT
+  400 CONTINUE
    49 CONTINUE                                                          
       IF(IPIS .EQ. 0) GO TO 998                                         
       DO 20 I=1,IPIS                                                    
-   20 SI(I) = FSEAS(I)*BETA                                             
+cxx   20 SI(I) = FSEAS(I)*BETA                                             
+      SI(I) = FSEAS(I)*BETA
+   20 CONTINUE
       CALL INIT(SI,IPIS,S0,1)                                           
   998 DO 50 I=1,IP                                                      
       Z0(I)=WZ                                                          
    50 CONTINUE                                                          
-   55 CONTINUE                                                          
+cxx   55 CONTINUE                                                          
       IS0 = IPIS + 1                                                    
       IZ0 = IP                                                          
       M1 = 0                                                            
@@ -2410,12 +2716,16 @@ cc      COMMON /IDATA/ IP,ID,IS,YEAR
       ITEM = IS0 - N3                                                   
       DO 130 J=1,N3                                                     
       ITEM = ITEM + 1                                                   
-  130 H3(J) = S0(ITEM)                                                  
+cxx  130 H3(J) = S0(ITEM)                                                  
+      H3(J) = S0(ITEM)
+  130 CONTINUE
       H4(1) = 0.D0                                                      
       IF(I .GT. IPIS) GO TO 145                                         
       H4(1)=SI(I)                                                       
       DO 141 J=1,N3                                                     
-  141 H3(J)=H3(J)*BETA                                                  
+cxx  141 H3(J)=H3(J)*BETA
+      H3(J)=H3(J)*BETA
+  141 CONTINUE
   145 CONTINUE                                                          
       CALL EXHSLD(H1,N1,H2,1,H3,N3,H4,M1,IPOS)                          
       N3 = IPOS                                                         
@@ -2423,12 +2733,16 @@ cc      COMMON /IDATA/ IP,ID,IS,YEAR
       ITEM = IZ0 - N3                                                   
       DO 150 J=1,N3                                                     
       ITEM = ITEM + 1                                                   
-  150 H3(J) = Z0(ITEM)                                                  
+cxx  150 H3(J) = Z0(ITEM)                                                  
+      H3(J) = Z0(ITEM)
+  150 CONTINUE
       H4(1) = 0.D0                                                      
       IF(I .GE. IP) GO TO 165                                           
       H4(1)=ZI(I)                                                       
       DO 161 J=1,N3                                                     
-  161 H3(J)=H3(J)*GAMMA                                                 
+cxx  161 H3(J)=H3(J)*GAMMA                                                 
+      H3(J)=H3(J)*GAMMA
+  161 CONTINUE
   165 CONTINUE                                                          
       CALL EXHSLD(H1,N1,H2,1,H3,N3,H4,M1,IPOS)                          
   100 CONTINUE                                                          
@@ -2436,29 +2750,41 @@ cc      COMMON /IDATA/ IP,ID,IS,YEAR
       END                                                               
       SUBROUTINE PARTAR(R,A,M)                                          
 C **** PARCOR R TO AR ********                                          
-      IMPLICIT REAL*8(A-H,O-Z)                                          
-      DIMENSION R(M),A(M,M)                                             
-      DO 10 I=1,M                                                       
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      DIMENSION R(M),A(M,M)                                             
+      INTEGER :: M
+      REAL(8) :: R(M), A(M,M)
+cxx      DO 10 I=1,M                                                       
+      DO 20 I=1,M
       DO 10 J=1,I                                                       
-   10 A(I,J)=0.D0                                                       
+cxx   10 A(I,J)=0.D0
+      A(I,J)=0.D0
+   10 CONTINUE
+   20 CONTINUE
       A(1,1)=R(1)                                                       
       IF(M.LE.1) RETURN                                                 
       DO 40 I=2,M                                                       
       A(I,I)=R(I)                                                       
       IM1=I-1                                                           
       DO 30 J=1,IM1                                                     
-   30 A(I,J)=A(I-1,J)-R(I)*A(I-1,I-J)                                   
+cxx   30 A(I,J)=A(I-1,J)-R(I)*A(I-1,I-J)                                   
+      A(I,J)=A(I-1,J)-R(I)*A(I-1,I-J)
+   30 CONTINUE
    40 CONTINUE                                                          
       RETURN                                                            
       END                                                               
 cc      SUBROUTINE SOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)                   
       SUBROUTINE BSOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cx      DIMENSION  H1(N1,1), H2(N2,1), A(1), ERR(1)                       
-      DIMENSION  H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), ERR(NANS)                       
+cxx      DIMENSION  H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), ERR(NANS)
+      INTEGER :: N1, N2, M1 ,NANS
+      REAL(8) :: H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), SQE, ERR(NANS)
+      REAL(8) :: AKA
 C                                                                       
-      DO 30 I=1,NANS                                                    
-   30 ERR(I)=0.D0                                                       
+cxx      DO 30 I=1,NANS                                                    
+cxx   30 ERR(I)=0.D0
+      ERR(1:NANS)=0.D0 
       DO 100 LER = 1, NANS                                              
          K = M1 + N2                                                    
          KA = NANS                                                      
@@ -2466,8 +2792,9 @@ C
          IF( LER.EQ.NANS )  GO TO 44                                    
             SQE = 0.D0                                                  
             KAM1 = KA - 1                                               
-            DO 40 KKA = 1, KAM1                                         
-   40       A(KKA) = 0.D0                                               
+cxx            DO 40 KKA = 1, KAM1                                         
+cxx   40       A(KKA) = 0.D0
+            A(1:KAM1) = 0.D0                                                
             A(LER) = 1.D0                                               
             GO TO 48                                                    
    44    CONTINUE                                                       

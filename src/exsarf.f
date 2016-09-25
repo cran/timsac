@@ -56,22 +56,31 @@ C     ---------------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: EXSARF
 C
-      IMPLICIT  REAL *8  ( A-H , O-Z )                                  
+cxx      IMPLICIT  REAL *8  ( A-H , O-Z )                                  
 CC      REAL * 4  Z(10000) , TITLE(20)                                    
 cc      REAL * 4   TITLE(20)
 cc      DIMENSION  Z(10000)
 cc      DIMENSION  X(200,51) , D(200) , A(50)                             
-      DIMENSION  Z1(N), Z(N)
-      DIMENSION  X(N-LAG,LAG+1), A1(LAG), A2(LAG)
+cxx      DIMENSION  Z1(N), Z(N)
+cxx      DIMENSION  X(N-LAG,LAG+1), A1(LAG), A2(LAG)
 c----------------    isw = 2   -----------------
-      DIMENSION  A22(LAG,LAG), SDM22(LAG)
+cxx      DIMENSION  A22(LAG,LAG), SDM22(LAG)
 c-----------------------------------------------
+
+      INTEGER :: N, LAG, M1, JER
+      REAL(8) :: Z1(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
+     1           AMIN, SDM1, A1(LAG), SDM2, A2(LAG)
+      REAL(8) :: Z(N), X(N-LAG,LAG+1)
+c----------------    isw = 2   -----------------
+      REAL(8) :: A22(LAG,LAG), SDM22(LAG)
+c-----------------------------------------------
+
 CC      COMMON     / AAA /  N , Z                                         
 cc      COMMON     / AAA /  N
 cc      COMMON     / BBB /  Z
 cc      COMMON     / CCC /  ISW , IPR                                     
 C
-      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
+cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
 C
@@ -156,7 +165,9 @@ cx      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN,
 cx     *              IFG,LU )
       CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A1,M1,SD,AIC,DIC,SDM1,AMIN )
       DO 5  I = 1,K
-    5 A2(I) = A1(I)
+cxx    5 A2(I) = A1(I)
+      A2(I) = A1(I)
+    5 CONTINUE
 C                                                                       
 C          +-------------------------------------------+                
 C          ! MAXIMIZATION OF EXACT LIKELIHOOD FUNCTION !                
@@ -169,7 +180,8 @@ C
 cc      CALL  ARMLE( Z,N,M,K,TITLE,A )                                    
 ccx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU )
 cx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,IFG,LU,JER )
-      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,JER )
+cxx      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,IPR,JER )
+      CALL  ARMLE( Z,N,M1,K,A2,SDM2,ISW,JER )
 cx      IF( JER .NE. 0 ) RETURN
 cx      IF (IFG.NE.0) CLOSE(LU)
       RETURN
@@ -181,10 +193,13 @@ cc      CALL  RECOEF( X,M,K,MJ1,A )
 cc   20 CALL  ARMLE( Z,N,M,K,TITLE,A )                                    
 ccx      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,IFG,LU )
 cx      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,IFG,LU,JER )
-      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,JER )
+cxx      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,IPR,JER )
+      CALL  ARMLE( Z,N,M,K,A2,SDM2,ISW,JER )
       IF( JER .NE. 0 ) RETURN
       DO 15  I = 1,M
-   15 A22(I,M) = A2(I)
+cxx   15 A22(I,M) = A2(I)
+      A22(I,M) = A2(I)
+   15 CONTINUE
       SDM22(M) = SDM2
    20 CONTINUE
 cc      GO TO 999
@@ -204,14 +219,14 @@ ccC /* __linux__ */
 cc      WRITE(6,610) IVAR,IFLNAM
 cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( 1H ,'PROGRAM 78.5.1',/,'   EXACT MAXIMUM LIKELIHOOD METHOD
-     * OF AUTOREGRESSIVE MODEL FITTING;  SCALAR CASE',/,'   < BASIC AUTO
-     *REGRESSIVE MODEL >',/,1H ,10X, 'Z(I) = A(1)*Z(I-1) + ... + A(K)*Z(
-     *I-K) + E(I)',/,1H ,'WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X
-     *,'E(I):  ZERO MEAN WHITE NOISE' )                                 
-    3 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
-     *1H ,'  ORIGINAL DATA INPUT DEVICE  MT =',I3 )                     
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( 1H ,'PROGRAM 78.5.1',/,'   EXACT MAXIMUM LIKELIHOOD METHOD
+cxx     * OF AUTOREGRESSIVE MODEL FITTING;  SCALAR CASE',/,'   < BASIC AUTO
+cxx     *REGRESSIVE MODEL >',/,1H ,10X, 'Z(I) = A(1)*Z(I-1) + ... + A(K)*Z(
+cxx     *I-K) + E(I)',/,1H ,'WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X
+cxx     *,'E(I):  ZERO MEAN WHITE NOISE' )                                 
+cxx    3 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
+cxx     *1H ,'  ORIGINAL DATA INPUT DEVICE  MT =',I3 )                     
 C                                                                       
 cc  999 CONTINUE
 cx      IF (IFG.NE.0) CLOSE(LU)                                                                       
@@ -220,7 +235,8 @@ cx      IF (IFG.NE.0) CLOSE(LU)
 cc      SUBROUTINE  ARMLE( Z,N,K,L,TITLE,A )                              
 ccx      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,IFG,LU )
 cx      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,IFG,LU,JER )
-      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,JER )
+cxx      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,IPR,JER )
+      SUBROUTINE  ARMLE( Z,N,K,L,A,SDM,ISW,JER )
 C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 C                                                                       
 C     THIS SUBROUTINE PRODUCES EXACT MAXIMUM LIKELIHOOD ESTIMATES OF THE
@@ -242,13 +258,16 @@ C          OUTPUTS:
 C             A:       MAXIMUM LIKELIHOOD ESTIMATES OF AR-COEFFICIENTS  
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z , TITLE                                              
 cc      REAL * 4   TITLE
 cc      DIMENSION  Z(1) , A(1) , TITLE(1)                                 
 cc      DIMENSION  R(31,31) , C(31)                                       
-      DIMENSION  Z(N), A(K)
-      DIMENSION  R(K+1,K+1), C(L+1)                                       
+cxx      DIMENSION  Z(N), A(K)
+cxx      DIMENSION  R(K+1,K+1), C(L+1)                                       
+      INTEGER :: N, K, L, ISW, JER 
+      REAL(8) :: Z(N), A(K), SDM
+      REAL(8) :: R(K+1,K+1), C(L+1), SUM, F0, AIC, SD
 CC      DIMENSION  TTL(4)                                                 
 cc      REAL * 4 TTL(8)
 cc      COMMON     / DDD /  R , F , AIC , SD                              
@@ -275,12 +294,17 @@ cx      IF( IFG.NE.0 ) WRITE( LU,3 )  K
       SUM = 0.D0                                                        
       DO 10  I=L1,NML                                                   
       IMJ = I - J                                                       
-   10 SUM = SUM + Z(I)*Z(IMJ)                                           
-   20 C(II) = SUM                                                       
+cxx   10 SUM = SUM + Z(I)*Z(IMJ)                                           
+      SUM = SUM + Z(I)*Z(IMJ)  
+   10 CONTINUE
+cxx   20 C(II) = SUM                                                       
+      C(II) = SUM
+   20 CONTINUE
 C                                                                       
 C       COVARIANCE MATRIX R COMPUTATION                                 
 C                                                                       
-      DO 70  II=1,K1                                                    
+cxx      DO 70  II=1,K1                                                    
+      DO 71  II=1,K1 
       KMI = K1 - II + 1                                                 
       NMI = N1 - II                                                     
       DO 70  JJ=II,K1                                                   
@@ -289,15 +313,20 @@ C
       IF( KMI .GT. L )  GO TO 40                                        
       DO 30  KK=KMI,L                                                   
       KI = KK - JMI                                                     
-   30 SUM = SUM + Z(KK)*Z(KI)                                           
+cxx   30 SUM = SUM + Z(KK)*Z(KI)                                           
+      SUM = SUM + Z(KK)*Z(KI) 
+   30 CONTINUE
    40 CONTINUE                                                          
       IF( NMLP1 .GT. NMI )  GO TO 60                                    
       DO 50  KK=NMLP1,NMI                                               
       KI = KK - JMI                                                     
-   50 SUM = SUM + Z(KK)*Z(KI)                                           
+cxx   50 SUM = SUM + Z(KK)*Z(KI)                                           
+      SUM = SUM + Z(KK)*Z(KI)
+   50 CONTINUE
    60 R(II,JJ) = SUM                                                    
       R(JJ,II) = SUM                                                    
-   70 CONTINUE                                                          
+   70 CONTINUE
+   71 CONTINUE                                                          
 C                                                                       
 C       DAVIDON'S MINIMIZATION PROCEDURE                                
 C                                                                       
@@ -308,11 +337,14 @@ cc      CALL  DAVIDN( FUNCT,HESIAN,A,K,IHES )
 ccx      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,IFG,LU )
 cx      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,
 cx     *                     IFG,LU,JER )
-      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,JER )
+cxx      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,IPR,AIC,SD,JER )
+      CALL  DAVIDN( FUNCT,HESIAN,Z,N,A,K,R,IHES,ISW,AIC,SD,JER )
       IF( JER .NE. 0 ) RETURN
 C                                                                       
       IF( F0-AIC .LT. 0.001 )     GO TO 90                              
-   80 F0 = AIC                                                          
+cxx   80 F0 = AIC
+      F0 = AIC
+   80 CONTINUE                                                          
    90 CONTINUE                                                          
 C                                                                       
 cc      CALL  PRINTA( A,SD,K,TTL,8,TITLE,1,N )                            
@@ -321,15 +353,16 @@ C
       RETURN                                                            
 cc    3 FORMAT( //1H ,29(1H-),/,' EXACT LIKELIHOOD MAXIMIZATION',/,1H ,29(
 cc     11H-) )                                                            
-    3 FORMAT( //1H ,29(1H-),/,' EXACT LIKELIHOOD MAXIMIZATION',10x,
-     *'ORDER OF THE AR-MODEL =',i5,/1H ,29(1H-) )                                                            
-   65 FORMAT( 1H ,10D13.5 )                                             
+cxx    3 FORMAT( //1H ,29(1H-),/,' EXACT LIKELIHOOD MAXIMIZATION',10x,
+cxx     *'ORDER OF THE AR-MODEL =',i5,/1H ,29(1H-) )                                                            
+cxx   65 FORMAT( 1H ,10D13.5 )                                             
       END                                                               
 cc      SUBROUTINE  DAVIDN( FUNCT,HESIAN,X,N,IHES )                       
-      SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,IPR,AIC,SD,
+cxx      SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,IPR,AIC,SD,
 ccx     *                    IFG,LU )
 cx     *                    IFG,LU,JER )
-     *                    JER )
+cxx     *                    JER )
+      SUBROUTINE  DAVIDN( FUNCT,HESIAN,Z,NZ,X,N,R,IHES,ISW,AIC,SD,JER )
 C.....DATE OF THE LATEST REVISION:  JUN. 29, 1979.......................
 C                                                                       
 C          MINIMIZATION BY DAVIDON-FLETCHER-POWELL PROCEDURE            
@@ -351,32 +384,42 @@ C
 C          OUTPUT:                                                      
 C             X:       VECTOR OF MINIMIZING SOLUTION                    
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(50) , DX(50) , G(50) , G0(50) , Y(50)                
 cc      DIMENSION  H(50,50) , WRK(50) , S(50)                             
 cc      DIMENSION  R(31,31)                                               
-      DIMENSION  Z(NZ)
-      DIMENSION  X(N) , DX(N) , G(N) , G0(N) , Y(N)                
-      DIMENSION  H(N,N) , WRK(N) , S(N)                             
-      DIMENSION  R(N+1,N+1)                                               
+cxx      DIMENSION  Z(NZ)
+cxx      DIMENSION  X(N) , DX(N) , G(N) , G0(N) , Y(N)                
+cxx      DIMENSION  H(N,N) , WRK(N) , S(N)                             
+cxx      DIMENSION  R(N+1,N+1)
+      INTEGER :: NZ, N, IHES, ISW, JER
+      REAL(8) :: Z(NZ), X(N), R(N+1,N+1), AIC, SD
+      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1           TAU1, TAU2, EPS1, EPS2, RAMDA, CONST1, SUM,
+     2           S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB                                                           
 C
 cc      COMMON     / CCC /  ISW, IPR                                      
 cc      COMMON     / DDD /  R , F , AIC , SD                              
       DATA  TAU1 , TAU2  /  1.0D-5 , 1.0D-5  /                          
       DATA  EPS1 , EPS2  / 1.0D-5 , 1.0D-5  /                           
-	EXTERNAL  FUNCT
+      EXTERNAL  FUNCT
 C
       RAMDA = 0.5D0                                                     
       CONST1 = 1.0D-70                                                  
 C                                                                       
 C          INITIAL ESTIMATE OF INVERSE OF HESSIAN                       
-C                                                                       
+C
+      H(1:N,1:N) = 0.0D00
+      S(1:N) = 0.0D00                                                     
+      DX(1:N) = 0.0D00                                                    
       DO  20   I=1,N                                                    
-      DO  10   J=1,N                                                    
-   10 H(I,J) = 0.0D00                                                   
-      S(I) = 0.0D00                                                     
-      DX(I) = 0.0D00                                                    
-   20 H(I,I) = 1.0D00                                                   
+cxx      DO  10   J=1,N                                                    
+cxx   10 H(I,J) = 0.0D00
+cxx      S(I) = 0.0D00                                                     
+cxx      DX(I) = 0.0D00                                                    
+cxx   20 H(I,I) = 1.0D00                                                   
+      H(I,I) = 1.0D00   
+   20 CONTINUE
       ISW = 0                                                           
 C                                                                       
 cc      CALL  FUNCT( N,X,XM,G,IG )                                        
@@ -400,17 +443,25 @@ C      ITERATION
       IF( IC .EQ. 1 .AND. ICC .EQ. 1 )     GO TO 120                    
 C                                                                       
       DO  40   I=1,N                                                    
-   40 Y(I) = G(I) - G0(I)                                               
+cxx   40 Y(I) = G(I) - G0(I)                                               
+      Y(I) = G(I) - G0(I)
+   40 CONTINUE
       DO  60   I=1,N                                                    
       SUM = 0.0D00                                                      
       DO  50   J=1,N                                                    
-   50 SUM = SUM + Y(J) * H(I,J)                                         
-   60 WRK(I) = SUM                                                      
+cxx   50 SUM = SUM + Y(J) * H(I,J)                                         
+      SUM = SUM + Y(J) * H(I,J)
+   50 CONTINUE
+cxx   60 WRK(I) = SUM                                                      
+      WRK(I) = SUM
+   60 CONTINUE
       S1 = 0.0D00                                                       
       S2 = 0.0D00                                                       
       DO  70   I=1,N                                                    
       S1 = S1 + WRK(I) * Y(I)                                           
-   70 S2 = S2 + DX(I) * Y(I)                                            
+cxx   70 S2 = S2 + DX(I) * Y(I)                                            
+      S2 = S2 + DX(I) * Y(I)
+   70 CONTINUE
       IF( S1.LE.CONST1 .OR. S2.LE.CONST1 )  GO TO 900                   
       IF( S1 .LE. S2 )     GO TO 100                                    
 C                                                                       
@@ -418,20 +469,28 @@ C          UPDATE THE INVERSE OF HESSIAN MATRIX
 C                                                                       
 C               ---  DAVIDON-FLETCHER-POWELL TYPE CORRECTION  ---       
 C                                                                       
-      DO  90   I=1,N                                                    
+cxx      DO  90   I=1,N                                                    
+      DO  91   I=1,N 
       DO  90   J=I,N                                                    
       H(I,J) = H(I,J) + DX(I)*DX(J)/S2 - WRK(I)*WRK(J)/S1               
-   90 H(J,I) = H(I,J)                                                   
+cxx   90 H(J,I) = H(I,J)                                                   
+      H(J,I) = H(I,J)
+   90 CONTINUE
+   91 CONTINUE
       GO TO  120                                                        
 C                                                                       
 C               ---  FLETCHER TYPE CORRECTION  ---                      
 C                                                                       
   100 CONTINUE                                                          
       STEM = S1 / S2 + 1.0D00                                           
-      DO  110   I=1,N                                                   
+cxx      DO  110   I=1,N                                                   
+      DO  111   I=1,N
       DO  110   J=I,N                                                   
       H(I,J) = H(I,J)- (DX(I)*WRK(J)+WRK(I)*DX(J)-DX(I)*DX(J)*STEM)/S2  
-  110 H(J,I) = H(I,J)                                                   
+cxx  110 H(J,I) = H(I,J)                                                   
+      H(J,I) = H(I,J)
+  110 CONTINUE
+  111 CONTINUE
 C                                                                       
 C                                                                       
 C                                                                       
@@ -440,25 +499,34 @@ C
       DO  150   I=1,N                                                   
       SUM = 0.0D00                                                      
       DO  140   J=1,N                                                   
-  140 SUM = SUM + H(I,J)*G(J)                                           
+cxx  140 SUM = SUM + H(I,J)*G(J)                                           
+      SUM = SUM + H(I,J)*G(J) 
+  140 CONTINUE
       SS = SS + SUM * SUM                                               
-  150 S(I) = -SUM                                                       
+cxx  150 S(I) = -SUM                                                       
+      S(I) = -SUM
+  150 CONTINUE
 C                                                                       
 C                                                                       
       S1 = 0.0D00                                                       
       S2 = 0.0D00                                                       
       DO  170   I=1,N                                                   
       S1 = S1 + S(I)*G(I)                                               
-  170 S2 = S2 + G(I)*G(I)                                               
+cxx  170 S2 = S2 + G(I)*G(I)
+      S2 = S2 + G(I)*G(I)
+  170 CONTINUE                                               
       DS2 = DSQRT(S2)                                                   
       GTEM = DABS(S1) / DS2                                             
       IF( GTEM .LE. TAU1  .AND.  DS2 .LE. TAU2 )     GO TO  900         
       IF( S1 .LT. 0.0D00 )     GO TO  200                               
+      H(1:N,1:N) = 0.0D00
       DO  190   I=1,N                                                   
-      DO  180   J=1,N                                                   
-  180 H(I,J) = 0.0D00                                                   
+cxx      DO  180   J=1,N                                                   
+cxx  180 H(I,J) = 0.0D00                                                   
       H(I,I) = 1.0D00                                                   
-  190 S(I) = -S(I)                                                      
+cxx  190 S(I) = -S(I)                                                      
+      S(I) = -S(I)
+  190 CONTINUE
   200 CONTINUE                                                          
 C                                                                       
       ED = XM                                                           
@@ -466,10 +534,11 @@ C
 C          LINEAR  SEARCH                                               
 C                                                                       
 cc      CALL  LINEAR( FUNCT,X,S,RAMDA,ED,N,IG )                           
-      CALL  LINEAR( FUNCT,Z,NZ,X,S,RAMDA,ED,N,R,AIC,SD,F,ISW,IPR,IG,
+cxx      CALL  LINEAR( FUNCT,Z,NZ,X,S,RAMDA,ED,N,R,AIC,SD,F,ISW,IPR,IG,
 ccx     *              IFG,LU )
 cx     *              IFG,LU,JER )
-     *              JER )
+cxx     *              JER )
+      CALL  LINEAR( FUNCT,Z,NZ,X,S,RAMDA,ED,N,R,AIC,SD,F,ISW,IG,JER )
       IF( JER .NE. 0 ) RETURN
 C                                                                       
 cc      IF( IPR .GE. 2 )   WRITE( 6,330 )   RAMDA, F, SD, AIC             
@@ -481,7 +550,9 @@ C
       DX(I) = S(I) * RAMDA                                              
       S1 = S1 + DX(I) * DX(I)                                           
       G0(I) = G(I)                                                      
-  210 X(I) = X(I) + DX(I)                                               
+cxx  210 X(I) = X(I) + DX(I)                                               
+      X(I) = X(I) + DX(I)
+  210 CONTINUE
       XMB = XM                                                          
       ISW = 0                                                           
 C                                                                       
@@ -492,7 +563,9 @@ cx      CALL  FUNCT( Z,NZ,N,X,R,ISW,XM,G,AIC,SD,F,IG )
 C                                                                       
       S2 = 0.D0                                                         
       DO  220     I=1,N                                                 
-  220 S2 = S2 + G(I)*G(I)                                               
+cxx  220 S2 = S2 + G(I)*G(I)
+      S2 = S2 + G(I)*G(I)
+  220 CONTINUE                                               
       IF( DSQRT(S2) .GT. TAU2 )   GO TO  11111                          
       IF( XMB/XM-1.D0 .LT. EPS1  .AND.  DSQRT(S1) .LT. EPS2 )  GO TO 900
 11111 CONTINUE                                                          
@@ -510,14 +583,14 @@ cx      WRITE( LU,610 )     (X(I),I=1,N)
 cx      WRITE( LU,601 )                                                    
 cx      WRITE( LU,610 )     (G(I),I=1,N)                                   
       RETURN                                                            
-  330 FORMAT( 1H ,'LAMBDA =',D15.7,3X,'(-1)LOG LIKELIHOOD =',D23.15,3X, 
-     * 'SD =',D22.15,5X,'AIC =',D23.15 )                                
-  340 FORMAT( 1H ,26X,'(-1)LOG-LIKELIHOOD =',D23.15,3X,'SD =',D22.15,5X,
-     *  'AIC =',D23.15 )                                                
-  600 FORMAT( 1H ,'-----  X  -----' )                                   
-  601 FORMAT( 1H ,'***  GRADIENT  ***' )                                
-  610 FORMAT( 1H ,10D13.5 )                                             
-      END                                                               
+cxx  330 FORMAT( 1H ,'LAMBDA =',D15.7,3X,'(-1)LOG LIKELIHOOD =',D23.15,3X, 
+cxx     * 'SD =',D22.15,5X,'AIC =',D23.15 )                                
+cxx  340 FORMAT( 1H ,26X,'(-1)LOG-LIKELIHOOD =',D23.15,3X,'SD =',D22.15,5X,
+cxx     *  'AIC =',D23.15 )                                                
+cxx  600 FORMAT( 1H ,'-----  X  -----' )                                   
+cxx  601 FORMAT( 1H ,'***  GRADIENT  ***' )                                
+cxx  610 FORMAT( 1H ,10D13.5 )                                             
+      END
 cc      SUBROUTINE  FUNCT( M,A,F,G,IFG )                                  
 cx      SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG )
       SUBROUTINE  FUNCT( Z,N,M,A,R,ISW,F,G,AIC,SD,FF,IFG,JER )
@@ -542,7 +615,7 @@ C             IFG:  =0    ;IF MODEL IS STATIONALY
 C                   =1    ;IF MODEL IS NON-STATIONALY                   
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z                                                      
 cc      DIMENSION  Z(10000)
 CC      COMMON     / AAA /  N , Z(1)                                      
@@ -552,9 +625,13 @@ cc      COMMON     / CCC /  ISW, IDUMMY
 cc      COMMON     / DDD /  R , FF , AIC , SD                             
 cc      DIMENSION   R(31,31) , T(31,31) , U(31,31) , S(31,31)              
 cc      DIMENSION   A(20) , B(30) , G(30)                                  
-      DIMENSION   Z(N)
-      DIMENSION   R(M+1,M+1) , T(M+1,M+1) , U(M+1,M+1) , S(M+1,M+1)              
-      DIMENSION   A(M) , B(M) , G(M)                                  
+cxx      DIMENSION   Z(N)
+cxx      DIMENSION   R(M+1,M+1) , T(M+1,M+1) , U(M+1,M+1) , S(M+1,M+1)              
+cxx      DIMENSION   A(M) , B(M) , G(M)                                  
+      INTEGER :: N, M, ISW, IFG, JER
+      REAL(8) :: Z(N), A(M), R(M+1,M+1), F, G(M), AIC, SD, FF
+      REAL(8) :: T(M+1,M+1), U(M+1,M+1), S(M+1,M+1), B(M),
+     1           DN, DN1, SUM, DSD, USUM, DETT, UDET
 cc      MJ = 31                                                           
       MJ = M+1                                                           
 C                                                                       
@@ -576,27 +653,41 @@ C
       DO  10     I=2,M                                                  
       IM1 = I - 1                                                       
       II = M - IM1                                                      
-   10 T(I,1) = - ( A(IM1)+A(M)*A(II) )                                  
+cxx   10 T(I,1) = - ( A(IM1)+A(M)*A(II) )                                  
+      T(I,1) = - ( A(IM1)+A(M)*A(II) ) 
+   10 CONTINUE
       IF( M .EQ. 2 )     GO TO 25                                       
 C                                                                       
-      DO  20     J=2,M1                                                 
+cxx      DO  20     J=2,M1                                                 
+      DO  21     J=2,M1
       JM1 = J - 1                                                       
       JJ = M - JM1                                                      
       DO  20     I=J,JJ                                                 
       IM1 = I - 1                                                       
       II = M - IM1                                                      
-   20 T(I,J) = T(IM1,JM1) + A(IM1)*A(JM1) - A(II)*A(JJ)                 
+cxx   20 T(I,J) = T(IM1,JM1) + A(IM1)*A(JM1) - A(II)*A(JJ)                 
+      T(I,J) = T(IM1,JM1) + A(IM1)*A(JM1) - A(II)*A(JJ)
+   20 CONTINUE
+   21 CONTINUE
 C                                                                       
-   25 DO  30     J=1,M1                                                 
+cxx   25 DO  30     J=1,M1                                                 
+   25 DO  31     J=1,M1 
       JE = MP1 - J                                                      
       JE1 = JE - 1                                                      
       DO  30     I=J,JE1                                                
       II = MP1 - I                                                      
-   30 T(JE,II) = T(I,J)                                                 
-      DO  40     I=2,M                                                  
+cxx   30 T(JE,II) = T(I,J)                                                 
+      T(JE,II) = T(I,J)
+   30 CONTINUE
+   31 CONTINUE
+cxx      DO  40     I=2,M                                                  
+      DO  41     I=2,M
       IM1 = I - 1                                                       
       DO  40     J=1,IM1                                                
-   40 T(J,I) = T(I,J)                                                   
+cxx   40 T(J,I) = T(I,J)                                                   
+      T(J,I) = T(I,J)
+   40 CONTINUE
+   41 CONTINUE
 C                                                                       
    45 CONTINUE                                                          
 C                                                                       
@@ -607,23 +698,37 @@ C
       J1 = J + 1                                                        
       SUM = 0.0D00                                                      
       DO  50     K=1,M                                                  
-   50 SUM = SUM + A(K)*R(J1,K+1)                                        
-   60 SD = SD + SUM*A(J)                                                
+cxx   50 SUM = SUM + A(K)*R(J1,K+1)                                        
+      SUM = SUM + A(K)*R(J1,K+1)
+   50 CONTINUE
+cxx   60 SD = SD + SUM*A(J)                                                
+      SD = SD + SUM*A(J)
+   60 CONTINUE
       SUM = 0.0D00                                                      
       DO  70     K=1,M                                                  
-   70 SUM = SUM + A(K)*R(1,K+1)                                         
+cxx   70 SUM = SUM + A(K)*R(1,K+1)                                         
+      SUM = SUM + A(K)*R(1,K+1)
+   70 CONTINUE
       SD = SD - 2.0D00*SUM                                              
 C                                                                       
       DO  80     J=1,M                                                  
       SUM = 0.0D00                                                      
       DO  85     K=1,M                                                  
-   85 SUM = SUM + T(J,K)*Z(K)                                           
-   80 SD = SD + SUM*Z(J)                                                
+cxx   85 SUM = SUM + T(J,K)*Z(K)                                           
+      SUM = SUM + T(J,K)*Z(K)
+   85 CONTINUE
+cxx   80 SD = SD + SUM*Z(J)                                                
+      SD = SD + SUM*Z(J)
+   80 CONTINUE
       SD = SD * DN1                                                     
 C                                                    DS     ) 033,6 (ETI
-      DO  90     I=1,M                                                  
+cxx      DO  90     I=1,M                                                  
+      DO  91     I=1,M
       DO  90     J=1,M                                                  
-   90 U(I,J) = T(I,J)                                                   
+cxx   90 U(I,J) = T(I,J)                                                   
+      U(I,J) = T(I,J)
+   90 CONTINUE
+   91 CONTINUE
       CALL  SUBDET( U,DETT,M,MJ )                                       
 C                                                                       
 C         CHECK THE STATIONARITY                                        
@@ -673,7 +778,8 @@ C
   100 CONTINUE                                                          
       IF( M .EQ. 2 )     GO TO 120                                      
 C                                                                       
-      DO  110     K=2,M1                                                
+cxx      DO  110     K=2,M1                                                
+      DO  111     K=2,M1
       KM1 = K - 1                                                       
       KK = MP1 - K                                                      
       DO  110     I=K,KK                                                
@@ -684,53 +790,78 @@ C
       IF( IM1 .EQ. JC )     S(I,K) = S(I,K) + A(KM1)                    
       IF( II .EQ. JC )     S(I,K) = S(I,K) - A(KK)                      
       IF( KK .EQ. JC )     S(I,K) = S(I,K) - A(II)                      
-  110 CONTINUE                                                          
+  110 CONTINUE
+  111 CONTINUE                                                          
 C                                                                       
-  120 DO  130     J=1,M1                                                
+cxx  120 DO  130     J=1,M1                                                
+  120 DO  131     J=1,M1
       JE=  MP1 - J                                                      
       JE1 = JE - 1                                                      
       DO  130     I=J,JE1                                               
       II = MP1 - I                                                      
-  130 S(JE,II) = S(I,J)                                                 
-      DO  140     I=2,M                                                 
+cxx  130 S(JE,II) = S(I,J)                                                 
+      S(JE,II) = S(I,J)
+  130 CONTINUE
+  131 CONTINUE
+cxx      DO  140     I=2,M                                                 
+      DO  141     I=2,M
       IM1 = I - 1                                                       
       DO  140     J=1,IM1                                               
-  140 S(J,I) = S(I,J)                                                   
+cxx  140 S(J,I) = S(I,J)                                                   
+      S(J,I) = S(I,J)
+  140 CONTINUE
+  141 CONTINUE
   145 CONTINUE                                                          
 C                                                                       
 C                                                                       
       J1 = JC + 1                                                       
       DSD = R(1,J1)                                                     
       DO  150     K=1,M                                                 
-  150 DSD = DSD - A(K) * R(J1,K+1)                                      
+cxx  150 DSD = DSD - A(K) * R(J1,K+1)                                      
+      DSD = DSD - A(K) * R(J1,K+1)
+  150 CONTINUE
 C                                                                       
       DSD = -2.0D00*DSD                                                 
       DO  170     I=1,M                                                 
       SUM = 0.0D00                                                      
       DO  160     J=1,M                                                 
-  160 SUM = SUM + S(I,J)*Z(J)                                           
-  170 DSD = DSD + SUM*Z(I)                                              
+cxx  160 SUM = SUM + S(I,J)*Z(J)
+      SUM = SUM + S(I,J)*Z(J)
+  160 CONTINUE                                           
+cxx  170 DSD = DSD + SUM*Z(I)
+      DSD = DSD + SUM*Z(I)
+  170 CONTINUE                                              
       DSD = DSD * DN1                                                   
       USUM = 0.0D00                                                     
       DO  200     K=1,M                                                 
-      DO  180     I=1,M                                                 
+cxx      DO  180     I=1,M
+      DO  181     I=1,M                                                 
       DO  180     J=1,M                                                 
-  180 U(I,J) = T(I,J)                                                   
+cxx  180 U(I,J) = T(I,J)
+      U(I,J) = T(I,J)
+  180 CONTINUE
+  181 CONTINUE                                                   
       DO  190     J=1,M                                                 
-  190 U(K,J) = S(K,J)                                                   
+cxx  190 U(K,J) = S(K,J)                                                   
+      U(K,J) = S(K,J)
+  190 CONTINUE
 C                                                                       
       CALL  SUBDET( U,UDET,M,MJ )                                       
 C                                                                       
-  200 USUM = USUM + UDET                                                
+cxx  200 USUM = USUM + UDET
+      USUM = USUM + UDET
+  200 CONTINUE                                                
 C                                                                       
 C         GRADIENT OF LIKELIHOOD FUNCTION                               
 C                                                                       
       G(JC) = 0.5D00*( -DN*DSD/SD + USUM/DETT )                         
  1000 CONTINUE                                                          
       DO  300     I=1,M                                                 
-  300 G(I) = -G(I)                                                      
+cxx  300 G(I) = -G(I)
+      G(I) = -G(I)
+  300 CONTINUE                                                      
       RETURN                                                            
-      END                                                               
+      END   
 cc      SUBROUTINE  HESIAN( X,K,H )                                       
       SUBROUTINE  HESIAN( X,K,N,R,SD,H )
 C                                                                       
@@ -752,7 +883,7 @@ C          SD:    ESTIMATE OF INNOVATION VARIANCE
 C                                                                       
 C       OUTPUT:                                                         
 C          H:     INVERSE OF THE HESSIAN                                
-      IMPLICIT  REAL*8( A-H,O-Z )                                       
+cxx      IMPLICIT  REAL*8( A-H,O-Z )                                       
 CC      REAL*4  Z                                                         
 cc      DIMENSION  Z(10000)
 CC      COMMON     / AAA /  N , Z(1)                                      
@@ -762,26 +893,38 @@ cc      COMMON     / DDD /  R , F , AIC , SD
 cc      DIMENSION  R(31,31)                                               
 cx      DIMENSION  X(1)                                                   
 cc      DIMENSION  H(50,50) , S(50)                                       
-      DIMENSION  R(K+1,K+1)                                               
-      DIMENSION  X(K)                                                   
-      DIMENSION  H(K,K) , S(K)                                       
+cxx      DIMENSION  R(K+1,K+1)                                               
+cxx      DIMENSION  X(K)                                                   
+cxx      DIMENSION  H(K,K) , S(K)
+      INTEGER :: K, N
+      REAL(8) :: X(K), R(K+1,K+1), SD, H(K,K)
+      REAL(8) :: S(K), SUM, HDET
       DO 10  I=1,K                                                      
       SUM = R(1,I+1)                                                    
       DO 20  II=1,K                                                     
-   20 SUM = SUM - X(II)*R(II+1,I+1)                                     
-   10 S(I) = SUM / SD                                                   
-      DO 30  I=1,K                                                      
+cxx   20 SUM = SUM - X(II)*R(II+1,I+1)                                     
+      SUM = SUM - X(II)*R(II+1,I+1)
+   20 CONTINUE                                     
+cxx   10 S(I) = SUM / SD
+      S(I) = SUM / SD                                                   
+   10 CONTINUE
+cxx      DO 30  I=1,K                                                      
+      DO 31  I=1,K 
       DO 30  J=1,K                                                      
-   30 H(I,J) = 0.5D0 * (R(I+1,J+1)/SD - S(I)*S(J)/N)                    
+cxx   30 H(I,J) = 0.5D0 * (R(I+1,J+1)/SD - S(I)*S(J)/N)                    
+      H(I,J) = 0.5D0 * (R(I+1,J+1)/SD - S(I)*S(J)/N)
+   30 CONTINUE
+   31 CONTINUE
 cc      CALL  INVDET( H,HDET,K,50 )                                       
       CALL  INVDET( H,HDET,K,K )                                       
       RETURN                                                            
       E N D                                                             
 cc      SUBROUTINE  LINEAR( FUNCT,X,H,RAM,EE,K,IG )                       
-      SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IPR,IG,
+cxx      SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IPR,IG,
 ccx     *                    JFG,LU )
 cx     *                    JFG,LU,JER )
-     *                    JER )
+cxx     *                    
+      SUBROUTINE  LINEAR( FUNCT,Z,N,X,H,RAM,EE,K,R,AIC,SD,F,ISW,IG,JER )
 C                                                                       
 C     THIS SUBROUTINE PERFORMS THE LINEAR SEARCH ALONG THE DIRECTION SPE
 C     BY THE VECTOR H                                                   
@@ -801,23 +944,31 @@ C        RAM:     OPTIMAL STEP WIDTH
 C        E2:      MINIMUM FUNCTION VALUE                                
 C        IG:      ERROR CODE                                            
 C                                                                       
-      IMPLICIT  REAL  *8 ( A-H,O-Z )                                    
-      INTEGER  RETURN,SUB                                               
+cxx      IMPLICIT  REAL  *8 ( A-H,O-Z )                                    
+cxx      INTEGER  RETURN,SUB                                               
 cc      DIMENSION  X(1) , H(1) , X1(50)                                   
 cc      DIMENSION  G(50)                                                  
 cc      COMMON     / CCC /  ISW , IPR                                     
 cc      DIMENSION  R(31,31)
-      DIMENSION  X(K) , H(K) , X1(K)                                   
-      DIMENSION  G(K)                                                  
-      DIMENSION  Z(N)
-      DIMENSION  R(K+1,K+1)
+cxx      DIMENSION  X(K) , H(K) , X1(K)                                   
+cxx      DIMENSION  G(K)                                                  
+cxx      DIMENSION  Z(N)
+cxx      DIMENSION  R(K+1,K+1)
+
+      INTEGER :: N, K, ISW, IG, JER
+      REAL(8) :: Z(N), X(K), H(K), RAM, EE, R(K+1,K+1), AIC, SD, F
+      INTEGER :: RETURN, SUB
+      REAL(8) :: X1(K), G(K), CONST2, HNORM, E1, E2, E3,
+     1           RAM1, RAM2, RAM3, A1, A2, A3, B1, B2
 C                                                                       
       ISW = 1                                                           
       IF( RAM .LE. 1.0D-30 )  RAM = 0.01D0                              
       CONST2 = 1.0D-60                                                  
       HNORM = 0.D0                                                      
       DO 10  I=1,K                                                      
-   10 HNORM = HNORM + H(I)**2                                           
+cxx   10 HNORM = HNORM + H(I)**2                                           
+      HNORM = HNORM + H(I)**2
+   10 CONTINUE
       HNORM = DSQRT( HNORM )                                            
 C                                                                       
       RAM2 = RAM                                                        
@@ -825,7 +976,9 @@ C
       RAM1 = 0.D0                                                       
 C                                                                       
       DO 20  I=1,K                                                      
-   20 X1(I) = X(I) + RAM2*H(I)                                          
+cxx   20 X1(I) = X(I) + RAM2*H(I)                                          
+      X1(I) = X(I) + RAM2*H(I)
+   20 CONTINUE
 cc      CALL  FUNCT( K,X1,E2,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,2)  RAM2,E2                                 
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )
@@ -837,7 +990,9 @@ C
       IF( E2 .GT. E1 )  GO TO 50                                        
    30 RAM3 = RAM2*2.D0                                                  
       DO 40  I=1,K                                                      
-   40 X1(I) = X(I) + RAM3*H(I)                                          
+cxx   40 X1(I) = X(I) + RAM3*H(I)                                          
+      X1(I) = X(I) + RAM3*H(I)
+   40 CONTINUE
 cc      CALL  FUNCT( K,X1,E3,G,IG )                                       
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
       CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG,JER )
@@ -857,7 +1012,9 @@ C
       RAM2 = RAM3*0.1D0                                                 
       IF( RAM2*HNORM .LT. CONST2 )  GO TO  400                          
       DO 60  I=1,K                                                      
-   60 X1(I) = X(I) + RAM2*H(I)                                          
+cxx   60 X1(I) = X(I) + RAM2*H(I)
+      X1(I) = X(I) + RAM2*H(I)
+   60 CONTINUE                                          
 cc      CALL  FUNCT( K,X1,E2,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,4)  RAM2,E2                                 
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E2,G,AIC,SD,F,IG )
@@ -871,7 +1028,9 @@ cc   70 ASSIGN 80 TO RETURN
       GO TO 200                                                         
 C                                                                       
    80 DO 90  I=1,K                                                      
-   90 X1(I) = X(I) + RAM*H(I)                                           
+cxx   90 X1(I) = X(I) + RAM*H(I)                                           
+      X1(I) = X(I) + RAM*H(I) 
+   90 CONTINUE
 cc      CALL  FUNCT( K,X1,EE,G,IG )                                       
 cc      IF(IPR.GE.7)  WRITE(6,5)  RAM,EE                                  
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
@@ -918,7 +1077,9 @@ cc      GO TO  SUB,( 200,300 )
       IF( SUB .EQ. 300 ) GO TO  300
 C                                                                       
   130 DO 140  I=1,K                                                     
-  140 X1(I) = X(I) + RAM*H(I)                                           
+cxx  140 X1(I) = X(I) + RAM*H(I)                                           
+      X1(I) = X(I) + RAM*H(I)
+  140 CONTINUE
 cc      CALL  FUNCT( K,X1,EE,G,IG )                                       
 cc      IF( IPR.GE.7 )  WRITE(6,6)  RAM,EE                                
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,EE,G,AIC,SD,F,IG )
@@ -970,7 +1131,9 @@ C ------------------------------------------------------------
 C                                                                       
   500 RAM = (RAM2+RAM3)*0.5D0                                           
   510 DO 520  I=1,K                                                     
-  520 X1(I) = X(I) + RAM*H(I)                                           
+cxx  520 X1(I) = X(I) + RAM*H(I)
+      X1(I) = X(I) + RAM*H(I)
+  520 CONTINUE                                           
 cc      CALL  FUNCT( K,X1,E3,G,IG )                                       
 cc      IF( IPR.GE.7 )  WRITE(6,7)  RAM,E3                                
 ccx      CALL  FUNCT( Z,N,K,X1,R,ISW,E3,G,AIC,SD,F,IG )
@@ -992,11 +1155,11 @@ C
       GO TO 510                                                         
 C                                                                       
 C ------------------------------------------------------------          
-    1 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E1 =',D25.17 )                
-    2 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E2 =',D25.17 )                
-    3 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E3 =',D25.17 )                
-    4 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E4 =',D25.17 )                
-    5 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E5 =',D25.17 )                
-    6 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E6 =',D25.17 )                
-    7 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E7 =',D25.17 )                
+cxx    1 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E1 =',D25.17 )                
+cxx    2 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E2 =',D25.17 )                
+cxx    3 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E3 =',D25.17 )                
+cxx    4 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E4 =',D25.17 )                
+cxx    5 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E5 =',D25.17 )                
+cxx    6 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E6 =',D25.17 )                
+cxx    7 FORMAT( 1H ,'LAMBDA =',D18.10, 10X,'E7 =',D25.17 )                
       E N D                                                             

@@ -70,20 +70,27 @@ C            -----------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: MLOMARF
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  Z(1500,10)                                             
 cc      DIMENSION  X(200,100) , U(100,100) , D(200)                       
 cc      DIMENSION  A(5,5,50) , B(5,5,50) , E(5,5)                         
-      DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
-      DIMENSION  ZMEAN(ID), ZVARI(ID)
-      DIMENSION  A(ID,ID,LAG,K) , B(ID,ID,LAG) , E(ID,ID,K)             
-      DIMENSION  NF(K), NS(K), MS(K), MP(K), MF(K)
-      DIMENSION  AIC(K), AICP(K), AICF(K)
-      DIMENSION  LK0(K), LKE(K)
-cxx      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
-      DIMENSION  X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2)
-      DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
+cxx      DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
+cxx      DIMENSION  ZMEAN(ID), ZVARI(ID)
+cxx      DIMENSION  A(ID,ID,LAG,K) , B(ID,ID,LAG) , E(ID,ID,K)             
+cxx      DIMENSION  NF(K), NS(K), MS(K), MP(K), MF(K)
+cxx      DIMENSION  AIC(K), AICP(K), AICF(K)
+cxx      DIMENSION  LK0(K), LKE(K)
+cxxcx      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
+cxx      DIMENSION  X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2)
+cxx      DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
+      INTEGER :: N, ID, LAG, NS0, KSW, K, NF(K), NS(K), MS(K), MP(K),
+     1           MF(K), LK0(K), LKE(K), M
+      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), AIC(K), AICP(K),
+     1           AICF(K), A(ID,ID,LAG,K), E(ID,ID,K)
+      REAL(8) :: Z(N,ID), B(ID,ID,LAG),
+     1           X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2),
+     2           U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -108,20 +115,20 @@ cc      MJ3 = 5
       MJ1 = MJ2*2
       MJ3 = ID
 C
-      NF = 0
-      NS = 0
-      MS = 0
-      AIC = 0.0D0
-      MP = 0
-      AICP = 0.0D0
-      MF = 0
-      AICF = 0.0D0
-      A = 0.0D0
-      E = 0.0D0
-      LK0 = 0
-      LKE = 0
-      X = 0.0D0
-      U = 0.0D0
+      NF(1:K) = 0
+      NS(1:K) = 0
+      MS(1:K) = 0
+      AIC(1:K) = 0.0D0
+      MP(1:K) = 0
+      AICP(1:K) = 0.0D0
+      MF(1:K) = 0
+      AICF(1:K) = 0.0D0
+      A(1:ID,1:ID,1:LAG,1:K) = 0.0D0
+      E(1:ID,1:ID,1:K) = 0.0D0
+      LK0(1:K) = 0
+      LKE(1:K) = 0
+      X(1:MJ1,1:MJ2) = 0.0D0
+      U(1:MJ2,1:MJ2) = 0.0D0
 C
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5
@@ -215,28 +222,28 @@ C
 cc  999 CONTINUE
 cc      close(3)
       RETURN
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( ///1H ,'PROGRAM TIMSAC 78.3.3',/,'   LOCALLY STATIONARY MU
-     1LTI-VARIATE AUTOREGRESSIVE MODEL FITTING;',//,'  < BASIC AUTOREGRE
-     2SSIVE MODEL >' )                                                  
-    3 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
-     1'   BASIC LOCAL SPAN LENGTH  NS =',I4,/,'   ORIGINAL DATA INPUT DE
-     2VICE  MT =',I3 )                                                  
-    4 FORMAT( //1H ,10X,'Z(N) = A1*Z(N-1) + A2*Z(N-2) + ... + AK*Z(N-K) 
-     1+ W(N)',/,1H ,'  WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X,  
-     2'W(N):  INNOVATION' )                                             
-   11 FORMAT( 1H ,18X,5D15.5 )                                          
-   12 FORMAT( 1H ,10X,1H.,6X,'INNOVATION VARIANCE MATRIX',53X,1H. )     
-   13 FORMAT( 1H ,//11X,35(1H.),'  CURRENT MODEL  ',35(1H.) )           
-   14 FORMAT( 1H ,10X,1H.,6X,'M',7X,'AM(I,J)',30X,'DATA  Z(K,.); K=',I5,
-     11H,,I5,7X,1H. )                                                   
-   15 FORMAT( 1H ,18X,5F15.8 )                                          
-   16 FORMAT( 1H ,10X,1H.,85X,1H. )                                     
-   17 FORMAT( 1H+,10X,1H.,I7,78X,1H. )                                  
-   18 FORMAT( 1H ,10X,87(1H.) )                                         
-   19 FORMAT( 1H ,10X,1H.,6X,'ORDER =',I5,67X,1H.,/,11X,1H.,6X,'AIC =', 
-     1 F15.3,59X,1H. )                                                  
-   21 FORMAT( 1H+,10X,1H.,85X,1H. )                                     
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( ///1H ,'PROGRAM TIMSAC 78.3.3',/,'   LOCALLY STATIONARY MU
+cxx     1LTI-VARIATE AUTOREGRESSIVE MODEL FITTING;',//,'  < BASIC AUTOREGRE
+cxx     2SSIVE MODEL >' )                                                  
+cxx    3 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
+cxx     1'   BASIC LOCAL SPAN LENGTH  NS =',I4,/,'   ORIGINAL DATA INPUT DE
+cxx     2VICE  MT =',I3 )                                                  
+cxx    4 FORMAT( //1H ,10X,'Z(N) = A1*Z(N-1) + A2*Z(N-2) + ... + AK*Z(N-K) 
+cxx     1+ W(N)',/,1H ,'  WHERE',/,11X,'K:     ORDER OF THE MODEL',/,11X,  
+cxx     2'W(N):  INNOVATION' )                                             
+cxx   11 FORMAT( 1H ,18X,5D15.5 )                                          
+cxx   12 FORMAT( 1H ,10X,1H.,6X,'INNOVATION VARIANCE MATRIX',53X,1H. )     
+cxx   13 FORMAT( 1H ,//11X,35(1H.),'  CURRENT MODEL  ',35(1H.) )           
+cxx   14 FORMAT( 1H ,10X,1H.,6X,'M',7X,'AM(I,J)',30X,'DATA  Z(K,.); K=',I5,
+cxx     11H,,I5,7X,1H. )                                                   
+cxx   15 FORMAT( 1H ,18X,5F15.8 )                                          
+cxx   16 FORMAT( 1H ,10X,1H.,85X,1H. )                                     
+cxx   17 FORMAT( 1H+,10X,1H.,I7,78X,1H. )                                  
+cxx   18 FORMAT( 1H ,10X,87(1H.) )                                         
+cxx   19 FORMAT( 1H ,10X,1H.,6X,'ORDER =',I5,67X,1H.,/,11X,1H.,6X,'AIC =', 
+cxx     1 F15.3,59X,1H. )                                                  
+cxx   21 FORMAT( 1H+,10X,1H.,85X,1H. )                                     
       END                                                               
 cc      SUBROUTINE  MNONST( Z,X,U,D,KSW,LAG,N0,NS,ID,IF,MJ,MJ1,MJ2,MJ3,   
 cc     1                    A,B,E,MF,AICF )                               
@@ -302,20 +309,28 @@ C          MF:     ORDER OF THE CURRENT MODEL
 C          AICF:   AIC OF THE CURRENT MODEL                             
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  X(MJ1,1) , U(MJ2,1) , D(1)                             
 cx      DIMENSION  Z(MJ,1)                                                
-      DIMENSION  Z(MJ,ID)                                                
-      DIMENSION  X(MJ1,MJ2) , U(MJ2,MJ2)
-      DIMENSION  A(ID,ID,LAG) , B(ID,ID,LAG) , E(ID,ID)                 
-      DIMENSION  AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID) 
+cxx      DIMENSION  Z(MJ,ID)                                                
+cxx      DIMENSION  X(MJ1,MJ2) , U(MJ2,MJ2)
+cxx      DIMENSION  A(ID,ID,LAG) , B(ID,ID,LAG) , E(ID,ID)                 
+cxx      DIMENSION  AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID) 
 cc      DIMENSION  Y(100,100)                                             
 cc      DIMENSION  C(10) , EX(10)                                         
-      DIMENSION  C(ID) , EX(ID)
-      DIMENSION  AIC(LAG+1,ID), SD(LAG+1,ID), DIC(LAG+1,ID)
-      DIMENSION  AICM(ID), SDM(ID), M(ID)
-      DIMENSION  JNDF(MJ2,ID), AF(MJ2,ID), NPR(ID), AAIC(ID)
+cxx      DIMENSION  C(ID) , EX(ID)
+cxx      DIMENSION  AIC(LAG+1,ID), SD(LAG+1,ID), DIC(LAG+1,ID)
+cxx      DIMENSION  AICM(ID), SDM(ID), M(ID)
+cxx      DIMENSION  JNDF(MJ2,ID), AF(MJ2,ID), NPR(ID), AAIC(ID)
+      INTEGER :: KSW, LAG, N0, NNF, NF, NS, ID, IF, MJ, MJ1, MJ2,
+     1           MJ3, MS, MP, MF
+      REAL(8) :: Z(MJ,ID), X(MJ1,MJ2), U(MJ2,MJ2), A(ID,ID,LAG),
+     1           B(ID,ID,LAG), E(ID,ID), AICFS, AICP, AICF
+      INTEGER :: M(ID), JNDF(MJ2,ID), NPR(ID)
+      REAL(8) :: AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID), C(ID), EX(ID),
+     1           AIC(LAG+1,ID), SD(LAG+1,ID), DIC(LAG+1,ID), AICM(ID),
+     2           SDM(ID), AF(MJ2,ID), AAIC(ID), AICS
 C                                                                       
 C                                                                       
 cc      MJ4 = 50                                                          
@@ -392,10 +407,16 @@ C
       MF = MS                                                           
       AICF = AICS                                                       
 C                                                                       
-      DO 30  II=1,MF                                                    
-      DO 30  J=1,ID                                                     
+cxx      DO 30  II=1,MF
+cxx      DO 30  J=1,ID
+      DO 32  II=1,MF                                                    
+      DO 31  J=1,ID                                                     
       DO 30  I=1,ID                                                     
-   30 A(I,J,II) = B(I,J,II)                                             
+cxx   30 A(I,J,II) = B(I,J,II) 
+      A(I,J,II) = B(I,J,II)                                            
+   30 CONTINUE
+   31 CONTINUE
+   32 CONTINUE
       GO TO 50                                                          
 C                                                                       
 C                                                                       
@@ -415,28 +436,28 @@ C
 C                                                                       
       RETURN                                                            
 C                                                                       
-  600 FORMAT( 1H ,'N =',I5,5X,'ID =',I5,5X,'K =',I5,5X,'M =',I5,5X,     
-     U  'MT =',I5,5X,'DATA FORMAT =',10A4 )                             
-  601 FORMAT( 1H ,'-----  ORIGINAL DATA  -----' )                       
-  602 FORMAT( 1H ,9X,'I',10X,'MEAN',7X,'VARIANCE' )                     
-  610 FORMAT( 1H ,10D13.5 )                                             
-  620 FORMAT( 1H ,I10,2D15.7 )                                          
-    2 FORMAT( 20A4 )                                                    
-    3 FORMAT( 8F10.0 )                                                  
-    4 FORMAT( //1H ,'---  THE FOLLOWING TWO MODELS ARE COMPARED  ---' ) 
-    5 FORMAT( //1H ,'INITIAL LOCAL MODEL:   NS =',I5,5X,'MS =',I3,5X,   
-     1'AIC =',F16.3 )                                                   
-    6 FORMAT( 1H ,'MOVING MODEL:     (NF =',I5,', NS =',I4,')',5X,      
-     1 'MS =',I3,5X,'AIC =',F16.3 )                                     
-    7 FORMAT( 1H ,'CONSTANT MODEL:   (NP =',I5,')',15X,'MP =',I3,5X,'AIC
-     1 =',F16.3 )                                                       
-    8 FORMAT( //1H ,37(1H*),/,1H ,'*****',27X,'*****',/,1H ,'*****     N
-     1EW MODEL ADOPTED     *****',/,1H ,'*****',27X,'*****',/,1H ,37(1H*
-     2) )                                                               
-    9 FORMAT( 1H ,'*****  CONSTANT MODEL ADOPTED  *****' )              
-   19 FORMAT( 1H ,'*****',27X,'*****' )                                 
-   21 FORMAT( 1H ,37(1H*) )                                             
-   22 FORMAT( 1H ,// )                                                  
-   24 FORMAT( 1H ,'LK1 =',I5,5X,'M =',I5,/,1H ,130(1H*) )               
+cxx  600 FORMAT( 1H ,'N =',I5,5X,'ID =',I5,5X,'K =',I5,5X,'M =',I5,5X,     
+cxx     U  'MT =',I5,5X,'DATA FORMAT =',10A4 )                             
+cxx  601 FORMAT( 1H ,'-----  ORIGINAL DATA  -----' )                       
+cxx  602 FORMAT( 1H ,9X,'I',10X,'MEAN',7X,'VARIANCE' )                     
+cxx  610 FORMAT( 1H ,10D13.5 )                                             
+cxx  620 FORMAT( 1H ,I10,2D15.7 )                                          
+cxx    2 FORMAT( 20A4 )                                                    
+cxx    3 FORMAT( 8F10.0 )                                                  
+cxx    4 FORMAT( //1H ,'---  THE FOLLOWING TWO MODELS ARE COMPARED  ---' ) 
+cxx    5 FORMAT( //1H ,'INITIAL LOCAL MODEL:   NS =',I5,5X,'MS =',I3,5X,   
+cxx     1'AIC =',F16.3 )                                                   
+cxx    6 FORMAT( 1H ,'MOVING MODEL:     (NF =',I5,', NS =',I4,')',5X,      
+cxx     1 'MS =',I3,5X,'AIC =',F16.3 )                                     
+cxx    7 FORMAT( 1H ,'CONSTANT MODEL:   (NP =',I5,')',15X,'MP =',I3,5X,'AIC
+cxx     1 =',F16.3 )                                                       
+cxx    8 FORMAT( //1H ,37(1H*),/,1H ,'*****',27X,'*****',/,1H ,'*****     N
+cxx     1EW MODEL ADOPTED     *****',/,1H ,'*****',27X,'*****',/,1H ,37(1H*
+cxx     2) )                                                               
+cxx    9 FORMAT( 1H ,'*****  CONSTANT MODEL ADOPTED  *****' )              
+cxx   19 FORMAT( 1H ,'*****',27X,'*****' )                                 
+cxx   21 FORMAT( 1H ,37(1H*) )                                             
+cxx   22 FORMAT( 1H ,// )                                                  
+cxx   24 FORMAT( 1H ,'LK1 =',I5,5X,'M =',I5,/,1H ,130(1H*) )               
 C                                                                       
       END                                                               

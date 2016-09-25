@@ -6,6 +6,22 @@
             ***************************************
 
 
+
+ timsac_1.3.5
+================
+Fixed bug in bsubst() for memory access issues under Valgrind.
+
+
+ timsac_1.3.4
+================
+* Fixed problems in Fortran code according to the warning messages from gfortran with options -Wall -pedantic.
+
+
+ timsac_1.3.3-2
+================
+* Modify explanation of value 'tdf' and examples in the help page of decomp()
+
+
  timsac_1.3.3
 ================
 * Corrected errors in inst/doc/index.html according to the error message of the W3C Markup Validator service.

@@ -34,8 +34,8 @@ C     WHERE NI (I=1,...,J) DENOTES THE NUMBER OF BASIC SPANS, EACH OF
 C     LENGTH NS, WHICH CONSTITUTE THE I-TH LOCALLY STATIONARY SPAN.     
 C     AT EACH LOCAL SPAN, THE PROCESS IS REPRESENTED BY A STATIONARY    
 C     AUTOREGRESSIVE MODEL.                                             
-C                                                                       
-C                                                                       
+C
+C
 C       --------------------------------------------------------------- 
 C       REFERENCE:                                                      
 C          G.KITAGAWA AND H.AKAIKE(1978), "A PROCEDURE FOR THE MODELING 
@@ -63,10 +63,10 @@ C             DFORM:    INPUT DATA SPECIFICATION STATEMENT.
 C                       -- EXAMPLE  --     (8F10.5)                     
 C             (Z(I),I=1,N):  ORIGINAL DATA                              
 C               --------------------------------------------------------
-C                                                                       
+C
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: MLOCARF
-C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+C
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
 cc      REAL * 4   TITLE(20)
 cc      DIMENSION  X(200,51)                                              
@@ -74,17 +74,24 @@ cc      DIMENSION  D(200) , A(50)
 cc      DIMENSION  U(51,51)                                               
 CC      DIMENSION  TTL(2)                                                 
 CC      DATA  TTL / 8H  CURREN,8HT MODEL  /                               
-	DIMENSION  ZS(N), Z(N)
-      DIMENSION  X(N,LAG+KSW+1)
-      DIMENSION  U(LAG+KSW+1,LAG+KSW+1), AA(LAG+KSW), A(LAG+KSW,NML)
+cxx      DIMENSION  ZS(N), Z(N)
+cxx      DIMENSION  X(N,LAG+KSW+1)
+cxx      DIMENSION  U(LAG+KSW+1,LAG+KSW+1), AA(LAG+KSW), A(LAG+KSW,NML)
 cc      REAL*4  TTL(4)                                                 
 cc      DATA  TTL / 4H  CU,4HRREN,4HT MO,4HDEL  /                               
 C
-      DIMENSION  MF(NML), SDF(NML), LK0(NML), LK2(NML)
-      DIMENSION  NNF(NML), NNS(NML)
-      DIMENSION  MS(NML), SDMS(NML), AICS(NML)
-      DIMENSION  MP(NML), SDMP(NML), AICP(NML)
-      DIMENSION  SXX(121,NML)
+cxx      DIMENSION  MF(NML), SDF(NML), LK0(NML), LK2(NML)
+cxx      DIMENSION  NNF(NML), NNS(NML)
+cxx      DIMENSION  MS(NML), SDMS(NML), AICS(NML)
+cxx      DIMENSION  MP(NML), SDMP(NML), AICP(NML)
+cxx      DIMENSION  SXX(121,NML)
+      INTEGER :: N, LAG, NS0, KSW, NML, MF(NML), LK0(NML), LK2(NML),
+     1           NNF(NML), NNS(NML), MS(NML), MP(NML)
+      REAL(8) :: ZS(N), ZMEAN, SUM, A(LAG+KSW,NML), SDF(NML), 
+     1           SXX(121,NML), SDMS(NML), AICS(NML), SDMP(NML),
+     2           AICP(NML)
+      REAL(8) :: Z(N), X(N,LAG+KSW+1), U(LAG+KSW+1,LAG+KSW+1),
+     1           AA(LAG+KSW), B
 C                                                                       
 C          EXTERNAL SUBROUTINE DECLARATION                              
 C                                                                       
@@ -117,26 +124,26 @@ CC      READ( 5,1 )     MT
 cc      MT = 5
 cc      OPEN( MT,FILE=IFLNAM,ERR=910,IOSTAT=IVAR,STATUS='OLD' )
 cc      READ( 5,1 )     LAG , NS , KSW                                    
-C                                                                       
+C
 cc      WRITE( 6,3 )                                                      
 cc      IF( KSW .EQ. 1 )     WRITE( 6,5 )                                 
 cc      IF( KSW .NE. 1 )     WRITE( 6,4 )                                 
 cc      WRITE( 6,6 )                                                      
 cc      WRITE( 6,2 )    LAG , NS , MT                                     
-C                                                                       
+C
 C          ---------------------------------------                      
 C          ORIGINAL DATA LOADING AND MEAN DELETION                      
 C          ---------------------------------------                      
-C                                                                       
+C
 cc      CALL  REDATA( Z,N,MT,TITLE )
       CALL  REDATA( ZS,Z,N,ZMEAN,SUM )
 cc      CLOSE( MT )
-C                                                                       
+C
       L  = 0                                                            
       K  = LAG + KSW                                                    
       MX = K * 2                                                        
       IF = 0                                                            
-	NJ = 0
+      NJ = 0
       NF = 0
       NS = NS0
 C                                                                       
@@ -165,11 +172,11 @@ C
 cc      IF( IF .EQ. 2 )     LK0 = LK1                                     
       IF( IF .EQ. 2 )     LK0(NJ) = LK1                                     
       IF( IF .NE. 2 )     LK0(NJ) = LK0(NJ-1)
-C                                                                       
+C
 C          -----------------------                                      
 C          PRINT OUT CURRENT MODEL                                      
 C          -----------------------                                      
-C                                                                       
+C
 cc      LK2 = LK + NS                                                     
 cc      CALL  PRINTA( A,SDF,MF,TTL,4,TITLE,LK0,LK2 )                      
       LK2(NJ) = LK + NS
@@ -182,7 +189,9 @@ C
 cc      CALL  NRASPE( SDF,A,B,MF,0,121,TITLE )                            
       CALL  NRASPE( SDF(NJ),AA,B,MF(NJ),0,120,SXX(1,NJ) )
       DO 110 I = 1,MF(NJ)
-  110 A(I,NJ) = AA(I)
+cxx  110 A(I,NJ) = AA(I)
+      A(I,NJ) = AA(I)
+  110 CONTINUE
 C                                                                       
       GO TO 100                                                         
 C                                                                       
@@ -202,25 +211,25 @@ cc#endif
 ccC /* __linux__ */
 cc      WRITE(6,610) IVAR,IFLNAM
 C
-  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//5X,100A)
-  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//5X,100A)
+cxx  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//5X,100A)
+cxx  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//5X,100A)
 C
 cc  999 CONTINUE
       RETURN
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
-     1'   BASIC LOCAL SPAN  NS =',I4,/,'   ORIGINAL DATA INPUT DEVICE  M
-     2T =',I3 )                                                         
-    3 FORMAT( //  ' PROGRAM TIMSAC 78.3.1',/'   LOCALLY STATIONARY AUTOR
-     1EGRESSIVE MODEL FITTING;   SCALAR CASE',//,'   < BASIC AUTOREGRESS
-     2IVE MODEL >' )                                                    
-    4 FORMAT( 1H ,10X,'Z(I) = A(1)*Z(I-1) + A(2)*Z(I-2) + ... + A(M)*Z(I
-     1-M) + E(I)' )                                                     
-    5 FORMAT( 1H ,10X,'Z(I) = A(1) + A(2)*Z(I-1) + ... + A(M+1)*Z(I-M) +
-     1 E(I)' )                                                          
-    6 FORMAT( 1H ,2X,'WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'E(
-     1I):  GAUSSIAN WHITE NOISE WITH MEAN 0  AND  VARIANCE SD(M).' )    
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( ///1H ,'  FITTING UP TO THE ORDER  K =',I3,'  IS TRIED',/,
+cxx     1'   BASIC LOCAL SPAN  NS =',I4,/,'   ORIGINAL DATA INPUT DEVICE  M
+cxx     2T =',I3 )                                                         
+cxx    3 FORMAT( //  ' PROGRAM TIMSAC 78.3.1',/'   LOCALLY STATIONARY AUTOR
+cxx     1EGRESSIVE MODEL FITTING;   SCALAR CASE',//,'   < BASIC AUTOREGRESS
+cxx     2IVE MODEL >' )                                                    
+cxx    4 FORMAT( 1H ,10X,'Z(I) = A(1)*Z(I-1) + A(2)*Z(I-2) + ... + A(M)*Z(I
+cxx     1-M) + E(I)' )                                                     
+cxx    5 FORMAT( 1H ,10X,'Z(I) = A(1) + A(2)*Z(I-1) + ... + A(M+1)*Z(I-M) +
+cxx     1 E(I)' )                                                          
+cxx    6 FORMAT( 1H ,2X,'WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'E(
+cxx     1I):  GAUSSIAN WHITE NOISE WITH MEAN 0  AND  VARIANCE SD(M).' )    
 C                                                                       
       END                                                               
 cc      SUBROUTINE  NONSTA( SETX,Z,X,U,D,LAG,N0,NS,K,IF,ISW,TITLE,MJ1,MJ2,
@@ -290,17 +299,23 @@ C          SDF:    INNOVATION VARIANCE OF THE CURRENT MODEL
 C          IF:     =1   MODEL UNSWITCHED                                
 C                  =2   MODEL SWITCHED                                  
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z(1) , TITLE(1)                                         
 cc      REAL * 4   TITLE(1)
 cc      DIMENSION  X(MJ1,1) , U(MJ2,1) , A(1)                      
 cc      DIMENSION  B(50)                                                  
 cx      DIMENSION  Z(1)
-      DIMENSION  Z(MJ1)
-      DIMENSION  X(MJ1,K+1) , U(K+1,K+1) , A(K)                      
-      DIMENSION  B(K)                                                  
-      DIMENSION  SDS(K+1), AS(K+1), DICS(K+1)
-      DIMENSION  SDP(K+1), AP(K+1), DICP(K+1)
+cxx      DIMENSION  Z(MJ1)
+cxx      DIMENSION  X(MJ1,K+1) , U(K+1,K+1) , A(K)                      
+cxx      DIMENSION  B(K)                                                  
+cxx      DIMENSION  SDS(K+1), AS(K+1), DICS(K+1)
+cxx      DIMENSION  SDP(K+1), AP(K+1), DICP(K+1)
+      INTEGER :: LAG, N0, NF, NS, K, IF, ISW, MJ1, MJ2, MF, NNF,
+     1           NNS, MS, MP
+      REAL(8) :: Z(MJ1), X(MJ1,K+1), U(K+1,K+1), A(K), SDF, SDMS,
+     1           AICS, SDMP, AICP
+      REAL(8) :: B(K), SDS(K+1), AS(K+1), DICS(K+1), SDP(K+1),
+     1           AP(K+1), DICP(K+1), AICMS, AICMP
       EXTERNAL  SETX
 C                                                                       
       K1 = K + 1                                                        
@@ -399,7 +414,9 @@ C                                                           !
       MF = MS                                                           
 C                                                           !           
       DO 30  I=1,MF                                                     
-   30 A(I) = B(I)                                                       
+cxx   30 A(I) = B(I)
+      A(I) = B(I)
+   30 CONTINUE                                                       
 C                                                           !           
 cc      SDF = SDS                                                         
       SDF = SDMS                                                         
@@ -423,25 +440,24 @@ cc      SDF = SDP
       NF = NF + NS                                                      
 C                                                                       
    50 CONTINUE                                                          
-C                                                                     ( 
+C
       RETURN                                                            
+C
+cxx    4 FORMAT( //1H ,'---  THE FOLLOWING TWO MODELS ARE COMPARED  ---' ) 
+cxx    5 FORMAT( //1H ,'INITIAL LOCAL MODEL:    NS =',I5,5X,'MS =',I3,5X,  
+cxx     1  'SDS =',D16.8,5X,'AICS =',F16.3 )                               
+cxx    6 FORMAT( 1H ,'MOVING MODEL:      (NF =',I5,', NS =',I4,1H),5X,'MS =
+cxx     2',I3,5X,'SDS =',D16.8,5X,'AICS =',F16.3 )                         
+cxx    7 FORMAT( 1H ,'CONSTANT MODEL:    (NP =',I5,1H),15X,'MP =',I3,5X,'SD
+cxx     3P =',D16.8,5X,'AICP =',F16.3 )                                    
+cxx    8 FORMAT( //1H ,37(1H*),/,1H ,'*****',27X,'*****',/,1H ,'*****     N
+cxx     1EW MODEL ADOPTED     *****',/,1H ,'*****',27X,'*****',/,1H ,37(1H*
+cxx     2) )                                                               
+cxx    9 FORMAT( 1H ,'*****  CONSTANT MODEL ADOPTED  *****' )              
+cxx  700 FORMAT( 1H ,'-----  X  -----' )                                   
+cxx  620 FORMAT( 1H ,10D13.5 )                                             
+cxx  600 FORMAT( 1H ,'N =',I5,5X,'K =',I5,5X,'M =',I5,5X,'MT =',I5,5X,     
+cxx     * 'DATA FORMAT =',15A4 )                                           
+cxx  601 FORMAT( 1H ,'-----  ORIGINAL DATA  -----',/,(1X,10D13.5) )        
 C                                                                       
-    4 FORMAT( //1H ,'---  THE FOLLOWING TWO MODELS ARE COMPARED  ---' ) 
-    5 FORMAT( //1H ,'INITIAL LOCAL MODEL:    NS =',I5,5X,'MS =',I3,5X,  
-     1  'SDS =',D16.8,5X,'AICS =',F16.3 )                               
-    6 FORMAT( 1H ,'MOVING MODEL:      (NF =',I5,', NS =',I4,1H),5X,'MS =
-     2',I3,5X,'SDS =',D16.8,5X,'AICS =',F16.3 )                         
-    7 FORMAT( 1H ,'CONSTANT MODEL:    (NP =',I5,1H),15X,'MP =',I3,5X,'SD
-     3P =',D16.8,5X,'AICP =',F16.3 )                                    
-    8 FORMAT( //1H ,37(1H*),/,1H ,'*****',27X,'*****',/,1H ,'*****     N
-     1EW MODEL ADOPTED     *****',/,1H ,'*****',27X,'*****',/,1H ,37(1H*
-     2) )                                                               
-    9 FORMAT( 1H ,'*****  CONSTANT MODEL ADOPTED  *****' )              
-  700 FORMAT( 1H ,'-----  X  -----' )                                   
-  620 FORMAT( 1H ,10D13.5 )                                             
-  600 FORMAT( 1H ,'N =',I5,5X,'K =',I5,5X,'M =',I5,5X,'MT =',I5,5X,     
-     * 'DATA FORMAT =',15A4 )                                           
-  601 FORMAT( 1H ,'-----  ORIGINAL DATA  -----',/,(1X,10D13.5) )        
-C                                                                       
-      END                                                               
-                                                                       
+      END

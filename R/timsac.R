@@ -1689,8 +1689,8 @@ function (y, mtype, lag=NULL, nreg=NULL, reg=NULL, term.lag=NULL, cstep=5, plot=
 
     if(is.null(reg))  reg <- array(0, dim=c(3,nreg)) 
     if(is.null(term.lag))  term.lag <- rep(0,5)
-    f <- ""                                          # specification of regressor (mtype=5)
-    cnst <- 0                                        # constant value (mtype=6)
+#    f <- ""                                          # specification of regressor (mtype=5)
+#    cnst <- 0                                        # constant value (mtype=6)
 
     z <- .Call("bsubst",
 	as.double(y),
@@ -1700,9 +1700,9 @@ function (y, mtype, lag=NULL, nreg=NULL, reg=NULL, term.lag=NULL, cstep=5, plot=
 	as.integer(nreg),
 	as.integer(cstep),
 	as.integer(reg),
-	as.integer(term.lag),
-	as.character(f),
-	as.double(cnst))
+	as.integer(term.lag))
+#	as.character(f),
+#	as.double(cnst))
 
     mo <- z[[3L]]
     arcoefm=z[[6L]][1:mo]
@@ -2318,7 +2318,7 @@ decomp <- function(y, trend.order=2, ar.order=2, frequency=12, seasonal.order=1,
       if( ar.order != 0 ) plot(z[[3L]], type="l", main="AR component", xlab="", ylab="", ylim=c(-my,my))
       if( itrade == 1) plot(z[[4L]], type="l", main="Trading Day Effect", xlab="", ylab="", ylim=c(-my,my))
       par(oldpar)
-      decomp.out <- list(aic=aic, lkhd=lkhd, sigma2=sigma2, tau1=tau1, tau2=tau2, tau3=tau3, arcoef=arcoef, tdf=tdf)
+      decomp.out <- list(trend=z[[1L]], seasonal=z[[2L]], ar=z[[3L]], trad=z[[4L]], noise=z[[5L]], aic=aic, lkhd=lkhd, sigma2=sigma2, tau1=tau1, tau2=tau2, tau3=tau3, arcoef=arcoef, tdf=tdf)
     } else {
       decomp.out <- list(trend=z[[1L]], seasonal=z[[2L]], ar=z[[3L]], trad=z[[4L]], noise=z[[5L]],
                        aic=aic, lkhd=lkhd, sigma2=sigma2, tau1=tau1, tau2=tau2, tau3=tau3, arcoef=arcoef, tdf=tdf)

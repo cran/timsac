@@ -58,14 +58,18 @@ C       ---------------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: UNIMARF
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
 cc      REAL * 4   TITLE(20)
 cc      DIMENSION  Z(10000)
 cc      DIMENSION  X(200,101) , D(200) , A(100)                           
-      DIMENSION  ZS(N), Z(N)
-      DIMENSION  X(N+1,LAG+1), A(LAG)
-      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
+cxx      DIMENSION  ZS(N), Z(N)
+cxx      DIMENSION  X(N+1,LAG+1), A(LAG)
+cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
+      INTEGER :: N, LAG, M
+      REAL(8) :: ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
+     1           AICM, SDM, A(LAG)
+      REAL(8) :: Z(N), X(N+1,LAG+1)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
 C                                                                       
@@ -149,35 +153,35 @@ cx      CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A,M,SD,AIC,DIC,SDM,AICM,
 cx     *              IFG,LU )
       CALL  ARMFIT( X,K,LAG,NMK,ISW,MJ1,A,M,SD,AIC,DIC,SDM,AICM )
 C
-cc	GO TO 999
+cc      GO TO 999
 C                                                                      +
 cc  900 CONTINUE
-cc	WRITE(6,600) IVAR,OFLNAM
+cc      WRITE(6,600) IVAR,OFLNAM
 cc  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//,5X,100A)
-cc	GO TO 999
+cc      GO TO 999
 C                                                                      !
 cc  910 CONTINUE
-cc	IF ( NFL.EQ.2 ) CLOSE( 6 )
+cc      IF ( NFL.EQ.2 ) CLOSE( 6 )
 cc#ifdef __linux__
-ccC	reopen #6 as stdout
-cc	IF ( NFL.EQ.2 ) OPEN(6, FILE='/dev/fd/1')
+ccC      reopen #6 as stdout
+cc      IF ( NFL.EQ.2 ) OPEN(6, FILE='/dev/fd/1')
 cc#endif
 ccC /* __linux__ */
-cc	WRITE(6,610) IVAR,IFLNAM
+cc      WRITE(6,610) IVAR,IFLNAM
 cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C                                                                      +
 cc  999 CONTINUE
 cx      IF (IFG.NE.0) CLOSE(LU)                                           
       RETURN
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( 1H ,'FITTING UP TO THE ORDER  K =',I3,'  IS TRIED' )      
-    3 FORMAT( ' PROGRAM TIMSAC 78.1.1',/'   AUTOREGRESSIVE MODEL FITTING
-     1  (SCALAR CASE)  ;   LEAST SQUARES METHOD BY HOUSEHOLDER TRANSFORM
-     2ATION',/,'   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-
-     31) + A(2)*Z(I-2) +  ...  + A(M)*Z(I-M) + E(I)',/,'   WHERE',/,11X,
-     4'M:     ORDER OF THE MODEL',/,11X,'E(I):  GAUSSIAN WHITE NOISE WIT
-     5H MEAN 0  AND  VARIANCE SD(M).' )                                 
-    4 FORMAT( 1H ,'ORIGINAL DATA INPUT DEVICE  MT =',I3 )               
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( 1H ,'FITTING UP TO THE ORDER  K =',I3,'  IS TRIED' )      
+cxx    3 FORMAT( ' PROGRAM TIMSAC 78.1.1',/'   AUTOREGRESSIVE MODEL FITTING
+cxx     1  (SCALAR CASE)  ;   LEAST SQUARES METHOD BY HOUSEHOLDER TRANSFORM
+cxx     2ATION',/,'   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-
+cxx     31) + A(2)*Z(I-2) +  ...  + A(M)*Z(I-M) + E(I)',/,'   WHERE',/,11X,
+cxx     4'M:     ORDER OF THE MODEL',/,11X,'E(I):  GAUSSIAN WHITE NOISE WIT
+cxx     5H MEAN 0  AND  VARIANCE SD(M).' )                                 
+cxx    4 FORMAT( 1H ,'ORIGINAL DATA INPUT DEVICE  MT =',I3 )               
 C                                                                       
       E N D                                                             

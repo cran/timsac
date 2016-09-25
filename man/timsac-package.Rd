@@ -17,7 +17,6 @@ For a complete list of functions, use library(help="timsac").
 
  For overview of models and information criteria for model selection, see \url{../doc/timsac-guide_e.pdf}
  or \url{../doc/timsac-guide_j.pdf} (in Japanese).
- PDF version of reference manual is available in \url{../doc/timsac-manual.pdf}
 }
 
 \references{

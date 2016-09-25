@@ -65,22 +65,27 @@ C                 RECORD
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULMARF
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  Z(1500,5)                                              
 cc      DIMENSION  X(200,100) , D(200)                                    
 cc      DIMENSION  Y(100,100) , B(10,10,30) , E(10,10)                    
 cc      DIMENSION  C(10) , EX(10)                                         
-      DIMENSION  Z(N,ID), ZS(N,ID), C(ID)
-      DIMENSION  ZMEAN(ID), ZVARI(ID)
-      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
-      DIMENSION  B(ID,ID,LAG) , E(ID,ID), BI(ID,ID,LAG) , EI(ID,ID)
-      DIMENSION  EX(ID), CV(ID)
-C
-      DIMENSION  SD1(LAG+1,ID), AIC1(LAG+1,ID), DIC1(LAG+1,ID)
-      DIMENSION  AICM(ID), SDM(ID), IM(ID)
-      DIMENSION  JNDF((LAG+1)*ID,ID), AF((LAG+1)*ID,ID)
-      DIMENSION  NPR(ID), AIC(ID)
+cxx      DIMENSION  Z(N,ID), ZS(N,ID), C(ID)
+cxx      DIMENSION  ZMEAN(ID), ZVARI(ID)
+cxx      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
+cxx      DIMENSION  B(ID,ID,LAG) , E(ID,ID), BI(ID,ID,LAG) , EI(ID,ID)
+cxx      DIMENSION  EX(ID), CV(ID)
+cxx      DIMENSION  SD1(LAG+1,ID), AIC1(LAG+1,ID), DIC1(LAG+1,ID)
+cxx      DIMENSION  AICM(ID), SDM(ID), IM(ID)
+cxx      DIMENSION  JNDF((LAG+1)*ID,ID), AF((LAG+1)*ID,ID)
+cxx      DIMENSION  NPR(ID), AIC(ID)
+      INTEGER :: N, ID, LAG, IM(ID), NPR(ID), JNDF((LAG+1)*ID,ID), LMAX
+      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), SD1(LAG+1,ID),
+     1           AIC1(LAG+1,ID), DIC1(LAG+1,ID), AICM(ID), SDM(ID),
+     2           AF((LAG+1)*ID,ID), EX(ID), AIC(ID), EI(ID,ID),
+     3           BI(ID,ID,LAG), E(ID,ID), B(ID,ID,LAG), AICS
+      REAL(8) :: Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), CV(ID)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
 C
@@ -157,8 +162,8 @@ cc      CLOSE( MT )
 C                                                                       
 C     --  HOUSEHOLDER REDUCTION  --                                     
 C                                                                       
-cc      CALL  MREDCT( Z,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
-      X = 0.0D0
+cc      CALL  MREDCT( Z,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )
+      X(1:MJ1,1:MJ4) = 0.0D0
       CALL  MREDCT( Z,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
 C                                                                       
 C     --  AR-MODEL FITTING (MAICE PROCEDURE)  --                        
@@ -189,14 +194,14 @@ cc  999 CONTINUE
 cc      CLOSE( LU )
 cx      IF( IFG.NE.0 ) CLOSE( LU )
       RETURN
-    1 FORMAT( 16I5 )                                                    
-    3 FORMAT( ' PROGRAM TIMSAC 78.2.1',/'   MULTI-VARIATE AUTOREGRESSIVE
-     * MODEL FITTING  ;  LEAST SQUARES METHOD BY HOUSEHOLDER TRANSFORMAT
-     2ION',/,'   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-1)
-     3 + A(2)*Z(I-2) + ... + A(II)*Z(I-II) + ... + A(M)*Z(I-M) + W(I)',/
-     4,'   WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'W(I):  ID-DIM
-     5ENSIONAL GAUSSIAN WHITE NOISE WITH MEAN 0 AND VARIANCE MATRIX E(M)
-     6.' )                                                              
-    4 FORMAT( 1H ,'FITTING UP TO THE ORDER  K =',I3,'   IS TRIED',/,' OR
-     1IGINAL DATA INPUT DEVICE   MT =',I3 )                             
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    3 FORMAT( ' PROGRAM TIMSAC 78.2.1',/'   MULTI-VARIATE AUTOREGRESSIVE
+cxx     * MODEL FITTING  ;  LEAST SQUARES METHOD BY HOUSEHOLDER TRANSFORMAT
+cxx     2ION',/,'   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-1)
+cxx     3 + A(2)*Z(I-2) + ... + A(II)*Z(I-II) + ... + A(M)*Z(I-M) + W(I)',/
+cxx     4,'   WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'W(I):  ID-DIM
+cxx     5ENSIONAL GAUSSIAN WHITE NOISE WITH MEAN 0 AND VARIANCE MATRIX E(M)
+cxx     6.' )                                                              
+cxx    4 FORMAT( 1H ,'FITTING UP TO THE ORDER  K =',I3,'   IS TRIED',/,' OR
+cxx     1IGINAL DATA INPUT DEVICE   MT =',I3 )                             
       E N D                                                             

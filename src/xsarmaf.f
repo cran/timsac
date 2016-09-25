@@ -1,7 +1,7 @@
       SUBROUTINE XSARMAF( YS,N,IQ,IP,P01,G1,TL1,P02,G2,ALPHB,ALPHA,TL2,
      *                    SIGMA2 )
 C
-	INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac_f.h'
 C
 cc      PROGRAM XSARMA                                                    
 C.......................................................................
@@ -65,12 +65,16 @@ C-----------------------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: XSARMAF
 C
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      REAL*4 TITL(20)                                                   
 cc      DIMENSION Y(2000),P0(50)                                          
-      DIMENSION YS(N), Y(N), P01(IP+IQ)
-      DIMENSION P02(IP+IQ), G1(IP+IQ), G2(IP+IQ)
-      DIMENSION ALPHB(IQ), ALPHA(IP)
+cxx      DIMENSION YS(N), Y(N), P01(IP+IQ)
+cxx      DIMENSION P02(IP+IQ), G1(IP+IQ), G2(IP+IQ)
+cxx      DIMENSION ALPHB(IQ), ALPHA(IP)
+      INTEGER :: N, IQ, IP
+      REAL(8) :: YS(N), P01(IP+IQ), G1(IP+IQ), TL1, P02(IP+IQ),
+     1           G2(IP+IQ), ALPHB(IQ), ALPHA(IP), TL2, SIGMA2
+      REAL(8) :: Y(N)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM,MFLNAM
 cc      CALL FLNAM3( IFLNAM,OFLNAM,MFLNAM,NFL )
@@ -90,7 +94,8 @@ C
 C                                                                       
 C-----  READ IN AND PRINT OUT OF INITIAL CONDITION  -----               
 cc      CALL SDATPR(TITL,Y,N,P0,IQ,IP)                                    
-      CALL SDATPR(YS,Y,N,P01,IQ,IP)
+cxx      CALL SDATPR(YS,Y,N,P01,IQ,IP)
+      CALL SDATPR(YS,Y,N)
 cc      CLOSE( 5 )
 cc#ifdef __linux__
 ccC     reopen #5 as stdin
@@ -182,18 +187,22 @@ C          ICOND:  ICOND=0, WHEN STABLE
 C                  ICOND=1, WHEN NOT STABLE                             
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION A(50),B(50),ALPH(50)                                    
 cc      COMMON /CMALPH/ALPH                                               
-      DIMENSION A(M),B(M),ALPH(M)                                    
+cxx      DIMENSION A(M),B(M),ALPH(M)                                    
+      INTEGER :: M, ICOND 
+      REAL(8) :: A(M), ALPH(M)
+      REAL(8) :: B(M), CST0, CST1, CST099, AT, CT, D
       DATA CST0,CST1,CST099/0.0D-00,1.0D-00,0.99999D-00/                
 C                                                                       
 C                                                                       
 C                                                                       
 C-----  STABILITY CHECK  -----                                          
 cc      DO 10 I=1,50                                                      
-      DO 10 I=1,M
-   10 B(I)=CST0                                                         
+cxx      DO 10 I=1,M
+cxx   10 B(I)=CST0                                                         
+      B(1:M)=CST0
       DO 20 I=1,M                                                       
       MI=M-I                                                            
       MIP1=MI+1                                                         
@@ -226,7 +235,9 @@ C-----  RECOVERY OF COEFFICIENTS  -----
       IP1=I+1                                                           
       DO 421 K=1,I                                                      
       IK=IP1-K                                                          
-  421 B(K)=A(IK)                                                        
+cxx  421 B(K)=A(IK)
+      B(K)=A(IK)
+  421 CONTINUE
   400 CONTINUE                                                          
 C                                                                       
       RETURN                                                            
@@ -255,21 +266,30 @@ C          F:  (-2)LOG LIKELIHOOD
 C          SD:  WHITE NOISE VARIANCE                                    
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION Y(2000)                                                 
 cc      DIMENSION A(50),B(50),P(51,51),P0(50)                             
 cc      DIMENSION P1(51),AKI(51),YY(51),PY(51),Z(51),PZ(51)               
-      DIMENSION Y(N)                                                 
-      DIMENSION A(IR),B(IR),P(IR,IR),P0(IP+IQ)                             
-      DIMENSION P1(IR),AKI(IR),YY(IR),PY(IR),Z(IR),PZ(IR)
+cxx      DIMENSION Y(N)                                                 
+cxx      DIMENSION A(IR),B(IR),P(IR,IR),P0(IP+IQ)                             
+cxx      DIMENSION P1(IR),AKI(IR),YY(IR),PY(IR),Z(IR),PZ(IR)
+      INTEGER :: N,  IQ, IP, IR
+      REAL(8) :: F ,SD, Y(N), P0(IP+IQ)
+      REAL(8) :: A(IR), B(IR), P(IR,IR), P1(IR), AKI(IR), YY(IR),
+     1           PY(IR), Z(IR), PZ(IR), CST0, CST1, CSTA, REM,
+     2           SUM, AMI, EM, SERI, SLR, Y2, REW, ERI, AMY,
+     3           AMRI, YRI, EW, AN
 cc      DATA A,B,AKI/151*0.0D-00/                                         
       DATA CST0,CST1,CSTA/0.0D-00,1.0D-00,0.1D-05/                      
 C                                                                       
-      DO 600 I=1,IR
-         A(I)=CST0
-         B(I)=CST0
-         AKI(I)=CST0
-  600 CONTINUE
+cxx      DO 600 I=1,IR
+cxx         A(I)=CST0
+cxx         B(I)=CST0
+cxx         AKI(I)=CST0
+cxx  600 CONTINUE
+      A(1:IR)=CST0
+      B(1:IR)=CST0
+      AKI(1:IR)=CST0
 C                                                                       
       IF(IQ.EQ.0) GO TO 620                                             
       DO 610 I=1,IQ                                                     
@@ -430,7 +450,7 @@ C
       P0(II)=A(I)                                                       
  1630 CONTINUE                                                          
  1640 CONTINUE                                                          
- 2100 CONTINUE                                                          
+cxx 2100 CONTINUE                                                          
 C                                                                       
       RETURN                                                            
       END                                                               
@@ -470,14 +490,22 @@ C          IPRNT=0:  NOT TO PRINT OUT INTERMEDIATE RESULTS
 C          IPRNT=1:  TO PRINT OUT INTERMEDIATE RESULTS                  
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
-      REAL*8 MAXVD                                                      
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      REAL*8 MAXVD                                                      
 cc      DIMENSION VD(50,50),X(50),G(50),SX(50),SG(50),SR(50),C(50)        
 cc      DIMENSION Y(2000),SSX(50)                                         
 cc      COMMON /COM50/VD                                                  
-      DIMENSION G(IP+IQ),C(IP+IQ),Y(N),X(IP+IQ),VD(IP+IQ,IP+IQ)
-      DIMENSION SX(IP+IQ),SG(IP+IQ),SR(IP+IQ),SSX(IP+IQ)                                         
-      DIMENSION ALPH(IP+IQ)
+cxx      DIMENSION G(IP+IQ),C(IP+IQ),Y(N),X(IP+IQ),VD(IP+IQ,IP+IQ)
+cxx      DIMENSION SX(IP+IQ),SG(IP+IQ),SR(IP+IQ),SSX(IP+IQ)                                         
+cxx      DIMENSION ALPH(IP+IQ)
+      INTEGER :: N, IQ, IP, ISWRO
+      REAL(8) :: PHAI, SIGMA2, G(IP+IQ), C(IP+IQ), Y(N), X(IP+IQ),
+     1           VD(IP+IQ,IP+IQ)
+      REAL(8) :: MAXVD, SX(IP+IQ), SG(IP+IQ), SR(IP+IQ), SSX(IP+IQ),
+     1           ALPH(IP+IQ),  CST0, CST1, CST4, CST10,
+     2           CONSTA, CONSTB, EPS3, EPS4, VDN, SCI, SUM,
+     3           SRO, GSR, DGAM, DGAM1, RAM, RAMSRO, RAMT,
+     4           SPHAI, RAM1, CONSDR, SD                                                         
       DATA CST0,CST1,CST4,CST10/0.0D-00,1.0D-00,4.0D-00,10.0D-00/       
       DATA CONSTA,CONSTB,EPS3,EPS4/0.5D-00,2.0D-00,0.1D-05,0.1D-05/     
 cc      DATA SSX/50*0.0D-00/                                              
@@ -497,7 +525,9 @@ C
       ICOND=0                                                           
 C-----  SX=X-C  -----                                                   
       DO 210 I=1,IPQ                                                    
-  210 SX(I)=X(I)-C(I)                                                   
+cxx  210 SX(I)=X(I)-C(I)
+      SX(I)=X(I)-C(I)
+  210 CONTINUE
 C                                                                       
 cx      IF(IPRNT.EQ.0) GO TO 3200                                         
 cc      WRITE(6,3900)                                                     
@@ -509,17 +539,21 @@ C
 C                                                                       
 C-----  GRADIENT COMPUTATION  -----                                     
 C                                                                       
- 4000 CONTINUE                                                          
+cxx 4000 CONTINUE                                                          
       ICOND=0                                                           
       IF(IQ.LE.0) GO TO 4510                                            
       DO 4500 I=1,IQ                                                    
- 4500 SSX(I)=SX(I)                                                      
+cxx 4500 SSX(I)=SX(I)
+      SSX(I)=SX(I)
+ 4500 CONTINUE
 cc      CALL ARCHCK(SSX,IQ,ICOND)                                         
       CALL ARCHCK(SSX,ALPH,IQ,ICOND)
  4510 IF(IP.LE.0) GO TO 4600                                            
       DO 4520 I=1,IP                                                    
       II=IQ+I                                                           
- 4520 SSX(I)=SX(II)                                                     
+cxx 4520 SSX(I)=SX(II)
+      SSX(I)=SX(II)
+ 4520 CONTINUE
 cc      CALL ARCHCK(SSX,IP,ICOND)                                         
       CALL ARCHCK(SSX,ALPH,IP,ICOND)
  4600 CONTINUE                                                          
@@ -541,13 +575,21 @@ C------------------------------
       VDN=MAXVD/CST4                                                    
       DO 304 I=1,IPQ                                                    
       DO 303 J=1,IPQ                                                    
-  303 VD(I,J)=VD(I,J)/CST10                                             
-  304 VD(I,I)=VD(I,I)+VDN                                               
+cxx  303 VD(I,J)=VD(I,J)/CST10
+      VD(I,J)=VD(I,J)/CST10
+  303 CONTINUE
+cxx  304 VD(I,I)=VD(I,I)+VDN
+      VD(I,I)=VD(I,I)+VDN
+  304 CONTINUE
       DO 306 I=1,IPQ                                                    
       SCI=CST0                                                          
       DO 305 J=1,IPQ                                                    
-  305 SCI=SCI+VD(I,J)*G(J)                                              
-  306 C(I)=SCI                                                          
+cxx  305 SCI=SCI+VD(I,J)*G(J)
+      SCI=SCI+VD(I,J)*G(J)
+  305 CONTINUE
+cxx  306 C(I)=SCI
+      C(I)=SCI
+  306 CONTINUE
 C------------------------------                                         
 C                                                                       
       GO TO 1210                                                        
@@ -563,18 +605,26 @@ C-----  SR=V*SG  -----
       DO 310 I=1,IPQ                                                    
       SUM=CST0                                                          
       DO 311 J=1,IPQ                                                    
-  311 SUM=SUM+VD(I,J)*SG(J)                                             
-  310 SR(I)=SUM                                                         
+cxx  311 SUM=SUM+VD(I,J)*SG(J)                                             
+      SUM=SUM+VD(I,J)*SG(J)
+  311 CONTINUE
+cxx  310 SR(I)=SUM
+      SR(I)=SUM
+  310 CONTINUE
 C                                                                       
 C-----  SRO=(SG)'*(SR)  -----                                           
       SRO=0.0D-00                                                       
       DO 1050 I=1,IPQ                                                   
- 1050 SRO=SRO+SG(I)*SR(I)                                               
+cxx 1050 SRO=SRO+SG(I)*SR(I)
+      SRO=SRO+SG(I)*SR(I)
+ 1050 CONTINUE
 C                                                                       
 C-----  DGAM=-G'*(SR)/SRO  -----                                        
       GSR=0.0D-00                                                       
       DO 1060 I=1,IPQ                                                   
- 1060 GSR=GSR+G(I)*SR(I)                                                
+cxx 1060 GSR=GSR+G(I)*SR(I)
+      GSR=GSR+G(I)*SR(I)
+ 1060 CONTINUE
       DGAM=-GSR/SRO                                                     
       DGAM1=DGAM+CST1                                                   
       DGAM1=DABS(DGAM1)+0.1D-70                                         
@@ -593,10 +643,14 @@ C
   450 CONTINUE                                                          
       IRAM=0                                                            
   470 RAMSRO=(RAM-CST1)/SRO                                             
-      DO 480 I=1,IPQ                                                    
+cxx      DO 480 I=1,IPQ                                                    
+      DO 481 I=1,IPQ
       RAMT=RAMSRO*SR(I)                                                 
       DO 480 J=1,IPQ                                                    
-  480 VD(I,J)=VD(I,J)+RAMT*SR(J)                                        
+cxx  480 VD(I,J)=VD(I,J)+RAMT*SR(J)
+      VD(I,J)=VD(I,J)+RAMT*SR(J)
+  480 CONTINUE
+  481 CONTINUE
       IF(PHAI.GE.SPHAI) GO TO 540                                       
 C                                                                       
 C-----  SPHAI.GT.PHAI: TEST OF CORRECTION  -----                        
@@ -604,7 +658,9 @@ C-----  SPHAI.GT.PHAI: TEST OF CORRECTION  -----
       IF(DABS(RAM1).LT.EPS3) GO TO 555                                  
       CONSDR=DGAM*RAM1                                                  
       DO 550 I=1,IPQ                                                    
-  550 C(I)=C(I)-CONSDR*SR(I)                                            
+cxx  550 C(I)=C(I)-CONSDR*SR(I)                                            
+      C(I)=C(I)-CONSDR*SR(I)
+  550 CONTINUE
       IPHAI=0                                                           
       IF(SRO.GT.EPS4) GO TO 900                                         
 C     END OF ITERATION                                                  
@@ -615,7 +671,9 @@ C-----  SHPAI.LE.PHAI: SUCCESSFUL REDUCTION  -----
   540 DO 560 I=1,IPQ                                                    
       X(I)=SX(I)                                                        
       G(I)=SG(I)                                                        
-  560 C(I)=RAM*SR(I)                                                    
+cxx  560 C(I)=RAM*SR(I)                                                    
+      C(I)=RAM*SR(I)
+  560 CONTINUE
       PHAI=SPHAI                                                        
       SIGMA2=SD                                                         
 C                                                                       
@@ -625,7 +683,7 @@ cx      WRITE(LU,570) PHAI
 cx  571 CONTINUE                                                          
 C                                                                       
       IPHAI=1                                                           
-  800 CONTINUE                                                          
+cxx  800 CONTINUE
       IF(IRAM.NE.0) GO TO 901                                           
       IF(SRO.LT.EPS4) GO TO 555                                         
 C     ITERATION CHECK                                                   
@@ -640,14 +698,16 @@ C
 C     END OF MINIMIZATION                                               
  1000 CONTINUE                                                          
 C                                                                       
- 1001 RETURN                                                            
-  570 FORMAT(1H ,'NEW PHAI=',D20.10)                                    
- 3900 FORMAT(//1H ,'C(I)')                                              
- 3910 FORMAT(1H ,5D20.10)                                               
- 4700 FORMAT(1H ,'ON THE BOUNDARY')                                     
+cxx 1001 RETURN                                                            
+cxx  570 FORMAT(1H ,'NEW PHAI=',D20.10)                                    
+cxx 3900 FORMAT(//1H ,'C(I)')                                              
+cxx 3910 FORMAT(1H ,5D20.10)                                               
+cxx 4700 FORMAT(1H ,'ON THE BOUNDARY')                                     
+      RETURN                                                            
       END                                                               
 cc      SUBROUTINE SDATPR(TITL,Y,N,P0,IQ,IP)                              
-      SUBROUTINE SDATPR(YS,Y,N,P0,IQ,IP)                              
+cxx      SUBROUTINE SDATPR(YS,Y,N,P0,IQ,IP)                              
+      SUBROUTINE SDATPR(YS,Y,N)                              
 C                                                                       
 C-----------------------------------------------------------------------
 C     THIS SUBROUTINE READS IN AND PRINTS OUT INITIAL CONDITION AND DELE
@@ -670,11 +730,14 @@ C     Y(I)+B(1)Y(I-1)+...+B(IQ)Y(I-IQ)=X(I)+A(1)X(I-1)+...+A(IP)X(I-IP),
 C     WHERE X(I) IS A ZERO MEAN WHITE NOISE.                            
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      REAL*4 DFORM(20),TITL(20)                                         
 cc      DIMENSION Y(2000),A(50),B(50),P0(50)                              
 cc      DATA A,B/100*0.0D-00/                                             
-      DIMENSION YS(N), Y(N), P0(IP+IQ)
+cxx      DIMENSION YS(N), Y(N), P0(IP+IQ)
+      INTEGER :: N
+      REAL(8) :: YS(N), Y(N)
+      REAL(8) :: CST0, AN, SUM, YMEAN
       DATA CST0/0.0D-00/                                                
 C                                                                       
 C-----  INITIAL CONDITION LOADING FOR AR-MA(IQ,IP)  -----               
@@ -705,7 +768,9 @@ cc      READ(5,4) (DFORM(I),I=1,20)
 C     ORIGINAL DATA INPUT AND PRINT OUT                                 
 cc      READ(5,DFORM) (Y(I),I=1,N)                                        
       DO 320 I=1,N
-  320 Y(I)=YS(I)
+cxx  320 Y(I)=YS(I)
+      Y(I)=YS(I)
+  320 CONTINUE
 C                                                                       
 cc      WRITE(6,59)                                                       
 cc      WRITE(6,162) (TITL(I),I=1,20)                                     
@@ -726,29 +791,33 @@ C-----  MEAN DELETION  -----
       AN=N                                                              
       SUM=CST0                                                          
       DO 9 I=1,N                                                        
-    9 SUM=SUM+Y(I)                                                      
+cxx    9 SUM=SUM+Y(I)                                                      
+      SUM=SUM+Y(I)
+    9 CONTINUE
       YMEAN=SUM/AN                                                      
       DO 10 I=1,N                                                       
-   10 Y(I)=Y(I)-YMEAN                                                   
+cxx   10 Y(I)=Y(I)-YMEAN
+      Y(I)=Y(I)-YMEAN
+   10 CONTINUE
 C                                                                       
       RETURN                                                            
-    1 FORMAT(16I5)                                                      
-    2 FORMAT(4D20.10)                                                   
-    4 FORMAT(20A4)                                                      
-   59 FORMAT( //,' PROGRAM TIMSAC 78.5.2',/,
-     *'   EXACT MAXIMUM LIKELIHOOD METHOD OF AR-MA MODEL FITTING;',
-     *'  SCALAR CASE',/,'   < AR-MA MODEL >',
-     *//,11X,'Y(I) + B(1)*Y(I-1) + ... + B(IQ)*Y(I-IQ)  =  ',
-     *'X(I) + A(1)*X(I-1) + ... + A(IP)*X(I-IP)',/,' WHERE',/,11X,
-     *'IQ:    AR-ORDER',/,11X,'IP:    MA-ORDER',/,11X,
-     *'X(I): ZERO MEAN WHITE NOISE' ) 
-   62 FORMAT(//1H ,5('-'),2X,'INITIAL AR(I)',2X,'IQ=',I3,2X,5('-'))     
-   63 FORMAT(//1H ,5('-'),2X,'INITIAL MA(I)',2X,'IP=',I3,2X,5('-'))     
-   65 FORMAT(1H ,5D20.10,/(1H ,5D20.10))                                
-  162 FORMAT( 1H ,' TITLE:',/,2X,20A4 )                                 
-  164 FORMAT(1H ,'N=',I5)                                               
-  285 FORMAT(///1H ,5('-'),2X,'ORIGINAL DATA',2X,5('-'))                
-  610 FORMAT(1H ,10F10.5,/(1H ,10F10.5))                                
+cxx    1 FORMAT(16I5)                                                      
+cxx    2 FORMAT(4D20.10)                                                   
+cxx    4 FORMAT(20A4)                                                      
+cxx   59 FORMAT( //,' PROGRAM TIMSAC 78.5.2',/,
+cxx     *'   EXACT MAXIMUM LIKELIHOOD METHOD OF AR-MA MODEL FITTING;',
+cxx     *'  SCALAR CASE',/,'   < AR-MA MODEL >',
+cxx     *//,11X,'Y(I) + B(1)*Y(I-1) + ... + B(IQ)*Y(I-IQ)  =  ',
+cxx     *'X(I) + A(1)*X(I-1) + ... + A(IP)*X(I-IP)',/,' WHERE',/,11X,
+cxx     *'IQ:    AR-ORDER',/,11X,'IP:    MA-ORDER',/,11X,
+cxx     *'X(I): ZERO MEAN WHITE NOISE' ) 
+cxx   62 FORMAT(//1H ,5('-'),2X,'INITIAL AR(I)',2X,'IQ=',I3,2X,5('-'))     
+cxx   63 FORMAT(//1H ,5('-'),2X,'INITIAL MA(I)',2X,'IP=',I3,2X,5('-'))     
+cxx   65 FORMAT(1H ,5D20.10,/(1H ,5D20.10))                                
+cxx  162 FORMAT( 1H ,' TITLE:',/,2X,20A4 )                                 
+cxx  164 FORMAT(1H ,'N=',I5)                                               
+cxx  285 FORMAT(///1H ,5('-'),2X,'ORIGINAL DATA',2X,5('-'))                
+cxx  610 FORMAT(1H ,10F10.5,/(1H ,10F10.5))                                
       END                                                               
 cc      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP,IPRNT)                      
 cx      SUBROUTINE SGRAD(F0,SD,G,Y,N,P0,IQ,IP,IPRNT,LU)                      
@@ -782,10 +851,14 @@ C          IPRNT=0:  NOT TO PRINT OUT INTERMEDIATE RESULTS
 C          IPRNT=1:  TO PRINT OUT INTERMEDIATE RESULTS                  
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION P0(50),P1(50),Y(2000),G(50),PP0(50)                     
-      DIMENSION P0(IP+IQ),P1(IP+IQ),Y(N),G(IP+IQ),PP0(IP+IQ)                     
-      DIMENSION ALPH(IP+IQ)
+cxx      DIMENSION P0(IP+IQ),P1(IP+IQ),Y(N),G(IP+IQ),PP0(IP+IQ)                     
+cxx      DIMENSION ALPH(IP+IQ)
+      INTEGER :: N, IQ, IP
+      REAL(8) :: F0, SD, G(IP+IQ), Y(N), P0(IP+IQ)
+      REAL(8) :: P1(IP+IQ), PP0(IP+IQ), ALPH(IP+IQ), CST07, 
+     1           EPSA, EPSAS, F1, SDN
       DATA EPSA,CST07/0.1D-03,0.7D-00/                                  
 C                                                                       
 cc      CALL FUNCT2(F0,SD,Y,N,P0,IQ,IP)                                   
@@ -814,7 +887,9 @@ cc      CALL ARCHCK(PP0,IQ,ICOND)
  4500 CONTINUE                                                          
       DO 5010 II=1,IP                                                   
       III=IQ+II                                                         
- 5010 PP0(II)=P1(III)                                                   
+cxx 5010 PP0(II)=P1(III)                                                   
+      PP0(II)=P1(III)
+ 5010 CONTINUE
 cc      CALL ARCHCK(PP0,IP,ICOND)                                         
       CALL ARCHCK(PP0,ALPH,IP,ICOND)
  5000 CONTINUE                                                          
@@ -845,10 +920,10 @@ cx      WRITE(LU,500)
 cx      WRITE(LU,520) (G(I),I=1,IPQ)                                       
 C                                                                       
       RETURN                                                            
-  450 FORMAT(1H ,'P0(I)')                                               
-  500 FORMAT(1H ,'GRADIENT G(I)')                                       
-  520 FORMAT(1H ,5D20.10)                                               
- 4200 FORMAT(1H ,'ICOND=1; GRADIENT UNOBTAINED')                        
+cxx  450 FORMAT(1H ,'P0(I)')                                               
+cxx  500 FORMAT(1H ,'GRADIENT G(I)')                                       
+cxx  520 FORMAT(1H ,5D20.10)                                               
+cxx 4200 FORMAT(1H ,'ICOND=1; GRADIENT UNOBTAINED')                        
       END                                                               
 cc      SUBROUTINE SMINOP(TL,SIGMA2,Y,N,P0,IQ,IP)                         
       SUBROUTINE SMINOP( TL,TL2,SIGMA2,Y,N,P0,G,P02,G2,ALPHB,ALPHA,IQ,
@@ -878,12 +953,17 @@ C          IPRNT=0:  NOT TO PRINT OUT INTERMEDIATE RESULTS
 C          IPRNT=1:  TO PRINT OUT INTERMEDIATE RESULTS                  
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
-      REAL*8 MAXAB                                                      
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      REAL*8 MAXAB                                                      
 cc      DIMENSION Y(2000),P0(50),G(50),HS(50,50),CR(50),PP0(50),ALPH(50)  
-      DIMENSION Y(N),P0(IP+IQ),P02(IP+IQ)
-      DIMENSION G(IP+IQ),G2(IP+IQ),HS(IP+IQ,IP+IQ),CR(IP+IQ)
-      DIMENSION PP0(IP+IQ),ALPH(IP+IQ),ALPHB(IQ),ALPHA(IP)
+cxx      DIMENSION Y(N),P0(IP+IQ),P02(IP+IQ)
+cxx      DIMENSION G(IP+IQ),G2(IP+IQ),HS(IP+IQ,IP+IQ),CR(IP+IQ)
+cxx      DIMENSION PP0(IP+IQ),ALPH(IP+IQ),ALPHB(IQ),ALPHA(IP)
+      INTEGER :: N, IQ, IP
+      REAL(8) :: TL, TL2, SIGMA2, Y(N), P0(IP+IQ), G(IP+IQ), P02(IP+IQ),
+     1           G2(IP+IQ), ALPHB(IQ), ALPHA(IP)
+      REAL(8) :: MAXAB, HS(IP+IQ,IP+IQ), CR(IP+IQ), PP0(IP+IQ),
+     1           ALPH(IP+IQ), CST0, CST10, CST05, CST005, PAB, BN, SUM
 cc      COMMON /COM50/HS /CMALPH/ALPH                                     
 cc      DATA PP0/50*0.0D-00/                                              
       DATA CST0,CST10,CST05,CST005/0.0D-00,10.0D-00,0.1D-03,0.00005D-00/
@@ -892,27 +972,36 @@ C
 cc      IPRNT=0                                                           
 C                                                                       
       IPQ=IP+IQ                                                         
-      DO 310 I=1,IPQ                                                    
-      G(I)=CST0                                                         
-      PP0(I)=CST0
-      DO 310 J=1,IPQ                                                    
-  310 HS(I,J)=CST0                                                      
+cxx      DO 310 I=1,IPQ                                                    
+cxx      G(I)=CST0                                                         
+cxx      PP0(I)=CST0
+cxx      DO 310 J=1,IPQ                                                    
+cxx  310 HS(I,J)=CST0                                                      
+      G(1:IPQ)=CST0                                                         
+      PP0(1:IPQ)=CST0
+      HS(1:IPQ,1:IPQ)=CST0 
 C                                                                       
 C                                                                       
-C-----  INITIAL GRADIENT COMPUTATION  -----                             
- 4000 CONTINUE                                                          
+C-----  INITIAL GRADIENT COMPUTATION  -----
+cxx 4000 CONTINUE                                                          
       ICOND=0                                                           
       IF(IQ.LE.0) GO TO 4510                                            
       DO 4500 I=1,IQ                                                    
- 4500 PP0(I)=P0(I)                                                      
+cxx 4500 PP0(I)=P0(I)                                                      
+      PP0(I)=P0(I)
+ 4500 CONTINUE
 cc      CALL ARCHCK(PP0,IQ,ICOND)                                         
       CALL ARCHCK(PP0,ALPH,IQ,ICOND)
       DO 5000 I=1,IQ                                                    
- 5000 P0(I)=PP0(I)                                                      
+cxx 5000 P0(I)=PP0(I)                                                      
+      P0(I)=PP0(I)
+ 5000 CONTINUE
  4510 IF(IP.LE.0) GO TO 4800                                            
       DO 4700 I=1,IP                                                    
       II=IQ+I                                                           
- 4700 PP0(I)=P0(II)                                                     
+cxx 4700 PP0(I)=P0(II)                                                     
+      PP0(I)=P0(II)
+ 4700 CONTINUE
 cc      CALL ARCHCK(PP0,IP,ICOND)                                         
       CALL ARCHCK(PP0,ALPH,IP,ICOND)
       DO 5100 I=1,IP                                                    
@@ -949,7 +1038,9 @@ C-----  INVERSE OF HESSIAN COMPUTATION  -----
       BN=CST05/MAXAB                                                    
       DO 3010 I=1,IPQ                                                   
       DO 3009 J=1,IPQ                                                   
- 3009 HS(I,J)=HS(I,J)/CST10                                             
+cxx 3009 HS(I,J)=HS(I,J)/CST10                                             
+      HS(I,J)=HS(I,J)/CST10
+ 3009 CONTINUE
       HS(I,I)=BN+HS(I,I)                                                
  3010 CONTINUE                                                          
 C                                                                       
@@ -966,8 +1057,12 @@ C-----  CORRECTION TERM CR(X)=HS*G(X) COMPUTATION  -----
       SUM=CST0                                                          
       DO 910 J=1,IPQ                                                    
 cc  910 SUM=SUM+HS(I,J)*G(J)                                              
-  910 SUM=SUM+HS(I,J)*G2(J)
-  900 CR(I)=SUM                                                         
+cxx  910 SUM=SUM+HS(I,J)*G2(J)
+      SUM=SUM+HS(I,J)*G2(J)
+  910 CONTINUE
+cxx  900 CR(I)=SUM                                                         
+      CR(I)=SUM
+  900 CONTINUE
 C                                                                       
 cx      IF(IPRNT.EQ.0) GO TO 3920                                         
 cc      WRITE(6,3900)                                                     
@@ -1018,7 +1113,9 @@ cc      WRITE(6,6100)
       DO 6500 I=1,IQ                                                    
 cc 6500 PP0(I)=P0(I)                                                      
 cc      CALL ARCHCK(PP0,IQ,ICOND)                                         
- 6500 PP0(I)=P02(I)                                                      
+cxx 6500 PP0(I)=P02(I)                                                      
+      PP0(I)=P02(I)
+ 6500 CONTINUE
       CALL ARCHCK(PP0,ALPHB,IQ,ICOND)
 cc      WRITE(6,6501)                                                     
 cc      WRITE(6,520) (ALPH(I),I=1,IQ)                                     
@@ -1027,7 +1124,9 @@ cc      WRITE(6,520) (ALPH(I),I=1,IQ)
       II=IQ+I                                                           
 cc 6700 PP0(I)=P0(II)                                                     
 cc      CALL ARCHCK(PP0,IP,ICOND)                                         
- 6700 PP0(I)=P02(II)
+cxx 6700 PP0(I)=P02(II)
+      PP0(I)=P02(II)
+ 6700 CONTINUE
       CALL ARCHCK(PP0,ALPHA,IP,ICOND)
 cc      WRITE(6,6502)                                                     
 cc      WRITE(6,520) (ALPH(I),I=1,IP)                                     
@@ -1038,23 +1137,23 @@ cc      WRITE(6,670) TL
 C                                                                       
 C                                                                       
       RETURN                                                            
-  450 FORMAT(//1H ,5('-'),2X,'INITIAL VALUES P0(I)',2X,5('-'))          
-  500 FORMAT(//1H ,5('-'),2X,'INITIAL GRADIENT G(I)',2X,5('-'))         
-  520 FORMAT(1H ,5D20.10,/(1H ,5D20.10))                                
-  550 FORMAT(//1H ,'INITIAL (-2)LOG LIKELIHOOD=',D20.10,///)            
-  650 FORMAT(////1H ,5('-'),2X,'FINAL VALUES P0(I)',2X,5('-'))          
-  660 FORMAT(//1H ,5('-'),2X,'FINAL GRADIENT G(I)',2X,5('-'))           
-  670 FORMAT(//1H ,'FINAL (-2)LOG LIKELIHOOD=',D20.10,///)              
- 1200 FORMAT(//1H ,'ISWRO=',I5)                                         
- 1926 FORMAT(1H ,'HESSIAN RESET')                                       
- 3000 FORMAT(1H ,'INVERSE OF HESSIAN')                                  
- 3110 FORMAT(1H ,I5,4X,10D12.5,/(1H ,8X,10D12.5))                       
- 3900 FORMAT(1H ,'CR(I)')                                               
- 3910 FORMAT(1H ,5D20.10)                                               
- 6100 FORMAT(//1H ,5('-'),2X,'FINAL ALPH(I)''S AT SUBROUTINE ARCHCK',2X,
-     A5('-'))                                                           
- 6501 FORMAT(/1H ,12X,'AR-PART')                                        
- 6502 FORMAT(/1H ,12X,'MA-PART')                                        
+cxx  450 FORMAT(//1H ,5('-'),2X,'INITIAL VALUES P0(I)',2X,5('-'))          
+cxx  500 FORMAT(//1H ,5('-'),2X,'INITIAL GRADIENT G(I)',2X,5('-'))         
+cxx  520 FORMAT(1H ,5D20.10,/(1H ,5D20.10))                                
+cxx  550 FORMAT(//1H ,'INITIAL (-2)LOG LIKELIHOOD=',D20.10,///)            
+cxx  650 FORMAT(////1H ,5('-'),2X,'FINAL VALUES P0(I)',2X,5('-'))          
+cxx  660 FORMAT(//1H ,5('-'),2X,'FINAL GRADIENT G(I)',2X,5('-'))           
+cxx  670 FORMAT(//1H ,'FINAL (-2)LOG LIKELIHOOD=',D20.10,///)              
+cxx 1200 FORMAT(//1H ,'ISWRO=',I5)                                         
+cxx 1926 FORMAT(1H ,'HESSIAN RESET')                                       
+cxx 3000 FORMAT(1H ,'INVERSE OF HESSIAN')                                  
+cxx 3110 FORMAT(1H ,I5,4X,10D12.5,/(1H ,8X,10D12.5))                       
+cxx 3900 FORMAT(1H ,'CR(I)')                                               
+cxx 3910 FORMAT(1H ,5D20.10)                                               
+cxx 6100 FORMAT(//1H ,5('-'),2X,'FINAL ALPH(I)''S AT SUBROUTINE ARCHCK',2X,
+cxx     A5('-'))                                                           
+cxx 6501 FORMAT(/1H ,12X,'AR-PART')                                        
+cxx 6502 FORMAT(/1H ,12X,'MA-PART')                                        
       END                                                               
       SUBROUTINE SUBPM(P,B,A,IQ,IP,IR)                                  
 C                                                                       
@@ -1075,9 +1174,12 @@ C          ((P(I,J),I=1,IR),J=1,IR):  VARIANCE MATRIX OF THE STATIONARY
 C                                     STATE VECTOR                      
 C-----------------------------------------------------------------------
 C                                                                       
-      IMPLICIT REAL*8(A-H,O-Z)                                          
+cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION P(51,51),A(50),B(50),WS(51),R(51),DB(1300)              
-      DIMENSION P(IR,IR),A(IR),B(IR),WS(IR),R(IR+1),DB(IQ*2)              
+cxx      DIMENSION P(IR,IR),A(IR),B(IR),WS(IR),R(IR+1),DB(IQ*2)
+      INTEGER :: IQ, IP, IR              
+      REAL(8) :: P(IR,IR), B(IR), A(IR)
+      REAL(8) :: WS(IR), R(IR+1), DB(IQ*2), CST0, CST1, SUM, CKB, CKI
       DATA CST0,CST1/0.0D-00,1.0D-00/                                   
 C                                                                       
 C                                                                       
@@ -1140,7 +1242,9 @@ C
 C-----  TRIANGULARIZATION OF THE COEFFICIENT MATRIX  -----              
       IQP1=IQ+1                                                         
       DO 2100 L=1,IQ                                                    
- 2100 DB(L)=B(L)                                                        
+cxx 2100 DB(L)=B(L)
+      DB(L)=B(L)
+ 2100 CONTINUE
       IT=IQ                                                             
       I=IQ                                                              
  2200 CONTINUE                                                          
@@ -1162,7 +1266,8 @@ C
  2400 CONTINUE                                                          
 C                                                                       
  2401 IM1=I-1                                                           
- 2410 IF(IM1.EQ.0) GO TO 2600                                           
+cxx 2410 IF(IM1.EQ.0) GO TO 2600                                           
+      IF(IM1.EQ.0) GO TO 2600                                           
       DO 2500 K=1,IM1                                                   
       ITPK=IT+K                                                         
       IMIK=IT-I+K                                                       

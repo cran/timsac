@@ -77,15 +77,20 @@ C               --------------------------------------------------------
 C
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: UNIBARF
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
 cc      REAL * 4   TITLE(20)
 cc      DIMENSION  Z(10000)
 cc      DIMENSION  X(200,101) , D(200) , A(100) , B(100)                  
-      DIMENSION  ZS(N), Z(N)
-      DIMENSION  X(N-LAG,LAG+1), D(LAG), A(LAG), B1(LAG), B2(LAG)
-      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1), C(LAG+1)
-      DIMENSION  SXX(121)
+cxx      DIMENSION  ZS(N), Z(N)
+cxx      DIMENSION  X(N-LAG,LAG+1), D(LAG), A(LAG), B1(LAG), B2(LAG)
+cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1), C(LAG+1)
+cxx      DIMENSION  SXX(121)
+      INTEGER :: N, LAG, IMIN
+      REAL(8) :: ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
+     1           AICM, SDMIN, B1(LAG), C(LAG+1), D(LAG), B2(LAG),
+     2           AICB, SDB, PN, A(LAG), SXX(121)
+      REAL(8) :: Z(N), X(N-LAG,LAG+1), B
 C                                                                       
 C        EXTERNAL SUBROUTINE DECLARATION:                               
 C                                                                       
@@ -141,7 +146,8 @@ C         ! AUTOREGRESSIVE MODEL FITTING (BAYESIAN MODEL) !           !
 C         +-----------------------------------------------+           +-
 C                                                                       
 cc      CALL  ARBAYS( X,D,K,LAG,NMK,ISW,TITLE,MJ1,A,B,SDB,AICB )          
-      CALL  ARBAYS( X,D,K,LAG,NMK,ISW,MJ1,SD,AIC,DIC,AICM,SDMIN,IMIN,
+cxx      CALL  ARBAYS( X,D,K,LAG,NMK,ISW,MJ1,SD,AIC,DIC,AICM,SDMIN,IMIN,
+      CALL  ARBAYS( X,D,K,NMK,ISW,MJ1,SD,AIC,DIC,AICM,SDMIN,IMIN,
      *              A,B1,B2,C,SDB,PN,AICB )
 C                                                                       
 C          +------------------------+                                 +-
@@ -150,32 +156,32 @@ C          +------------------------+                                 +-
 C                                                                       
 cc      CALL  NRASPE( SDB,A,B,K,0,120,TITLE )                             
       CALL  NRASPE( SDB,A,B,K,0,120,SXX )
-cc	GO TO 999
+cc      GO TO 999
 C
 cc  900 CONTINUE
-cc	WRITE(6,600) IVAR,OFLNAM
+cc      WRITE(6,600) IVAR,OFLNAM
 cc  600 FORMAT(/,' !!! Output_Data_File OPEN ERROR ',I8,//,5X,100A)
-cc	GO TO 999
+cc       GO TO 999
 C
 cc  910 CONTINUE
-cc	IF ( NFL.EQ.2 ) CLOSE( 6 )
+cc      IF ( NFL.EQ.2 ) CLOSE( 6 )
 cc#ifdef __linux__
-C	reopen #6 as stdout
-cc	IF ( NFL.EQ.2 ) OPEN(6, FILE='/dev/fd/1')
+C      reopen #6 as stdout
+cc      IF ( NFL.EQ.2 ) OPEN(6, FILE='/dev/fd/1')
 cc#endif
 C /* __linux__ */
-cc	WRITE(6,610) IVAR,IFLNAM
+cc      WRITE(6,610) IVAR,IFLNAM
 cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C                                                                       
 cc  999 CONTINUE
       RETURN
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( 1H ,I4,'-TH ORDER BAYESIAN MODEL IS FITTED',/,1H ,2X,     
-     1'ORIGINAL DATA INPUT DEVICE  MT =',I4 )                           
-    3 FORMAT( ' PROGRAM TIMSAC 78.1.2',/'   EXPONENTIALLY WEIGHTED BAYES
-     1IAN AUTOREGRESSIVE MODEL FITTING;  SCALAR CASE')                  
-    4 FORMAT(  '   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-
-     11) + A(2)*Z(I-2) +  ...  + A(M)*Z(I-M) + E(I)',/,'   WHERE',/,11X,
-     2'M:     ORDER OF THE MODEL',/,11X,'E(I):  GAUSSIAN WHITE NOISE WIT
-     3H MEAN 0  AND  VARIANCE SD(M).' )                                 
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( 1H ,I4,'-TH ORDER BAYESIAN MODEL IS FITTED',/,1H ,2X,     
+cxx     1'ORIGINAL DATA INPUT DEVICE  MT =',I4 )                           
+cxx    3 FORMAT( ' PROGRAM TIMSAC 78.1.2',/'   EXPONENTIALLY WEIGHTED BAYES
+cxx     1IAN AUTOREGRESSIVE MODEL FITTING;  SCALAR CASE')                  
+cxx    4 FORMAT(  '   < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(I-
+cxx     11) + A(2)*Z(I-2) +  ...  + A(M)*Z(I-M) + E(I)',/,'   WHERE',/,11X,
+cxx     2'M:     ORDER OF THE MODEL',/,11X,'E(I):  GAUSSIAN WHITE NOISE WIT
+cxx     3H MEAN 0  AND  VARIANCE SD(M).' )                                 
       E N D                                                             

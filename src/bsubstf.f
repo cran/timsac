@@ -1,4 +1,5 @@
-      SUBROUTINE BSUBSTF( ZS,N,IMODEL,LAG,K,IL,LG1,LG2,F,CNST,ZMEAN,SUM,
+cxx      SUBROUTINE BSUBSTF( ZS,N,IMODEL,LAG,K,IL,LG1,LG2,F,CNST,ZMEAN,SUM,
+      SUBROUTINE BSUBSTF( ZS,N,IMODEL,LAG,K,IL,LG1,LG2,ZMEAN,SUM,
      *M,AICM,SDM,A1,SD,AIC,DIC,AICB,SDB,EK,A2,IND,C,C1,C2,B,OEIC,ESUM,
      *OMEAN,OM,E,EMEAN,VARI,SKEW,PEAK,COV,SXX )
 C
@@ -67,24 +68,34 @@ cc      !DEC$ ATTRIBUTES DLLEXPORT :: BSUBSTF
 C
       PARAMETER  ( MJ2 = 101 )
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL*4     Z(10000) , TITLE(20) , TTL(5) , E(20000)               
 cc      REAL*4     TITLE(20) , TTL(5)
 cc      DIMENSION  Z(10000), E(20000) 
 cc      DIMENSION  X(200,101), D(200) , A(100) , B(100)                  
 cc      DATA  TTL  / 4H   B,4HAYES,4HIAN ,4HMODE,4HL    /                 
-      COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
+cxx      COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
 cc      REAL * 4   CONST , SD0                                            
-      DIMENSION  ZS(N), Z(N), E(N,IL) 
-      DIMENSION  X(N,K+1), A1(K), A2(K), B(K)                  
-      DIMENSION  LG1(3,K), LG2(5)
-      DIMENSION  SD(K+1), AIC(K+1), DIC(K+1)
-      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
-      DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
-      DIMENSION  SXX(121), FA(N-LAG,IL)
+cxx      DIMENSION  ZS(N), Z(N), E(N,IL) 
+cxx      DIMENSION  X(N,K+1), A1(K), A2(K), B(K)                  
+cxx      DIMENSION  LG1(3,K), LG2(5)
+cxx      DIMENSION  SD(K+1), AIC(K+1), DIC(K+1)
+cxx      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
+cxx      DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
+cxx      DIMENSION  SXX(121), FA(N-LAG,IL)
 cc      CHARACTER*4 F(20,K+1)
-      INTEGER*1  F(80,K+1)
+cxx      INTEGER*1  F(80,K+1)
+cxx      CHARACTER(4) G
+      INTEGER :: N, IMODEL, LAG, K, IL, LG1(3,K), LG2(5), M, IND(K) 
+      REAL(8) :: ZS(N), ZMEAN, SUM, AICM, SDM, A1(K), SD(K+1), AIC(K+1),
+     1           DIC(K+1), AICB, SDB, EK, A2(K), C(K), C1(K+1), C2(K),
+     2           B(K), OEIC, ESUM(K+1), OMEAN, OM, E(N,IL),
+     3           EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2),
+     4           SXX(121)
+      REAL(8) :: Z(N), X(N,K+1), FA(N-LAG,IL), SD0, CONST
       CHARACTER(4) G
+C
+      COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
       COMMON     / EEE /  G(20,31)                                      
       COMMON     / AAA /  NN
 C                                                                       
@@ -155,7 +166,11 @@ C          ---------------------
 C                                                                       
 cc      GO TO ( 10,20,30,40,50,60,70 ), IMODEL                            
 cx      GO TO ( 10,20,30,40,50,60 ), IMODEL                            
-      GO TO ( 10,20,30,40 ), IMODEL                            
+cxx      GO TO ( 10,20,30,40 ), IMODEL                            
+      IF ( IMODEL .EQ. 1 ) GO TO 10
+      IF ( IMODEL .EQ. 2 ) GO TO 20
+      IF ( IMODEL .EQ. 3 ) GO TO 30
+      IF ( IMODEL .EQ. 4 ) GO TO 40
 C                                                                       
    10 K = LAG                                                           
 cc      CALL  REDUCT( SETX1,Z,D,NMK,0,K,MJ1,LAG,X )                       
@@ -255,16 +270,21 @@ C          PREDICTION ERROR CHECKING
 C          -------------------------                                    
 C                                                                       
 cx      GO TO ( 110,120,120,150,130,140 ), IMODEL                         
-      GO TO ( 110,120,120,150 ), IMODEL                         
+cxx      GO TO ( 110,120,120,150 ), IMODEL                         
+      IF ( IMODEL .EQ. 1 ) GO TO 110 
+      IF ( IMODEL .EQ. 2 ) GO TO 120
+      IF ( IMODEL .EQ. 3 ) GO TO 120
       GO TO 150                                                         
 C                                                                       
 cc  110 CALL CHECK( PRDCT1,Z,A,K,0,IL,NPS,N,0,MJ,E )                      
-  110 CALL CHECK( PRDCT1,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+cxx  110 CALL CHECK( PRDCT1,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+  110 CALL CHECK( PRDCT1,Z,A2,K,0,IL,NPS,N,MJ,E,FA,EMEAN,VARI,SKEW,
      *            PEAK,COV,MJ2 )
       GO TO 150                                                         
 C                                                                       
 cc  120 CALL  CHECK( PRDCT2,Z,A,K,0,IL,NPS,N,0,MJ,E )                     
-  120 CALL  CHECK( PRDCT2,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+cxx  120 CALL  CHECK( PRDCT2,Z,A2,K,0,IL,NPS,N,0,MJ,E,FA,EMEAN,VARI,SKEW,
+  120 CALL  CHECK( PRDCT2,Z,A2,K,0,IL,NPS,N,MJ,E,FA,EMEAN,VARI,SKEW,
      *             PEAK,COV,MJ2 )
       GO TO 150                                                         
 C                                                                       
@@ -279,28 +299,29 @@ C
   150 CONTINUE                                                          
       RETURN
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( /1H ,'ORIGINAL DATA INPUT DEVICE  MT =',I4 )              
-    3 FORMAT( ' PROGRAM TIMSAC 78.1.3',/,'   SCALAR TIME SERIES MODEL FI
-     *TTING;     BAYESIAN PROCEDURE ( ALL SUBSET REGRESSIN TYPE )' )    
-    4 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < AUTOREGRESSIVE MODEL >',/,  
-     11H ,10X,'Z(I) = A(1)*Z(I-1) + A(2)*Z(I-2) + ... + A(M)*Z(I-M) + E(
-     2I)' )                                                             
-    5 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < NON-LINEAR MODEL >',/,1H ,10
-     1X,'Z(I) = A(1)*Y(I,1) + A(2)*Y(I,2) + ... + A(K)*Y(I,K) + E(I)' ) 
-    6 FORMAT( 1H ,2X,'WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'E(
-     1I):  GAUSSIAN WHITE NOISE WITH MEAN 0  AND  VARIANCE SD(M).' )    
-    7 FORMAT( 1H ,'FITTING UP TO THE ORDER',I3,2X,'IS TRIED' )          
-    8 FORMAT( 1H ,'MAXIMUM LAG =',I4,/,' NUMBER OF REGRESSORS =',I4 )   
-    9 FORMAT( F10.0 )                                                   
-   11 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < EXPONENTIALLY DAMPED NON-LIN
-     *EAR MODEL >',/,1H ,10X,'Z(I) = A(1)*Y(I,1) + A(2)*Y(I,2) + ... + A
-     *(K)*Y(I,K) + E(I)' )                                              
-   12 FORMAT( 1H ,'SIGMA2 =',D15.5,5X,'CONST =',D15.5 )                 
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( /1H ,'ORIGINAL DATA INPUT DEVICE  MT =',I4 )              
+cxx    3 FORMAT( ' PROGRAM TIMSAC 78.1.3',/,'   SCALAR TIME SERIES MODEL FI
+cxx     *TTING;     BAYESIAN PROCEDURE ( ALL SUBSET REGRESSIN TYPE )' )    
+cxx    4 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < AUTOREGRESSIVE MODEL >',/,  
+cxx     11H ,10X,'Z(I) = A(1)*Z(I-1) + A(2)*Z(I-2) + ... + A(M)*Z(I-M) + E(
+cxx     2I)' )                                                             
+cxx    5 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < NON-LINEAR MODEL >',/,1H ,10
+cxx     1X,'Z(I) = A(1)*Y(I,1) + A(2)*Y(I,2) + ... + A(K)*Y(I,K) + E(I)' ) 
+cxx    6 FORMAT( 1H ,2X,'WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'E(
+cxx     1I):  GAUSSIAN WHITE NOISE WITH MEAN 0  AND  VARIANCE SD(M).' )    
+cxx    7 FORMAT( 1H ,'FITTING UP TO THE ORDER',I3,2X,'IS TRIED' )          
+cxx    8 FORMAT( 1H ,'MAXIMUM LAG =',I4,/,' NUMBER OF REGRESSORS =',I4 )   
+cxx    9 FORMAT( F10.0 )                                                   
+cxx   11 FORMAT( //1H ,'MODEL TYPE',I2,/,'   < EXPONENTIALLY DAMPED NON-LIN
+cxx     *EAR MODEL >',/,1H ,10X,'Z(I) = A(1)*Y(I,1) + A(2)*Y(I,2) + ... + A
+cxx     *(K)*Y(I,K) + E(I)' )                                              
+cxx   12 FORMAT( 1H ,'SIGMA2 =',D15.5,5X,'CONST =',D15.5 )                 
 C                                                                       
       E N D                                                             
 cc      REAL FUNCTION  BICOEF * 8( K,J )                                  
-      REAL*8 FUNCTION  BICOEF( K,J )                                  
+cxx      REAL*8 FUNCTION  BICOEF( K,J )                                  
+      DOUBLE PRECISION FUNCTION BICOEF( K,J )
 C                                                                       
 C     THIS FUNCTION RETURNS BINOMIAL COEFFICIENTS                       
 C                                                                       
@@ -314,30 +335,38 @@ C       OUTPUT:
 C          F:     NUMBER OF COMBINATIONS OF SELECTING J OBJECTS FROM    
 C                 A SET OF K OBJECTS                                    
 C                                                                       
-      IMPLICIT REAL * 8 ( A-H , O-Z )                                   
+cxx      IMPLICIT REAL * 8 ( A-H , O-Z )
+      REAL(8) :: SUM, DI
 C                                                                       
       KMJ = K-J                                                         
       SUM = 0.D0                                                        
       DO 10   I=1,K                                                     
       DI = I                                                            
-   10 SUM = SUM + DLOG( DI )                                            
+cxx   10 SUM = SUM + DLOG( DI )
+      SUM = SUM + DLOG( DI )
+   10 CONTINUE                                            
 C                                                                       
       IF( J .EQ. 0 )   GO TO 30                                         
       DO 20   I=1,J                                                     
       DI = I                                                            
-   20 SUM = SUM - DLOG( DI )                                            
+cxx   20 SUM = SUM - DLOG( DI )
+      SUM = SUM - DLOG( DI )                                            
+   20 CONTINUE
 C                                                                       
    30 IF( KMJ .EQ. 0 )   GO TO 50                                       
       DO 40   I=1,KMJ                                                   
       DI = I                                                            
-   40 SUM = SUM - DLOG( DI )                                            
+cxx   40 SUM = SUM - DLOG( DI )                                            
+      SUM = SUM - DLOG( DI )
+   40 CONTINUE
 C                                                                       
    50 BICOEF = DEXP( SUM )                                              
       RETURN                                                            
 C                                                                       
-      END                                                               
+      END
 cc      SUBROUTINE  CHECK( PRDCT,X,A,K,L,IL,NPS,NPE,IPR,MJ,E )            
-      SUBROUTINE  CHECK( PRDCT,X,A,K,L,IL,NPS,NPE,IPR,MJ,E,F,EMEAN,VARI,
+cxx      SUBROUTINE  CHECK( PRDCT,X,A,K,L,IL,NPS,NPE,IPR,MJ,E,F,EMEAN,VARI,
+      SUBROUTINE  CHECK( PRDCT,X,A,K,L,IL,NPS,NPE,MJ,E,F,EMEAN,VARI,
      *                   SKEW,PEAK,COV,MJ2 )            
 C                                                                       
 C     THIS SUBROUTINE DRAWS HISTGRAMS AND AUTOCOVARIANCE FUNCTION OF ORI
@@ -371,15 +400,19 @@ C       OUTPUT:
 C          E:      SEVERAL-STEPS PREDICTION ERRORS                      
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  X , F , E                                               
 cx      DIMENSION  X(1) , E(MJ,1)                                         
 cc      DIMENSION  A(1) , COV(120)                                        
-      DIMENSION  X(NPE) , E(MJ,IL)
-      DIMENSION  A(K) , COV(MJ2)                                        
-      DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL)
+cxx      DIMENSION  X(NPE) , E(MJ,IL)
+cxx      DIMENSION  A(K) , COV(MJ2)                                        
+cxx      DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL)
 cc      COMMON  /COMXX/ F(2000)                                           
-      DIMENSION  F(NPE-NPS+1,IL)
+cxx      DIMENSION  F(NPE-NPS+1,IL)
+      INTEGER :: K, L, IL, NPS, NPE, MJ, MJ2 
+      REAL(8) :: X(NPE), A(K), E(MJ,IL), F(NPE-NPS+1,IL), EMEAN(IL),
+     1           VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
+      REAL(8) :: SUM, COV1, SD
 C                                                                       
 C                                                                       
       ISTEP = 1                                                         
@@ -392,7 +425,9 @@ C
       IF( ISW .GT. 0 )     GO TO 20                                     
 C                                                                       
       DO 10  I=NPS,NPE                                                  
-   10 E(I,1) = X(I)                                                     
+cxx   10 E(I,1) = X(I) 
+      E(I,1) = X(I)
+   10 CONTINUE                                                    
       IL = 1                                                            
       GO TO 36                                                          
 C                                                                       
@@ -403,17 +438,25 @@ C
 C                                                                       
 C       ---  PREDICTION ERROR  ---                                      
 C                                                                       
-      DO 30  II=NPS,NPE                                                 
+cxx      DO 30  II=NPS,NPE                                                 
+      DO 31  II=NPS,NPE
          I = NPE-II+NPS                                                 
          DO 30  J=1,IL                                                  
          JJ = I-J+1                                                     
-   30 E(I,J) = X(I) - E(JJ,J)                                           
+cxx   30 E(I,J) = X(I) - E(JJ,J)
+      E(I,J) = X(I) - E(JJ,J)
+   30 CONTINUE
+   31 CONTINUE                                           
       IF( IL .EQ. 1 )     GO TO 34                                      
       DO 35  J=2,IL                                                     
       JJ = J-1                                                          
-      DO 35  I=1,JJ                                                     
+cxx      DO 35  I=1,JJ                                                     
+      DO 33  I=1,JJ 
       II = I+NPS-1                                                      
-   35 E(II,J) = 0.D0                                                    
+cxx   35 E(II,J) = 0.D0                                                    
+      E(II,J) = 0.D0
+   33 CONTINUE
+   35 CONTINUE
    34 CONTINUE                                                          
 cc      WRITE( 6,690 )                                                    
 cc      IF( IPR .EQ. 0 )   GO TO 36                                       
@@ -430,7 +473,9 @@ C
       DO 40  I=II,NPE                                                   
       J = I - II + 1                                                    
 cc   40 F(J) = E(I,KK)                                                    
-   40 F(J,KK) = E(I,KK)
+cxx   40 F(J,KK) = E(I,KK)
+      F(J,KK) = E(I,KK)
+   40 CONTINUE
       NMK = NPE-NPS-(KK-2)                                              
 C                                                                       
 cc      CALL  MOMENT( F,NMK,EMEAN,VARI,SKEW,PEAK )                        
@@ -456,12 +501,18 @@ C
       SUM = 0.D0                                                        
       DO 60   I=JJ,IE                                                   
       J = I + II- 1                                                     
-   60 SUM = SUM + E(I,KK)*E(J,KK)                                       
-   70 COV(II) = SUM / (NPE-NPS-KK+2)                                    
+cxx   60 SUM = SUM + E(I,KK)*E(J,KK)
+      SUM = SUM + E(I,KK)*E(J,KK)
+   60 CONTINUE                                       
+cxx   70 COV(II) = SUM / (NPE-NPS-KK+2)
+      COV(II) = SUM / (NPE-NPS-KK+2)
+   70 CONTINUE                                    
 C                                                                       
       COV1 = COV(1)                                                     
       DO 80   I=1,LAG1                                                  
-   80 COV(I) = COV(I) / COV1                                            
+cxx   80 COV(I) = COV(I) / COV1                                            
+      COV(I) = COV(I) / COV1
+   80 CONTINUE
 C                                                                       
 cc      IF( ISW .GT. 0 )   WRITE( 6,630 )     KK                          
 cc      IF( ISW .EQ. 0 )   WRITE( 6,660 )                                 
@@ -479,19 +530,19 @@ C
 C                                                                       
 C                                                                       
   110 CONTINUE                                                          
-      RETURN                                                            
-  610 FORMAT( //1H ,I3,'-STEP AHEAD PREDICTION ERROR' )                 
-  620 FORMAT( 1H ,'MEAN       =',D15.8,/,' VARIANCE   =',D15.8,/,' SKEWN
-     1ESS   =',D15.8,/,' PEAKEDNESS =',D15.8 )                          
-  630 FORMAT( //1H ,'AUTOCORRELATION FUNCTION OF ',I3,'-STEP AHEAD PREDI
-     1CTION ERROR' )                                                    
-  640 FORMAT( 1H ,I5,5X,10D12.4 )                                       
-  650 FORMAT( //,' ORIGINAL DATA' )                                     
-  660 FORMAT( //1H ,'AUTOCORRELATION FUNCTION OF ORIGINAL DATA' )       
-  670 FORMAT( 1H ,10X,10(4X,'J =',I2,3X) )                              
-  680 FORMAT( 1H ,10D13.5 )                                             
-  690 FORMAT( ///1H ,45(1H-),2X,'<< J-STEP AHEAD PREDICTION ERROR >>',2X
-     1,45(1H-) )                                                        
+cxx      RETURN                                                            
+cxx  610 FORMAT( //1H ,I3,'-STEP AHEAD PREDICTION ERROR' )                 
+cxx  620 FORMAT( 1H ,'MEAN       =',D15.8,/,' VARIANCE   =',D15.8,/,' SKEWN
+cxx     1ESS   =',D15.8,/,' PEAKEDNESS =',D15.8 )                          
+cxx  630 FORMAT( //1H ,'AUTOCORRELATION FUNCTION OF ',I3,'-STEP AHEAD PREDI
+cxx     1CTION ERROR' )                                                    
+cxx  640 FORMAT( 1H ,I5,5X,10D12.4 )                                       
+cxx  650 FORMAT( //,' ORIGINAL DATA' )                                     
+cxx  660 FORMAT( //1H ,'AUTOCORRELATION FUNCTION OF ORIGINAL DATA' )       
+cxx  670 FORMAT( 1H ,10X,10(4X,'J =',I2,3X) )                              
+cxx  680 FORMAT( 1H ,10D13.5 )                                             
+cxx  690 FORMAT( ///1H ,45(1H-),2X,'<< J-STEP AHEAD PREDICTION ERROR >>',2X
+cxx     1,45(1H-) )                                                        
       END                                                               
       SUBROUTINE  MOMENT( X,N,F1,F2,F3,F4 )                             
 C                                                                       
@@ -511,15 +562,20 @@ C          F2:    VARIANCE OF X
 C          F3:    SKEWNESS OF X                                         
 C          F4:    PEAKEDNESS OF X                                       
 C                                                                       
-      IMPLICIT  REAL * 8  ( F )                                         
+cxx      IMPLICIT  REAL * 8  ( F )                                         
 CC      DIMENSION  X(1)                                                   
 cx	REAL*8  X(1)
-	REAL*8  X(N)
+cxx      REAL*8  X(N)
+      INTEGER :: N
+      REAL(8) :: X(N), F1, F2, F3, F4
+      REAL(8) :: FN, FSUM, FF
 C                                                                       
       FN = N                                                            
       FSUM = 0.D0                                                       
       DO  10     I=1,N                                                  
-   10 FSUM = FSUM + X(I)                                                
+cxx   10 FSUM = FSUM + X(I)                                                
+      FSUM = FSUM + X(I)
+   10 CONTINUE
 C                                                                       
       F1 = FSUM / FN                                                    
 C                                                                       
@@ -530,7 +586,9 @@ C
       FF = X(I) - F1                                                    
       F2 = F2 + FF*FF                                                   
       F3 = F3 + FF**3                                                   
-   20 F4 = F4 + FF**4                                                   
+cxx   20 F4 = F4 + FF**4                                                   
+      F4 = F4 + FF**4
+   20 CONTINUE
 C                                                                       
       F2 = F2 / FN                                                      
       F3 = F3 / (FN*F2*DSQRT(F2))                                       
@@ -556,27 +614,35 @@ C
 C       OUTPUT:                                                         
 C          EZ:     PREDICTION VALUE MATRIX                              
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z(1) , EZ(MJ,1)                                         
 cx      DIMENSION  Z(1) , EZ(MJ,1)
 cx	DIMENSION  A(1)
-      DIMENSION  Z(NPE) , EZ(MJ,IL)
-      DIMENSION  A(M)                                                   
+cxx      DIMENSION  Z(NPE) , EZ(MJ,IL)
+cxx      DIMENSION  A(M)                                                   
+      INTEGER :: M, L, IL, NPS, NPE, MJ
+      REAL(8) :: Z(NPE), A(M), EZ(MJ,IL)
+      REAL(8) :: SUM
 C                                                                       
 C                                                                       
       DO  100     II=NPS,NPE                                            
 C                                                                       
-      DO  90     KK=1,IL                                                
+cxx      DO  90     KK=1,IL                                                
+      DO  91     KK=1,IL 
       KKM1 = KK - 1                                                     
       SUM = 0.D0                                                        
       IF( KK .EQ. 1 )     GO TO 30                                      
       DO  20     I=1,KKM1                                               
       KI = KK - I                                                       
-   20 SUM = SUM + A(I)*EZ(II,KI)                                        
+cxx   20 SUM = SUM + A(I)*EZ(II,KI)                                        
+      SUM = SUM + A(I)*EZ(II,KI)
+   20 CONTINUE
    30 IF( KK .GT. M )     GO TO 50                                      
       DO  40     I=KK,M                                                 
       I1 = II + KKM1 - I                                                
-   40 SUM = SUM + A(I)*Z(I1)                                            
+cxx   40 SUM = SUM + A(I)*Z(I1)                                            
+      SUM = SUM + A(I)*Z(I1)
+   40 CONTINUE
 C                                                                       
    50 IF( L .LE. 0 )     GO TO 90                                       
       IF( KK .GT. L )     GO TO 90                                      
@@ -586,11 +652,12 @@ C
       IF( I2 .GE. II )     GO TO 60                                     
       SUM = SUM + A(I1)*(Z(I2)-EZ(I2,1))                                
    60 CONTINUE                                                          
-   90 EZ(II,KK) = SUM                                                   
+   90 EZ(II,KK) = SUM
+   91 CONTINUE                                                   
   100 CONTINUE                                                          
 C                                                                       
       RETURN                                                            
-      END                                                               
+      END
       SUBROUTINE  PRDCT2( Z,A,K,L,IL,NPS,NPE,MJ1,EZ )                   
 C                                                                       
 C     THIS SUBROUTINE COMPUTES SEVERAL STEPS AHEAD PREDICTION VALUES OF 
@@ -610,15 +677,19 @@ C       OUTPUT:
 C          EZ:     PREDICTION VALUE MATRIX                              
 C                                                                       
 CC      IMPLICIT  REAL*8 ( A-D,O-Y )                                      
-      IMPLICIT  REAL*8 ( A-H,O-Z ) 
+cxx      IMPLICIT  REAL*8 ( A-H,O-Z ) 
 cc      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(20)                        
 cx      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
-      DIMENSION  Z(NPE) , A(K) , EZ(MJ1,IL) , Y(IL)                        
+cxx      DIMENSION Z(NPE) , A(K) , EZ(MJ1,IL) , Y(IL)
 cc      REAL * 4   CSTDMY, SD0DMY
+      INTEGER :: K, IL, NPS, NPE, MJ1
+      REAL(8) :: Z(NPE), A(K), EZ(MJ1,IL)
+      REAL(8) :: Y(IL), CSTDMY, SD0DMY, SUM, XX, X
       COMMON     / BBB /  LAG1(50) , LAG2(50) , LAG3(50), CSTDMY, SD0DMY
 CC      INTEGER  RETURN                                                   
 C                                                                       
-      DO 100  II=NPS,NPE                                                
+cxx      DO 100  II=NPS,NPE                                                
+      DO 110  II=NPS,NPE
          DO 50  J1=1,IL                                                 
             JJ = J1-1                                                   
             SUM = 0.D0                                                  
@@ -644,7 +715,7 @@ C
 CC               ASSIGN 20 TO RETURN                                      
 CC               GO TO 200                                                                                               
 CC   20          XX = XX*X
-   	         X = 1.D0
+               X = 1.D0
                IF ( LAG .GT. 0 ) THEN
                   I = II+JJ-LAG
                   IF ( I .GE. II ) THEN
@@ -672,14 +743,19 @@ CC   30          XX = XX*X
                END IF
                XX = XX*X
 C                                                                       
-   40       SUM = SUM + A(J)*XX                                         
-   50    Y(J1) = SUM                                                    
+cxx   40       SUM = SUM + A(J)*XX 
+            SUM = SUM + A(J)*XX 
+   40       CONTINUE                                        
+cxx   50    Y(J1) = SUM
+         Y(J1) = SUM
+   50    CONTINUE                                                    
 C                                                                       
       DO  100  J=1,IL                                                   
       EZ(II,J) = Y(J)                                                   
-  100 CONTINUE                                                          
+  100 CONTINUE
+  110 CONTINUE                                     
 CC      GO TO 300
-C	-----  INTERNAL SUBROUTINE  -----
+C        -----  INTERNAL SUBROUTINE  -----
 C
 CC  200 X = 1.D0
 CC      IF ( LAG .LE. 0 )     GO TO 220
@@ -690,11 +766,13 @@ CC      GO TO 220
 CC  210 I = I - II + 1
 CC      X = Y(I)
 CC  220 GO TO RETURN, ( 10,20,30 )
-C	----------------------------------
+C        ----------------------------------
 C                                                                                                                                                              
-CC  300 RETURN                                                            
+CC  300 RETURN
+C    L : DUMMY
+      L = L
       RETURN
-	END                                                               
+      END                                                               
 cc      SUBROUTINE  SETLAG( K )                                           
       SUBROUTINE  SETLAG( K,LAG1,LAG2,LAG3,LAG4,LAG5 )                                           
 C                                                                       
@@ -720,7 +798,9 @@ C              WHERE  0-LAG TERM Z(N-0) IS REPLACED BY THE CONSTANT 1.
 C              ......................................................   
 C                                                                       
 cc      REAL * 4   CSTDMY,SD0DMY
-      REAL * 8   CSTDMY,SD0DMY
+cxx      REAL * 8   CSTDMY,SD0DMY
+      INTEGER :: K, LAG1, LAG2, LAG3, LAG4, LAG5
+      REAL(8) :: CSTDMY, SD0DMY
       COMMON     / BBB /  L1(50),L2(50),L3(50),CSTDMY,SD0DMY
 C                                                                       
 cc      READ( 5,1 )     LAG1,LAG2,LAG3,LAG4,LAG5                          
@@ -729,7 +809,9 @@ cc      WRITE( 6,2 )    LAG1,LAG2,LAG3,LAG4,LAG5
       DO 10  I=1,LAG1                                                   
       L1(I) = I                                                         
       L2(I) = 0                                                         
-   10 L3(I) = 0                                                         
+cxx   10 L3(I) = 0
+      L3(I) = 0
+   10 CONTINUE                                                         
    15 K = LAG1                                                          
 C                                                                       
       IF(LAG2.LE.0)   GO TO 30                                          
@@ -737,17 +819,23 @@ C
       K = K+1                                                           
       L1(K) = I                                                         
       L2(K) = I                                                         
-   20 L3(K) = 0                                                         
+cxx   20 L3(K) = 0                                                         
+      L3(K) = 0
+   20 CONTINUE
 C                                                                       
    30 IF(LAG3.LE.1)   GO TO 50                                          
       LL = LAG3-1                                                       
-      DO 40  I=1,LL                                                     
+cxx      DO 40  I=1,LL
+      DO 41  I=1,LL                                                     
          I1 = I+1                                                       
          DO 40  J=I1,LAG3                                               
          K = K+1                                                        
          L1(K) = I                                                      
          L2(K) = J                                                      
-   40    L3(K) = 0                                                      
+cxx   40    L3(K) = 0
+         L3(K) = 0
+   40    CONTINUE
+   41 CONTINUE
    50 M  = K                                                            
 C                                                                       
       IF(LAG4.LE.0)   GO TO 65                                          
@@ -755,49 +843,55 @@ C
       K = K+1                                                           
       L1(K) = I                                                         
       L2(K) = I                                                         
-   60 L3(K) = I                                                         
+cxx   60 L3(K) = I                                                         
+      L3(K) = I
+   60 CONTINUE
    65 CONTINUE                                                          
 C                                                                       
       IF(LAG5.LE.1)   GO TO 80                                          
-      DO 70  I=1,LAG5                                                   
-         DO 70  J=I,LAG5                                                
+cxx      DO 70  I=1,LAG5                                                   
+cxx         DO 70  J=I,LAG5                                                
+      DO 72  I=1,LAG5                                                   
+         DO 71  J=I,LAG5
             DO 70  L=J,LAG5                                             
             IF(I.EQ.J .AND. J.EQ.L)  GO TO 70                           
             K = K+1                                                     
             L1(K) = I                                                   
             L2(K) = J                                                   
             L3(K) = L                                                   
-   70 CONTINUE                                                          
+   70       CONTINUE
+   71    CONTINUE
+   72 CONTINUE
 C                                                                       
 cc   80 WRITE( 6,3 )                                                      
    80 CONTINUE
-      IF( LAG1 .EQ. 0 )  GO TO 100                                      
-      DO 90  I=1,LAG1                                                   
+cxx      IF( LAG1 .EQ. 0 )  GO TO 100                                      
+cxx      DO 90  I=1,LAG1                                                   
 cc   90 WRITE( 6,4 )     I , L1(I)                                        
-   90 CONTINUE
-  100 J = LAG1+1                                                        
-      IF( LAG2+LAG3 .EQ. 0 )   GO TO 120                                
-      DO 110  I=J,M                                                     
+cxx   90 CONTINUE
+cxx  100 J = LAG1+1                                                        
+cxx      IF( LAG2+LAG3 .EQ. 0 )   GO TO 120                                
+cxx      DO 110  I=J,M                                                     
 cc  110 WRITE( 6,5 )     I , L1(I) , L2(I)                                
-  110 CONTINUE
-  120 J = M+1                                                           
-      IF( LAG4+LAG5 .EQ. 0 )   GO TO 140                                
-      DO 130  I=J,K                                                     
+cxx  110 CONTINUE
+cxx  120 J = M+1                                                           
+cxx      IF( LAG4+LAG5 .EQ. 0 )   GO TO 140                                
+cxx      DO 130  I=J,K                                                     
 cc  130 WRITE( 6,6 )     I ,L1(I) , L2(I) ,L3(I)                          
-  130 CONTINUE
-  140 CONTINUE                                                          
+cxx  130 CONTINUE
+cxx  140 CONTINUE                                                          
 C                                                                       
       RETURN                                                            
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( /1H ,'LAG1 =',I3,5X,'LAG2 =',I3,5X,'LAG3 =',I3,5X,
-     *        'LAG4 =',I3,5X,'LAG5 =',I3 )
-    3 FORMAT( 1H ,4X,'M',5X,'REGRESSOR  Y(I,M)' )                       
-    4 FORMAT( 1H ,I5,5X,'Z(I-',I2,')' )                                 
-    5 FORMAT( 1H ,I5,5X,'Z(I-',I2,') * Z(I-',I2,')' )                   
-    6 FORMAT( 1H ,I5,5X,'Z(I-',I2,') * Z(I-',I2,') * Z(I-',I2,')' )     
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( /1H ,'LAG1 =',I3,5X,'LAG2 =',I3,5X,'LAG3 =',I3,5X,
+cxx     *        'LAG4 =',I3,5X,'LAG5 =',I3 )
+cxx    3 FORMAT( 1H ,4X,'M',5X,'REGRESSOR  Y(I,M)' )                       
+cxx    4 FORMAT( 1H ,I5,5X,'Z(I-',I2,')' )                                 
+cxx    5 FORMAT( 1H ,I5,5X,'Z(I-',I2,') * Z(I-',I2,')' )                   
+cxx    6 FORMAT( 1H ,I5,5X,'Z(I-',I2,') * Z(I-',I2,') * Z(I-',I2,')' )     
 C                                                                       
       END                                                               
-	SUBROUTINE  SETX2( Z,N0,L,K,MJ1,JSW,LAG,X )                       
+      SUBROUTINE  SETX2( Z,N0,L,K,MJ1,JSW,LAG,X )                       
 C                                                                       
 C          +----------------------------------------+                   
 C          ! MATRIX X SET UP (FOR NON-LINEAR MODEL) !                   
@@ -835,8 +929,11 @@ CC      REAL * 8  X(MJ1,1)
 CC      DIMENSION  Z(1)                                                   
 cc      REAL * 4   CSTDMY, SD0DMY
 cx      REAL * 8  X(MJ1,1) ,  Z(1) , ZTEM
-      REAL * 8  X(MJ1,K+1) ,  Z(N0+LAG+L) , ZTEM
-      REAL * 8  CSTDMY, SD0DMY
+cxx      REAL * 8  X(MJ1,K+1) ,  Z(N0+LAG+L) , ZTEM
+cxx      REAL * 8  CSTDMY, SD0DMY
+      INTEGER :: N0, L, K, MJ1, JSW, LAG 
+      REAL(8) :: Z(N0+LAG+L), X(MJ1,K+1)
+      REAL(8) :: CSTDMY, SD0DMY, ZTEM
       COMMON     / BBB /  L1(50) , L2(50) , L3(50), CSTDMY, SD0DMY  
 C                                                                       
       K1 = K + 1                                                        
@@ -844,13 +941,16 @@ C
       DO  10     I=1,L                                                  
       I1 = I + I0                                                       
       J1 = N0 + LAG + I                                                 
-   10 X(I1,K1) = Z(J1)                                                  
+cxx   10 X(I1,K1) = Z(J1)                                                  
+      X(I1,K1) = Z(J1)
+   10 CONTINUE
 C                                                                       
       DO  70     II=1,K                                                 
       LL1 = L1(II)                                                      
       LL2 = L2(II)                                                      
       LL3 = L3(II)                                                      
-      DO  60     I=1,L                                                  
+cxx      DO  60     I=1,L
+      DO  61     I=1,L
       ZTEM = 1.D0                                                       
       I1 = I + I0                                                       
       J1 = N0 + LAG + I                                                 
@@ -863,7 +963,8 @@ C
    50 IF( LL3 .EQ. 0 )     GO TO 60                                     
       M3 = J1 - LL3                                                     
       ZTEM = ZTEM * Z(M3)                                               
-   60 X(I1,II) = ZTEM                                                   
+   60 X(I1,II) = ZTEM
+   61 CONTINUE                                                   
    70 CONTINUE                                                          
 C                                                                       
       RETURN                                                            
@@ -891,11 +992,14 @@ C          X:      L*(K+1) MATRIX           IF   JSW = 0
 C                  (K+1+L)*(K+1) MATRIX     IF   JSW = 1                
 C                                                                       
 C                                                                       
-      IMPLICIT  REAL  * 8 (A-H,O-Z)                                     
+cxx      IMPLICIT  REAL  * 8 (A-H,O-Z)                                     
 CC      REAL * 4 Z(1)                                                     
 cx      DIMENSION  Z(1)
 cx      DIMENSION  X(MJ1,1)                                               
-      DIMENSION  X(MJ1,K+1) ,  Z(NO+LAG+L)
+cxx      DIMENSION  X(MJ1,K+1) ,  Z(NO+LAG+L)
+      INTEGER :: NO, L, K, MJ1, JSW, LAG                       
+      REAL(8) :: Z(NO+LAG+L), X(MJ1,K+1)
+      REAL(8) :: BN, Y, XX
 cc      COMMON     / AAA /  N , M                                         
       COMMON     / AAA /  N
 C                                                                       
@@ -907,22 +1011,30 @@ C
       M1 = M + 1                                                        
       LAG=K-M1                                                          
       BN = 2.D0/(N-LAG-1.D0)                                            
-      DO 10  I=1,L                                                      
+cxx      DO 10  I=1,L                                                      
+      DO 11  I=1,L
       Y= BN*(NO+I-1)-1.D0                                               
       XX= 1.D0                                                          
       DO 10 J=1,M1                                                      
       II= I+I0                                                          
       X(II,J) = XX                                                      
-   10 XX = XX*Y                                                         
+cxx   10 XX = XX*Y 
+      XX = XX*Y 
+   10 CONTINUE
+   11 CONTINUE                                                        
 C                                                                       
-      DO 20  I=1,L                                                      
+cxx      DO 20  I=1,L 
+      DO 21  I=1,L                                                     
       II = I+I0                                                         
       NN = NO+LAG+I                                                     
       X(II,K1) = Z(NN)                                                  
       DO 20   J=1,LAG                                                   
       NN = NN-1                                                         
       JJ = J+M1                                                         
-   20 X(II,JJ) = Z(NN)                                                  
+cxx   20 X(II,JJ) = Z(NN)                                                  
+      X(II,JJ) = Z(NN)
+   20 CONTINUE
+   21 CONTINUE
 C                                                                       
       RETURN                                                            
 C                                                                       
@@ -939,13 +1051,17 @@ C       OUTPUTS:
 C          X:   ARRANGED VECTOR                                         
 C          IND: INDEX OF ARRANGED VECTOR                                
 C                                                                       
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(1) , IX(1)                                           
-      DIMENSION  X(N) , IX(N)                                           
+cxx      DIMENSION  X(N) , IX(N)
+      INTEGER :: N, IX(N)
+      REAL(8) :: X(N), XMIN, XT
 C                                                                       
       NM1 = N - 1                                                       
       DO  30     I=1,N                                                  
-   30 IX(I) = I                                                         
+cxx   30 IX(I) = I                                                         
+      IX(I) = I 
+   30 CONTINUE
       DO  20     II=1,NM1                                               
       XMIN = X(II)                                                      
       MIN = II                                                          
@@ -966,7 +1082,8 @@ C
       RETURN                                                            
       E N D                                                             
 cc      SUBROUTINE  SUBSPC( B,K,N,IPR,EK )                                
-      SUBROUTINE  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )
+cxx      SUBROUTINE  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )
+      SUBROUTINE  SUBSPC( B,K,N,EK,IND,C,C1,C2,OEIC,ESUM1,OMEAN,OM )
 C                                                                       
 C       THIS SUBROUTINE PRODUCES BAYESIAN ESTIMATES OF PARTIAL CORRELATI
 C       BY CHECKING ALL SUBSET REGRESSION MODELS.                       
@@ -987,27 +1104,37 @@ C         OUTPUTS:
 C           B(I) (I=1,K):   BAYESIAN ESTIMATES OF PARTIAL CORRELATIONS  
 C           EK:   EQUIVALENT NUMBER OF FREE PARAMETERS IN THE BAYESIAN M
 C                                                                       
-      IMPLICIT  REAL * 8 ( A-H , O-Z )                                  
+cxx      IMPLICIT  REAL * 8 ( A-H , O-Z )                                  
 cc      DIMENSION  B(1) , C(50) , D(50,50)                                
 cc      DIMENSION  IND(50) , KND(50) , ESUM(50)                           
 cc      DIMENSION  C1(50), C2(50), ESUM1(50)
 cx      DIMENSION  B(1) , C(K) , D(K+1,K+1)                                
-      DIMENSION  B(K) , C(K) , D(K+1,K+1)                                
-      DIMENSION  IND(K) , KND(K+1) , ESUM(K+1)                           
-      DIMENSION  C1(K+1), C2(K), ESUM1(K+1)
+cxx      DIMENSION  B(K) , C(K) , D(K+1,K+1)                                
+cxx      DIMENSION  IND(K) , KND(K+1) , ESUM(K+1)                           
+cxx      DIMENSION  C1(K+1), C2(K), ESUM1(K+1)
+      INTEGER :: K, N, IND(K)
+      REAL(8) :: B(K), EK, C(K), C1(K+1), C2(K), OEIC, ESUM1(K+1),
+     1           OMEAN, OM
+      INTEGER :: KND(K+1)
+      REAL(8) :: BICOEF, D(K+1,K+1), ESUM(K+1), CC, DN, SUM, EIC,
+     1           SUMC, EXIC, OSUM
 C                                                                       
       CC = 1.D0 + DLOG(2.D0)                                            
       K1 = K + 1                                                        
       DN = N                                                            
-      DO 10   I=1,K1                                                    
-      ESUM(I) = 0.D0                                                    
-      DO 10   J=1,K1                                                    
-   10 D(I,J) = 0.D0                                                     
+cxx      DO 10   I=1,K1                                                    
+cxx      ESUM(I) = 0.D0                                                    
+cxx      DO 10   J=1,K1                                                    
+cxx   10 D(I,J) = 0.D0 
+      ESUM(1:K1) = 0.D0
+      D(1:K1,1:K1) = 0.D0
 C                                                                       
 C          SQUARE OF PARTIAL CORRELATIONS ( NORMALISED BY MULTIPLYING N 
 C                                                                       
       DO 20   I=1,K                                                     
-   20 C(I) = B(I)*B(I)*DN                                               
+cxx   20 C(I) = B(I)*B(I)*DN                                               
+      C(I) = B(I)*B(I)*DN 
+   20 CONTINUE
 C                                                                       
 C          ARRANGEMENT OF C(I) IN ORDER OF INCREASING MAGNITUDE         
 C                                                                       
@@ -1025,7 +1152,9 @@ C
       DO 30   I=1,K                                                     
       SUM = SUM + C(I)                                                  
       EIC = SUM + CC*(K-I)                                              
-   30 IF( OEIC .GT. EIC )   OEIC = EIC                                  
+cxx   30 IF( OEIC .GT. EIC )   OEIC = EIC                                  
+      IF( OEIC .GT. EIC )   OEIC = EIC 
+   30 CONTINUE
 cc      WRITE( 6,604 )   OEIC                                             
 C                                                                       
 C--------  COMPUTATION OF EIC'S OF WHOLE SUBSET REGRESSION MODELS  -----
@@ -1033,7 +1162,9 @@ C
 C          INITIAL SETTING                                              
 C                                                                       
       DO 40   I=1,K                                                     
-   40 KND(I) = 0                                                        
+cxx   40 KND(I) = 0                                                        
+      KND(I) = 0
+   40 CONTINUE
       KND(K1) = 1                                                       
       SUM = 0.D0                                                        
       SUMC = 0.D0
@@ -1044,11 +1175,13 @@ C
   100 CONTINUE                                                          
 C                                                                       
 C          -----  SPECIFICATION OF NEXT SUBSET  -----                   
-               DO 110   I=1,K                                           
+cxx               DO 110   I=1,K
+               DO 111   I=1,K
                IF( KND(I) .EQ. 0 )   GO TO 110                          
                KND(I) = 0                                               
                GO TO 120                                                
   110          KND(I) = 1                                               
+  111          CONTINUE
   120          CONTINUE                                                 
 C          ------------------------------------------                   
 C                                                                       
@@ -1083,11 +1216,15 @@ C
       EXIC = DEXP( -0.5D0*EIC )                                         
       ESUM(M+1) = ESUM(M+1) + EXIC                                      
       DO 170   I=1,K                                                    
-  170 IF( KND(I) .EQ. 1 )   D(I,M+1) = D(I,M+1) + EXIC                  
+cxx  170 IF( KND(I) .EQ. 1 )   D(I,M+1) = D(I,M+1) + EXIC                  
+      IF( KND(I) .EQ. 1 )   D(I,M+1) = D(I,M+1) + EXIC 
+  170 CONTINUE
       GO TO 100                                                         
 C         --------------------------------------------                  
   180          DO 190   I=1,IP                                          
-  190          KND(I) = 1                                               
+cxx  190          KND(I) = 1                                               
+               KND(I) = 1 
+  190          CONTINUE
                KND(IP+1) = 0                                            
                IP = IP+1                                                
                IQ = IP-1                                                
@@ -1100,7 +1237,9 @@ C
 cc      IF( IPR .GE. 2 )     WRITE( 6,8 )                                 
 cc      IF( IPR .GE. 2 )     WRITE( 6,607 )     (ESUM(I),I=1,K1)          
       DO 201 I=1,K1
-  201 ESUM1(I) = ESUM(I)
+cxx  201 ESUM1(I) = ESUM(I)
+      ESUM1(I) = ESUM(I)
+  201 CONTINUE
 C                                                                       
 C          MEAN OF NUMBER OF PARAMETERS                                 
 C                                                                       
@@ -1108,7 +1247,9 @@ C
       SUM = ESUM(1)                                                     
       DO 210   I=1,K                                                    
       SUM = SUM + ESUM(I+1)                                             
-  210 OSUM = OSUM + I*ESUM(I+1)                                         
+cxx  210 OSUM = OSUM + I*ESUM(I+1)                                         
+      OSUM = OSUM + I*ESUM(I+1)
+  210 CONTINUE
       OMEAN = OSUM / SUM                                                
       OM = OMEAN / K                                                    
 cc      IF( IPR .GE. 2 )     WRITE( 6,608 )     OMEAN , OM                
@@ -1120,36 +1261,53 @@ C
       KMJ = K-J                                                         
 cc  220 C(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)                       
 cc      C(1) = 1.D0 / (1.D0 + K)                                          
-  220 C1(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)                       
+cxx  220 C1(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)                       
+      C1(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)
+  220 CONTINUE
       C1(1) = 1.D0 / (1.D0 + K)                                          
       DO 221  I=1,K                                                     
 cc  221 C(I+1) = C(I) * I / (1.D0 + K - I)                                
-  221 C1(I+1) = C1(I) * I / (1.D0 + K - I)                                
+cxx  221 C1(I+1) = C1(I) * I / (1.D0 + K - I)                                
+      C1(I+1) = C1(I) * I / (1.D0 + K - I) 
+  221 CONTINUE
 cc      IF( IPR .GE. 2 )     WRITE( 6,609 )                               
 cc      IF( IPR .GE. 2 )     WRITE( 6,607 )     (C(I),I=1,K1)             
 C                                                                       
       DO 230   I=1,K1                                                   
 cc  230 ESUM(I) = ESUM(I)*C(I)                                            
-  230 ESUM(I) = ESUM(I)*C1(I)                                            
+cxx  230 ESUM(I) = ESUM(I)*C1(I)                                            
+      ESUM(I) = ESUM(I)*C1(I)
+  230 CONTINUE
 C                                                                       
       SUM = 0.D0                                                        
       DO 240   I=1,K1                                                   
-  240 SUM = SUM + ESUM(I)                                               
+cxx  240 SUM = SUM + ESUM(I)                                               
+      SUM = SUM + ESUM(I)
+  240 CONTINUE
 C                                                                       
-      DO 250   J=1,K1                                                   
+cxx      DO 250   J=1,K1                                                   
+      DO 251   J=1,K1 
       DO 250   I=1,K                                                    
 cc  250 D(I,J) = D(I,J)*C(J) / SUM                                        
-  250 D(I,J) = D(I,J)*C1(J) / SUM                                        
+cxx  250 D(I,J) = D(I,J)*C1(J) / SUM                                        
+      D(I,J) = D(I,J)*C1(J) / SUM
+  250 CONTINUE
+  251 CONTINUE
 C                                                                       
 C          WEIGHTS OF PARTIAL CORRELATIONS                              
 C                                                                       
-      DO 260   I=1,K                                                    
+cxx      DO 260   I=1,K                                                    
 cc  260 C(I) = 0.D0                                                       
-  260 C2(I) = 0.D0                                                       
-      DO 270   I=1,K                                                    
+cxx  260 C2(I) = 0.D0
+      C2(1:K) = 0.D0                                                      
+cxx      DO 270   I=1,K                                                    
+      DO 271   I=1,K
       DO 270   J=1,K1                                                   
 cc  270 C(I) = C(I) + D(I,J)                                              
-  270 C2(I) = C2(I) + D(I,J)                                              
+cxx  270 C2(I) = C2(I) + D(I,J)
+      C2(I) = C2(I) + D(I,J)
+  270 CONTINUE
+  271 CONTINUE                                              
 cc      IF( IPR .GE. 2 )     WRITE( 6,603 )                               
 cc      IF( IPR .GE. 2 )     WRITE( 6,607 )     (C(I),I=1,K)              
 C                                                                       
@@ -1161,7 +1319,9 @@ C
 cc      B(J) = B(J)*C(I)                                                  
 cc  280 EK = EK + C(I)**2                                                 
       B(J) = B(J)*C2(I)                                                  
-  280 EK = EK + C2(I)**2                                                 
+cxx  280 EK = EK + C2(I)**2                                                 
+      EK = EK + C2(I)**2
+  280 CONTINUE
 cc      IF( IPR .LE. 1 )     RETURN                                       
 cc      WRITE( 6,602 )                                                    
 cc      DO  290     I=1,K                                                 
@@ -1169,20 +1329,20 @@ cc  290 WRITE( 6,609 )     I , B(I)
 C                                                                       
       RETURN                                                            
 C                                                                       
-    3 FORMAT( 1H ,20I3 )                                                
-    4 FORMAT( 1H ,3D20.10,2I5 )                                         
-    6 FORMAT( 1H ,2I7,F13.5 )                                           
-    7 FORMAT( 1H ,6X,'I IND(I)',4X,'N*B(I)**2' )                        
-    8 FORMAT( 1H ,'ESUM(I) (I=1,M+1)' )                                 
-    9 FORMAT( 1H ,'***  BINOMIAL TYPE  ***' )                           
-  602 FORMAT( 1H ,'PARTIAL CORRELATIONS OF THE BAYESIAN MODEL',/,1H ,6X,
-     1'I',9X,'A(I)' )                                                   
-  603 FORMAT( 1H ,'FINAL BAYESIAN WEIGHTS OF PARTIAL CORRELATIONS' )    
-  604 FORMAT( 1H ,'  OAIC =',D13.5 )                                    
-  606 FORMAT( 1H ,'OSUM =',D20.10,5X,'SUM =',D20.10,5X,'COD =',D20.10 ) 
-  607 FORMAT( 1H ,10D13.5 )                                             
-  608 FORMAT( 1H ,'OMEAN =',D15.8,5X,'OM =',D15.8 )                     
-  609 FORMAT( 1H ,I7,F13.5 )                                            
+cxx    3 FORMAT( 1H ,20I3 )                                                
+cxx    4 FORMAT( 1H ,3D20.10,2I5 )                                         
+cxx    6 FORMAT( 1H ,2I7,F13.5 )                                           
+cxx    7 FORMAT( 1H ,6X,'I IND(I)',4X,'N*B(I)**2' )                        
+cxx    8 FORMAT( 1H ,'ESUM(I) (I=1,M+1)' )                                 
+cxx    9 FORMAT( 1H ,'***  BINOMIAL TYPE  ***' )                           
+cxx  602 FORMAT( 1H ,'PARTIAL CORRELATIONS OF THE BAYESIAN MODEL',/,1H ,6X,
+cxx     1'I',9X,'A(I)' )                                                   
+cxx  603 FORMAT( 1H ,'FINAL BAYESIAN WEIGHTS OF PARTIAL CORRELATIONS' )    
+cxx  604 FORMAT( 1H ,'  OAIC =',D13.5 )                                    
+cxx  606 FORMAT( 1H ,'OSUM =',D20.10,5X,'SUM =',D20.10,5X,'COD =',D20.10 ) 
+cxx  607 FORMAT( 1H ,10D13.5 )                                             
+cxx  608 FORMAT( 1H ,'OMEAN =',D15.8,5X,'OM =',D15.8 )                     
+cxx  609 FORMAT( 1H ,I7,F13.5 )                                            
       END                                                               
 cc      SUBROUTINE  SBBAYS( X,D,K,N,IPR,MJ1,A,SD )                        
       SUBROUTINE  SBBAYS( X,K,N,IPR,MJ1,A,SD,EK,AIC,IND,C,C1,C2,B,
@@ -1210,14 +1370,18 @@ C       OUTPUTS:
 C          A(I) (I=1,K):   REGRESSION COEFFICIENTS OF BAYESIAN MODEL    
 C          SD:    RESIDUAL VARIANCE                                     
 C                                                                       
-      IMPLICIT  REAL * 8  (A-H , O-Z )                                  
+cxx      IMPLICIT  REAL * 8  (A-H , O-Z )                                  
 cc      DIMENSION  X(MJ1,1) , A(1) , D(1)                                 
 cc      DIMENSION  B(50) , G(50)                                          
 cc      DIMENSION  IND(50), C(50), C1(50), C2(50), ESUM(50)
 cx      DIMENSION  X(MJ1,1) , A(1) , D(K)                                 
-      DIMENSION  X(MJ1,K+1) , A(K) , D(K)                                 
-      DIMENSION  B(K) , G(K)
-      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
+cxx      DIMENSION  X(MJ1,K+1) , A(K) , D(K)                                 
+cxx      DIMENSION  B(K) , G(K)
+cxx      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
+      INTEGER :: K, N, IPR, MJ1, IND(K)
+      REAL(8) :: X(MJ1,K+1), A(K), SD, EK, AIC, C(K), C1(K+1), C2(K),
+     1           B(K), OEIC, ESUM(K+1), OMEAN, OM
+      REAL(8) :: D(K), G(K), FN, SUM, BB
       K1 = K + 1                                                        
       FN = N                                                            
 cc      IF( IPR .GE. 2 )     WRITE( 6,3 )                                 
@@ -1229,12 +1393,15 @@ C
       J = K1-I                                                          
       SUM = SUM + X(J,K1)**2                                            
       G(J) = DSQRT( SUM )                                               
-   10 B(J) = X(J,K1)*X(J,J) / (G(J)*DABS(X(J,J)))                       
+cxx   10 B(J) = X(J,K1)*X(J,J) / (G(J)*DABS(X(J,J)))                       
+      B(J) = X(J,K1)*X(J,J) / (G(J)*DABS(X(J,J))) 
+   10 CONTINUE
 C                                                                       
 C          PARTIAL CORRELATIONS OF BAYESIAN MODEL COMPUTATION           
 C                                                                       
 cc      CALL  SUBSPC( B,K,N,IPR,EK )                                      
-      CALL  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM,OMEAN,OM )
+cxx      CALL  SUBSPC( B,K,N,IPR,EK,IND,C,C1,C2,OEIC,ESUM,OMEAN,OM )
+      CALL  SUBSPC( B,K,N,EK,IND,C,C1,C2,OEIC,ESUM,OMEAN,OM )
 C                                                                       
 C          MODIFICATION OF CROSS-PRODUCTS  X(I,K1) (I=1,K)              
 C                                                                       
@@ -1243,14 +1410,18 @@ cc      B(I) = B(I)*X(I,I)*G(I) / DABS(X(I,I))
       BB = B(I)*X(I,I)*G(I) / DABS(X(I,I))                            
       D(I) = X(I,K1)                                                    
 cc   30 X(I,K1) = B(I)                                                    
-   30 X(I,K1) = BB
+cxx   30 X(I,K1) = BB
+      X(I,K1) = BB
+   30 CONTINUE
 C                                                                       
 C          REGRESSION COEFFICIENTS OF BAYSIAN MODEL                     
 C                                                                       
       CALL  RECOEF( X,K,K,MJ1,A )                                       
 C                                                                       
       DO 40   I=1,K                                                     
-   40 X(I,K1) = D(I)                                                    
+cxx   40 X(I,K1) = D(I)                                                    
+      X(I,K1) = D(I)
+   40 CONTINUE
 C                                                                       
 C          RESIDUAL VARIANCE AND AIC                                    
 C                                                                       
@@ -1262,8 +1433,9 @@ C
 cc      WRITE( 6,6 )     SD , EK , AIC                                    
       RETURN                                                            
 C                                                                       
-    3 FORMAT( //1H ,18(1H-),/,' BAYESIAN PROCEDURE',/,1H ,18(1H-) )     
-    5 FORMAT( 1H ,10D13.5 )                                             
-    6 FORMAT( 1H ,'RESIDUAL VARIANCE',16X,'SD =',D19.8,/,1H ,'EQUIVALENT
-     1 NUMBER OF PARAMETERS  EK =',F10.3,/,1H ,32X,'AIC =',F15.3 )      
+cxx    3 FORMAT( //1H ,18(1H-),/,' BAYESIAN PROCEDURE',/,1H ,18(1H-) )     
+cxx    5 FORMAT( 1H ,10D13.5 )                                             
+cxx    6 FORMAT( 1H ,'RESIDUAL VARIANCE',16X,'SD =',D19.8,/,1H ,'EQUIVALENT
+cxx     1 NUMBER OF PARAMETERS  EK =',F10.3,/,1H ,32X,'AIC =',F15.3 )      
       E N D                                                             
+

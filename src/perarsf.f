@@ -76,7 +76,7 @@ C       ---------------------------------------------------------------
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: PERARSF
 C
-      IMPLICIT  REAL * 8 ( A-H,O-Z )                                    
+cxx      IMPLICIT  REAL * 8 ( A-H,O-Z )                                    
 CC      REAL  * 4   Z , Y                                                 
 cc      REAL * 4   TITLE(20)                                              
 cc      DIMENSION  Z(5000) , Y(200,24)                                    
@@ -84,16 +84,25 @@ cc      DIMENSION  X(200,150) , D(300)
 cc      DIMENSION  U(150,150) , B(24,24,5) , E(24,24)                     
 cc      DIMENSION  C(24)                                                  
 cc      DIMENSION  EX(24)                                                 
-      DIMENSION  ZS(N), Z(N), Y(N/IP,IP)                                    
-      DIMENSION  X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW)
-      DIMENSION  B(IP,IP,LAG) , E(IP,IP), BI(IP,IP,LAG) , EI(IP,IP)                     
-      DIMENSION  C(IP)
-      DIMENSION  EX(IP)
+cxx      DIMENSION  ZS(N), Z(N), Y(N/IP,IP)                                    
+cxx      DIMENSION  X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW)
+cxx      DIMENSION  B(IP,IP,LAG) , E(IP,IP), BI(IP,IP,LAG) , EI(IP,IP)                     
+cxx      DIMENSION  C(IP)
+cxx      DIMENSION  EX(IP)
+cxx      DIMENSION  AIC(LAG+1,IP), SD(LAG+1,IP), DIC(LAG+1,IP)
+cxx      DIMENSION  AICM(IP), SDM(IP), IM(IP)
+cxx      DIMENSION  JNDF((LAG+1)*IP+KSW,IP), AF((LAG+1)*IP+KSW,IP)
+cxx      DIMENSION  NPR(IP), AICF(IP)
 C
-      DIMENSION  AIC(LAG+1,IP), SD(LAG+1,IP), DIC(LAG+1,IP)
-      DIMENSION  AICM(IP), SDM(IP), IM(IP)
-      DIMENSION  JNDF((LAG+1)*IP+KSW,IP), AF((LAG+1)*IP+KSW,IP)
-      DIMENSION  NPR(IP), AICF(IP)
+      INTEGER :: N, IP, LAG, KSW, NPR(IP), JNDF((LAG+1)*IP+KSW,IP),
+     1           LMAX
+      REAL(8) :: ZS(N), ZMEAN, SUM, AF((LAG+1)*IP+KSW,IP), AICF(IP),
+     1           B(IP,IP,LAG), E(IP,IP), C(IP), EX(IP)
+      INTEGER :: IM(IP)
+      REAL(8) :: X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW), Y(N/IP,IP), 
+     1           Z(N), BI(IP,IP,LAG), EI(IP,IP), AIC(LAG+1,IP),
+     2           SD(LAG+1,IP), DIC(LAG+1,IP), AICM(IP), SDM(IP),
+     3           AICS
 C
 cc      CHARACTER(100) IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -144,8 +153,8 @@ C
 C                                                                       
 C          REDUCTION TO AN UPPER TRIANGULAR FORM                        
 C                                                                       
-cc      CALL  MREDCT( Y,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
-      X = 0.0D0
+cc      CALL  MREDCT( Y,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )
+      X(1:MJ1,1:MJ4) = 0.0D0
       CALL  MREDCT( Y,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
 C                                                                       
 C          INSTANTANEOUS RESPONSE MODEL FITTING                         
@@ -181,19 +190,19 @@ C
 cc  999 CONTINUE
       RETURN
 C                                                                       
-    1 FORMAT( 16I5 )                                                    
-    2 FORMAT( 1H ,'PROGRAM  TIMSAC 78.2.3.',/,1H ,'  PERIODIC AUTOREGRES
-     1SIVE MODELS FITTING BY THE METHOD OF LEAST SQUARES (SCALAR CASE)')
-    3 FORMAT( 1H ,'  <PERIODIC AUTOREGRESSIVE MODEL (J=1,...,IP) >',/,  
-     1 1H ,8X,'Y(I,J) = C(J) + A(1,J,0)*Y(I,1) + ... + A(J-1,J,0)*',
-     2'Y(I,J-1) + A(1,J,1)*Y(I-1,1) + ... + A(IP,J,1)*Y(I-1,IP)',
-     3' + ... + E(I,J)',/,   1H ,'  WHERE',/,
-     4  1H ,7X,'IP:       NUMBER OF INSTANTS IN ONE PERIOD',/,          
-     5  1H ,7X,'E(I,J):   GAUSSIAN WHITE NOISE' )                       
-    4 FORMAT( 1H ,2X,'IP =',I3,5X,'LAG =',I3,5X,'KSW =',I3,/,3X,'ORIGINA
-     *L DATA INPUT DEVICE   MT =',I3 )                                  
-    5 FORMAT( 1H ,'  *****  WHEN KSW IS SET TO 0, THE CONSTANT TERM C(J)
-     * IS EXCLUDED.  *****' )                                           
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    2 FORMAT( 1H ,'PROGRAM  TIMSAC 78.2.3.',/,1H ,'  PERIODIC AUTOREGRES
+cxx     1SIVE MODELS FITTING BY THE METHOD OF LEAST SQUARES (SCALAR CASE)')
+cxx    3 FORMAT( 1H ,'  <PERIODIC AUTOREGRESSIVE MODEL (J=1,...,IP) >',/,  
+cxx     1 1H ,8X,'Y(I,J) = C(J) + A(1,J,0)*Y(I,1) + ... + A(J-1,J,0)*',
+cxx     2'Y(I,J-1) + A(1,J,1)*Y(I-1,1) + ... + A(IP,J,1)*Y(I-1,IP)',
+cxx     3' + ... + E(I,J)',/,   1H ,'  WHERE',/,
+cxx     4  1H ,7X,'IP:       NUMBER OF INSTANTS IN ONE PERIOD',/,          
+cxx     5  1H ,7X,'E(I,J):   GAUSSIAN WHITE NOISE' )                       
+cxx    4 FORMAT( 1H ,2X,'IP =',I3,5X,'LAG =',I3,5X,'KSW =',I3,/,3X,'ORIGINA
+cxx     *L DATA INPUT DEVICE   MT =',I3 )                                  
+cxx    5 FORMAT( 1H ,'  *****  WHEN KSW IS SET TO 0, THE CONSTANT TERM C(J)
+cxx     * IS EXCLUDED.  *****' )                                           
       E N D                                                             
       SUBROUTINE  PERREG( Z,N,IP,MJ,Y,ND )                              
 C                                                                       
@@ -214,12 +223,18 @@ C          ND:    NUMBER OF ROWS OF Y
 C                                                                        
 CC      DIMENSION  Z(1) , Y(MJ,1)                                         
 cx      REAL * 8  Z(1) , Y(MJ,1)
-      REAL * 8  Z(N) , Y(MJ,IP)
+cxx      REAL * 8  Z(N) , Y(MJ,IP)
+      INTEGER :: N, IP, MJ, ND
+      REAL(8) :: Z(N), Y(MJ,IP)
       ND = N / IP                                                       
-      DO 10  I=1,ND                                                     
+cxx      DO 10  I=1,ND
+      DO 20  I=1,ND
       DO 10  J=1,IP                                                     
       II = (I-1)*IP + J                                                 
-   10 Y(I,J) = Z(II)                                                    
+cxx   10 Y(I,J) = Z(II)
+      Y(I,J) = Z(II)
+   10 CONTINUE
+   20 CONTINUE
       RETURN                                                            
 C                                                                       
       E N D                                                             

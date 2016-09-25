@@ -95,10 +95,10 @@ C     Y:  D*1         VECTOR
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: SIMCONF
 C
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      REAL*4 RANDOM                                                     
-      REAL*8 RANDM 
-      INTEGER D,H,R,H1                                                  
+cxx      REAL*8 RANDM 
+cxx      INTEGER D,H,R,H1                                                  
 cc      DIMENSION B(10,10,10),BD(100,10),BC(100,10)                       
 cc      DIMENSION Q(100,100),Q0(100,100),Z(100,100),G(10,100)             
 cc      DIMENSION W1(10)                                                  
@@ -107,15 +107,25 @@ cc      DIMENSION SI(10),CI(10),V(100),AV(100),BCN(100),BDN(100)
 cc      DIMENSION W3(10,10),W4(10,10),S2(10)                              
 cc      DIMENSION R1(10,100),R3(10,100)                                   
 cc      DIMENSION BX(100,10)                                              
-      DIMENSION B0(D,D,K),B(D,D,K),BD(K*D,D-R),BC(K*D,R)
-      DIMENSION Q(K*D,K*D),Q0(D,D),Z(K*D,K*D),G(R,K*D)
-      DIMENSION W1(D)
-      DIMENSION S0(D,D),S(D-R,D-R)
-      DIMENSION WIN1(D,D),WIN2(R,D),Y(D,L),W2(K*D,K*D)
-      DIMENSION SI(D),CI(R),V(K*D),AV(K*D),AVY(D),BCN(K*D),BDN(K*D)
-      DIMENSION W31(R,R),W32(D,D),W41(D,D),W42(R,D),S2(D)
-      DIMENSION R1(R,K*D),R3(R,K*D)
-      DIMENSION BX0((K-1)*D,D),BX(K*D,D)
+cxx      DIMENSION B0(D,D,K),B(D,D,K),BD(K*D,D-R),BC(K*D,R)
+cxx      DIMENSION Q(K*D,K*D),Q0(D,D),Z(K*D,K*D),G(R,K*D)
+cxx      DIMENSION W1(D)
+cxx      DIMENSION S0(D,D),S(D-R,D-R)
+cxx      DIMENSION WIN1(D,D),WIN2(R,D),Y(D,L),W2(K*D,K*D)
+cxx      DIMENSION SI(D),CI(R),V(K*D),AV(K*D),AVY(D),BCN(K*D),BDN(K*D)
+cxx      DIMENSION W31(R,R),W32(D,D),W41(D,D),W42(R,D),S2(D)
+cxx      DIMENSION R1(R,K*D),R3(R,K*D)
+cxx      DIMENSION BX0((K-1)*D,D),BX(K*D,D)
+      INTEGER :: D, K, H, L, R
+      REAL(8) :: B0(D,D,K), BX0((K-1)*D,D), S0(D,D), Q0(D,D), BC(K*D,R),
+     1           BD(K*D,D-R), G(R,K*D), AVY(D), SI(D), S2(D)
+      INTEGER H1
+      REAL(8) :: RANDM, B(D,D,K), Q(K*D,K*D),Z(K*D,K*D), W1(D),
+     1           S(D-R,D-R), WIN1(D,D), WIN2(R,D), Y(D,L),
+     2           W2(K*D,K*D), CI(R), V(K*D), AV(K*D), BCN(K*D),
+     3           BDN(K*D), W31(R,R), W32(D,D), W41(D,D), W42(R,D),
+     4           R1(R,K*D), R3(R,K*D), BX(K*D,D), CST0, CST1, CSTM6,
+     5           BDMN, AL, SUM, WDET
 cc      EQUIVALENCE(Q0(1,1),BCN(1))                                       
 cc      EQUIVALENCE(WIN(1,1),W1(1),SI(1),CI(1))                           
 cc      EQUIVALENCE(V(1),S2(1))                                           
@@ -151,7 +161,9 @@ cc      CALL REMATX(WIN,D,D,ISW,MJD,MJD)
       DO  106 I=1,D                                                     
       DO  105 J=1,D                                                     
 cc  105 B(I,J,IX)=-WIN(I,J)                                               
-  105 B(I,J,IX)=-B0(I,J,IX)
+cxx  105 B(I,J,IX)=-B0(I,J,IX)
+      B(I,J,IX)=-B0(I,J,IX)
+  105 CONTINUE
   106 CONTINUE                                                          
   107 CONTINUE                                                          
 C                                                                       
@@ -177,7 +189,9 @@ C     MATRIX BX SET
       K1=K-1                                                            
       K2=K1*D                                                           
       DO 102 I=1,D                                                      
-  102 BX(I,I)=CST1                                                      
+cxx  102 BX(I,I)=CST1
+      BX(I,I)=CST1
+  102 CONTINUE
 C                                                                       
 C     IMPULSE RESPONSE MATRICES W(I),I=1,K-1 INPUT                      
 cc      I1=0                                                              
@@ -192,18 +206,23 @@ cc      DO 115 J=1,D
 cc  115 BX(I2,J)=WIN(I,J)                                                 
 cc  116 CONTINUE                                                          
 cc  117 CONTINUE                                                          
-      DO 116 I=1,(K-1)*D
+cxx      DO 116 I=1,(K-1)*D
+      DO 126 I=1,(K-1)*D
       DO 116 J=1,D
          BX(I+D,J)=BX0(I,J)
   116 CONTINUE
+  126 CONTINUE
+
 C                                                                       
 C     INNOVATION COVARIANCE MATRIX INPUT                                
 C     COMMON SUBROUTINE CALL                                            
 cc      CALL REMATX (S,D,D,ISW,MJD,MJD)                                   
-      DO 117 I=1,D-R
+cxx      DO 117 I=1,D-R
+      DO 127 I=1,D-R
       DO 117 J=1,D-R
          S(I,J)=S0(I,J)
   117 CONTINUE
+  127 CONTINUE
 cc      READ (5,800) H,L,R                                                
 cc      WRITE(6,901) D,K,H,L,R                                            
 C     MATRIX Q(0) SET UP                                                
@@ -219,20 +238,28 @@ cc  118 Q0(I,J)=W3(I,J)
 cc  109 CONTINUE                                                          
 cc      DO 119 I=1,KD
 cc      DO 119 J=1,KD
-      DO 119 I=1,D
+cxx      DO 119 I=1,D
+      DO 120 I=1,D
       DO 119 J=1,D
-  119 Q(I,J)=Q0(I,J)
+cxx  119 Q(I,J)=Q0(I,J)
+      Q(I,J)=Q0(I,J)
+  119 CONTINUE
+  120 CONTINUE
 C                                                                       
 C     MATRIX BC AND BD SET UP                                           
       KDR=D-R                                                           
       DO 1120 I=1,KD                                                    
-      DO 1119 J=1,KDR                                                   
- 1119 BD(I,J)=BX(I,J)                                                   
+      DO 1119 J=1,KDR
+cxx 1119 BD(I,J)=BX(I,J)
+      BD(I,J)=BX(I,J)
+ 1119 CONTINUE
  1120 CONTINUE                                                          
       DO 1122 I=1,KD                                                    
       DO 1121 J=1,R                                                     
       J1=KDR+J                                                          
- 1121 BC(I,J)=BX(I,J1)                                                  
+cxx 1121 BC(I,J)=BX(I,J1) 
+      BC(I,J)=BX(I,J1)
+ 1121 CONTINUE
  1122 CONTINUE                                                          
 C                                                                       
 C     INITIAL MATRIX PRINT OUT FOR DEBUGGING                            
@@ -312,7 +339,9 @@ cc      KX=KD-D
       DO  402 I=1,D                                                     
       DO  401 J=1,D                                                     
 cc  401 WIN(I,J)=B(I,J,IZ)                                                
-  401 WIN1(I,J)=B(I,J,IZ)
+cxx  401 WIN1(I,J)=B(I,J,IZ)
+      WIN1(I,J)=B(I,J,IZ)
+  401 CONTINUE
   402 CONTINUE                                                          
       KJZ=0                                                             
       DO  407 JY=1,K                                                    
@@ -321,7 +350,9 @@ cc  401 WIN(I,J)=B(I,J,IZ)
       DO  403 J=1,D                                                     
       KJX=KJZ+J                                                         
 cc  403 W3(I,J)=Z(KIX,KJX)                                                
-  403 W32(I,J)=Z(KIX,KJX)                                                
+cxx  403 W32(I,J)=Z(KIX,KJX)
+      W32(I,J)=Z(KIX,KJX)
+  403 CONTINUE
   404 CONTINUE                                                          
 cc      CALL MULTRX (WIN,D,D,MJD,MJD,W3,D,D,MJD,MJD,                      
 cc     AW4,D,D,MJD,MJD,2)                                                 
@@ -331,7 +362,9 @@ cc     AW4,D,D,MJD,MJD,2)
       DO  405 J=1,D                                                     
       KJX=KJZ+J                                                         
 cc  405 W2(KIX,KJX)=W4(I,J)                                               
-  405 W2(KIX,KJX)=W41(I,J)
+cxx  405 W2(KIX,KJX)=W41(I,J)
+      W2(KIX,KJX)=W41(I,J)
+  405 CONTINUE
   406 CONTINUE                                                          
       KJZ=KJZ+D                                                         
   407 CONTINUE                                                          
@@ -340,7 +373,8 @@ cc  405 W2(KIX,KJX)=W4(I,J)
       DO  411 IY=J1,KD                                                  
       DO  410 JY=1,KD                                                   
       IYY=IY-D                                                          
-  409 W2(IY,JY) = W2(IY,JY) + Z(IYY,JY)                                 
+cxx  409 W2(IY,JY) = W2(IY,JY) + Z(IYY,JY)                                 
+      W2(IY,JY) = W2(IY,JY) + Z(IYY,JY)
   410 CONTINUE                                                          
   411 CONTINUE                                                          
 C                                                                       
@@ -373,7 +407,9 @@ C     W2*A IS STORED IN Q.
       IZ=IZ-1                                                           
       DO  413 I=1,D                                                     
       DO  412 J=1,D                                                     
-  412 W32(I,J)=B(I,J,IZ)                                                 
+cxx  412 W32(I,J)=B(I,J,IZ)
+      W32(I,J)=B(I,J,IZ)
+  412 CONTINUE
   413 CONTINUE                                                          
       KIZ=0                                                             
       DO  418 IY=1,K                                                    
@@ -382,7 +418,9 @@ C     W2*A IS STORED IN Q.
       DO  414 I=1,D                                                     
       KIX=KIZ+I                                                         
 cc  414 WIN(I,J)=W2(KIX,KJX)                                              
-  414 WIN1(I,J)=W2(KIX,KJX)
+cxx  414 WIN1(I,J)=W2(KIX,KJX)
+      WIN1(I,J)=W2(KIX,KJX)
+  414 CONTINUE
   415 CONTINUE                                                          
 cc      CALL MULTRX (WIN,D,D,MJD,MJD,W3,D,D,MJD,MJD,                      
 cc     AW4,D,D,MJD,MJD,1)                                                 
@@ -392,7 +430,9 @@ cc     AW4,D,D,MJD,MJD,1)
       DO  416 I=1,D                                                     
       KIX=KIZ+I                                                         
 cc  416 Q(KIX,KJX)=W4(I,J)                                                
-  416 Q(KIX,KJX)=W41(I,J)                                                
+cxx  416 Q(KIX,KJX)=W41(I,J)                                                
+      Q(KIX,KJX)=W41(I,J)
+  416 CONTINUE
   417 CONTINUE                                                          
       KIZ=KIZ+D                                                         
   418 CONTINUE                                                          
@@ -400,15 +440,20 @@ cc  416 Q(KIX,KJX)=W4(I,J)
   419 CONTINUE                                                          
       DO  422 JY=J1,KD                                                  
       DO  421 IY=1,KD                                                   
-      JYY=JY-D                                                          
-  420 Q(IY,JY)=Q(IY,JY)+W2(IY,JYY)                                      
+      JYY=JY-D
+cxx  420 Q(IY,JY)=Q(IY,JY)+W2(IY,JYY)                                      
+      Q(IY,JY)=Q(IY,JY)+W2(IY,JYY)
   421 CONTINUE                                                          
   422 CONTINUE                                                          
 cc      DO 142 I=1,KD                                                     
 cc      DO 142 J=1,KD                                                     
-      DO 142 I=1,D
+cxx      DO 142 I=1,D
+      DO 143 I=1,D
       DO 142 J=1,D
-  142 Q(I,J)=Q(I,J)+Q0(I,J)                                             
+cxx  142 Q(I,J)=Q(I,J)+Q0(I,J)
+      Q(I,J)=Q(I,J)+Q0(I,J)
+  142 CONTINUE
+  143 CONTINUE
   200 CONTINUE                                                          
 C                                                                       
 C     G=-(INVERSE(BC'*Q*BC))*BC'*Q*A                                    
@@ -435,7 +480,9 @@ C     R3*A IS STORED IN G.
       DO  454 J=1,D                                                     
       KJX=KX+J                                                          
 cc  454 WIN(I,J)=R3(I,KJX)                                                
-  454 WIN2(I,J)=R3(I,KJX)
+cxx  454 WIN2(I,J)=R3(I,KJX)
+      WIN2(I,J)=R3(I,KJX)
+  454 CONTINUE
   455 CONTINUE                                                          
       IZ=K+1                                                            
       DO  461 JY=1,K                                                    
@@ -443,7 +490,9 @@ cc  454 WIN(I,J)=R3(I,KJX)
       DO  453 I=1,D                                                     
       DO  452 J=1,D                                                     
 cc  452 W3(I,J)=B(I,J,IZ)                                                 
-  452 W32(I,J)=B(I,J,IZ)                                                 
+cxx  452 W32(I,J)=B(I,J,IZ)
+      W32(I,J)=B(I,J,IZ)
+  452 CONTINUE
   453 CONTINUE                                                          
 cc      CALL MULTRX (WIN,R,D,MJD,MJD,W3,D,D,MJD,MJD,                      
 cc     AW4,R,D,MJD,MJD,1)                                                 
@@ -453,7 +502,9 @@ cc     AW4,R,D,MJD,MJD,1)
       DO 456 J=1,D                                                      
       KJY=KJZ+J                                                         
 cc  456 G(I,KJY)=W4(I,J)                                                  
-  456 G(I,KJY)=W42(I,J)
+cxx  456 G(I,KJY)=W42(I,J)
+      G(I,KJY)=W42(I,J)
+  456 CONTINUE
   457 CONTINUE                                                          
 cc      IF  (KJZ) 461,461,458                                             
       IF  (KJZ .LE. 0) GO TO 461
@@ -462,12 +513,16 @@ cc      IF  (KJZ) 461,461,458
       DO  459 J=1,D                                                     
       KJX=KJZ+J-D                                                       
       KJY=KJZ+J                                                         
-  459 G(I,KJY)=G(I,KJY)+R3(I,KJX)                                       
+cxx  459 G(I,KJY)=G(I,KJY)+R3(I,KJX)
+      G(I,KJY)=G(I,KJY)+R3(I,KJX)
+  459 CONTINUE
   460 CONTINUE                                                          
   461 CONTINUE                                                          
       DO 202 I=1,R                                                      
       DO 201 J=1,KD                                                     
-  201 G(I,J)=-G(I,J)                                                    
+cxx  201 G(I,J)=-G(I,J)
+      G(I,J)=-G(I,J)
+  201 CONTINUE
   202 CONTINUE                                                          
 C     G PRINT OUT                                                       
 cc      WRITE(6,903) R,KD                                                 
@@ -480,8 +535,9 @@ C     ****************
 C     SIMULATION START                                                  
 C     ****************                                                  
 C     V(I),I=1,KD  CLEAR                                                
-      DO  301 I=1,KD                                                    
-  301 V(I)=CST0                                                         
+cxx      DO  301 I=1,KD                                                    
+cxx  301 V(I)=CST0
+      V(1:KD)=CST0
 C     CONSTANT FOR NOISE GENERATION                                     
 C     COMMON SUBROUTINE CALL                                            
 cc      SI(1)=RANDOM(1)                                                   
@@ -491,12 +547,16 @@ C     COVARIANCE MATRIX FACTORIZATION
 C     COMMON SUBROUTINE CALL                                            
 cc      CALL LTINV  (S,KDR,MJD)                                           
       CALL LTINV  (S,KDR)
-C     MATRIX S ARRANGEMENT                                              
+C     MATRIX S ARRANGEMENT 
       IF(KDR.EQ.1) GO TO 260                                            
-      DO 12 I=2,KDR                                                     
+cxx      DO 12 I=2,KDR
+      DO 13 I=2,KDR
       IM1=I-1                                                           
       DO 12 J=1,IM1                                                     
-   12 S(I,J)=S(J,I)                                                     
+cxx   12 S(I,J)=S(J,I)
+      S(I,J)=S(J,I)
+   12 CONTINUE
+   13 CONTINUE
   260 CONTINUE                                                          
 C                                                                       
       DO  500 J=1,L                                                     
@@ -522,8 +582,9 @@ C       +-                                   -+
 C                                                                       
 C     WHERE V(J)(J=1,K) ARE THE D-DIMENSIONAL SUB VECTORS OF V.         
 C     A*V IS STORED IN THE VECTOR AV.                                   
-      DO  432 I1=1,D                                                    
-  432 W1(I1)=CST0                                                       
+cxx      DO  432 I1=1,D                                                    
+cxx  432 W1(I1)=CST0
+      W1(1:D)=CST0 
       IZ=K+1                                                            
       KJZ=0                                                             
       DO  436 JY=1,K                                                    
@@ -531,7 +592,9 @@ C     A*V IS STORED IN THE VECTOR AV.
       DO  434 I1=1,D                                                    
       DO  433 I2=1,D                                                    
       J2=KJZ+I2                                                         
-  433 W1(I1)=W1(I1)+B(I1,I2,IZ)*V(J2)                                   
+cxx  433 W1(I1)=W1(I1)+B(I1,I2,IZ)*V(J2)
+      W1(I1)=W1(I1)+B(I1,I2,IZ)*V(J2)
+  433 CONTINUE
   434 CONTINUE                                                          
       KJZ=KJZ+D                                                         
   436 CONTINUE                                                          
@@ -561,21 +624,29 @@ C     RANDOM VECTOR SI GENERATION
       DO 302 I=1,KDR                                                    
       BDMN=CSTM6                                                        
       DO 303 JRN=1,12                                                   
-cc  303 BDMN=BDMN+RANDOM(0)                                               
-  303 BDMN=BDMN+RANDM(0,KK1,KK2,KK3,KK4)
-  302 BDN(I)=BDMN                                                       
+cc  303 BDMN=BDMN+RANDOM(0)
+cxx  303 BDMN=BDMN+RANDM(0,KK1,KK2,KK3,KK4)
+      BDMN=BDMN+RANDM(0,KK1,KK2,KK3,KK4)
+  303 CONTINUE
+cxx  302 BDN(I)=BDMN
+      BDN(I)=BDMN
+  302 CONTINUE
 C     RANDOM NORMAL VECTOR BDN GENERATION                               
 C     COMMON SUBROUTINE CALL                                            
-cc      CALL LTRVEC(S,BDN,SI,KDR,KDR,MJD,MJD)                             
+cc      CALL LTRVEC(S,BDN,SI,KDR,KDR,MJD,MJD)
       CALL LTRVEC(S,BDN,SI,KDR,KDR)
 C     COMMON SUBROUTINE CALL                                            
-cc      CALL MULVER(BD,SI,BDN,KD,KDR,MJKD,MJD)                            
+cc      CALL MULVER(BD,SI,BDN,KD,KDR,MJKD,MJD)
       CALL MULVER(BD,SI,BDN,KD,KDR)
 C     V=AV+BCN+BDN                                                      
       DO  309 I=1,KD                                                    
-  309 V(I) = AV(I)+BCN(I)+BDN(I)                                        
+cxx  309 V(I) = AV(I)+BCN(I)+BDN(I)
+      V(I) = AV(I)+BCN(I)+BDN(I)
+  309 CONTINUE
       DO  310 I=1,D                                                     
-  310 Y(I,J)=V(I)                                                       
+cxx  310 Y(I,J)=V(I)
+      Y(I,J)=V(I)
+  310 CONTINUE
   500 CONTINUE                                                          
 C                                                                       
 C     ************************************************                  
@@ -586,14 +657,18 @@ C     ************************************************
       DO  600 I=1,D                                                     
       SUM=CST0                                                          
       DO  501 J=1,L                                                     
-  501 SUM=SUM+Y(I,J)                                                    
+cxx  501 SUM=SUM+Y(I,J)                                                    
+      SUM=SUM+Y(I,J)
+  501 CONTINUE
 cc      AV(I)=AL*SUM                                                      
       AVY(I)=AL*SUM
       SUM=CST0                                                          
       DO  502 J=1,L                                                     
 cc  502 SUM=SUM+(Y(I,J)-AV(I))**2                                         
-  502 SUM=SUM+(Y(I,J)-AVY(I))**2
-      SI(I)=AL*SUM                                                      
+cxx  502 SUM=SUM+(Y(I,J)-AVY(I))**2
+      SUM=SUM+(Y(I,J)-AVY(I))**2
+  502 CONTINUE
+      SI(I)=AL*SUM
       S2(I)= DSQRT(SI(I))                                               
   600 CONTINUE                                                          
 cc      WRITE(6,902)                                                      
@@ -604,22 +679,22 @@ C
 cc      CALL FLCLS2(NFL)
 cc  999 CONTINUE
       RETURN
-  800 FORMAT(6I5)                                                       
-  900 FORMAT('1  PROGRAM 74.3.2. OPTIMAL CONTROLLER DESIGN')            
-  901 FORMAT(1H ,'D (DIMENSION)=',I2,', K (ORDER)=',I3,', H (HORIZON)=',
-     A       I3,', L (LENGTH OF EXPERIMENTAL PERIOD)=',I5,              
-     A       ', R (DIMENSION OF CONTROL INPUT)=',I5)                    
-  902 FORMAT(//1H ,'OPTIMAL CONTROL SIMULATION')                        
-  903 FORMAT(////1H ,'COTROLLER GAIN G(',I3,',',I3,')')                 
-  904 FORMAT(1H ,' AVERAGE VALUE OF I-TH COMPONENT OF Y',9X,            
-     A'VARIANCE',20X,'STANDARD DEVIATION')                              
-  905 FORMAT(1H ,'      I = ',I4,D20.10,8X,D20.10,8X,D20.10)            
-  700 FORMAT(' MATRIX  B(',I3,')')                                   
-  701 FORMAT(' MATRIX  BX')                                          
-  702 FORMAT(' MATRIX  BC')                                          
-  703 FORMAT(' MATRIX  BD')                                          
-  704 FORMAT(' MATRIX  QX')                                          
-  706 FORMAT(' S: COVARIANCE MATRIX OF INNOVATION')                  
+cxx  800 FORMAT(6I5)
+cxx  900 FORMAT('1  PROGRAM 74.3.2. OPTIMAL CONTROLLER DESIGN')            
+cxx  901 FORMAT(1H ,'D (DIMENSION)=',I2,', K (ORDER)=',I3,', H (HORIZON)=',
+cxx     A       I3,', L (LENGTH OF EXPERIMENTAL PERIOD)=',I5,              
+cxx     A       ', R (DIMENSION OF CONTROL INPUT)=',I5)                    
+cxx  902 FORMAT(//1H ,'OPTIMAL CONTROL SIMULATION')                        
+cxx  903 FORMAT(////1H ,'COTROLLER GAIN G(',I3,',',I3,')')                 
+cxx  904 FORMAT(1H ,' AVERAGE VALUE OF I-TH COMPONENT OF Y',9X,            
+cxx     A'VARIANCE',20X,'STANDARD DEVIATION')                              
+cxx  905 FORMAT(1H ,'      I = ',I4,D20.10,8X,D20.10,8X,D20.10)            
+cxx  700 FORMAT(' MATRIX  B(',I3,')')                                   
+cxx  701 FORMAT(' MATRIX  BX')                                          
+cxx  702 FORMAT(' MATRIX  BC')                                          
+cxx  703 FORMAT(' MATRIX  BD')                                          
+cxx  704 FORMAT(' MATRIX  QX')                                          
+cxx  706 FORMAT(' S: COVARIANCE MATRIX OF INNOVATION')                  
       END                                                               
 C                                                                       
 cc      SUBROUTINE MULTRX(X,MX,NX,MJ1,MJ2,Y,MY,NY,MJ3,MJ4,                
@@ -632,9 +707,12 @@ C     Z: MZ*NZ, ABSOLUTE DIMENSION MJ5*MJ6
 C     IS=1: Z=X*Y                                                       
 C     IS=2: Z=X'*Y                                                      
 C     IS=3: Z=X*Y'                                                      
-      IMPLICIT REAL*8 (A-H,O-Z)                                         
+cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION X(MJ1,MJ2),Y(MJ3,MJ4),Z(MJ5,MJ6)                        
-      DIMENSION X(MX,NX),Y(MY,NY),Z(MZ,NZ)
+cxx      DIMENSION X(MX,NX),Y(MY,NY),Z(MZ,NZ)
+      INTEGER :: MX, NX, MY, NY, MZ, NZ, IS
+      REAL(8) :: X(MX,NX), Y(MY,NY), Z(MZ,NZ)
+      REAL(8) :: CST0
       CST0=0.0D-00                                                      
       IF  (IS.EQ.2) GO TO 3050                                          
       IF  (IS.EQ.3) GO TO 3100                                          
@@ -644,7 +722,9 @@ cc      NZ=NY
       DO  3008 J=1,NY                                                   
       Z(I,J)=CST0                                                       
       DO  3007 K=1,NX                                                   
- 3007 Z(I,J)=Z(I,J)+X(I,K)*Y(K,J)                                       
+cxx 3007 Z(I,J)=Z(I,J)+X(I,K)*Y(K,J)
+      Z(I,J)=Z(I,J)+X(I,K)*Y(K,J)
+ 3007 CONTINUE
  3008 CONTINUE                                                          
  3009 CONTINUE                                                          
       GO TO 3200                                                        
@@ -655,7 +735,9 @@ cc      NZ=NY
       DO  3058 J=1,NY                                                   
       Z(I,J)=CST0                                                       
       DO  3057 K=1,MX                                                   
- 3057 Z(I,J)=Z(I,J)+X(K,I)*Y(K,J)                                       
+cxx 3057 Z(I,J)=Z(I,J)+X(K,I)*Y(K,J)
+      Z(I,J)=Z(I,J)+X(K,I)*Y(K,J)
+ 3057 CONTINUE
  3058 CONTINUE                                                          
  3059 CONTINUE                                                          
       GO TO 3200                                                        
@@ -666,7 +748,9 @@ cc      NZ=MY
       DO  3158 J=1,MY                                                   
       Z(I,J)=CST0                                                       
       DO  3157 K=1,NX                                                   
- 3157 Z(I,J)=Z(I,J)+X(I,K)*Y(J,K)                                       
+cxx 3157 Z(I,J)=Z(I,J)+X(I,K)*Y(J,K)
+      Z(I,J)=Z(I,J)+X(I,K)*Y(J,K)
+ 3157 CONTINUE
  3158 CONTINUE                                                          
  3159 CONTINUE                                                          
  3200 RETURN                                                            
@@ -685,11 +769,15 @@ C     THE INVERSE MATRIX IS OVERWRITTEN ON THE ORIGINAL.
 C     NEXT STATEMENT SHOULD BE REPLACED BY                              
 C     IMPLICIT COMPLEX*16(X)                                            
 C     FOR COMPLEX VERSION.  ALSO STATEMENT NO.1 NEEDS MODIFICATION.     
-      IMPLICIT REAL*8(X)                                                
+cxx      IMPLICIT REAL*8(X)                                                
 cc      DIMENSION X(MJ,MJ)                                                
 cc      DIMENSION IDS(10)                                                 
-      DIMENSION X(MM,MM)
-      DIMENSION IDS(MM)
+cxx      DIMENSION X(MM,MM)
+cxx      DIMENSION IDS(MM)
+      INTEGER :: MM
+      REAL(8) :: X(MM,MM), XDET
+      INTEGER :: IDS(MM)
+      REAL(8) :: CST0, CST1, XMAXP, XC
       CST0=0.0D-00                                                      
       CST1=1.0D-00                                                      
       XDET=CST1                                                         
@@ -700,7 +788,8 @@ C     PIVOTING AT L-TH STAGE
       DO 110 I=L,MM                                                     
 C     FOR COMPLEX VERSION NEXT STATEMENT SHOULD BE REPLACED BY          
 C     IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110                       
-    1 IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110                         
+cxx    1 IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110                         
+      IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110
       XMAXP=X(I,L)                                                      
       MAXI=I                                                            
   110 CONTINUE                                                          
@@ -713,19 +802,25 @@ C     ROW INTERCHANGE
   121 DO 14 J=1,MM                                                      
       XC=X(MAXI,J)                                                      
       X(MAXI,J)=X(L,J)                                                  
-   14 X(L,J)=XC                                                         
+cxx   14 X(L,J)=XC                                                         
+      X(L,J)=XC
+   14 CONTINUE
       XDET=-XDET                                                        
   120 XDET=CST1                                                         
       XC=CST1/XMAXP                                                     
       X(L,L)=CST1                                                       
       DO 11 J=1,MM                                                      
-   11 X(L,J)=X(L,J)*XC                                                  
+cxx   11 X(L,J)=X(L,J)*XC
+      X(L,J)=X(L,J)*XC
+   11 CONTINUE
       DO 12 I=1,MM                                                      
       IF(I.EQ.L) GO TO 12                                               
       XC=X(I,L)                                                         
       X(I,L)=CST0                                                       
       DO 13 J=1,MM                                                      
-   13 X(I,J)=X(I,J)-XC*X(L,J)                                           
+cxx   13 X(I,J)=X(I,J)-XC*X(L,J)
+      X(I,J)=X(I,J)-XC*X(L,J)
+   13 CONTINUE
    12 CONTINUE                                                          
    10 CONTINUE                                                          
       IF(MM.GT.1) GO TO 123                                             
@@ -739,7 +834,9 @@ C     COLUMN INTERCHANGE
       DO 131 I=1,MM                                                     
       XC=X(I,JJ)                                                        
       X(I,JJ)=X(I,MMJ)                                                  
-  131 X(I,MMJ)=XC                                                       
+cxx  131 X(I,MMJ)=XC
+      X(I,MMJ)=XC
+  131 CONTINUE
   130 CONTINUE                                                          
   140 RETURN                                                            
       END                                                               

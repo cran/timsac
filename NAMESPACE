@@ -1,5 +1,9 @@
 useDynLib(timsac)
 
+importFrom("grDevices", "dev.new")
+importFrom("graphics", "abline", "hist", "lines", "matplot", "par", "plot")
+importFrom("stats", "as.ts", "sd", "tsp", "tsp<-")
+
 export(autcor, mulcor, fftcor, auspec, mulspe, sglfre, mulfrf, fpeaut, fpec, mulnos, raspec, mulrsp, optdes,
  optsim, wnoise, autoarmafit, armafit, canarm, covgen, canoca, markov, prdctr, simcon, nonst, thirmo, bispec,
  unimar, unibar, bsubst, mulmar, mulbar, perars, mlocar, blocar, mlomar, blomar, exsar, xsarma, decomp, baysea,

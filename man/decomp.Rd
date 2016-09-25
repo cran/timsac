@@ -68,7 +68,7 @@
   \item{tau2}{system noise variances tau2(2).}
   \item{tau3}{system noise variances tau2(3).}
   \item{arcoef}{vector of AR coefficients.}
-  \item{tdf}{trading day factor \code{tdf(i)} (i=1,7).}
+  \item{tdf}{trading day factor. \code{tdf(i)} (i=1,7) are from Sunday to Saturday sequentially.}
 }
 
 \references{
@@ -85,7 +85,13 @@
 
 \examples{
   data(Blsallfood)
-  decomp(Blsallfood, trade=TRUE, year=1973)
+  z <- decomp(Blsallfood, trade=TRUE, year=1973)
+  z$aic
+  z$lkhd
+  z$sigma2
+  z$tau1
+  z$tau2
+  z$tau3
 }
 
 \keyword{ts}

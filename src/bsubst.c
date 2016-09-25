@@ -2,14 +2,13 @@
 #include <Rdefines.h>
 #include "timsac.h"
 
-extern void  F77_NAME(bsubstf) (double*,int*,int*,int*,int*,int*,int*,int*,char*,double*,double*,double*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*);
+extern void  F77_NAME(bsubstf) (double*,int*,int*,int*,int*,int*,int*,int*,double*,double*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*);
 
-SEXP bsubst(SEXP y, SEXP n, SEXP mtype, SEXP lag, SEXP nreg, SEXP cstep, SEXP reg, SEXP tlag, SEXP f, SEXP cnst)
+SEXP bsubst(SEXP y, SEXP n, SEXP mtype, SEXP lag, SEXP nreg, SEXP cstep, SEXP reg, SEXP tlag)
 {
-    double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13,*d14,*d15,*d16,*d17,*d18,*d19,*d20;
+    double *d1,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13,*d14,*d15,*d16,*d17,*d18,*d19,*d20;
     double *d21,*d22,*d23,*d24,*d25,*d26,*d27,*d28,*d29;
     int    *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8,*i9;
-    char   *ch1;
     int    i, nn, k, k1, nc;
 
     SEXP ans =  R_NilValue, ymean = R_NilValue, yvar = R_NilValue, m = R_NilValue, aicm = R_NilValue;
@@ -31,8 +30,6 @@ SEXP bsubst(SEXP y, SEXP n, SEXP mtype, SEXP lag, SEXP nreg, SEXP cstep, SEXP re
     i5 = INTEGER_POINTER(cstep);
     i6 = INTEGER_POINTER(reg);
     i7 = INTEGER_POINTER(tlag);
-    ch1 = (char *)CHAR(STRING_ELT(f, 0)); 
-    d2 = NUMERIC_POINTER(cnst);
 
     nn = *i1;
     k = *i4;
@@ -99,7 +96,7 @@ SEXP bsubst(SEXP y, SEXP n, SEXP mtype, SEXP lag, SEXP nreg, SEXP cstep, SEXP re
     d28 = NUMERIC_POINTER(cov);
     d29 = NUMERIC_POINTER(pxx);
 
-    F77_CALL(bsubstf) (d1,i1,i2,i3,i4,i5,i6,i7,ch1,d2,d3,d4,i8,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,i9,d15,d16,d17,d18,d19,d20,d21,d22,d23,d24,d25,d26,d27,d28,d29);
+    F77_CALL(bsubstf) (d1,i1,i2,i3,i4,i5,i6,i7,d3,d4,i8,d5,d6,d7,d8,d9,d10,d11,d12,d13,d14,i9,d15,d16,d17,d18,d19,d20,d21,d22,d23,d24,d25,d26,d27,d28,d29);
 
     xymean = REAL(ymean);
     xyvar = REAL(yvar);
@@ -154,12 +151,12 @@ SEXP bsubst(SEXP y, SEXP n, SEXP mtype, SEXP lag, SEXP nreg, SEXP cstep, SEXP re
     *xnpm = *d21;
     *xnpmnreg = *d22;
     for(i=0; i<nn*nc; i++) xe[i] = d23[i];
-    for(i=0; i<k; i++) xmean[i] = d24[i];
-    for(i=0; i<k; i++) xvar[i] = d25[i];
-    for(i=0; i<k; i++) xskew[i] = d26[i];
-    for(i=0; i<k; i++) xpeak[i] = d27[i];
-    for(i=0; i<k; i++) xcov[i] = d28[i];
-    for(i=0; i<k; i++) xpxx[i] = d29[i];
+    for(i=0; i<nc; i++) xmean[i] = d24[i];
+    for(i=0; i<nc; i++) xvar[i] = d25[i];
+    for(i=0; i<nc; i++) xskew[i] = d26[i];
+    for(i=0; i<nc; i++) xpeak[i] = d27[i];
+    for(i=0; i<101; i++) xcov[i] = d28[i];
+    for(i=0; i<121; i++) xpxx[i] = d29[i];
 
     UNPROTECT(1);
 

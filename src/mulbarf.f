@@ -88,20 +88,26 @@ C                  RECORD
 C                                                                       
 cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULBARF
 C
-      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
+cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  Z(1500,10)                                             
 cc      DIMENSION  X(200,100) , D(200)                                    
 cc      DIMENSION  A(10,10,30) , B(10,10,30) , G(10,10,30) , H(10,10,30)  
 cc      DIMENSION  E(10,10)                                               
-      DIMENSION  Z(N,ID), ZS(N,ID), C(ID)
-      DIMENSION  ZMEAN(ID), ZVARI(ID)
-      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
-      DIMENSION  A(ID,ID,LAG), B(ID,ID,LAG), G(ID,ID,LAG), H(ID,ID,LAG)
-      DIMENSION  E(ID,ID)
+cxx      DIMENSION  Z(N,ID), ZS(N,ID), C(ID)
+cxx      DIMENSION  ZMEAN(ID), ZVARI(ID)
+cxx      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
+cxx      DIMENSION  A(ID,ID,LAG), B(ID,ID,LAG), G(ID,ID,LAG), H(ID,ID,LAG)
+cxx      DIMENSION  E(ID,ID)
 C
-      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
-      DIMENSION  BW1(LAG+1), BW2(LAG)
+cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
+cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
+      INTEGER :: N, ID, LAG, IMIN
+      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), SD(LAG+1),
+     1           AIC(LAG+1), DIC(LAG+1), AICM, SDMIN, BW1(LAG+1),
+     2           BW2(LAG), A(ID,ID,LAG), B(ID,ID,LAG), G(ID,ID,LAG),
+     3           H(ID,ID,LAG), E(ID,ID), AICB
+      REAL(8) :: Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), EK
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -141,13 +147,14 @@ C
 C     --  HOUSEHOLDER REDUCTION  --                                     
 C                                                                       
 cc      CALL  MREDCT( Z,D,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
-      X = 0.0D0
+      X(1:MJ1,1:(LAG+1)*ID) = 0.0D0
       CALL  MREDCT( Z,NMK,N0,LAG,ID,MJ,MJ1,KSW,X )                    
 C                                                                       
 C     --  AR-MODEL FITTING (BAYESIAN PROCEDURE)  --                     
 C                                                                       
 cc      CALL  MBYSAR( X,D,NMK,LAG,ID,KSW,IPR,MJ1,MJ2,A,B,G,H,E,AIC,EK )   
-      CALL  MBYSAR( X,NMK,LAG,ID,KSW,IPR,MJ1,MJ2,SD,AIC,DIC,
+cxx      CALL  MBYSAR( X,NMK,LAG,ID,KSW,IPR,MJ1,MJ2,SD,AIC,DIC,
+      CALL  MBYSAR( X,NMK,LAG,ID,KSW,MJ1,MJ2,SD,AIC,DIC,
      *              AICM,SDMIN,IMIN,BW1,BW2,A,B,G,H,E,AICB,EK )
 cc      GO TO 999
 C
@@ -168,14 +175,14 @@ cc  610 FORMAT(/,' !!! Input_Data_File OPEN ERROR ',I8,//,5X,100A)
 C                                                                       
 cc  999 CONTINUE
       RETURN
-    1 FORMAT( 16I5 )                                                    
-    3 FORMAT( 1H ,'PROGRAM TIMSAC 78.2.2',/,'   EXPONENTIALLY WEIGHTED B
-     1AYESIAN AUTOREGRESSIVE MODEL FITTING;  MULTI-VARIATE CASE' )      
-    4 FORMAT( 1H ,'  < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(
-     1I-1) + A(2)*Z(I-2) + ... + A(II)*Z(I-II) + ... + A(M)*Z(I-M) + W(I
-     2)',/,'   WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'W(I):  ID
-     3-DIMENSIONAL GAUSSIAN WHITE NOISE WITH MEAN 0 AND VARIANCE',
-     4' MATRIX E(M).' )                                                          
-    5 FORMAT( 1H ,I4,'-TH ORDER BAYESIAN MODEL IS FITTED',/,1H ,2X,'ORIG
-     1INAL DATA INPUT DEVICE  MT =',I4 )                                
+cxx    1 FORMAT( 16I5 )                                                    
+cxx    3 FORMAT( 1H ,'PROGRAM TIMSAC 78.2.2',/,'   EXPONENTIALLY WEIGHTED B
+cxx     1AYESIAN AUTOREGRESSIVE MODEL FITTING;  MULTI-VARIATE CASE' )      
+cxx    4 FORMAT( 1H ,'  < AUTOREGRESSIVE MODEL >',/,1H ,10X,'Z(I) = A(1)*Z(
+cxx     1I-1) + A(2)*Z(I-2) + ... + A(II)*Z(I-II) + ... + A(M)*Z(I-M) + W(I
+cxx     2)',/,'   WHERE',/,11X,'M:     ORDER OF THE MODEL',/,11X,'W(I):  ID
+cxx     3-DIMENSIONAL GAUSSIAN WHITE NOISE WITH MEAN 0 AND VARIANCE',
+cxx     4' MATRIX E(M).' )                                                          
+cxx    5 FORMAT( 1H ,I4,'-TH ORDER BAYESIAN MODEL IS FITTED',/,1H ,2X,'ORIG
+cxx     1INAL DATA INPUT DEVICE  MT =',I4 )                                
       E N D                                                             

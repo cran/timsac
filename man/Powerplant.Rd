@@ -11,9 +11,9 @@
 \format{
   A 2-dimensional array with 500 observations on 3 variables.
   \tabular{rl}{
-    [,1] \tab command \cr
-    [,2] \tab temperature \cr
-    [,3] \tab fuel
+    [, 1] \tab command \cr
+    [, 2] \tab temperature \cr
+    [, 3] \tab fuel
   }
 }
 \source{

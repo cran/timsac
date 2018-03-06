@@ -4,7 +4,7 @@
 
 extern void F77_NAME(mulspef) (int*, int*, int*, int*, double*, double*, double*, double*, double*, double*);
 
-SEXP mulspe(SEXP n, SEXP d, SEXP lag1, SEXP lag3, SEXP cov)
+SEXP MulspeC(SEXP n, SEXP d, SEXP lag1, SEXP lag3, SEXP cov)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6;
     int *i1,*i2,*i3,*i4;

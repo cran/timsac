@@ -4,7 +4,7 @@
 
 extern void F77_NAME(wnoisef) (int*, int*, double*, double*);
 
-SEXP wnoise(SEXP len, SEXP ir, SEXP perr)
+SEXP WnoiseC(SEXP len, SEXP ir, SEXP perr)
 {
     double *d1,*d2;
     int *i1,*i2;

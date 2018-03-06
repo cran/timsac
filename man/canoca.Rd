@@ -11,17 +11,20 @@ canoca(y)
   \item{y}{a multivariate time series.}
 }
 \details{
-  First AR model is fitted by the minimum AIC procedure. The results are used to ortho-normalize
-  the present and past variables. The present and future variables are tested successively to
-  decide on the dependence of their predictors. When the last DIC (=chi-square - 2.0*N.D.F.) is
-  negative the predictor of the variable is decided to be linearly dependent on the antecedents.
+  First AR model is fitted by the minimum AIC procedure. The results are used to
+  ortho-normalize the present and past variables. The present and future
+  variables are tested successively to decide on the dependence of their
+  predictors. When the last DIC (=chi-square - 2.0*N.D.F.) is negative the
+  predictor of the variable is decided to be linearly dependent on the
+  antecedents.
 }
 \value{
   \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
   \item{order.maice}{MAICE AR model order.}
   \item{v}{innovation variance.}
-  \item{arcoef}{autoregressive coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
+  \item{arcoef}{autoregressive coefficients. \code{arcoef[i,j,k]} shows the
+    value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k}-th order.}
   \item{nc}{number of cases.}
   \item{future}{number of variable in the future set.}
   \item{past}{number of variables in the past set.}
@@ -34,7 +37,8 @@ canoca(y)
   \item{dicmin}{minimum DIC.}
   \item{order.dicmin}{order of minimum DIC.}
   \item{matF}{the transition matrix \eqn{F}.}
-  \item{vectH}{structural characteristic vector \eqn{H} of the canonical Markovian representation.}
+  \item{vectH}{structural characteristic vector \eqn{H} of the canonical
+    Markovian representation.}
   \item{matG}{the estimate of the input matrix \eqn{G}.}
   \item{vectF}{matrix \eqn{F} in vector form.}
 }
@@ -46,17 +50,17 @@ canoca(y)
 }
 
 \examples{
-  ar <- array(0,dim=c(3,3,2))
-  ar[,,1] <- matrix(c(0.4,  0,   0.3,
+ar <- array(0, dim = c(3,3,2))
+ar[, , 1] <- matrix(c(0.4,  0,   0.3,
                       0.2, -0.1, -0.5,
-                      0.3,  0.1, 0),3,3,byrow=TRUE)
-  ar[,,2] <- matrix(c(0,  -0.3,  0.5,
+                      0.3,  0.1, 0), nrow = 3, ncol = 3, byrow= TRUE)
+ar[, , 2] <- matrix(c(0,  -0.3,  0.5,
                       0.7, -0.4,  1,
-                      0,   -0.5,  0.3),3,3,byrow=TRUE)
-  x <- matrix(rnorm(1000*3),1000,3)
-  y <- mfilter(x,ar,"recursive")
-  z <- canoca(y)
-  z$arcoef
+                      0,   -0.5,  0.3), nrow = 3, ncol = 3, byrow = TRUE)
+x <- matrix(rnorm(1000*3), nrow = 1000, ncol = 3)
+y <- mfilter(x, ar, "recursive")
+z <- canoca(y)
+z$arcoef
 }
 
 \keyword{ts}

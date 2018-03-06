@@ -6,7 +6,7 @@
 
    extern void F77_NAME(mulrspf) (int*, int*, int*, int*, double*, double*, double*, Rcomplex*, double*);
 
-SEXP mulrsp(SEXP h, SEXP l, SEXP d, SEXP k, SEXP cov, SEXP arcoef, SEXP macoef)
+SEXP MulrspC(SEXP h, SEXP l, SEXP d, SEXP k, SEXP cov, SEXP arcoef, SEXP macoef)
 {
     double *d1, *d2, *d3, *d4;
     int    *i1, *i2, *i3, *i4;

@@ -4,7 +4,7 @@
 
 extern void F77_NAME(fpec7f) (int*, int*, int*, int*, int*, int*, double*, double*, double*, double*, double*, int*, double*, double*, double*, double*, double*);
 
-SEXP fpec7(SEXP n, SEXP morder, SEXP ncon, SEXP ip, SEXP d, SEXP inw, SEXP cov)
+SEXP Fpec7C(SEXP n, SEXP morder, SEXP ncon, SEXP ip, SEXP d, SEXP inw, SEXP cov)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7;

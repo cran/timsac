@@ -4,7 +4,7 @@
 
 extern void  F77_NAME(bispecf)(int*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*);
 
-SEXP bispec(SEXP n, SEXP lag, SEXP cv, SEXP tmnt)
+SEXP BispecC(SEXP n, SEXP lag, SEXP cv, SEXP tmnt)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int *i1, *i2;

@@ -2,15 +2,16 @@
 \alias{exsar}
 \title{Exact Maximum Likelihood Method of Scalar AR Model Fitting}
 \description{
-  Produce exact maximum likelihood estimates of the parameters of a scalar AR model.
+  Produce exact maximum likelihood estimates of the parameters of a scalar AR
+  model.
 }
 \usage{
-  exsar(y, max.order=NULL, plot=FALSE)
+  exsar(y, max.order = NULL, plot = FALSE)
 }
 \arguments{
   \item{y}{a univariate time series.}
   \item{max.order}{upper limit of AR order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
-  \item{plot}{logical. If TRUE \code{daic} is plotted.}
+  \item{plot}{logical. If \code{TRUE}, \code{daic} is plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -40,10 +41,10 @@
 }
 
 \examples{
-  data(Canadianlynx)
-  z <- exsar(Canadianlynx, max.order=14)
-  z$arcoef.maice
-  z$arcoef.mle
+data(Canadianlynx)
+z <- exsar(Canadianlynx, max.order = 14)
+z$arcoef.maice
+z$arcoef.mle
 }
 
 \keyword{ts}

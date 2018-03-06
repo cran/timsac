@@ -4,7 +4,7 @@
 
 extern void F77_NAME(nonstf) (int*,int*,double*,int*,int*,int*,double*,double*,double*,double*,double*,int*,int*,double*);
 
-SEXP nonst( SEXP n, SEXP span, SEXP y, SEXP ns, SEXP morder )
+SEXP NonstC( SEXP n, SEXP span, SEXP y, SEXP ns, SEXP morder )
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7;

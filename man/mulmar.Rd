@@ -3,17 +3,21 @@
 \title{Multivariate Case of Minimum AIC Method of AR Model Fitting}
 \description{
   Fit a multivariate autoregressive model by the minimum AIC procedure.
-  Only the possibilities of zero coefficients at the beginning and end of the model are considered.
-  The least squares estimates of the parameters are obtained by the householder transformation.
+  Only the possibilities of zero coefficients at the beginning and end of the
+  model are considered. The least squares estimates of the parameters are
+  obtained by the householder transformation.
 }
 \usage{
-mulmar(y, max.order=NULL, plot=FALSE)
+mulmar(y, max.order = NULL, plot = FALSE)
 }
 \arguments{
   \item{y}{a multivariate time series.}
-  \item{max.order}{upper limit of the order of AR model, less than or equal to \eqn{n/(2*d)} where \eqn{n} is the length and \eqn{d} is the dimension of the time series \code{y}.
- Default is \eqn{min(2 \sqrt{n}, n/(2*d))}{min(2*sqrt(n), n/(2*d))}.}
-  \item{plot}{logical. If TRUE \code{daic[[1]],...,daic[[d]]} are plotted.}
+  \item{max.order}{upper limit of the order of AR model, less than or equal to
+    \eqn{n/2d} where \eqn{n} is the length and \eqn{d} is the dimension of the
+    time series \code{y}. Default is
+    \eqn{min(2 \sqrt{n}, n/2d)}{min(2*sqrt(n), n/2d)}.}
+  \item{plot}{logical. If \code{TRUE},
+    \code{daic[[1]]}\eqn{, \ldots , }\code{daic[[d]]} are plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -32,22 +36,25 @@ mulmar(y, max.order=NULL, plot=FALSE)
   \item{respns}{instantaneous response.}
   \item{matv}{innovation variance matrix.}
   \item{morder}{order of the MAICE model.}
-  \item{arcoef}{AR coefficients. \code{arcoef[i,j,k]} shows the value of \eqn{i}-th row, \eqn{j}-th column, \eqn{k-}th order.}
+  \item{arcoef}{AR coefficients. \code{arcoef[i,j,k]} shows the value of
+    \eqn{i}-th row, \eqn{j}-th column, \eqn{k-}th order.}
   \item{aicsum}{the sum of aicf.}
 }
 \details{
   Multivariate autoregressive model is defined by
-    \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +\ldots+ A(p)y(t-p) + u(t),}{y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
-  where \eqn{p} is order of the model and \eqn{u(t)} is Gaussian white noise with mean \eqn{0} and variance matrix \code{matv}.
-  AIC is defined by
+    \deqn{y(t) = A(1)y(t-1) + A(2)y(t-2) +\ldots+ A(p)y(t-p) + u(t),}{%
+          y(t) = A(1)y(t-1) + A(2)y(t-2) +...+ A(p)y(t-p) + u(t),}
+  where \eqn{p} is order of the model and \eqn{u(t)} is Gaussian white noise
+  with mean \eqn{0} and variance matrix \code{matv}. AIC is defined by
     \deqn{AIC = n \log(det(v)) + 2k,}{AIC = n log(det(v)) + 2k,}
-  where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation variance matrix,
-  \eqn{det} is the determinant and \eqn{k} is the number of free parameters.
+  where \eqn{n} is the number of data, \eqn{v} is the estimate of innovation
+  variance matrix, \eqn{det} is the determinant and \eqn{k} is the number of
+  free parameters.
 }
 
 \references{
-  G.Kitagawa and H.Akaike (1978) A Procedure for The Modeling of Non-stationary Time Series.
-  Ann. Inst. Statist. Math., 30, B, 351--363.
+  G.Kitagawa and H.Akaike (1978) A Procedure for The Modeling of Non-stationary
+  Time Series. Ann. Inst. Statist. Math., 30, B, 351--363.
 
   H.Akaike, G.Kitagawa, E.Arahata and F.Tada (1979)
   \emph{Computer Science Monograph, No.11, Timsac78.}
@@ -55,23 +62,23 @@ mulmar(y, max.order=NULL, plot=FALSE)
 }
 
 \examples{
-  # Example 1
-  data(Powerplant)
-  z <- mulmar(Powerplant, max.order=10)
-  z$arcoef
+# Example 1
+data(Powerplant)
+z <- mulmar(Powerplant, max.order = 10)
+z$arcoef
 
-  # Example 2
-  ar <- array(0,dim=c(3,3,2))
-  ar[,,1] <- matrix(c(0.4,  0,   0.3,
+# Example 2
+ar <- array(0, dim = c(3,3,2))
+ar[, , 1] <- matrix(c(0.4,  0,   0.3,
                       0.2, -0.1, -0.5,
-                      0.3,  0.1, 0),3,3,byrow=TRUE)
-  ar[,,2] <- matrix(c(0,  -0.3,  0.5,
+                      0.3,  0.1, 0), nrow = 3, ncol = 3, byrow = TRUE)
+ar[, , 2] <- matrix(c(0,  -0.3,  0.5,
                       0.7, -0.4,  1,
-                      0,   -0.5,  0.3),3,3,byrow=TRUE)
-  x <- matrix(rnorm(200*3),200,3)
-  y <- mfilter(x,ar,"recursive")
-  z <- mulmar(y, max.order=10)
-  z$arcoef
+                      0,   -0.5,  0.3), nrow = 3, ncol = 3,byrow = TRUE)
+x <- matrix(rnorm(200*3), nrow = 200, ncol = 3)
+y <- mfilter(x, ar, "recursive")
+z <- mulmar(y, max.order = 10)
+z$arcoef
 }
 
 \keyword{ts}

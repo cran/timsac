@@ -6,21 +6,25 @@
   canonical correlations between the future and past sets of observations.
 }
 \usage{
-canarm(y, lag=NULL, max.order=NULL, plot=TRUE)
+canarm(y, lag = NULL, max.order = NULL, plot = TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
-  \item{max.order}{upper limit of AR order and MA order, must be less than or equal to \code{lag}. Default is \code{lag}.}
-  \item{plot}{logical. If TRUE (default) \code{parcor} is plotted.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n}
+    is the length of the time series \code{y}.}
+  \item{max.order}{upper limit of AR order and MA order, must be less than or
+    equal to \code{lag}. Default is \code{lag}.}
+  \item{plot}{logical. If \code{TRUE} (default), \code{parcor} is plotted.}
 }
 \details{
-  The ARMA model of stationary scalar time series \eqn{y(t) (t=1,...,n)} is given by
-    \deqn{y(t) - a(1)y(t-1) - ...- a(p)y(t-p) = u(t) - b(1)u(t-1) - ... - b(q)u(t-q),}
+  The ARMA model of stationary scalar time series \eqn{y(t) (t=1,...,n)} is
+  given by
+\deqn{y(t) - a(1)y(t-1) - ...- a(p)y(t-p) = u(t) - b(1)u(t-1) - ... - b(q)u(t-q),}
   where \eqn{p} is AR order and \eqn{q} is MA order.
 }
 \value{
-  \item{arinit}{AR coefficients of initial AR model fitting by the minimum AIC procedure.}
+  \item{arinit}{AR coefficients of initial AR model fitting by the minimum AIC
+    procedure.}
   \item{v}{innovation vector.}
   \item{aic}{AIC.}
   \item{aicmin}{minimum AIC.}
@@ -48,12 +52,12 @@ canarm(y, lag=NULL, max.order=NULL, plot=TRUE)
 }
 
 \examples{
-  # "arima.sim" is a function in "stats".
-  # Note that the sign of MA coefficient is opposite from that in "timsac".
-  y <- arima.sim(list(order=c(2,0,1), ar=c(0.64,-0.8), ma=c(-0.5)), n=1000)
-  z <- canarm(y, max.order=30)
-  z$arcoef
-  z$macoef
+# "arima.sim" is a function in "stats".
+# Note that the sign of MA coefficient is opposite from that in "timsac".
+y <- arima.sim(list(order=c(2,0,1), ar=c(0.64,-0.8), ma=c(-0.5)), n = 1000)
+z <- canarm(y, max.order = 30)
+z$arcoef
+z$macoef
 }
 
 \keyword{ts}

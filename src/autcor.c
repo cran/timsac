@@ -4,7 +4,7 @@
 
 extern void F77_NAME(autcorf)(double*, int*, double*, double*, int*, double*);
 
-SEXP autcor(SEXP y, SEXP n, SEXP lag1)
+SEXP AutcorC(SEXP y, SEXP n, SEXP lag1)
 {
     double *d1, *d2, *d3, *d4;
     int *i1, *i2;

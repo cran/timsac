@@ -4,7 +4,7 @@
 
 extern void F77_NAME(unimarf)  (double*,int*,int*,double*,double*,double*,double*,double*,int*,double*,double*,double*);
 
-SEXP unimar( SEXP y, SEXP n, SEXP morder )
+SEXP UnimarC( SEXP y, SEXP n, SEXP morder )
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int    *i1,*i2,*i3;

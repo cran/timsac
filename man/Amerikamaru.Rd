@@ -11,8 +11,8 @@
 \format{
   A 2-dimensional array with 896 observations on 2 variables.
   \tabular{rl}{
-      [,1] \tab rudder\cr
-      [,2] \tab yawing
+      [, 1] \tab rudder\cr
+      [, 2] \tab yawing
   }
 }
 \source{

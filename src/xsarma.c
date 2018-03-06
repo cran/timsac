@@ -4,7 +4,7 @@
 
 extern void F77_NAME(xsarmaf) (double*,int*,int*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*);
 
-SEXP xsarma(SEXP y, SEXP n, SEXP p, SEXP q, SEXP p01)
+SEXP XsarmaC(SEXP y, SEXP n, SEXP p, SEXP q, SEXP p01)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10;
     int    *i1,*i2,*i3;

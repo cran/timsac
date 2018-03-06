@@ -5,7 +5,7 @@
 
 extern void F77_NAME(perarsf)  (double*,int*,int*,int*,int*,double*,double*,int*,int*,double*,double*,double*,double*,double*,double*,int*);
 
-SEXP perars(SEXP y, SEXP n, SEXP ni, SEXP lag, SEXP ksw)
+SEXP PerarsC(SEXP y, SEXP n, SEXP ni, SEXP lag, SEXP ksw)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7;

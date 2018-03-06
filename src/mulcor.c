@@ -4,7 +4,7 @@
 
 extern void F77_NAME(mulcorf) (double*, int*, int*, int*, double*, double*, double*);
 
-SEXP mulcor(SEXP y, SEXP n, SEXP d, SEXP lag1)
+SEXP MulcorC(SEXP y, SEXP n, SEXP d, SEXP lag1)
 {
     double *d1, *d2, *d3, *d4;
     int    *i1,*i2,*i3;

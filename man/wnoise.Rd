@@ -5,12 +5,12 @@
   Generate approximately Gaussian vector white noise.
 }
 \usage{
-  wnoise(len, perr, plot=TRUE)
+  wnoise(len, perr, plot = TRUE)
 }
 \arguments{
   \item{len}{length of white noise record.}
   \item{perr}{prediction error.}
-  \item{plot}{logical. If TRUE (default) white noises are plotted.}
+  \item{plot}{logical. If \code{TRUE} (default), white noises are plotted.}
 }
 \value{
   \code{wnoise} gives white noises.
@@ -22,14 +22,14 @@
 }
 
 \examples{
-  # Example 1
-  wnoise(len=100, perr=1)
+# Example 1
+wnoise(len = 100, perr = 1)
 
-  # Example 2
-  v <- matrix(c(1,  0,  0,
-                0,  2,  0,
-                0,  0,  3),3,3,byrow=TRUE)
-  wnoise(len=20, perr=v )
+# Example 2
+v <- matrix(c(1,  0,  0,
+              0,  2,  0,
+              0,  0,  3), nrow = 3, ncol = 3, byrow = TRUE)
+wnoise(len = 20, perr = v)
 }
 
 \keyword{ts}

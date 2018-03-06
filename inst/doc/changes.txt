@@ -6,15 +6,24 @@
             ***************************************
 
 
+ timsac_1.3.6
+================
+* Fixed bug in prdctr() for memory access issues using ASAN.
+
+* Added src/init.c.
+
+* Renamed function names of C routines to be different fron R function names.
+
 
  timsac_1.3.5
 ================
-Fixed bug in bsubst() for memory access issues under Valgrind.
+* Fixed bug in bsubst() for memory access issues using Valgrind.
 
 
  timsac_1.3.4
 ================
-* Fixed problems in Fortran code according to the warning messages from gfortran with options -Wall -pedantic.
+* Fixed problems in Fortran code according to the warning messages from gfortran
+ with options -Wall -pedantic.
 
 
  timsac_1.3.3-2
@@ -24,18 +33,21 @@ Fixed bug in bsubst() for memory access issues under Valgrind.
 
  timsac_1.3.3
 ================
-* Corrected errors in inst/doc/index.html according to the error message of the W3C Markup Validator service.
+* Corrected errors in inst/doc/index.html according to the error message of the
+ W3C Markup Validator service.
 
 
  timsac_1.3.2
 ================
  * Fixed a bug in mulmar().
-When max.order (upper limit of the order of AR model) is too large, output results are incorrect.
-In such a case, max.order is changed to the appropriate value.
+  When max.order (upper limit of the order of AR model) is too large, output
+  results are incorrect. In such a case, max.order is changed to the appropriate
+  value.
 
   (Reported by Jiri Baum)
 
- * Fixed bug in armafit(), baysea(), bispec(), decomp(), mlomar(), mulmar() and perars() for memory access issues under Valgrind.
+ * Fixed bug in armafit(), baysea(), bispec(), decomp(), mlomar(), mulmar() and
+  perars() for memory access issues under Valgrind.
 
   (Reported by Brian Ripley)
 
@@ -53,10 +65,12 @@ In such a case, max.order is changed to the appropriate value.
 
  timsac_1.3.0
 ================
- * Set the correct dimension for array bounds (1) and (*) in Fortran source files.
+ * Set the correct dimension for array bounds (1) and (*) in Fortran source
+  files.
 
- * Deleted the functions armaimp(), lsar2(), ngsmth(), tsmooth(), tvvar(), tvar() and tvspc().
-  These functions have been added to another R package "TSSS".
+ * Deleted the functions armaimp(), lsar2(), ngsmth(), tsmooth(), tvvar(),
+  tvar() and tvspc().
+   These functions have been added to another R package "TSSS".
 
  * Deleted a document "f77program.pdf" in doc directory.
 
@@ -65,7 +79,8 @@ In such a case, max.order is changed to the appropriate value.
 ================
  * Added function lsar2().
 
- * Defined the functions print.blocar(), print.mlocar(), print.nonst() and print.tvvar() using S3method detective.
+ * Defined the functions print.blocar(), print.mlocar(), print.nonst() and
+  print.tvvar() using S3method detective.
 
  * Renamed the argument 'ord' in perars() to 'subset'.
 
@@ -79,7 +94,8 @@ In such a case, max.order is changed to the appropriate value.
  * Deleted the default value for delta in function tvvar() and tvar().
 
  * Fixed a bug in decomp().
-  If argument "log" is TRUE and there is zero or negative number in input data y, output error message.
+  If argument "log" is TRUE and there is zero or negative number in input data y,
+  output error message.
 
  * Fixed a bug in mulcor().
   In mulcor.c, size of allocVector are not enough.
@@ -88,24 +104,27 @@ In such a case, max.order is changed to the appropriate value.
  timsac_1.2.7
 ================
  * Fixed a bug in mulmar().
-  Mulmar() did not work for certain types of data.   
+  Mulmar() did not work for certain types of data.
 
   (Reported by William Pleasant)
 
- * Changed the maintainer address from "timsac at jasp.ism.ac.jp" to "ismrp at jasp.ism.ac.jp".
+ * Changed the maintainer address from "timsac at jasp.ism.ac.jp" to "ismrp at
+  jasp.ism.ac.jp".
 
 
  timsac_1.2.6
 ================
  * Added C wrapper functions to call Fortran subroutines.
 
- * Deleted arguments 'tmp.file' in autoarmafit(), armafit(), exsar(), markov(), mulmar() and unimar().
+ * Deleted arguments 'tmp.file' in autoarmafit(), armafit(), exsar(), markov(),
+  mulmar() and unimar().
 
- * Changed the type of argument 'smt' from "single" to "double" to use the type SEXP in ngsmth().
+ * Changed the type of argument 'smt' from "single" to "double" to use the type
+  SEXP in ngsmth().
 
  * Fixed a bug in bsubst().
-  In the case of mtype=3, the argument 'nreg'(number of regressors) of bsubst() is not invalid.
-  It is computed automatically in R function.
+  In the case of mtype=3, the argument 'nreg'(number of regressors) of bsubst()
+  is not invalid. It is computed automatically in R function.
 
 
  timsac_1.2.5
@@ -130,13 +149,16 @@ In such a case, max.order is changed to the appropriate value.
  * Added function tvspc().
 
  * Fixed a bug in tvar(). 
-   In subroutine setcar, the size of the array "A" in the declaration is unsuitable.
-   This often causes the abnormal termination of a routine process in which the argument "trend.order" is equal to 1.
+  In subroutine setcar, the size of the array "A" in the declaration is
+  unsuitable.
+  This often causes the abnormal termination of a routine process in which the
+  argument "trend.order" is equal to 1.
 
 
  timsac_1.2.3
 ================
- * Deleted the arguments 'ncon', 'nman' and 'inw' then add the arguments 'control' and 'manip' in fpec() and mulnos().
+ * Deleted the arguments 'ncon', 'nman' and 'inw' then add the arguments
+  'control' and 'manip' in fpec() and mulnos().
 
  * Deleted the argument 'niv' in mulfrf().
 
@@ -147,8 +169,10 @@ In such a case, max.order is changed to the appropriate value.
 
  timsac_1.2.2
 ================
- * Fixed a bug in decomp(). In subroutine smoth3, the working array "D" is not long enough.
-   This often causes the abnormal termination of a routine process in which the argument "seasonal.order" is equal to zero.
+ * Fixed a bug in decomp().
+  In subroutine smoth3, the working array "D" is not long enough.
+  This often causes the abnormal termination of a routine process in which the
+  argument "seasonal.order" is equal to zero.
 
   (Reported by Seisho Sato)
 
@@ -159,7 +183,8 @@ In such a case, max.order is changed to the appropriate value.
 
  timsac_1.2.1
 ================
- * In decomp() an argument 'imiss' is renamed 'miss' and given a detailed description. 
+ * In decomp() an argument 'imiss' is renamed 'miss' and given a detailed
+  description. 
 
 
  timsac_1.2.0
@@ -171,17 +196,22 @@ In such a case, max.order is changed to the appropriate value.
 
  timsac_1.1.4
 ================
- * Added a set of macros (F77_NAME(name), F77_CALL(name)) in all C source files (arma.c, auspec.c, ..., xsarma.c) 
+ * Added a set of macros (F77_NAME(name), F77_CALL(name)) in all C source files
+  (arma.c, auspec.c, ..., xsarma.c) 
 
  * Fixed a bug in fpec().
-  aperm(arcoef, c(2,3,1)) give an error if z$ordermin = 1. (Reported by Seisho Sato)
+  aperm(arcoef, c(2,3,1)) give an error if z$ordermin = 1.
+
+  (Reported by Seisho Sato)
 
 
  timsac_1.1.3
 ================
- * Fixed a bug in blomar(). Added 'F1' and 'F2' to arguments of subroutine MNONSB in blomarf.f.
+ * Fixed a bug in blomar(). Added 'F1' and 'F2' to arguments of subroutine
+  MNONSB in blomarf.f.
 
- * Fixed a bug in mlomar(). Added 'X' and 'U' to arguments of subroutine MNONST in mlomarf.f.
+ * Fixed a bug in mlomar(). Added 'X' and 'U' to arguments of subroutine MNONST
+  in mlomarf.f.
 
 
  timsac_1.1.2
@@ -204,10 +234,9 @@ In such a case, max.order is changed to the appropriate value.
  timsac_1.0.1
 ================
  * Fixed a bug in decomp() where both seasonal component and trading day effect
-    are no consideration. The following example demonstrates the problem:
-
-        data(Blsallfood)
-        decomp(Blsallfood, seasonal.order=0)   # trade=FALSE (default)
+  are no consideration. The following example demonstrates the problem:
+      data(Blsallfood)
+      decomp(Blsallfood, seasonal.order=0)   # trade=FALSE (default)
 
   (Reported by Makoto Kodama)
 

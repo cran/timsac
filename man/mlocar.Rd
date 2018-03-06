@@ -2,18 +2,23 @@
 \alias{mlocar}
 \title{Minimum AIC Method of Locally Stationary AR Model Fitting; Scalar Case}
 \description{
-  Locally fit autoregressive models to non-stationary time series by minimum AIC procedure.
+  Locally fit autoregressive models to non-stationary time series by minimum AIC
+  procedure.
 }
 \usage{
-  mlocar(y, max.order=NULL, span, const=0, plot=TRUE)
+  mlocar(y, max.order = NULL, span, const = 0, plot = TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of the order of AR model. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{max.order}{upper limit of the order of AR model. Default is
+    \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series
+    \code{y}.}
   \item{span}{length of the basic local span.}
-  \item{const}{integer. \code{0} denotes constant vector is not included as a regressor
-        and \code{1} denotes constant vector is included as the first regressor.}
-  \item{plot}{logical. If TRUE (default) spectrums \code{pspec} are plotted.}
+  \item{const}{integer. \code{0} denotes constant vector is not included as a
+    regressor and \code{1} denotes constant vector is included as the first
+    regressor.}
+  \item{plot}{logical. If \code{TRUE} (default), spectrums \code{pspec} are
+    plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -37,11 +42,13 @@
 \details{
   The data of length \eqn{n} are divided into \eqn{k} locally stationary spans,
 
-    \deqn{|<-- n_1 -->|<-- n_2 -->|<-- n_3 -->| ..... |<-- n_k -->|}{  |<-- n1 -->|<-- n2 -->|<-- n3 -->| ..... |<-- nk -->|}
+    \deqn{|<-- n_1 -->|<-- n_2 -->|<-- n_3 -->| ..... |<-- n_k -->|}{%
+          |<-- n1 -->|<-- n2 -->|<-- n3 -->| ..... |<-- nk -->|}
 
-  where \eqn{n_i}{ni} (\eqn{i=1,\ldots,k}{i=1,...,k}) denotes the number of basic spans, each of length span,
-  which constitute the \eqn{i}-th locally stationary span. At each local span,
-  the process is represented by a stationary autoregressive model.
+  where \eqn{n_i}{ni} (\eqn{i=1,\ldots,k}{i=1,...,k}) denotes the number of
+  basic spans, each of length span, which constitute the \eqn{i}-th locally
+  stationary span. At each local span, the process is represented by a
+  stationary autoregressive model.
 }
 
 \references{
@@ -55,9 +62,9 @@
 }
 
 \examples{
-  data(locarData)
-  z <- mlocar(locarData, max.order=10, span=300, const=0)
-  z$arcoef
+data(locarData)
+z <- mlocar(locarData, max.order = 10, span = 300, const = 0)
+z$arcoef
 }
 
 \keyword{ts}

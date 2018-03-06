@@ -118,7 +118,11 @@ cc      MJ1 = 200
 cc      MJ2 = 51                                                          
       MJ1 = N
       MJ2 = LAG+1                                                          
-      ISW = 0                                                           
+      ISW = 0
+C
+      MF(1:NML) = 0
+      A(1:(LAG+KSW),1:NML) = 0.0d0
+      SXX(1:121,1:NML) = 0.0d0 
 C                                                                       
 CC      READ( 5,1 )     MT                                                
 cc      MT = 5

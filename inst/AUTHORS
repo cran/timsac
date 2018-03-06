@@ -1,15 +1,14 @@
 timsac : Time Series Analysis and Control Program Package
 
-R package 'timsac' has been developed by TIMSAC maintenance and improvement group, 
-Masami Saga, Junji Nakano, Yoshiyasu Tamura and Seisho Sato, 
-The Institute of Statistical Mathematics.
+R package 'timsac' has been developed by TIMSAC maintenance and improvement
+ group, Masami Saga, Junji Nakano, Yoshiyasu Tamura and Seisho Sato,
+ The Institute of Statistical Mathematics.
 
-The original TIMSAC program package was developed by several members of 
-The Institute of Statistical Mathematics including Hirotugu Akaike.
+The original TIMSAC program package was developed by several members of
+ The Institute of Statistical Mathematics including Hirotugu Akaike.
 
 Copyrights
 ==========
 
 All files are copyright (C) 2005 The Institute of Statistical Mathematics.
-
 

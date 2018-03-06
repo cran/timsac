@@ -4,7 +4,7 @@
 
 extern void F77_NAME(autarmf) (int*,int*,double*,int*,int*,double*,int*,double*,int*,int*,double*,int*,double*,double*,double*,double*,double*,double*,int*,int*,int*,int*,int*);
 
-SEXP autarm( SEXP n, SEXP morder1, SEXP autcv, SEXP inc, SEXP p1, SEXP arcoef1, SEXP q1, SEXP macoef1, SEXP lmax, SEXP mmax, SEXP nmax )
+SEXP AutarmC( SEXP n, SEXP morder1, SEXP autcv, SEXP inc, SEXP p1, SEXP arcoef1, SEXP q1, SEXP macoef1, SEXP lmax, SEXP mmax, SEXP nmax )
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10;
     int      *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8,*i9,*i10,*i11,*i12,*i13;

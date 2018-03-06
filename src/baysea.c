@@ -5,7 +5,7 @@
 void F77_NAME(bayseaf)(double*, int*, int*, double*, double*, double*, double*, double*, double*, double*,
  double*, double*, double*, double*, int*, double*, double*, double*, double*, int*, int*, int*);
 
-SEXP baysea(SEXP y, SEXP ndata, SEXP forecast, SEXP ipara, SEXP para, SEXP arft, SEXP arfs, SEXP arfn, SEXP iart, SEXP iars, SEXP iarn)
+SEXP BayseaC(SEXP y, SEXP ndata, SEXP forecast, SEXP ipara, SEXP para, SEXP arft, SEXP arfs, SEXP arfn, SEXP iart, SEXP iars, SEXP iarn)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13,*d14,*d15,*d16;
     int *i1,*i2,*i3,*i4,*i5,*i6;

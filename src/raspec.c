@@ -4,7 +4,7 @@
 
 extern void F77_NAME(raspecf) (int*, int*, int*, double*, double*, double*, double*);
 
-SEXP raspec(SEXP h, SEXP l, SEXP k, SEXP var, SEXP arcoef, SEXP macoef)
+SEXP RaspecC(SEXP h, SEXP l, SEXP k, SEXP var, SEXP arcoef, SEXP macoef)
 {
     double *d1,*d2,*d3,*d4;
     int    *i1,*i2,*i3;

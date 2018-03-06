@@ -4,7 +4,7 @@
 
 extern void F77_NAME(spgrhf) (double*, int*, int*, int*, int*, int*, double*, double*, double*, double*, double*, double*, double*, int*);
 
-SEXP spgrh(SEXP y, SEXP n, SEXP lag1, SEXP ifpl1, SEXP mode, SEXP period)
+SEXP SpgrhC(SEXP y, SEXP n, SEXP lag1, SEXP ifpl1, SEXP mode, SEXP period)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8;
     int *i1,*i2,*i3,*i4,*i5,*i6;

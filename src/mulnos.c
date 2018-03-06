@@ -5,7 +5,7 @@
 
 extern void F77_NAME(mulnosf) (int*, int*, int*, double*, double*, double*, double*, double*);
 
-SEXP mulnos(SEXP h, SEXP l, SEXP ip, SEXP sd, SEXP arcoef)
+SEXP MulnosC(SEXP h, SEXP l, SEXP ip, SEXP sd, SEXP arcoef)
 {
     double *d1,*d2,*d3,*d4,*d5;
     int    *i1,*i2,*i3;

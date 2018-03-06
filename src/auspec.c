@@ -4,7 +4,7 @@
 
 extern void F77_NAME(auspecf)(int*, int*, double*, double*, double*, double*);
 
-SEXP auspec(SEXP n, SEXP lag1, SEXP acov)
+SEXP AuspecC(SEXP n, SEXP lag1, SEXP acov)
 {
     double *d1, *d2, *d3, *d4;
     int *i1, *i2;

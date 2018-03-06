@@ -4,7 +4,7 @@
 
 extern void F77_NAME(sglfref) (int*, int*, int*, int*, int*, double*, double*, double*, double*, double*, double*, double*, double*, double*, double*, double*);
 
-SEXP sglfre(SEXP invar, SEXP outvar, SEXP n, SEXP lag1, SEXP d, SEXP spec)
+SEXP SglfreC(SEXP invar, SEXP outvar, SEXP n, SEXP lag1, SEXP d, SEXP spec)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11;
     int    *i1,*i2,*i3,*i4,*i5;

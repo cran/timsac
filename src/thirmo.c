@@ -4,7 +4,7 @@
 
 extern void F77_NAME(thirmof) (int*,int*,double*,double*,double*,double*,double*);
 
-SEXP thirmo(SEXP n, SEXP lag, SEXP y)
+SEXP ThirmoC(SEXP n, SEXP lag, SEXP y)
 {
     double *d1,*d2,*d3,*d4,*d5;
     int    *i1,*i2;

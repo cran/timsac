@@ -4,7 +4,7 @@
 
 extern void  F77_NAME(blocarf)(double*,int*,int*,int*,int*,double*,double*,double*,double*,double*,double*,double*,int*,int*,double*);
 
-SEXP blocar(SEXP y, SEXP n, SEXP sorder, SEXP span, SEXP ns)
+SEXP BlocarC(SEXP y, SEXP n, SEXP sorder, SEXP span, SEXP ns)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int    *i1,*i2,*i3,*i4,*i5,*i6;

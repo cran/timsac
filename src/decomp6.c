@@ -6,7 +6,7 @@
 
 extern void F77_NAME(decompf) (double*, int*, int*, double*, double*, double*, double*, double*, double*, int*, double*, int*);
 
-SEXP decomp(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
+SEXP DecompC(SEXP y, SEXP n, SEXP ipar, SEXP miss, SEXP omax)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8;
     int *i1,*i2,*i3,*i4;

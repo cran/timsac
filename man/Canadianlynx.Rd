@@ -3,7 +3,8 @@
 \alias{Canadianlynx}
 \title{Time series of Canadian lynx data}
 \description{
-  A time series of Canadian lynx data for testing \code{unimar}, \code{unibar}, \code{bsubst} and \code{exsar}.
+  A time series of Canadian lynx data for testing \code{\link{unimar}},
+  \code{\link{unibar}}, \code{\link{bsubst}} and \code{\link{exsar}}.
 }
 \usage{
   data(Canadianlynx)

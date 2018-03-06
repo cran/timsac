@@ -4,7 +4,7 @@
 
 extern void F77_NAME(markovf) (int*,int*,int*,double*,int*,int*,int*,double*,double*,int*,int*,int*,int*,int*,int*,double*,double*,double*,double*,double*,int*,double*,double*,double*,double*,double*,int*,int*,int*,int*);
 
-SEXP markov( SEXP n, SEXP lag1, SEXP d, SEXP cov, SEXP k, SEXP nh, SEXP nvf, SEXP vectF, SEXP matGi, SEXP icont, SEXP mj3, SEXP mj4, SEXP mj6, SEXP mj7 )
+SEXP MarkovC( SEXP n, SEXP lag1, SEXP d, SEXP cov, SEXP k, SEXP nh, SEXP nvf, SEXP vectF, SEXP matGi, SEXP icont, SEXP mj3, SEXP mj4, SEXP mj6, SEXP mj7 )
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8,*i9,*i10,*i11,*i12,*i13,*i14,*i15,*i16,*i17;

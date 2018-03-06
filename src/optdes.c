@@ -4,7 +4,7 @@
 
 extern void F77_NAME(optdesf) (int*, int*, int*, int*, double*, double*, double*, double*, double*, double*);
 
-SEXP optdes(SEXP ncon, SEXP nman, SEXP ns, SEXP order, SEXP q, SEXP r, SEXP osd, SEXP a, SEXP b)
+SEXP OptdesC(SEXP ncon, SEXP nman, SEXP ns, SEXP order, SEXP q, SEXP r, SEXP osd, SEXP a, SEXP b)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6;
     int *i1,*i2,*i3,*i4;

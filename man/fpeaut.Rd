@@ -4,11 +4,13 @@
 \description{
   Perform FPE(Final Prediction Error) computation for one-dimensional AR model.}
 \usage{
-  fpeaut(y, max.order=NULL)
+  fpeaut(y, max.order = NULL)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{max.order}{upper limit of model order. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
+  \item{max.order}{upper limit of model order. Default is
+    \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series
+    \code{y}.}
 }
 \value{
   \item{ordermin}{order of minimum FPE.}
@@ -36,8 +38,8 @@
 }
 
 \examples{
-  y <- arima.sim(list(order=c(2,0,0), ar=c(0.64,-0.8)), n=200)
-  fpeaut(y, max.order=20)
+y <- arima.sim(list(order=c(2,0,0), ar=c(0.64,-0.8)), n = 200)
+fpeaut(y, max.order = 20)
 }
 
 \keyword{ts}

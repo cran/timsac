@@ -4,7 +4,7 @@
 
 extern void F77_NAME(fftcorf) (int*, int*, int*, int*, int*, double*, double*, double*, double*, double*, double*, double*, double*, double*);
 
-SEXP fftcor(SEXP ld, SEXP lag1, SEXP n, SEXP n2p, SEXP isw, SEXP x1, SEXP y1)
+SEXP FftcorC(SEXP ld, SEXP lag1, SEXP n, SEXP n2p, SEXP isw, SEXP x1, SEXP y1)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int *i1,*i2,*i3,*i4,*i5;

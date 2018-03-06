@@ -12,7 +12,8 @@
   A time series of 72 observations.
 }
 \source{
-  H.Akaike, T.Ozaki, M.Ishiguro, Y.Ogata, G.Kitagawa, Y-H.Tamura, E.Arahata, K.Katsura and Y.Tamura (1985)
+  H.Akaike, T.Ozaki, M.Ishiguro, Y.Ogata, G.Kitagawa, Y-H.Tamura, E.Arahata,
+  K.Katsura and Y.Tamura (1985)
   \emph{Computer Science Monograph, No.22, Timsac84 Part 1.}
   The Institute of Statistical Mathematics.
 }

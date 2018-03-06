@@ -4,7 +4,7 @@
 
 extern void F77_NAME(mulbarf) (double*,int*,int*,double*,int*,double*,double*,double*,double*,double*,int*,double*,double*,double*,double*,double*,double*,double*,double*,double*,double*);
 
-SEXP mulbar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder)
+SEXP MulbarC(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13,*d14,*d15,*d16,*d17;
     int *i1,*i2,*i3,*i4;

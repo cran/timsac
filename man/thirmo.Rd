@@ -5,12 +5,14 @@
   Compute the third order moments.
 }
 \usage{
-thirmo(y, lag=NULL, plot=TRUE)
+thirmo(y, lag = NULL, plot = TRUE)
 }
 \arguments{
   \item{y}{a univariate time series.}
-  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n} is the length of the time series \code{y}.}
-  \item{plot}{logical. If TRUE (default) autocovariance \code{acor} is plotted.}
+  \item{lag}{maximum lag. Default is \eqn{2 \sqrt{n}}{2*sqrt(n)}, where \eqn{n}
+    is the length of the time series \code{y}.}
+  \item{plot}{logical. If \code{TRUE} (default), autocovariance \code{acor} is
+    plotted.}
 }
 \value{
   \item{mean}{mean.}
@@ -26,9 +28,9 @@ thirmo(y, lag=NULL, plot=TRUE)
 }
 
 \examples{
-  data(bispecData)
-  z <- thirmo(bispecData, lag=30)
-  z$tmomnt
+data(bispecData)
+z <- thirmo(bispecData, lag = 30)
+z$tmomnt
 }
 
 \keyword{ts}

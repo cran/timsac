@@ -5,7 +5,7 @@
 
    extern void F77_NAME(mulfrff) (int*, int*, int*, int*, int*, double*, Rcomplex*, double*, double*, double*, double*, double*, double*, double*);
 
-SEXP mulfrf(SEXP nv, SEXP iovar, SEXP n, SEXP lag1, SEXP d, SEXP spec)
+SEXP MulfrfC(SEXP nv, SEXP iovar, SEXP n, SEXP lag1, SEXP d, SEXP spec)
 {
     double *d1, *d2, *d3, *d4, *d5, *d6, *d7, *d8;
     int *i1, *i2, *i3, *i4, *i5;

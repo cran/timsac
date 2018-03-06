@@ -4,7 +4,7 @@
 
 extern void F77_NAME(canarmf) (int*,int*,double*,double*,int*,double*,double*,double*,int*,double*,int*,int*,int*,double*,double*,double*,double*,int*,double*,double*,int*,int*,double*,int*,double*,int*,int*);
 
-SEXP canarm( SEXP n, SEXP morder1, SEXP autcv, SEXP l1, SEXP mmax, SEXP nmax )
+SEXP CanarmC( SEXP n, SEXP morder1, SEXP autcv, SEXP l1, SEXP mmax, SEXP nmax )
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9,*d10,*d11,*d12,*d13,*d14;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8,*i9,*i10,*i11,*i12,*i13;

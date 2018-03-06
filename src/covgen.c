@@ -4,7 +4,7 @@
 
 extern void F77_NAME(covgenf) (int*,int*,double*,double*,double*,double*);
 
-SEXP covgen(SEXP lag, SEXP k, SEXP f, SEXP gain)
+SEXP CovgenC(SEXP lag, SEXP k, SEXP f, SEXP gain)
 {
     double *d1,*d2,*d3,*d4;
     int *i1,*i2;

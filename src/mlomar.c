@@ -4,7 +4,7 @@
 
 extern void F77_NAME(mlomarf) (double*,int*,int*,double*,int*,int*,int*,int*,double*,double*,int*,int*,int*,double*,int*,double*,int*,double*,double*,double*,int*,int*,int*);
 
-SEXP mlomar(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP cnst, SEXP ns)
+SEXP MlomarC(SEXP y, SEXP n, SEXP d, SEXP calb, SEXP morder, SEXP span, SEXP cnst, SEXP ns)
 {
     double *d1,*d2,*d3,*d4,*d5,*d6,*d7,*d8,*d9;
     int *i1,*i2,*i3,*i4,*i5,*i6,*i7,*i8,*i9,*i10,*i11,*i12,*i13,*i14;

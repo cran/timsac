@@ -1,8 +1,7 @@
       SUBROUTINE  MLOMARF( ZS,N,ID,C,LAG,NS0,KSW,K,ZMEAN,ZVARI,NF,NS,MS,
-cxx     *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE )
      *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE,M )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  MLOMAR                                                   
 C.......................................................................
@@ -67,8 +66,6 @@ C                 -- EXAMPLE --     (8F10.5)
 C          C(J):  CALIBRATION CONSTANT FOR CHANNEL J (J=1,ID)           
 C          Z(I,J): ORIGINAL DATA                                        
 C            -----------------------------------------------------------
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MLOMARF
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
@@ -84,13 +81,14 @@ cxx      DIMENSION  LK0(K), LKE(K)
 cxxcx      DIMENSION  X(N,((LAG+1)*ID+KSW)*2)
 cxx      DIMENSION  X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2)
 cxx      DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
-      INTEGER :: N, ID, LAG, NS0, KSW, K, NF(K), NS(K), MS(K), MP(K),
-     1           MF(K), LK0(K), LKE(K), M
-      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), AIC(K), AICP(K),
-     1           AICF(K), A(ID,ID,LAG,K), E(ID,ID,K)
-      REAL(8) :: Z(N,ID), B(ID,ID,LAG),
-     1           X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2),
-     2           U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
+      INTEGER N, ID, LAG, NS0, KSW, K, NF(K), NS(K), MS(K), MP(K),
+     1        MF(K), LK0(K), LKE(K), M
+      DOUBLE PRECISION ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), AIC(K),
+     1                 AICP(K), AICF(K), A(ID,ID,LAG,K), E(ID,ID,K)
+c local
+      DOUBLE PRECISION Z(N,ID), B(ID,ID,LAG),
+     1                 X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2),
+     2                 U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -323,14 +321,16 @@ cxx      DIMENSION  C(ID) , EX(ID)
 cxx      DIMENSION  AIC(LAG+1,ID), SD(LAG+1,ID), DIC(LAG+1,ID)
 cxx      DIMENSION  AICM(ID), SDM(ID), M(ID)
 cxx      DIMENSION  JNDF(MJ2,ID), AF(MJ2,ID), NPR(ID), AAIC(ID)
-      INTEGER :: KSW, LAG, N0, NNF, NF, NS, ID, IF, MJ, MJ1, MJ2,
-     1           MJ3, MS, MP, MF
-      REAL(8) :: Z(MJ,ID), X(MJ1,MJ2), U(MJ2,MJ2), A(ID,ID,LAG),
-     1           B(ID,ID,LAG), E(ID,ID), AICFS, AICP, AICF
-      INTEGER :: M(ID), JNDF(MJ2,ID), NPR(ID)
-      REAL(8) :: AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID), C(ID), EX(ID),
-     1           AIC(LAG+1,ID), SD(LAG+1,ID), DIC(LAG+1,ID), AICM(ID),
-     2           SDM(ID), AF(MJ2,ID), AAIC(ID), AICS
+      INTEGER KSW, LAG, N0, NNF, NF, NS, ID, IF, MJ, MJ1, MJ2, MJ3,
+     1        MS, MP, MF
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,MJ2), U(MJ2,MJ2), A(ID,ID,LAG),
+     1                 B(ID,ID,LAG), E(ID,ID), AICFS, AICP, AICF
+c local
+      INTEGER M(ID), JNDF(MJ2,ID), NPR(ID)
+      DOUBLE PRECISION AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID), C(ID),
+     1                 EX(ID), AIC(LAG+1,ID), SD(LAG+1,ID),
+     2                 DIC(LAG+1,ID), AICM(ID), SDM(ID), AF(MJ2,ID),
+     3                 AAIC(ID), AICS
 C                                                                       
 C                                                                       
 cc      MJ4 = 50                                                          

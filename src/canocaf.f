@@ -2,7 +2,7 @@
      *NC,N1,N2,VV,Z,Y,XX,NDT,X3,X3MIN,MIN3,F,M1NH,NH,G,IAW,VF,
      *LMAX,MJ0,MJ1)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc	PROGRAM CANOCA
 C     PROGRAM 74.2.1. CANONICAL CORRELATION ANALYSIS OF VECTOR TIME SERI
@@ -57,8 +57,6 @@ C         THE (J+1)ST ELEMENT OF THE COVARIANCE SEQUENCE WITH R=K AND C=
 C         IS AN ESTIMATE OF E(Z(I+J,K)*Z(I,L)), WHERE Z(I,K) DENOTES
 C         THE K-TH COMPONENT OF Z(I).
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: CANOCAF
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION Y(91),Z(91),WL(91)
 cc      DIMENSION CV(25,7,7)
@@ -89,21 +87,22 @@ cxx      DIMENSION CCV(LAGH1,IP0,IP0)
 cxx      DIMENSION AIC(MJ0)
 cxx      DIMENSION N1(MJ1),N2(MJ1),NDT(MJ1,MJ1)
 cxx      DIMENSION X3MIN(MJ0*IR),MIN3(MJ0*IR)
-      INTEGER :: IR,  INW(IR), N, LAGH1, IP0, L, MO, NC, N1(MJ1),
-     1           N2(MJ1), NDT(MJ1,MJ1), MIN3(MJ0*IR), M1NH,
-     2           NH(MJ1), IAW, LMAX, MJ0, MJ1
-      REAL(8) :: CCV(LAGH1,IP0,IP0), AIC(MJ0), OAIC, OSD(IR,IR),
-     1           AAO(MJ0,IR,IR), VV(MJ1,MJ1,MJ1), Z(MJ1,MJ1),
-     2           Y(MJ1,MJ1), XX(MJ1,MJ1), X3(MJ1,MJ1),
-     3           X3MIN(MJ0*IR), F(MJ1,MJ1), G(MJ1,IR), VF(MJ1*MJ1)
+      INTEGER IR,  INW(IR), N, LAGH1, IP0, L, MO, NC, N1(MJ1), N2(MJ1),
+     1        NDT(MJ1,MJ1), MIN3(MJ0*IR), M1NH, NH(MJ1), IAW, LMAX,
+     2        MJ0, MJ1
+      DOUBLE PRECISION CCV(LAGH1,IP0,IP0), AIC(MJ0), OAIC, OSD(IR,IR),
+     1                 AAO(MJ0,IR,IR), VV(MJ1,MJ1,MJ1), Z(MJ1,MJ1),
+     2                 Y(MJ1,MJ1), XX(MJ1,MJ1), X3(MJ1,MJ1),
+     3                 X3MIN(MJ0*IR), F(MJ1,MJ1), G(MJ1,IR), VF(MJ1*MJ1)
 c
-      INTEGER :: IH(MJ1)
-      REAL(8) :: WL(MJ1), CV(LMAX*2+1,IR,IR), U(MJ1,MJ1), V(MJ1,MJ1),
-     1           AST1((LMAX+1)*LMAX,IR,IR), FL(MJ1,MJ1), RGT(MJ1,MJ1),
-     2           FRG(MJ1,MJ1), VTG(MJ1), SR(MJ1), ZZ(MJ1), SF(MJ1),
-     3           SFRG(MJ1), C1(IP0,IP0), AO(MJ0,IR,IR), 
-     4           CST0, CST1, CST2, XL, YL, R11C, FCT, SS, FSRINP,
-     5           SSFR2, SG, EM, EN, ANDT, AII
+      INTEGER IH(MJ1)
+      DOUBLE PRECISION WL(MJ1), CV(LMAX*2+1,IR,IR), U(MJ1,MJ1),
+     1                 V(MJ1,MJ1), AST1((LMAX+1)*LMAX,IR,IR),
+     2                 FL(MJ1,MJ1), RGT(MJ1,MJ1), FRG(MJ1,MJ1),
+     3                 VTG(MJ1), SR(MJ1), ZZ(MJ1), SF(MJ1), SFRG(MJ1),
+     4                 C1(IP0,IP0), AO(MJ0,IR,IR), CST0, CST1, CST2, XL,
+     5                 YL, R11C, FCT, SS, FSRINP, SSFR2, SG, EM, EN,
+     6                 ANDT, AII
 C
 cc      COMMON /COM9/AST1
 cc      COMMON /COM10/CV
@@ -515,9 +514,9 @@ cxx      DIMENSION Y(MM),Z(MM)
 cc      DIMENSION FL(46,46)
 cc      COMMON /COM25/FL
 cxx      DIMENSION FL(MJ1,MJ1)
-      INTEGER :: MM ,MJ1
-      REAL(8) :: Y(MM), Z(MM), FL(MJ1,MJ1)
-      REAL(8) :: CST0, SUM
+      INTEGER MM ,MJ1
+      DOUBLE PRECISION Y(MM), Z(MM), FL(MJ1,MJ1)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       SUM=CST0
@@ -540,9 +539,9 @@ cxx      DIMENSION Y(MM),Z(MM)
 cc      DIMENSION FL(46,46)
 cc      COMMON /COM25/FL
 cxx      DIMENSION FL(MJ1,MJ1)
-      INTEGER :: MM, MJ1
-      REAL(8) :: Y(MM), Z(MM), FL(MJ1,MJ1)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, MJ1
+      DOUBLE PRECISION Y(MM), Z(MM), FL(MJ1,MJ1)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       SUM=CST0
@@ -564,9 +563,9 @@ cc      COMMON /COM21/VV
 cc      COMMON /COM25/FL
 cc      DIMENSION V(46,46),VV(46,46),FL(46,46)
 cxx      DIMENSION V(MJ1,MJ1),VV(MJ1,MJ1),FL(MJ1,MJ1)
-      INTEGER :: MM, MJ1
-      REAL(8) :: V(MJ1,MJ1), VV(MJ1,MJ1), FL(MJ1,MJ1)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, MJ1
+      DOUBLE PRECISION V(MJ1,MJ1), VV(MJ1,MJ1), FL(MJ1,MJ1)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       DO 11 J=1,MM
@@ -594,9 +593,9 @@ C     MJ IS THE ABSOLUTE DIMENSION OF R IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION R(MJ,MJ),RIN(K)
 cxx      DIMENSION R(K,K),RIN(K)
-      INTEGER :: K
-      REAL(8) :: R(K,K), RIN(K), DET
-      REAL(8) :: CST0, CST1, ABC0, RR, RPIVOT, RIL
+      INTEGER K
+      DOUBLE PRECISION R(K,K), RIN(K), DET
+      DOUBLE PRECISION CST0, CST1, ABC0, RR, RPIVOT, RIL
       CST0=0.0D-00
       CST1=1.0D-00
       KM1=K-1
@@ -648,16 +647,17 @@ cxx      DIMENSION SFL(IR+IL,IR+IL),RIN(IR+IL),B(IR+IL,IR+IL)
 cxx      DIMENSION AST1(LMAX2,IR+IL,IR+IL)
 cxx      DIMENSION OSD(IR,IR),AO(MJ0,IR,IR+IL),AAO(MJ0,IR,IR+IL)
 cxx      DIMENSION AAIC(0:MJ0-1)
-      INTEGER :: L, IR, IL, N, IFPEC, MJ0, LMAX2, LCV1
-      REAL(8) :: AAIC(0:MJ0-1), OAIC, CV(LCV1,IR+IL,IR+IL),
-     1           AST1(LMAX2,IR+IL,IR+IL), OSD(IR,IR),
-     2           AO(MJ0,IR,IR+IL), AAO(MJ0,IR,IR+IL)
+      INTEGER L, IR, IL, N, IFPEC, MJ0, LMAX2, LCV1
+      DOUBLE PRECISION AAIC(0:MJ0-1), OAIC, CV(LCV1,IR+IL,IR+IL),
+     1                 AST1(LMAX2,IR+IL,IR+IL), OSD(IR,IR),
+     2                 AO(MJ0,IR,IR+IL), AAO(MJ0,IR,IR+IL)
 c
-      REAL(8) :: A1(L,IR+IL,IR+IL), B1(L,IR+IL,IR+IL), SD(IR+IL,IR+IL),
-     1           SE(IR+IL,IR+IL), SF(IR+IL,IR+IL), XSD(IR+IL,IR+IL),
-     2           XSF(IR+IL,IR+IL), D(IR+IL,IR+IL), E(IR+IL,IR+IL),
-     3           Z1(IR+IL,IR+IL), SFL(IR+IL,IR+IL), RIN(IR+IL),
-     4           B(IR+IL,IR+IL), AIC, SFDT, SDDET, SFDET
+      DOUBLE PRECISION A1(L,IR+IL,IR+IL), B1(L,IR+IL,IR+IL),
+     1                 SD(IR+IL,IR+IL), SE(IR+IL,IR+IL),
+     2                 SF(IR+IL,IR+IL), XSD(IR+IL,IR+IL),
+     3                 XSF(IR+IL,IR+IL), D(IR+IL,IR+IL), E(IR+IL,IR+IL),
+     4                 Z1(IR+IL,IR+IL), SFL(IR+IL,IR+IL), RIN(IR+IL),
+     5                 B(IR+IL,IR+IL), AIC, SFDT, SDDET, SFDET
 cc      COMMON /COM9/AST1
 cc      COMMON /COM10/CV
 c
@@ -849,9 +849,9 @@ cc      DIMENSION SD(MJ,MJ)
 cc      DIMENSION SD1(7,7)
 cxx      DIMENSION SD(K,K)
 cxx      DIMENSION SD1(K,K)
-      INTEGER :: N, K, MS
-      REAL(8) :: SD(K,K), AIC
-      REAL(8) :: SD1(K,K), AN, SDRM, ARM2
+      INTEGER N, K, MS
+      DOUBLE PRECISION SD(K,K), AIC
+      DOUBLE PRECISION SD1(K,K), AN, SDRM, ARM2
       AN=N
 cxx      DO 9 I=1,K
       DO 10 I=1,K
@@ -904,9 +904,9 @@ cc      DIMENSION X(7,7),Y(7,7)
 cxx      DIMENSION CV(LCV1,ID,ID),AST1(LMAX2,MJ,MJ)
 cxx      DIMENSION RGT(MJ1,MJ1)
 cxx      DIMENSION X(ID,ID),Y(ID,ID)
-      INTEGER :: MO, ID, MJ1, MJ, LMAX2, LCV1
-      REAL(8) :: AST1(LMAX2,MJ,MJ), CV(LCV1,ID,ID), RGT(MJ1,MJ1)
-      REAL(8) :: X(ID,ID), Y(ID,ID), CST0, SUM
+      INTEGER MO, ID, MJ1, MJ, LMAX2, LCV1
+      DOUBLE PRECISION AST1(LMAX2,MJ,MJ), CV(LCV1,ID,ID), RGT(MJ1,MJ1)
+      DOUBLE PRECISION X(ID,ID), Y(ID,ID), CST0, SUM
 c      COMMON /COM9/AST1
 cc      COMMON /COM10/CV
 cc      COMMON /COM11/RGT
@@ -975,10 +975,10 @@ cxx      DIMENSION XX(ID,ID),AA(ID,ID),C(ID,ID)
 cxx      DIMENSION W(100,ID),B(MJ1,ID)
 cxx      DIMENSION NH(M1)
 
-      INTEGER :: NH(M1), M1, ID, IQ, MJ1, MJ0
-      REAL(8) :: AO(MJ0,ID,ID), B(MJ1,ID)
-      REAL(8) :: X(IQ,ID,ID), XX(ID,ID), AA(ID,ID), C(ID,ID), W(100,ID),
-     1           CST0, CST1
+      INTEGER NH(M1), M1, ID, IQ, MJ1, MJ0
+      DOUBLE PRECISION AO(MJ0,ID,ID), B(MJ1,ID)
+      DOUBLE PRECISION X(IQ,ID,ID), XX(ID,ID), AA(ID,ID), C(ID,ID),
+     1                 W(100,ID), CST0, CST1
       CST0=0.0D-00
       CST1=1.0D-00
       W(1:ID,1:ID)=CST0
@@ -1055,9 +1055,9 @@ cc      DIMENSION RGT(91,91)
 cc      DIMENSION NH(91)
 cxx      DIMENSION RGT(MJ1,MJ1)
 cxx      DIMENSION NH(MM)
-      INTEGER :: NH(MM), MM, NN, MJ1
-      REAL(8) :: X(MM), Z(NN), RGT(MJ1,MJ1)
-      REAL(8) :: CST0, SUM
+      INTEGER NH(MM), MM, NN, MJ1
+      DOUBLE PRECISION X(MM), Z(NN), RGT(MJ1,MJ1)
+      DOUBLE PRECISION CST0, SUM
 cc      COMMON /COM11/RGT
       CST0=0.0D-00
       DO 10 I=1,NN
@@ -1080,9 +1080,9 @@ C     Z=X*Y (X: LOWER TRIANGLE)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION X(MJ1,MJ1),Y(MJ1,MJ2),Z(MJ1,MJ2)
 cxx      DIMENSION X(MM,MM),Y(MM,NN),Z(MM,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,MM), Y(MM,NN), Z(MM,NN)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,MM), Y(MM,NN), Z(MM,NN)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       DO 11 J=1,NN
@@ -1109,9 +1109,9 @@ C     MJ: ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(X)
 cc      DIMENSION X(MJ,MJ)
 cxx      DIMENSION X(MM,MM)
-      INTEGER :: MM
-      REAL(8) :: X(MM,MM), XDETMI
-      REAL(8) :: CST0, CST1, XC, XXC
+      INTEGER MM
+      DOUBLE PRECISION X(MM,MM), XDETMI
+      DOUBLE PRECISION CST0, CST1, XC, XXC
       CST0=0.0D-00
       CST1=1.0D-00
       XDETMI=CST1

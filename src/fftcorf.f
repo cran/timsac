@@ -1,7 +1,7 @@
       SUBROUTINE FFTCORF(LD,LAGH1,N,N2P,ISW,X1,Y1,XA,X,Y,
-     1CNA1,CN1,CN2,AMEAN)
+     1 CNA1,CN1,CN2,AMEAN)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.1.3   AUTO AND/OR CROSS CORRELATIONS VIA FFT.
 C-----------------------------------------------------------------------
@@ -31,9 +31,6 @@ C     (8F10.4)
 C     (X(I); I=1,LD): DATA OF CHANNEL X
 C     (Y(I); I=1,LD): DATA OF CHANNEL Y (FOR ISW=2 OR 4 ONLY)
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: FFTCORF
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Y)
 cxx      IMPLICIT COMPLEX*16(Z)
 c      REAL*4 DFORM
@@ -45,12 +42,12 @@ c      DIMENSION XS(2048),YS(2048)
 cxx      DIMENSION X1(LD),Y1(LD),XA(N,2),X(N),Y(N)
 cxx      DIMENSION Z(N),ZS(N/2+1)
 cxx      DIMENSION CNA1(LAGH1,2),CN1(LAGH1),CN2(LAGH1),AMEAN(2)
-      INTEGER :: LD, LAGH1, N, N2P, ISW
-      REAL(8) :: X1(LD), Y1(LD), XA(N,2), X(N), Y(N), CNA1(LAGH1,2),
-     1           CN1(LAGH1), CN2(LAGH1), AMEAN(2)
-      REAL(8) :: CST0, CST1, CST2, AN, ALD, ALD1, RF, SF,
-     1           RG, SG, XI, XNI, YI, YNI, X0, XMEAN, YMEAN,
-     2           CX0, Y0
+      INTEGER LD, LAGH1, N, N2P, ISW
+      DOUBLE PRECISION X1(LD), Y1(LD), XA(N,2), X(N), Y(N),
+     1                 CNA1(LAGH1,2), CN1(LAGH1), CN2(LAGH1), AMEAN(2)
+c local
+      DOUBLE PRECISION CST0, CST1, CST2, AN, ALD, ALD1, RF, SF, RG,
+     1                 SG, XI, XNI, YI, YNI, X0, XMEAN, YMEAN, CX0, Y0
       COMPLEX(kind(0d0)) :: Z(N), ZS(N/2+1), ZI, ZNI
 C     INPUT / OUTPUT DATA FILE OPEN
 c	CHARACTER(100) DFNAM

@@ -1,7 +1,7 @@
       SUBROUTINE BLOCARF( ZS,N,LAG,NS0,KMAX,ZMEAN,SUM,AIC,C,B,A,SD,NP,
      *                    NE,SXX )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  BLOCAR                                                   
 C.......................................................................
@@ -93,15 +93,15 @@ cxx      DIMENSION  X(NS0,LAG+1), A(LAG,KMAX)
 cxx      DIMENSION  AIC(KMAX,KMAX), C(KMAX,KMAX)
 cxx      DIMENSION  B(LAG,KMAX), SD(KMAX)
 cxx      DIMENSION  NP(KMAX), NE(KMAX)
-      INTEGER :: N, LAG, NS0, KMAX, NP(KMAX), NE(KMAX)
-      REAL(8) :: ZS(N), ZMEAN, SUM, AIC(KMAX,KMAX), C(KMAX,KMAX),
-     1           B(LAG,KMAX), A(LAG,KMAX), SD(KMAX), SXX(121,KMAX)
+      INTEGER N, LAG, NS0, KMAX, NP(KMAX), NE(KMAX)
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, AIC(KMAX,KMAX), C(KMAX,KMAX),
+     1                 B(LAG,KMAX), A(LAG,KMAX), SD(KMAX), SXX(121,KMAX)
 cc      DATA  TTL / 4H  CU,4HRREN,4HT MO,4HDEL ,4H(AVE,4HRAGE,4H BY ,4HTHE
 cc     1 ,4HBAYE,4HSIAN,4H WEI,4HGHTS,4H)    /                            
 C
 cxx      DIMENSION    SXX(121,KMAX)
 cxx      DIMENSION    F(LAG,KMAX)
-      REAL(8) :: Z(N), X(NS0,LAG+1), F(LAG,KMAX), BB
+      DOUBLE PRECISION Z(N), X(NS0,LAG+1), F(LAG,KMAX), BB
 C
       EXTERNAL  SETX1
 C
@@ -272,12 +272,13 @@ cxx      DIMENSION  X(MJ1,1) , D(LAG+KSW+1), A(LAG+KSW) , Z(N)
 cxx      DIMENSION  F(LAG+KSW,KMAX1) , AIC(KMAX1) , C(KMAX1) , B(LAG+KSW)
 cxx      DIMENSION  SDD(LAG+KSW+1), AICC(LAG+KSW+1), DIC(LAG+KSW+1)
 cxx      DIMENSION  B1(LAG+KSW), W(LAG+KSW+1)
-      INTEGER :: N, LAG, N0, NS, KMAX1, KSW, ISW, MJ1, KC
-      REAL(8) :: Z(N), X(MJ1,1), F(LAG+KSW,KMAX1), AIC(KMAX1),
-     1           C(KMAX1), B(LAG+KSW), A(LAG+KSW), SD
-      REAL(8) :: D(LAG+KSW+1), SDD(LAG+KSW+1), AICC(LAG+KSW+1),
-     1           DIC(LAG+KSW+1), B1(LAG+KSW), W(LAG+KSW+1),
-     2           AICB, AICM, SDMIN, PN
+      INTEGER N, LAG, N0, NS, KMAX1, KSW, ISW, MJ1, KC
+      DOUBLE PRECISION Z(N), X(MJ1,1), F(LAG+KSW,KMAX1), AIC(KMAX1),
+     1                 C(KMAX1), B(LAG+KSW), A(LAG+KSW), SD
+c local
+      DOUBLE PRECISION D(LAG+KSW+1), SDD(LAG+KSW+1), AICC(LAG+KSW+1),
+     1                 DIC(LAG+KSW+1), B1(LAG+KSW), W(LAG+KSW+1), AICB,
+     2                 AICM, SDMIN, PN
 cc      DATA  KC / 0 /                                                    
       EXTERNAL  SETX
 C                                                                       

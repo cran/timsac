@@ -1,7 +1,7 @@
       SUBROUTINE MLOCARF( ZS,N,LAG,NS0,KSW,NML,ZMEAN,SUM,A,MF,SDF,LK0,
      *                    LK2,SXX,NNF,NNS,MS,SDMS,AICS,MP,SDMP,AICP )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  MLOCAR                                                   
 C.......................................................................
@@ -64,8 +64,6 @@ C                       -- EXAMPLE  --     (8F10.5)
 C             (Z(I),I=1,N):  ORIGINAL DATA                              
 C               --------------------------------------------------------
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MLOCARF
-C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
 cc      REAL * 4   TITLE(20)
@@ -85,13 +83,13 @@ cxx      DIMENSION  NNF(NML), NNS(NML)
 cxx      DIMENSION  MS(NML), SDMS(NML), AICS(NML)
 cxx      DIMENSION  MP(NML), SDMP(NML), AICP(NML)
 cxx      DIMENSION  SXX(121,NML)
-      INTEGER :: N, LAG, NS0, KSW, NML, MF(NML), LK0(NML), LK2(NML),
-     1           NNF(NML), NNS(NML), MS(NML), MP(NML)
-      REAL(8) :: ZS(N), ZMEAN, SUM, A(LAG+KSW,NML), SDF(NML), 
-     1           SXX(121,NML), SDMS(NML), AICS(NML), SDMP(NML),
-     2           AICP(NML)
-      REAL(8) :: Z(N), X(N,LAG+KSW+1), U(LAG+KSW+1,LAG+KSW+1),
-     1           AA(LAG+KSW), B
+      INTEGER N, LAG, NS0, KSW, NML, MF(NML), LK0(NML), LK2(NML),
+     1        NNF(NML), NNS(NML), MS(NML), MP(NML)
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, A(LAG+KSW,NML), SDF(NML),
+     1                 SXX(121,NML), SDMS(NML), AICS(NML), SDMP(NML),
+     2                 AICP(NML)
+      DOUBLE PRECISION Z(N), X(N,LAG+KSW+1), U(LAG+KSW+1,LAG+KSW+1),
+     1                 AA(LAG+KSW), B
 C                                                                       
 C          EXTERNAL SUBROUTINE DECLARATION                              
 C                                                                       
@@ -314,12 +312,12 @@ cxx      DIMENSION  X(MJ1,K+1) , U(K+1,K+1) , A(K)
 cxx      DIMENSION  B(K)                                                  
 cxx      DIMENSION  SDS(K+1), AS(K+1), DICS(K+1)
 cxx      DIMENSION  SDP(K+1), AP(K+1), DICP(K+1)
-      INTEGER :: LAG, N0, NF, NS, K, IF, ISW, MJ1, MJ2, MF, NNF,
-     1           NNS, MS, MP
-      REAL(8) :: Z(MJ1), X(MJ1,K+1), U(K+1,K+1), A(K), SDF, SDMS,
-     1           AICS, SDMP, AICP
-      REAL(8) :: B(K), SDS(K+1), AS(K+1), DICS(K+1), SDP(K+1),
-     1           AP(K+1), DICP(K+1), AICMS, AICMP
+      INTEGER LAG, N0, NF, NS, K, IF, ISW, MJ1, MJ2, MF, NNF, NNS,
+     1        MS, MP
+      DOUBLE PRECISION Z(MJ1), X(MJ1,K+1), U(K+1,K+1), A(K), SDF, SDMS,
+     1                 AICS, SDMP, AICP
+      DOUBLE PRECISION B(K), SDS(K+1), AS(K+1), DICS(K+1), SDP(K+1),
+     1                 AP(K+1), DICP(K+1), AICMS, AICMP
       EXTERNAL  SETX
 C                                                                       
       K1 = K + 1                                                        

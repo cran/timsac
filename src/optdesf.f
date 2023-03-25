@@ -1,6 +1,6 @@
       SUBROUTINE OPTDESF(IR,L,NS,M,Q1,R,GR1,A,B,GI)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM OPTDES
 C     PROGRAM 5.5.1   OPTIMAL CONTROLLER DESIGN
@@ -27,9 +27,6 @@ C     M: ORDER OF THE MODEL WHICH GIVES THE MINIMUM OF FPEC
 C     MATRIX P: MI OR P
 C     GI: GAIN
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: OPTDESF
-cc      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION A(75,5),B(75,5),Q1(5,5),R(5,5)
 cc      DIMENSION GI(5,75),GIT(75,5)
@@ -40,11 +37,12 @@ cxx      DIMENSION GI(L,M*IR),GIT(M*IR,IR)
 cxx      DIMENSION GL(L,L),G3(L,M*IR),GR(IR,IR),GLR(L,IR)
 cxx      DIMENSION P(M*IR,M*IR),D(M*IR)
 cxx      DIMENSION GR1(IR,IR)
-      INTEGER :: IR, L, NS, M
-      REAL(8) :: Q1(IR,IR), R(L,L), GR1(IR,IR), A(M*IR,IR), B(M*IR,L),
-     1           GI(L,M*IR)
-      REAL(8) :: GIT(M*IR,IR), GL(L,L), G3(L,M*IR), GR(IR,IR),
-     1           GLR(L,IR), P(M*IR,M*IR), D(M*IR), XDET, CST0
+      INTEGER IR, L, NS, M
+      DOUBLE PRECISION Q1(IR,IR), R(L,L), GR1(IR,IR), A(M*IR,IR),
+     1                 B(M*IR,L), GI(L,M*IR)
+c local
+      DOUBLE PRECISION GIT(M*IR,IR), GL(L,L), G3(L,M*IR), GR(IR,IR),
+     1                 GLR(L,IR), P(M*IR,M*IR), D(M*IR), XDET, CST0
 C     INPUT / OUTPUT DATA FILE OPEN
 cc      CHARACTER(100) DFNAM
 cc      DFNAM='optdes.out'
@@ -280,9 +278,9 @@ C     (MJ1,MJ1): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION X(MJ1,MJ2),Y(MJ2,MJ1),Z(MJ1,MJ1)
 cxx      DIMENSION X(MM,NN),Y(NN,MM),Z(NN,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(NN,MM), Z(NN,NN)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(NN,MM), Z(NN,NN)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
 cxx      DO 10 I=1,MM
       DO 9 I=1,MM
@@ -311,9 +309,9 @@ C     (MJ2,MJ2): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION X(MJ1,MJ2),Y(MJ1,MJ2),Z(MJ2,MJ2)
 cxx      DIMENSION X(MM,NN),Y(MM,NN),Z(NN,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(MM,NN), Z(NN,NN)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(MM,NN), Z(NN,NN)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
 cxx      DO 10 I=1,NN
       DO 9 I=1,NN

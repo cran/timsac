@@ -1,8 +1,7 @@
       SUBROUTINE  BLOMARF( ZS,N,ID,C,LAG,NS0,KMAX,ZMEAN,ZVARI,BW,AIC,A,
-cxx     *                     E,AICB,LKS,LKE )
      *                     E,AICB,LKS,LKE,M )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  BLOMAR                                                   
 C.......................................................................
@@ -56,8 +55,6 @@ C                 -- EXAMPLE --     (8F10.5)
 C          C(J):  CALIBRATION CONSTANT FOR CHANNEL J (J=1,ID)           
 C          Z(I,J): ORIGINAL DATA                                        
 C            -----------------------------------------------------------
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: BLOMARF
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
@@ -74,13 +71,14 @@ cxx      DIMENSION  AICB(KMAX), LKS(KMAX), LKE(KMAX)
 cxx      DIMENSION  F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX)
 cxxcxx      DIMENSION  X(NS0+LAG+1,(LAG+1)*ID)
 cxx      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
-      INTEGER :: N, ID, LAG, NS0, KMAX, LKS(KMAX), LKE(KMAX), M
-      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID),
-     1           BW(KMAX,KMAX), AIC(KMAX,KMAX), A(ID,ID,LAG,KMAX),
-     2           E(ID,ID,KMAX), AICB(KMAX)
-      REAL(8) :: Z(N,ID), B(ID,ID,LAG), G(ID,ID,LAG), H(ID,ID,LAG),
-     1           F1(LAG*ID,ID,KMAX), F2(LAG*ID,ID,KMAX),
-     2           X((LAG+1)*ID*2,(LAG+1)*ID)
+      INTEGER N, ID, LAG, NS0, KMAX, LKS(KMAX), LKE(KMAX), M
+      DOUBLE PRECISION ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID),
+     1                 BW(KMAX,KMAX), AIC(KMAX,KMAX), A(ID,ID,LAG,KMAX),
+     2                 E(ID,ID,KMAX), AICB(KMAX)
+c local
+      DOUBLE PRECISION Z(N,ID), B(ID,ID,LAG), G(ID,ID,LAG),
+     1                 H(ID,ID,LAG), F1(LAG*ID,ID,KMAX),
+     2                 F2(LAG*ID,ID,KMAX), X((LAG+1)*ID*2,(LAG+1)*ID)
 C
 C       PARAMETERS:                                                     
 C          MJ:    ABSOLUTE DIMENSION FOR SUBROUTINE CALL                
@@ -278,17 +276,17 @@ cxx      DIMENSION  Z(MJ,ID) , F1(LAG*ID,ID,KMAX1) , F2(LAG*ID,ID,KMAX1)
 cxx      DIMENSION  X(MJ1,(LAG+1)*ID), A(MJ3,MJ3,LAG) , B(MJ3,MJ3,LAG)
 cxx      DIMENSION  G(MJ3,MJ3,LAG) , H(MJ3,MJ3,LAG) , E(MJ3,ID) 
 cxx      DIMENSION  AIC(KMAX1) , C(KMAX1)
-      INTEGER :: KSW, LAG, N0, NS, ID, KMAX1, KC, MJ, MJ1, MJ3
-      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID), G(MJ3,MJ3,LAG),
-     1           H(MJ3,MJ3,LAG), E(MJ3,ID), C(KMAX1), AIC(KMAX1),
-     2           A(MJ3,MJ3,LAG), B(MJ3,MJ3,LAG), AICB,
-     3           F1(LAG*ID,ID,KMAX1), F2(LAG*ID,ID,KMAX1)
+      INTEGER KSW, LAG, N0, NS, ID, KMAX1, KC, MJ, MJ1, MJ3
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID), G(MJ3,MJ3,LAG),
+     1                 H(MJ3,MJ3,LAG), E(MJ3,ID), C(KMAX1), AIC(KMAX1),
+     2                 A(MJ3,MJ3,LAG), B(MJ3,MJ3,LAG), AICB,
+     3                 F1(LAG*ID,ID,KMAX1), F2(LAG*ID,ID,KMAX1)
 cc      DATA     KC  / 0 /                                                
 C
 cxx      DIMENSION  SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1)
 cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
-      REAL(8) :: SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1),
-     1           BW1(LAG+1), BW2(LAG), AICM, EK, SD, SDMIN
+      DOUBLE PRECISION SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1),
+     1                 BW1(LAG+1), BW2(LAG), AICM, EK, SD, SDMIN
 C                                                                       
       KMAX = KMAX1-1
 cc      MJ5 = 100                                                         

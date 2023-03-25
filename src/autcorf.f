@@ -1,6 +1,6 @@
       SUBROUTINE AUTCORF(X,N,CXX,CN,LAGH1,XMEAN)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.1.1   AUTO CORRELATION
 C-----------------------------------------------------------------------
@@ -30,9 +30,10 @@ c      DIMENSION X(5000),CXX(1001),CN(1001)
 c	 REAL*4 DFORM
 c      DIMENSION  DFORM(20)
 cxx      DIMENSION X(N),X1(N),CXX(LAGH1),CN(LAGH1)
-      INTEGER :: N, LAGH1
-      REAL(8) :: X(N), CXX(LAGH1), CN(LAGH1), XMEAN
-      REAL(8) :: X1(N), CX0
+      INTEGER N, LAGH1
+      DOUBLE PRECISION X(N), CXX(LAGH1), CN(LAGH1), XMEAN
+c local
+      DOUBLE PRECISION X1(N), CX0
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 c	CHARACTER(100) DFNAM

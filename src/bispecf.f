@@ -1,6 +1,6 @@
       SUBROUTINE BISPECF(N,MH,CC0,C0,P1,P2,Q,A,BR,BI,RAT)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc	PROGRAM BISPEC
 C     PROGRAM 74.6.2.
@@ -38,15 +38,16 @@ cxx      DIMENSION P1(MH+1),P2(MH+1),Q(MH+1)
 cxx      DIMENSION CC(MH+1)
 cxx      DIMENSION CC0(MH+1),C0(MH+1,MH+1)
 cxx      DIMENSION A(MH+1,MH+1),BR(MH+1,MH+1),BI(MH+1,MH+1)
-      INTEGER :: N, MH
-      REAL(8) :: CC0(MH+1), C0(MH+1,MH+1), P1(MH+1), P2(MH+1),
-     1           Q(MH+1), A(MH+1,MH+1), BR(MH+1,MH+1),
-     2           BI(MH+1,MH+1), RAT
-      REAL(8) :: C(MH+1,MH+1), C1((MH+1)*2), S1((MH+1)*2),
-     1           CL(MH+1,MH+1), SL(MH+1,MH+1), CA1(MH+1,MH+1),
-     2           CA2(MH+1,MH+1), CC(MH+1),
-     3           CST0, CST1, CST2, CST6, CST2I, CST6I, H, PI, PP, AI,
-     4           T, C00, SL0, TC1, TC2, TC3, TS1, TS3, CN0, SN0
+      INTEGER N, MH
+      DOUBLE PRECISION CC0(MH+1), C0(MH+1,MH+1), P1(MH+1), P2(MH+1),
+     1                 Q(MH+1), A(MH+1,MH+1), BR(MH+1,MH+1),
+     2                 BI(MH+1,MH+1), RAT
+c local
+      DOUBLE PRECISION C(MH+1,MH+1), C1((MH+1)*2), S1((MH+1)*2),
+     1                 CL(MH+1,MH+1), SL(MH+1,MH+1), CA1(MH+1,MH+1),
+     2                 CA2(MH+1,MH+1), CC(MH+1), CST0, CST1, CST2,
+     3                 CST6, CST2I, CST6I, H, PI, PP, AI, T, C00, SL0,
+     4                 TC1, TC2, TC3, TS1, TS3, CN0, SN0
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 cc	CALL SETWND
@@ -266,9 +267,10 @@ C     ISW=1: SIN
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION CL(51,51),CA(51,51)
 cxx      DIMENSION CL(MH+1,MH+1),CA(MH+1,MH+1)
-      INTEGER :: MH, ISW
-      REAL(8) :: CL(MH+1,MH+1), CA(MH+1,MH+1)
-      REAL(8) :: CST2, CST4, CST4I
+      INTEGER MH, ISW
+      DOUBLE PRECISION CL(MH+1,MH+1), CA(MH+1,MH+1)
+c local
+      DOUBLE PRECISION CST2, CST4, CST4I
       CST2=2.0D-00
       CST4=4.0D-00
       CST4I=1.0D-00/CST4
@@ -314,9 +316,10 @@ C             (CA(I,J-1)+2.0*CA(I,J)+CA(I,J+1))/4.0
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION CA(51,51),CB(51,51)
 cxx      DIMENSION CA(MH+1,MH+1),CB(MH+1,MH+1)
-      INTEGER :: MH
-      REAL(8) :: CA(MH+1,MH+1), CB(MH+1,MH+1)
-      REAL(8) :: CST2, CST4, CST4I
+      INTEGER MH
+      DOUBLE PRECISION CA(MH+1,MH+1), CB(MH+1,MH+1)
+c local
+      DOUBLE PRECISION CST2, CST4, CST4I
 C     ON AND ABOVE 1-AXIS
       CST2=2.0D-00
       CST4=4.0D-00
@@ -362,9 +365,10 @@ cc      INTEGER KANA1 / ' B  ' /
 cc      DIMENSION CB(51,51),CD(51,51)
 cxx      DIMENSION CB(MH+1,MH+1),CD(MH+1,MH+1)
 cxx      DIMENSION B(0:MH,0:MH)
-      INTEGER :: MH
-      REAL(8) :: CB(MH+1,MH+1), CD(MH+1,MH+1), B(0:MH,0:MH)
-      REAL(8) :: CST2, CST4, CST4I, CZ
+      INTEGER MH
+      DOUBLE PRECISION CB(MH+1,MH+1), CD(MH+1,MH+1), B(0:MH,0:MH)
+c local
+      DOUBLE PRECISION CST2, CST4, CST4I, CZ
       CST2=2.0D-00
       CST4=4.0D-00
       CST4I=1.0D-00/CST4
@@ -421,10 +425,11 @@ cc      INTEGER KANA2 / 'Q1  ' /
 cc      DIMENSION CL(51,51),SL(51,51),P(51)
 cxx      DIMENSION CL(MH+1,MH+1),SL(MH+1,MH+1),P(MH+1)
 cxx      DIMENSION A(0:MH,0:MH)
-      INTEGER :: N, MH
-      REAL(8) :: CL(MH+1,MH+1), SL(MH+1,MH+1), P(MH+1),
-     1           A(0:MH,0:MH), RAT
-      REAL(8) :: H, CZ, AN, AS3, CST075
+      INTEGER N, MH
+      DOUBLE PRECISION CL(MH+1,MH+1), SL(MH+1,MH+1), P(MH+1),
+     1                 A(0:MH,0:MH), RAT
+c local
+      DOUBLE PRECISION H, CZ, AN, AS3, CST075
 c
       L1=MH+1
       H = MH
@@ -489,9 +494,10 @@ cc      DIMENSION CXX(51),FC(51),P1(51),P2(51),Q(51),P3(51)
 cc      DIMENSION A1(10),A2(10)
 cxx      DIMENSION CXX(LAGH1),FC(LAGH1),P1(LAGH1),P2(LAGH1),Q(LAGH1)
 cxx      DIMENSION A1(2),A2(3)
-      INTEGER :: N, LAGH3, LAGH1
-      REAL(8) :: CXX(LAGH1), P1(LAGH1), P2(LAGH1), Q(LAGH1)
-      REAL(8) :: FC(LAGH1), A1(2), A2(3)
+      INTEGER N, LAGH3, LAGH1
+      DOUBLE PRECISION CXX(LAGH1), P1(LAGH1), P2(LAGH1), Q(LAGH1)
+c local
+      DOUBLE PRECISION FC(LAGH1), A1(2), A2(3)
 C     WINDOW W1 DEFINITION
       MLA1=2
       A1(1)=0.5D-00

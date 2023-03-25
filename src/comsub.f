@@ -1,4 +1,4 @@
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C------------------------------------------------- 
 C     AUSP	---  (72) auspec, mulspe
 C     COEFAB  ---  (72) fpec7 (74) canoca
@@ -90,9 +90,9 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION FC(LAGH1),P1(LAGH1),A(LA1)
 c      DIMENSION FC1(521)
 cxx      DIMENSION FC1(LAGH1+2*(LA1-1))
-      INTEGER :: LAGH1, LA1
-      REAL(8) :: FC(LAGH1), P1(LAGH1), A(LA1) 
-      REAL(8) :: FC1(LAGH1+2*(LA1-1))
+      INTEGER LAGH1, LA1
+      DOUBLE PRECISION FC(LAGH1), P1(LAGH1), A(LA1)
+      DOUBLE PRECISION FC1(LAGH1+2*(LA1-1))
       LA=LA1-1
       LAGSHF=LAGH1+2*LA
 C     FC SHIFT-RIGHT BY LA FOR END CORRECTION
@@ -115,9 +115,9 @@ cc	DIMENSION A(7,7),B(7,7),Z1(7,7),Z2(7,7)
 cxx      DIMENSION A1(L,K,K),B1(L,K,K)
 cxx      DIMENSION D(K,K),E(K,K)
 cxx      DIMENSION A(K,K),B(K,K),Z1(K,K),Z2(K,K)
-      INTEGER :: MS, L, K
-      REAL(8) :: A1(L,K,K), B1(L,K,K), D(K,K), E(K,K)
-      REAL(8) :: A(K,K), B(K,K), Z1(K,K), Z2(K,K)
+      INTEGER MS, L, K
+      DOUBLE PRECISION A1(L,K,K), B1(L,K,K), D(K,K), E(K,K)
+      DOUBLE PRECISION A(K,K), B(K,K), Z1(K,K), Z2(K,K)
       IF(MS.EQ.1) GO TO 40
       MSM1=MS-1
       DO 10 I=1,MSM1
@@ -162,9 +162,9 @@ C
 C     NORMALIZATION OF COVARIANCE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION C(LAGH1),CN(LAGH1)
-      INTEGER :: LAGH1
-      REAL(8) :: C(LAGH1), CN(LAGH1), CX0, CY0
-      REAL(8) :: CST1, DS
+      INTEGER LAGH1
+      DOUBLE PRECISION C(LAGH1), CN(LAGH1), CX0, CY0
+      DOUBLE PRECISION CST1, DS
       CST1=1.0D-00
       DS=CST1/DSQRT(CX0*CY0)
       DO 10 I=1,LAGH1
@@ -179,9 +179,9 @@ C     THIS SUBROUTINE COMPUTES C(L)=COVARIANCE(X(S+L),Y(S))
 C     (L=0,1,...,LAGH1-1).
 cxx      IMPLICIT REAL*8 (A-H,O-Z)
 cxx      DIMENSION X(N),Y(N),C(LAGH1)
-      INTEGER :: N, LAGH1
-      REAL(8) :: X(N), Y(N), C(LAGH1)
-      REAL(8) :: AN, BN1, BN, CT0, T
+      INTEGER N, LAGH1
+      DOUBLE PRECISION X(N), Y(N), C(LAGH1)
+      DOUBLE PRECISION AN, BN1, BN, CT0, T
       AN=N
       BN1=1.0D-00
       BN=BN1/AN
@@ -206,8 +206,8 @@ C     DOUBLE PRECISION MEAN DELETION
 cc      DOUBLE PRECISION X,XMEAN,AN
 cxx      DOUBLE PRECISION X,XMEAN,AN,DSUMF
 cxx      DIMENSION X(N)
-      INTEGER :: N
-      REAL(8) :: X(N), XMEAN, AN, DSUMF
+      INTEGER N
+      DOUBLE PRECISION X(N), XMEAN, AN, DSUMF
 
       AN=N
       XMEAN=DSUMF(X,N)/AN
@@ -222,8 +222,8 @@ C
 C     FC SHIFT-RIGHT BY LA FOR REAL PART END CORRECTION
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION FC(LAGH1),FC1(LAGSHF)
-      INTEGER :: LAGH1, LAGSHF, LA1
-      REAL(8) :: FC(LAGH1), FC1(LAGSHF)
+      INTEGER LAGH1, LAGSHF, LA1
+      DOUBLE PRECISION FC(LAGH1), FC1(LAGSHF)
       LAGH2=LAGH1+1
       LA=LA1-1
       DO 100 I=1,LAGH1
@@ -255,9 +255,10 @@ cxx      INTEGER H
 c      COMMON G,GR,GI,LG,H,JJF
 c      DIMENSION G(31)
 cxx      DIMENSION G(LG+1)
-      INTEGER :: LG, H, JJF
-      REAL(8) :: G(LG+1), GR, GI
-      REAL(8) :: CST0, T, PI, AH, AK, TK, CK, SK, CK2, UM2, UM1, UM0
+      INTEGER LG, H, JJF
+      DOUBLE PRECISION G(LG+1), GR, GI
+      DOUBLE PRECISION CST0, T, PI, AH, AK, TK, CK, SK, CK2,
+     1                 UM2, UM1, UM0
       CST0=0.0D-00
       LGP1=LG+1
 C     REVERSAL OF G(I),I=1,...,LGP1 INTO G(LG3-I)   LG3=LGP1+1
@@ -301,9 +302,10 @@ C     FREQUENCIES K/(2*LF),K=0,1,...,LF AND RETURNS COSIN TRANSFORM IN
 C     FC(K).
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION G(LGP1),FC(LF1)
-      INTEGER :: LGP1, LF1
-      REAL(8) :: G(LGP1), FC(LF1)
-      REAL(8) :: T, PI, ALF, AK, TK, CK, CK2, UM2, UM1, UM0
+      INTEGER LGP1, LF1
+      DOUBLE PRECISION G(LGP1), FC(LF1)
+      DOUBLE PRECISION T, PI, ALF, AK, TK, CK, CK2,
+     1                 UM2, UM1, UM0
       LG=LGP1-1
       LF=LF1-1
 C     REVERSAL OF G(I),I=1,...,LGP1 INTO G(LG3-I)   LG3=LGP1+1
@@ -356,10 +358,10 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cxx      DIMENSION X(MJ,MJ)                                                
 cc      DIMENSION  IDS(100)                                               
 cxx      DIMENSION  IDS(MM)
-      INTEGER :: MM, MJ
-      REAL(8) :: X(MJ,MJ),  XDET
-      INTEGER :: IDS(MM)
-      REAL(8) :: XMAXP, XC
+      INTEGER MM, MJ
+      DOUBLE PRECISION X(MJ,MJ), XDET
+      INTEGER IDS(MM)
+      DOUBLE PRECISION XMAXP, XC
       XDET = 1.0D00                                                     
       DO 10 L=1,MM                                                      
 C     PIVOTING AT L-TH STAGE                                            
@@ -436,10 +438,10 @@ c      DIMENSION IDS(10)
 cxx      DIMENSION X(MM,MM)
 cxx      DIMENSION IDS(MM)
 cxx      DOUBLE PRECISION CST0, CST1
-      INTEGER :: MM
+      INTEGER MM
       COMPLEX(kind(0d0)) :: X(MM,MM), XDET
-      INTEGER :: IDS(MM)
-      REAL(8) :: CST0, CST1
+      INTEGER IDS(MM)
+      DOUBLE PRECISION CST0, CST1
       COMPLEX(kind(0d0)) :: XMAXP, XC
       CST0=0.0D-00
       CST1=1.0D-00
@@ -510,9 +512,9 @@ C     MJ: ABSOLUTE DIMENSION OF R IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION R(MJ,MJ)                                                
 cxx      DIMENSION R(K,K)
-      INTEGER :: K
-      REAL(8) :: R(K,K)
-      REAL(8) :: CST1, RPIVOT, RIL
+      INTEGER K
+      DOUBLE PRECISION R(K,K)
+      DOUBLE PRECISION CST1, RPIVOT, RIL
       CST1=1.0D-00                                                      
       DO 10 L=1,K                                                       
       RPIVOT=CST1/DSQRT(R(L,L))                                         
@@ -543,9 +545,9 @@ C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION X(MJ1,MJ2),Y(NN),Z(MM)                                  
 cxx      DIMENSION X(MM,NN),Y(NN),Z(MM)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(NN), Z(MM)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(NN), Z(MM)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00                                                      
       DO 10 I=1,MM                                                      
       SUM=CST0                                                          
@@ -569,8 +571,8 @@ C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X AND Y IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      DIMENSION X(MJ1,MJ2),Y(MJ1,MJ2)
 cxx      DIMENSION X(MM,NN),Y(MM,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(MM,NN)
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(MM,NN)
 cxx      DO 10 I=1,MM
       DO 11 I=1,MM
       DO 10 J=1,NN
@@ -591,11 +593,11 @@ cxx      IMPLICIT COMPLEX*16(Z)
 cxx      DIMENSION Z(N)
 cc	DIMENSION MS(11)
 cxx      DIMENSION MS(N2P)
-      INTEGER :: N, N2P, ISG
+      INTEGER N, N2P, ISG
       COMPLEX(kind(0d0)) :: Z(N)
-      INTEGER :: MS(N2P)
-      REAL(8) :: CST0, CST1, AN, PI, PI2, SG, AM4, AM5, AJM1, ARG,
-     1           C1, S1, C2, S2, C3, S3
+      INTEGER MS(N2P)
+      DOUBLE PRECISION CST0, CST1, AN, PI, PI2, SG, AM4, AM5, AJM1, ARG,
+     1                 C1, S1, C2, S2, C3, S3
       COMPLEX(kind(0d0)) :: ZCI, ZW1, ZW2, ZW3, ZC1, ZC2, ZC3, ZC4, ZC
       CST0=0.0D-00
       CST1=1.0D-00
@@ -691,9 +693,9 @@ C     (MJ1,MJ3): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      DIMENSION X(MJ1,MJ2),Y(MJ2,MJ3),Z(MJ1,MJ3)
 cxx      DIMENSION X(MM,NN),Y(NN,NC),Z(MM,NC)
-      INTEGER :: MM, NN, NC
-      REAL(8) :: X(MM,NN), Y(NN,NC), Z(MM,NC)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN, NC
+      DOUBLE PRECISION X(MM,NN), Y(NN,NC), Z(MM,NC)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       DO 11 J=1,NC
@@ -716,9 +718,9 @@ C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION X(MJ1,MJ2),Y(NN),Z(MM)                                  
 cxx      DIMENSION X(MM,NN),Y(NN),Z(MM)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(NN), Z(MM)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(NN), Z(MM)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00                                                      
       DO 10 I=1,MM                                                      
       SUM=CST0                                                          
@@ -743,9 +745,9 @@ cc	DIMENSION A(7,7),R(7,7),Z(7,7)
 cxx      DIMENSION A1(L,K,K), CV(LCV1,K,K)
 cxx      DIMENSION SE(K,K)
 cxx      DIMENSION A(K,K),R(K,K),Z(K,K)
-      INTEGER :: MS, L, K, LCV1
-      REAL(8) :: A1(L,K,K), CV(LCV1,K,K), SE(K,K)
-      REAL(8) :: A(K,K), R(K,K), Z(K,K), CST0
+      INTEGER MS, L, K, LCV1
+      DOUBLE PRECISION A1(L,K,K), CV(LCV1,K,K), SE(K,K)
+      DOUBLE PRECISION A(K,K), R(K,K), Z(K,K), CST0
 cc	COMMON /COM10/CV
       CST0=0.0D-00
 cxx      DO 10 II=1,K
@@ -800,10 +802,10 @@ c      DIMENSION X(MJ,MJ),INW(IP)
 c      DIMENSION IOD(10)
 cxx      DIMENSION X(IP0,IP0),INW(IP)
 cxx      DIMENSION IOD(IP0)
-      INTEGER :: INW(IP), IP0, IP
-      REAL(8) :: X(IP0,IP0)
-      INTEGER :: IOD(IP0)
-      REAL(8) :: XC
+      INTEGER INW(IP), IP0, IP
+      DOUBLE PRECISION X(IP0,IP0)
+      INTEGER IOD(IP0)
+      DOUBLE PRECISION XC
 C
       DO 300 I=1,IP0
 cxx  300 IOD(I)=I
@@ -848,9 +850,9 @@ c      DIMENSION X(MJ,MJ),INW(IP)
 c      DIMENSION IOD(10)
 cxx      DIMENSION X(IP0,IP0),INW(IP)
 cxx      DIMENSION IOD(IP0)
-      INTEGER :: INW(IP), IP0, IP
+      INTEGER INW(IP), IP0, IP
       COMPLEX(kind(0d0)) :: X(IP0,IP0)
-      INTEGER :: IOD(IP0)
+      INTEGER IOD(IP0)
       COMPLEX(kind(0d0)) :: XC
 C
       DO 300 I=1,IP0
@@ -891,9 +893,9 @@ C     LAGH1: DIMENSION OF PI (I=1,2,3)
 C     N: LENGTH OF THE ORIGINAL DATA
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION P1(LAGH1),P2(LAGH1),P3(LAGH1)
-      INTEGER :: LAGH1, N
-      REAL(8) :: P1(LAGH1), P2(LAGH1), P3(LAGH1)
-      REAL(8) :: H, AN, HAN, SD2, SD3, T
+      INTEGER LAGH1, N
+      DOUBLE PRECISION P1(LAGH1), P2(LAGH1), P3(LAGH1)
+      DOUBLE PRECISION H, AN, HAN, SD2, SD3, T
       LAGH=LAGH1-1
       H=LAGH
       AN=N
@@ -915,8 +917,8 @@ C     I=0,1,...,LAGH.
 C     ACTUAL X(I) IS SHIFTED TO THE RIGHT BY LA FOR END CORRECTION.
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION X(LAGSHF),A(LA1),Z(LAGH1)
-      INTEGER :: LAGSHF, LA1, LAGH1
-      REAL(8) :: X(LAGSHF), A(LA1), Z(LAGH1), SUM1
+      INTEGER LAGSHF, LA1, LAGH1
+      DOUBLE PRECISION X(LAGSHF), A(LA1), Z(LAGH1), SUM1
       LA=LA1-1
       DO 10 I=1,LAGH1
       I0=I+LA
@@ -938,9 +940,9 @@ C     CONSTANTS D1,D2 COMPUTATION
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 C     L1: NUMBER OF A(I)S (LESS THAN 5)
 cxx      DIMENSION A(4)
-      INTEGER :: N, LAGH, K
-      REAL(8) :: D1, D2
-      REAL(8) :: A(4), CST0, AN, H, SUM, FK, C1, C2
+      INTEGER N, LAGH, K
+      DOUBLE PRECISION D1, D2
+      DOUBLE PRECISION A(4), CST0, AN, H, SUM, FK, C1, C2
       CST0=0.0D-00
       L1=2
       A(1)=0.5D-00
@@ -986,9 +988,9 @@ C     XDETMI: DETERMINANT OF UPPER LEFT MM X MM OF X
 C     MJ: ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE                   
 cxx      IMPLICIT REAL*8(X)                                                
 cxx      DIMENSION X(MJ,MJ)
-      INTEGER :: MM, MJ
-      REAL(8) :: X(MJ,MJ), XDETMI
-      REAL(8) :: XC, XXC
+      INTEGER MM, MJ
+      DOUBLE PRECISION X(MJ,MJ), XDETMI
+      DOUBLE PRECISION XC, XXC
       XDETMI=1.0D0                                                      
       IF(MM.EQ.1) GO TO 18                                              
       MM1=MM-1                                                          
@@ -1035,10 +1037,10 @@ cxx      DIMENSION X(MJ,MJ)
 cxx      DIMENSION SD(MJ,MJ),RS(MJ,MJ),R(MJ,MJ)
 c      DIMENSION RS1(10),RL(10)
 cxx      DIMENSION RS1(MJ),RL(MJ)
-      INTEGER :: IP, MJ
-      REAL(8) :: SD(MJ,MJ), RS(MJ,MJ), R(MJ,MJ)
+      INTEGER IP, MJ
+      DOUBLE PRECISION SD(MJ,MJ), RS(MJ,MJ), R(MJ,MJ)
       COMPLEX(kind(0d0)) :: X(MJ,MJ)
-      REAL(8) :: RS1(MJ), RL(MJ), CST0, CST1, SUM, RX, RIX, RCONST
+      DOUBLE PRECISION RS1(MJ), RL(MJ), CST0, CST1, SUM, RX, RIX, RCONST
       CST0=0.0D-00
       CST1=1.0D-00
       DO 10 II=1,IP
@@ -1075,8 +1077,8 @@ C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X AND Y IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	DIMENSION X(MJ1,MJ2),Y(MJ1,MJ2)
 cxx      DIMENSION X(MM,NN),Y(MM,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(MM,NN)
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(MM,NN)
 cxx      DO 10 I=1,MM
       DO 11 I=1,MM
       DO 10 J=1,NN
@@ -1099,9 +1101,9 @@ C     (MJ2,MJ3): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      DIMENSION X(MJ1,MJ2),Y(MJ1,MJ3),Z(MJ2,MJ3)
 cxx      DIMENSION X(MM,NN),Y(MM,NC),Z(NN,NC)
-      INTEGER :: MM, NN, NC
-      REAL(8) :: X(MM,NN), Y(MM,NC), Z(NN,NC)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN, NC
+      DOUBLE PRECISION X(MM,NN), Y(MM,NC), Z(NN,NC)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,NN
       DO 11 J=1,NC
@@ -1129,9 +1131,9 @@ C     (MJ1,MJ3): ABSOLUTE DIMENSION OF Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	DIMENSION X(MJ1,MJ2),Y(MJ3,MJ2),Z(MJ1,MJ3)
 cxx      DIMENSION X(MM,NN),Y(NC,NN),Z(MM,NC)
-      INTEGER :: MM, NN, NC
-      REAL(8) :: X(MM,NN), Y(NC,NN), Z(MM,NC)
-      REAL(8) :: CST0, SUM
+      INTEGER MM, NN, NC
+      DOUBLE PRECISION X(MM,NN), Y(NC,NN), Z(MM,NC)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
       DO 11 J=1,NC
@@ -1151,8 +1153,8 @@ C
 C     DOUBLE PRECISION SUMMATION
 cxx      DOUBLE PRECISION X
 cxx      DIMENSION X(N)
-      INTEGER :: N
-      REAL(8) :: X(N)
+      INTEGER N
+      DOUBLE PRECISION X(N)
       DSUMF=0.0D-00
       DO 10 I=1,N
 cxx   10 DSUMF=DSUMF+X(I)
@@ -1165,8 +1167,8 @@ cc	FUNCTION RANDOM(K)
 ccc	 FUNCTION RANDM(K)
       DOUBLE PRECISION FUNCTION RANDM(K,K1,K2,K3,K4)
 C     RANDOM NUMBER GENERATOR
-      INTEGER :: K, K1, K2, K3, K4
-      REAL(8) :: X1, X2
+      INTEGER K, K1, K2, K3, K4
+      DOUBLE PRECISION X1, X2
       MCST11=11
       MC100=100
 cc      IF(K) 1,2,1
@@ -1207,8 +1209,8 @@ C
 C------------------------------------------------- TIMSAC74
       SUBROUTINE DINIT(A,N,DD)
 cxx      REAL*8 A(N),DD
-      INTEGER :: N
-      REAL(8) :: A(N), DD
+      INTEGER N
+      DOUBLE PRECISION A(N), DD
       DO 100 I=1,N
          A(I)=DD
   100 CONTINUE
@@ -1220,9 +1222,9 @@ C     COMMON SUBROUTINE
 C     INNER-PRODUCT OF DD1 AND DD2.
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION DD1(INP),DD2(INP)
-      INTEGER :: INP
-      REAL(8) :: DD1(INP), DD2(INP), DINP12
-      REAL(8) :: CST0, SUM
+      INTEGER INP
+      DOUBLE PRECISION DD1(INP), DD2(INP), DINP12
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       SUM=CST0
       DO 100 I=1,INP
@@ -1244,8 +1246,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	COMMON /COM50/HS
 cc	DIMENSION HS(50,50)
 cxx      DIMENSION HS(NN,NN)
-      INTEGER :: M, NN
-      REAL(8) :: HS(NN,NN), XDET
+      INTEGER M, NN
+      DOUBLE PRECISION HS(NN,NN), XDET
 C
       CALL INVDET(HS,XDET,M,NN)
 C
@@ -1292,10 +1294,10 @@ cc	DIMENSION E(50)
 cxx      DIMENSION U(MJ2,MJ1),V(MJ1,MJ1)
 cxx      DIMENSION E(M)
 cxx      DIMENSION Q(N)
-      INTEGER :: M, N, MJ2, MJ1
-      REAL(8) :: U(MJ2,MJ1), V(MJ1,MJ1), Q(N)
-      REAL(8) :: E(M), EPS, TOL, CST0, CST1, CST2, C, F, G, FG, H,
-     1           S, T, X, Y, Z
+      INTEGER M, N, MJ2, MJ1
+      DOUBLE PRECISION U(MJ2,MJ1), V(MJ1,MJ1), Q(N)
+      DOUBLE PRECISION E(M), EPS, TOL, CST0, CST1, CST2, C, F, G, FG, H,
+     1                 S, T, X, Y, Z
 C     ESP: SMALL POSITIVE CONSTANT TO BE USED FOR THE DECISION OF CONVER
 C     TOL: (SMALLEST POSITIVE NUMBER REPRESENTABLE IN THE COMPUTER)/EPS
       EPS=1.0D-15
@@ -1529,8 +1531,8 @@ C     (MJ1,MJ2): ABSOLUTE DIMENSION OF X, Y AND Z IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	DIMENSION X(MJ1,MJ2),Y(MJ1,MJ2),Z(MJ1,MJ2)
 cxx      DIMENSION X(MM,NN),Y(MM,NN),Z(MM,NN)
-      INTEGER :: MM, NN
-      REAL(8) :: X(MM,NN), Y(MM,NN), Z(MM,NN)
+      INTEGER MM, NN
+      DOUBLE PRECISION X(MM,NN), Y(MM,NN), Z(MM,NN)
 cxx      DO 10 I=1,MM
       DO 20 I=1,MM
       DO 10 J=1,NN
@@ -1572,8 +1574,8 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cc      DIMENSION  X(MJ,1) , D(1) , IND(1) , JND(1)                       
 cx      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
 cxx      DIMENSION  X(MJ,K+1) , IND(K+1) , JND(K+1)                       
-      INTEGER :: IND(K+1), JND(K+1), K, L, M, MJ 
-      REAL(8) :: X(MJ,K+1)                        
+      INTEGER IND(K+1), JND(K+1), K, L, M, MJ 
+      DOUBLE PRECISION X(MJ,K+1)                        
 C                                                                       
       K1 = K + 1                                                        
       DO  60     I=1,K1                                                 
@@ -1612,9 +1614,9 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(MJ,1)                                                
 cxx      DIMENSION  X(MJ,K+1)
-      INTEGER :: N, M, K, MJ
-      REAL(8) :: X(MJ,K+1), SD, AIC
-      REAL(8) :: FN, SUM
+      INTEGER N, M, K, MJ
+      DOUBLE PRECISION X(MJ,K+1), SD, AIC
+      DOUBLE PRECISION FN, SUM
 C                                                                       
 C       INPUTS:                                                         
 C          X:     (K+1)*(K+1) REDUCED MATRIX                            
@@ -1686,10 +1688,11 @@ cc      DIMENSION  X(MJ1,1) , D(1) , A(1) , B(1)
 cc      DIMENSION  SD(101) , AIC(101) , C(101)                            
 cxx      DIMENSION  X(MJ1,1), D(K+1), A(K), B(K), B1(K)
 cxx      DIMENSION  SD(K+1), AIC(K+1), C(K+1), DIC(K+1)
-      INTEGER :: K, N, ISW, MJ1, IMIN
-      REAL(8) :: X(MJ1,1), D(K+1), SD(K+1), AIC(K+1), DIC(K+1),
-     1           AICM, SDMIN, A(K), B1(K), B(K), C(K+1), SDB, PN, AICB
-      REAL(8) :: FN
+      INTEGER K, N, ISW, MJ1, IMIN
+      DOUBLE PRECISION X(MJ1,1), D(K+1), SD(K+1), AIC(K+1), DIC(K+1),
+     1                 AICM, SDMIN, A(K), B1(K), B(K), C(K+1), SDB, PN,
+     2                 AICB
+      DOUBLE PRECISION FN
 cc      DATA       TTL / 4H..  ,4H BAY,4HESIA,4HN MO,4HDEL ,4H  .. /      
 C                                                                       
 cc      IF(ISW.GE.1)  WRITE( 6,2 )                                        
@@ -1795,8 +1798,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  B(1) , A(1) , AA(100)                                  
 cxx      DIMENSION  B(K) , A(K) , AA(K)
-      INTEGER :: K
-      REAL(8) :: B(K), A(K), AA(K)
+      INTEGER K
+      DOUBLE PRECISION B(K), A(K), AA(K)
 C                                                                       
       DO  30     II=1,K                                                 
       A(II) = B(II)                                                     
@@ -1859,9 +1862,9 @@ cc      REAL * 4   TITLE(20) , TTL(4)
 cc      DIMENSION  X(MJ1,1) , A(1) , SD(101) , AIC(101)                   
 cxx      DIMENSION  X(MJ1,1) , A(K)
 cxx      DIMENSION  SD(K+1), AIC(K+1), DIC(K+1)
-      INTEGER :: K, LAG, N, ISW, MJ1, IMIN
-      REAL(8) :: X(MJ1,1), A(K), SD(K+1), AIC(K+1), DIC(K+1), SDMIN,
-     1           AICM
+      INTEGER K, LAG, N, ISW, MJ1, IMIN
+      DOUBLE PRECISION X(MJ1,1), A(K), SD(K+1), AIC(K+1), DIC(K+1),
+     1                 SDMIN, AICM
 cc      DATA     TTL / 4H   M,4H A I ,4H C E,4H   . /                    
 c
 cc      IF(ISW.GE.1)  WRITE( 6,3 )                                        
@@ -1943,9 +1946,9 @@ cx      DIMENSION  X(MJ1,1) , B(1) , C(1) , D(1)
 cx      DIMENSION  B1(1)
 cxx      DIMENSION  X(MJ1,K+1) , B(K) , C(K+1) , D(K+1)                          
 cxx      DIMENSION  B1(K)
-      INTEGER :: N, K, ISW, MJ1
-      REAL(8) :: X(MJ1,K+1), C(K+1), B(K), B1(K), D(K+1)                          
-      REAL(8) :: FN, SUM, G, SC, SIG 
+      INTEGER N, K, ISW, MJ1
+      DOUBLE PRECISION X(MJ1,K+1), C(K+1), B(K), B1(K), D(K+1)
+      DOUBLE PRECISION FN, SUM, G, SC, SIG 
 cc      DATA  AST , AXIS / 1H* , 1H! /                                    
 cc      DATA  TABLE / 41*1H /                                             
 cx      DATA  AST , AXIS / '*' , '!' /                                    
@@ -2061,9 +2064,9 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  AIC(1) , C(1)                                          
 cxx      DIMENSION  AIC(K+1) , C(K+1)
-      INTEGER :: K, ISW
-      REAL(8) :: AIC(K+1), AICM, C(K+1)
-      REAL(8) :: SUM, EK, DIC, AI
+      INTEGER K, ISW
+      DOUBLE PRECISION AIC(K+1), AICM, C(K+1)
+      DOUBLE PRECISION SUM, EK, DIC, AI
 C                                                                       
 C          C(I)  =  EXP( -AIC(I)/2 )                                    
 C                                                                       
@@ -2142,8 +2145,8 @@ cx      DIMENSION  A(1) , JND(1) , C(1)
 cx      DIMENSION  B(MJ1,MJ1,1) , E(MJ1,1)                                
 cxx      DIMENSION  A(M) , JND(M) , C(ID)                                   
 cxx      DIMENSION  B(MJ1,MJ1,MM) , E(MJ1,ID)                                
-      INTEGER :: M, ID, II, JND(M), LMAX, MM, KSW, MSW, MJ1
-      REAL(8) :: A(M), B(MJ1,MJ1,MM), C(ID), E(MJ1,ID)
+      INTEGER M, ID, II, JND(M), LMAX, MM, KSW, MSW, MJ1
+      DOUBLE PRECISION A(M), B(MJ1,MJ1,MM), C(ID), E(MJ1,ID)
 C                                                                       
       M0 = MSW + 1                                                      
       C(II) = 0.D0                                                      
@@ -2190,9 +2193,9 @@ C
 cxx      IMPLICIT  REAL * 8( A-H,O-Z )                                     
 cx      DIMENSION  X(MJ1,1) , AIC(1) , SD(1)                              
 cxx      DIMENSION  X(MJ1,K+1) , AIC(K+1) , SD(K+1)                              
-      INTEGER :: N, K, MJ1
-      REAL(8) :: X(MJ1,K+1), SD(K+1), AIC(K+1)
-      REAL(8) :: FN, OSD
+      INTEGER N, K, MJ1
+      DOUBLE PRECISION X(MJ1,K+1), SD(K+1), AIC(K+1)
+      DOUBLE PRECISION FN, OSD
       FN = N                                                            
       K1 = K + 1                                                        
 C                                                                       
@@ -2229,8 +2232,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(MJ1,1) , Y(MJ2,1)                                    
 cxx      DIMENSION  X(MJ1,K) , Y(MJ2,K)                                    
-      INTEGER :: K, II, JJ, MJ1, MJ2
-      REAL(8) :: X(MJ1,K), Y(MJ2,K)                                    
+      INTEGER K, II, JJ, MJ1, MJ2
+      DOUBLE PRECISION X(MJ1,K), Y(MJ2,K)                                    
 C                                                                       
 cxx      DO  10     I=1,K                                                  
       DO  20     I=1,K
@@ -2274,8 +2277,8 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cc      DIMENSION  X(MJ,1) , D(1) , IND(1) , JND(1)                       
 cx      DIMENSION  X(MJ,1) , IND(1) , JND(1)                       
 cxx      DIMENSION  X(MJ,K+1) , IND(K+1) , JND(K+1)
-      INTEGER :: IND(K+1), JND(K+1), K, L, M, MJ
-      REAL(8) :: X(MJ,K+1)
+      INTEGER IND(K+1), JND(K+1), K, L, M, MJ
+      DOUBLE PRECISION X(MJ,K+1)
 C
       K1 = K + 1                                                        
       DO  60     I=1,K1                                                 
@@ -2323,9 +2326,9 @@ C          FB(I):  SINE TRANSFORM OF G  (I=0,1,...,LF)
 C                                                                       
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cxx      DIMENSION G(LGP1),FC(LF1),FS(LF1)
-      INTEGER :: LGP1, LF1
-      REAL(8) :: G(LGP1), FC(LF1), FS(LF1)
-      REAL(8) :: T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
+      INTEGER LGP1, LF1
+      DOUBLE PRECISION G(LGP1), FC(LF1), FS(LF1)
+      DOUBLE PRECISION T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
       LG=LGP1-1                                                         
       LF=LF1-1                                                          
 C     REVERSAL OF G(I),I=1,...,LGP1 INTO G(LG3-I)   LG3=LGP1+1          
@@ -2387,9 +2390,9 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(MJ1,1) , D(MJ1) , IND(1) , JND(1)                    
 cxx      DIMENSION  X(MJ1,K) , D(MJ1) , IND(K) , JND(K)
-      INTEGER :: MJ1, K, L, M, IND(K), JND(K)
-      REAL(8) :: X(MJ1,K)
-      REAL(8) :: D(MJ1), TOL, H, G, F, S
+      INTEGER MJ1, K, L, M, IND(K), JND(K)
+      DOUBLE PRECISION X(MJ1,K)
+      DOUBLE PRECISION D(MJ1), TOL, H, G, F, S
 C                                                                       
       TOL = 1.0D-60                                                     
 
@@ -2467,9 +2470,9 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  X(MJ1,1) , D(MJ1)                                      
 cxx      DIMENSION  X(MJ1,K) , D(MJ1)
-      INTEGER :: MJ1, N, K
-      REAL(8) :: X(MJ1,K)
-      REAL(8) :: D(MJ1), TOL, H, G, F, S
+      INTEGER MJ1, N, K
+      DOUBLE PRECISION X(MJ1,K)
+      DOUBLE PRECISION D(MJ1), TOL, H, G, F, S
 C                                                                       
            TOL = 1.0D-60                                                
 C                                                                       
@@ -2546,8 +2549,8 @@ cc      REAL * 4  TBL(41) , AST , BLNK , AXIS , PERI
 cx      DIMENSION  AIC(1) , SD(1)                                         
 cxx      DIMENSION  AIC(K+1) , SD(K+1)                                         
 cxx      DIMENSION  DIC(K+1)
-      INTEGER :: K, IMIN
-      REAL(8) :: AIC(K+1), SD(K+1), AICM, SDM, DIC(K+1)
+      INTEGER K, IMIN
+      DOUBLE PRECISION AIC(K+1), SD(K+1), AICM, SDM, DIC(K+1)
 cc      DATA  AST / 1H* / , BLNK / 1H  / , AXIS / 1H! / , PERI / 1H. /    
 C                                                                       
 cc      DO  10     I=1,41                                                 
@@ -2624,9 +2627,10 @@ cc      DIMENSION  F(10,10) , G(10,10)
 cxx      DIMENSION  A(MJ3,MJ3,M) , B(MJ3,MJ3,M)                            
 cxx      DIMENSION  D(MJ3,MJ3,M) , E(MJ3,MJ3,M)                            
 cxx      DIMENSION  F(ID,ID) , G(ID,ID)                                    
-      INTEGER :: ID, M, MJ3
-      REAL(8) :: D(MJ3,MJ3,M), E(MJ3,MJ3,M), A(MJ3,MJ3,M), B(MJ3,MJ3,M)
-      REAL(8) :: F(ID,ID), G(ID,ID), SUMA, SUMB
+      INTEGER ID, M, MJ3
+      DOUBLE PRECISION D(MJ3,MJ3,M), E(MJ3,MJ3,M), A(MJ3,MJ3,M),
+     1                 B(MJ3,MJ3,M)
+      DOUBLE PRECISION F(ID,ID), G(ID,ID), SUMA, SUMB
 C                                                                       
 cxx      DO 10  II=1,M                                                     
 cxx      DO 10  I=1,ID                                                     
@@ -2735,15 +2739,15 @@ cxx      DIMENSION  IND(MJ4) , JND(MJ4) , KND(MJ4)
 cxx      DIMENSION  EI(ID,ID) , BI(ID,ID,M)
 cxx      DIMENSION  JNDF(MJ4,ID), AF(MJ4,ID)
 cxx      DIMENSION  NPR(ID), AAIC(ID)
-      INTEGER :: N, ID, M, KSW, MJ1, MJ2, MJ3, MJ4, ISW, IPR, IM(ID),
-     1           LMAX, JNDF(MJ4,ID), NPR(ID)
-      REAL(8) :: X(MJ1,MJ4), AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID),
-     1           AICM(ID), SDM(ID), BI(ID,ID,M), EI(ID,ID),
-     2           B(ID,ID,M), E(ID,ID), EX(ID), C(ID), AICS,
-     3           AF(MJ4,ID), AAIC(ID)
-      INTEGER :: IND(MJ4), JND(MJ4), KND(MJ4)
-      REAL(8) :: Y(MJ4,MJ4), A(MJ4), AICSUM, OSD, OAIC, AICMIN,
-     1           SDMIN, SDD, AIC1, AIC2, OSP
+      INTEGER N, ID, M, KSW, MJ1, MJ2, MJ3, MJ4, ISW, IPR, IM(ID),
+     1        LMAX, JNDF(MJ4,ID), NPR(ID)
+      DOUBLE PRECISION X(MJ1,MJ4), AIC(M+1,ID), SD(M+1,ID), DIC(M+1,ID),
+     1                 AICM(ID), SDM(ID), BI(ID,ID,M), EI(ID,ID),
+     2                 B(ID,ID,M), E(ID,ID), EX(ID), C(ID), AICS,
+     3                 AF(MJ4,ID), AAIC(ID)
+      INTEGER IND(MJ4), JND(MJ4), KND(MJ4)
+      DOUBLE PRECISION Y(MJ4,MJ4), A(MJ4), AICSUM, OSD, OAIC, AICMIN,
+     1                 SDMIN, SDD, AIC1, AIC2, OSP
 C                                     
 C                                                                       
 C         INITIAL SETTING                                               
@@ -3247,14 +3251,14 @@ cc      DIMENSION  Y(100,10)
 cxx      DIMENSION  IND((M+1)*ID+KSW) , JND((M+1)*ID+KSW)
 cxx      DIMENSION  C(M+1)
 cxx      DIMENSION  Y((M+1)*ID+KSW,ID)                                     
-      INTEGER :: N, M, ID, KSW, MJ1, MJ2, IMIN1
-      REAL(8) :: X(MJ1,(M+1)*ID+KSW), SD1(M+1), AIC1(M+1), DIC1(M+1),
-     1           AICM1, SDMIN1, C(M+1), D(M), A(MJ2,MJ2,M),
-     2           B(MJ2,MJ2,M), G(MJ2,MJ2,M), H(MJ2,MJ2,M), E(MJ2,ID),
-     3           AICB, EK
-      INTEGER :: IND((M+1)*ID+KSW), JND((M+1)*ID+KSW)
-      REAL(8) :: DIC2(M+1), AIC(M+1), SD(M+1), Y((M+1)*ID+KSW,ID), YY,
-     1           AICM, SDMIN, OSD
+      INTEGER N, M, ID, KSW, MJ1, MJ2, IMIN1
+      DOUBLE PRECISION X(MJ1,(M+1)*ID+KSW), SD1(M+1), AIC1(M+1),
+     1                 DIC1(M+1), AICM1, SDMIN1, C(M+1), D(M),
+     2                 A(MJ2,MJ2,M), B(MJ2,MJ2,M), G(MJ2,MJ2,M),
+     3                 H(MJ2,MJ2,M), E(MJ2,ID), AICB, EK
+      INTEGER IND((M+1)*ID+KSW), JND((M+1)*ID+KSW)
+      DOUBLE PRECISION DIC2(M+1), AIC(M+1), SD(M+1), Y((M+1)*ID+KSW,ID),
+     1                 YY, AICM, SDMIN, OSD
 C
 C                                                                       
 C          ---------------                                              
@@ -3484,9 +3488,9 @@ C          D:      INTEGRATED BAYESIAN WEIGHT EACH ORDER (I=1,...,M)
 C                                                                       
 cxx      IMPLICIT  REAL * 8 ( A-H , O-Z )                                  
 cx      DIMENSION  G(MJ2,MJ2,1) , H(MJ2,MJ2,1) , C(1) , D(1)              
-cxx      DIMENSION  G(MJ2,MJ2,M) , H(MJ2,MJ2,M) , C(M+1) , D(M)              
-      INTEGER :: M, ID, MJ2 
-      REAL(8) :: G(MJ2,MJ2,M), H(MJ2,MJ2,M), C(M+1), D(M)              
+cxx      DIMENSION  G(MJ2,MJ2,M) , H(MJ2,MJ2,M) , C(M+1) , D(M)
+      INTEGER M, ID, MJ2
+      DOUBLE PRECISION G(MJ2,MJ2,M), H(MJ2,MJ2,M), C(M+1), D(M)
 C                                                                       
 C          INTEGRATED BAYESIAN WEIGHT                                   
 C                                                                       
@@ -3565,10 +3569,10 @@ cx      DIMENSION  B( MJ2,MJ2,MJ3 ) , E( MJ2,1 ) , EX( 1 ) , C( 1 )
 cc      DIMENSION  C1(24) , EE(24,24)                                     
 cxx      DIMENSION  B( MJ2,MJ2,MJ3 ) , E( MJ2,ID ) , EX( ID ) , C( ID )       
 cxx      DIMENSION  C1(ID) , EE(ID,ID)
-      INTEGER :: ID, LMAX, KSW, IPR, MJ2, MJ3 
-      REAL(8) :: BI(ID,ID,LMAX), B(MJ2,MJ2,MJ3), C(ID), EI(ID,ID),
-     1           E(MJ2,ID), EX( ID )
-      REAL(8) :: C1(ID), EE(ID,ID), SUM, EDET
+      INTEGER ID, LMAX, KSW, IPR, MJ2, MJ3 
+      DOUBLE PRECISION BI(ID,ID,LMAX), B(MJ2,MJ2,MJ3), C(ID), EI(ID,ID),
+     1                 E(MJ2,ID), EX( ID )
+      DOUBLE PRECISION C1(ID), EE(ID,ID), SUM, EDET
 C
 C    INPUT  E ---> EI
 C    INPUT  B ---> BI
@@ -3736,9 +3740,9 @@ cx      DIMENSION  X(MJ1,1) , G(MJ3,MJ3,1) , H(MJ3,MJ3,1)
 cc      DIMENSION  C(10,10) , R(10,10)                                    
 ccx      DIMENSION  X(MJ1,(M+1)*ID+KSW) , G(MJ3,MJ3,M) , H(MJ3,MJ3,M)                 
 ccx      DIMENSION  C(ID,ID) , R(ID,ID)
-      INTEGER :: ID, M, KSW, IFG, MJ1, MJ3
-      REAL(8) :: X(MJ1,(M+1)*ID+KSW), G(MJ3,MJ3,M), H(MJ3,MJ3,M)                 
-      REAL(8) :: C(ID,ID), R(ID,ID)                                    
+      INTEGER ID, M, KSW, IFG, MJ1, MJ3
+      DOUBLE PRECISION X(MJ1,(M+1)*ID+KSW), G(MJ3,MJ3,M), H(MJ3,MJ3,M)
+      DOUBLE PRECISION C(ID,ID), R(ID,ID)
 C                                                                       
 cc      MJ2 = 10                                                          
       MJ2 = ID
@@ -3823,9 +3827,9 @@ cc      DIMENSION  Z(MJ,1)
 cc      DIMENSION  C(24)                                                  
 cxx      DIMENSION  ZS(N,ID), Z(N,ID), C(ID)
 cxx      DIMENSION  ZMEAN(ID), ZVARI(ID)
-      INTEGER :: N, ID
-      REAL(8) :: ZS(N,ID), Z(N,ID), C(ID), ZMEAN(ID), ZVARI(ID)
-      REAL(8) :: CC, SUM
+      INTEGER N, ID
+      DOUBLE PRECISION ZS(N,ID), Z(N,ID), C(ID), ZMEAN(ID), ZVARI(ID)
+      DOUBLE PRECISION CC, SUM
 cc      REAL * 4  FORM(20) , TITLE(20)                                    
 C                                                                       
 C                                                                       
@@ -3962,8 +3966,8 @@ cc      DIMENSION  X(MJ1,1) , D(1)
 CC      REAL * 4  Z(MJ,1)                                                 
 cx      DIMENSION  Z(MJ,1), X(MJ1,1)
 cxx      DIMENSION  Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
-      INTEGER :: NMK, N0, LAG, ID, MJ, MJ1, KSW
-      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
+      INTEGER NMK, N0, LAG, ID, MJ, MJ1, KSW
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
 C                                                                       
       L = MIN0( NMK,MJ1 )                                               
       K1 = LAG + 1                                                      
@@ -4053,9 +4057,9 @@ cc      DIMENSION  X(MJ,1) , A(MJ2,MJ2,1) , E(MJ2,1) , Y(MJ4,1)
 cc      DIMENSION  D(1)                                                   
 cx      DIMENSION  X(MJ,1) , A(ID,ID,M) , E(ID,ID) , Y((M+1)*ID,ID)
 cxx      DIMENSION X(MJ,(M+1)*ID+KSW), A(ID,ID,M), E(ID,ID), Y((M+1)*ID,ID)
-      INTEGER :: N, M, ID, KSW, MJ
-      REAL(8) :: X(MJ,(M+1)*ID+KSW), A(ID,ID,M), E(ID,ID), SD
-      REAL(8) :: Y((M+1)*ID,ID), SUM
+      INTEGER N, M, ID, KSW, MJ
+      DOUBLE PRECISION X(MJ,(M+1)*ID+KSW), A(ID,ID,M), E(ID,ID), SD
+      DOUBLE PRECISION Y((M+1)*ID,ID), SUM
 C                                                                       
       MD = M * ID                                                       
       M1D= MD + ID                                                      
@@ -4144,8 +4148,8 @@ C                  (LAG+1+L)*(LAG+1) MATRIX    IF  JSW = 1
 C                                                                       
 cx      REAL * 8  X(MJ1,1) , Z(MJ,1)
 cxx      REAL * 8  X(MJ1,(LAG+1)*ID+KSW) , Z(MJ,ID)
-      INTEGER :: N0, L, LAG, ID, MJ, MJ1, JSW, KSW
-      REAL(8) :: Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
+      INTEGER N0, L, LAG, ID, MJ, MJ1, JSW, KSW
+      DOUBLE PRECISION Z(MJ,ID), X(MJ1,(LAG+1)*ID+KSW)
 CC      DIMENSION  Z(MJ,1)                                                
 C                                                                       
       KD = LAG*ID + KSW                                                 
@@ -4216,11 +4220,11 @@ cc      DIMENSION SXX(501) , PXX(510)
 cxx      DIMENSION A(L),B(K)
 cxx      DIMENSION G(L+K+1),GR1(H+1),GI1(H+1),GR2(H+1),GI2(H+1)
 cxx      DIMENSION SXX(H+1), PXX(H+1)
-      INTEGER :: L, K, H                                                       
-      REAL(8) :: SGME2, A(L), B(K), SXX(H+1)
-      INTEGER :: H1
-      REAL(8) :: G(L+K+1), GR1(H+1), GI1(H+1), GR2(H+1), GI2(H+1),
-     1           PXX(H+1)
+      INTEGER L, K, H                                                       
+      DOUBLE PRECISION SGME2, A(L), B(K), SXX(H+1)
+      INTEGER H1
+      DOUBLE PRECISION G(L+K+1), GR1(H+1), GI1(H+1), GR2(H+1), GI2(H+1),
+     1                 PXX(H+1)
 cxx  310 H1=H+1                                                            
       H1=H+1                                                            
       L1=L+1                                                            
@@ -4270,9 +4274,9 @@ C
 cxx      IMPLICIT  REAL * 8( A-H,O-Z )                                     
 cc      DIMENSION  AR(K) , PAC(K) , W(20)                                 
 cxx      DIMENSION  AR(K) , PAC(K) , W(K)
-      INTEGER :: K
-      REAL(8) :: AR(K), PAC(K)
-      REAL(8) :: W(K), S
+      INTEGER K
+      DOUBLE PRECISION AR(K), PAC(K)
+      DOUBLE PRECISION W(K), S
       DO 10  I=1,K                                                      
 cxx   10 PAC(I) = AR(I)                                                    
       PAC(I) = AR(I)
@@ -4320,8 +4324,8 @@ C
 cxx      IMPLICIT REAL * 8 (A-H,O-Z )                                      
 cx      DIMENSION X(MJ,1) , A(1)                                          
 cxx      DIMENSION X(MJ,K+1) , A(M)
-      INTEGER :: M, K, MJ                                           
-      REAL(8) :: X(MJ,K+1), A(M), SUM
+      INTEGER M, K, MJ                                           
+      DOUBLE PRECISION X(MJ,K+1), A(M), SUM
 C                                                                       
       K1 = K + 1                                                        
       A(M) = X(M, K1) / X(M,M)                                          
@@ -4371,8 +4375,8 @@ C
 cxx      IMPLICIT REAL*8( A-H,O-Z )                                        
 CC      REAL * 4     DFORM(20) , TITLE(20) , X(1)                         
 cxx      DIMENSION     XS(N), X(N)
-      INTEGER :: N
-      REAL(8) :: XS(N), X(N), XMEAN, SUM
+      INTEGER N
+      DOUBLE PRECISION XS(N), X(N), XMEAN, SUM
 cc	REAL * 4     DFORM(20) , TITLE(20)
 C                                                                       
 C       LOADING OF TITLE, DATA LENGTH, FORMAT SPECIFICATION AND DATA    
@@ -4468,8 +4472,8 @@ CC      DIMENSION  X(MJ1,1) , D(1)
 CC      REAL * 4   Z(1)                                                   
 cx      DIMENSION  X(MJ1,1) , Z(1)
 cxx      DIMENSION  X(MJ1,LAG+1) , Z(N0+LAG+NMK)
-      INTEGER :: NMK, N0, K, MJ1, LAG
-      REAL(8) :: Z(N0+LAG+NMK), X(MJ1,LAG+1)
+      INTEGER NMK, N0, K, MJ1, LAG
+      DOUBLE PRECISION Z(N0+LAG+NMK), X(MJ1,LAG+1)
 C                                                                       
       L = MIN0( NMK,MJ1 )                                               
       K1 = K + 1                                                        
@@ -4543,9 +4547,9 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cc      DIMENSION  X(MJ,1) , Y(1) , A(1)                                  
 cx      DIMENSION  X(MJ,1) , Y(K+1) , A(K)
 cxx      DIMENSION  X(MJ,K+1) , Y(K+1) , A(K)
-      INTEGER :: N, K, MJ
-      REAL(8) :: X(MJ,K+1), A(K), SD
-      REAL(8) :: Y(K+1), SUM
+      INTEGER N, K, MJ
+      DOUBLE PRECISION X(MJ,K+1), A(K), SD
+      DOUBLE PRECISION Y(K+1), SUM
 C                                                                       
       K1 = K + 1                                                        
 C                                                                       
@@ -4604,8 +4608,8 @@ CC      REAL * 8  X(MJ1,1)
 CC      DIMENSION  Z(1)                                                   
 cx      REAL * 8  X(MJ1,1) , Z(1)
 cxx      REAL * 8  X(MJ1,LAG+1) , Z(N0+LAG+L)
-      INTEGER :: N0, L, K, MJ1, JSW, LAG 
-      REAL(8) :: Z(N0+LAG+L), X(MJ1,LAG+1)
+      INTEGER N0, L, K, MJ1, JSW, LAG 
+      DOUBLE PRECISION Z(N0+LAG+L), X(MJ1,LAG+1)
 C                                                                       
       KSW = 0                                                           
       IF( K .NE. LAG )     KSW = 1                                      
@@ -4654,8 +4658,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  C(MJ2,1) , R(MJ2,1) , G(MJ3,MJ3,1)                     
 cxx      DIMENSION  C(MJ2,ID) , R(MJ2,ID) , G(MJ3,MJ3,II)
-      INTEGER :: ID, II, MJ2, MJ3 
-      REAL(8) :: C(MJ2,ID), R(MJ2,ID), G(MJ3,MJ3,II), SUM
+      INTEGER ID, II, MJ2, MJ3 
+      DOUBLE PRECISION C(MJ2,ID), R(MJ2,ID), G(MJ3,MJ3,II), SUM
 C                                                                       
       IDM1 = ID - 1                                                     
       DO  10   J=1,ID                                                   
@@ -4703,9 +4707,9 @@ C
 cxx      IMPLICIT  REAL * 8(A-H,O-Z)                                       
 cx      DIMENSION  X(MJ,1) , A(1) , JND(1)                                
 cxx      DIMENSION  X(MJ,K+1) , A(M) , JND(M)
-      INTEGER :: M, K, N, MJ, JND(M)
-      REAL(8) :: X(MJ,K+1), A(M), SD, AIC
-      REAL(8) :: SUM, OSD
+      INTEGER M, K, N, MJ, JND(M)
+      DOUBLE PRECISION X(MJ,K+1), A(M), SD, AIC
+      DOUBLE PRECISION SUM, OSD
       K1 = K + 1                                                        
       M1 = M + 1                                                        
 C                                                                       
@@ -4786,8 +4790,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(MJ,1) , Y(MJ1,1)                                     
 cxx      DIMENSION  X(MJ,M) , Y(MJ1,M)
-      INTEGER :: M, MJ, MJ1 
-      REAL(8) :: X(MJ,M), Y(MJ1,M), SUM                                     
+      INTEGER M, MJ, MJ1 
+      DOUBLE PRECISION X(MJ,M), Y(MJ1,M), SUM                                     
       MM1 = M - 1                                                       
 cxx      DO  10     I=1,MM1                                                
 cxx      DO  10     J=I,M                                                  
@@ -4829,8 +4833,8 @@ C       OUTPUT:
 C          DMIN:  MINIMUM OF X(I) (I=1,N)                               
 C                                                                       
 cxx      REAL * 8  X(1)
-      INTEGER :: N                                                    
-      REAL(8) :: X(N)                                                    
+      INTEGER N                                                    
+      DOUBLE PRECISION X(N)                                                    
 C                                                                       
       DMIN = X(1)                                                       
       DO  10   I=2,N                                                    

@@ -1,6 +1,6 @@
       SUBROUTINE MULRSPF(H,L,IP,K,SD,A,B,Y,CH)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.4.2   MULTIPLE RATIONAL SPECTRUM
 C-----------------------------------------------------------------------
@@ -23,9 +23,6 @@ C     MATRIX SD.
 C     OUTPUTS ARE SPECTRUM MATRIX P(I) AT FREQUENCIES I/(2*H)
 C     (I=0,1,...,H).
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULRSPF
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-W)
 cxx      IMPLICIT COMPLEX*16(X-Z)
 cxx      INTEGER H,H1
@@ -34,11 +31,13 @@ c      DIMENSION SD(10,10),A(30,10,10),B(30,10,10),X(10,10),Y(10,10)
 c      DIMENSION Z(10,10),G(31),CH(10,10)
 cxx      DIMENSION SD(IP,IP),A(L,IP,IP),B(K,IP,IP),X(IP,IP),Y(IP,IP,H+1)
 cxx      DIMENSION Z(IP,IP),G(L+K+1),CH(IP,IP,H+1)
-      INTEGER :: H, L, IP, K
-      REAL(8) :: SD(IP,IP), A(L,IP,IP), B(K,IP,IP), CH(IP,IP,H+1)
+      INTEGER H, L, IP, K
+      DOUBLE PRECISION SD(IP,IP), A(L,IP,IP), B(K,IP,IP), CH(IP,IP,H+1)
       COMPLEX(kind(0d0)) :: Y(IP,IP,H+1)
-      INTEGER :: H1
-      REAL(8) :: G(L+K+1), CST0,  CST1, GR, GI, RYI, RYJ, RRYIJ, RIYIJ
+c local
+      INTEGER H1
+      DOUBLE PRECISION G(L+K+1), CST0,  CST1, GR, GI, RYI, RYJ, RRYIJ,
+     1                 RIYIJ
       COMPLEX(kind(0d0)) :: X(IP,IP), Z(IP,IP), XDET
 C     INPUT / OUTPUT DATA FILE OPEN
 c	CALL SETWND
@@ -229,9 +228,9 @@ c      DIMENSION Y1(10,10)
 cxx      DIMENSION X(MM,NN),Y(NN,NN),Z(MM,MM)
 cxx      DIMENSION Y1(MM,NN)
 cxx      DOUBLE PRECISION CST0
-      INTEGER :: MM, NN
+      INTEGER MM, NN
       COMPLEX(kind(0d0)) :: X(MM,NN), Y(NN,NN), Z(MM,MM)
-      REAL(8) :: CST0
+      DOUBLE PRECISION CST0
       COMPLEX(kind(0d0)) :: Y1(MM,NN), XSUM
       CST0=0.0D-00
       DO 10 I=1,MM

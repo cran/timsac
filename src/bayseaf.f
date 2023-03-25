@@ -1,10 +1,10 @@
 C Reviced	M.S C85-02-19-16:46:06 BAYSEAA PAIR                                         
 CC      PROGRAM BAYSEA
       SUBROUTINE BAYSEAF(Y,NDATA,FOCAST,CDATA,DMOI,TREND,SEASON,TDCMP,
-     *                    IRREG,ADJUST,EST,PSDS,PSDT,AVABIC,
-     *                    IPARA,PARA,ARFT,ARFS,ARFN,IART,IARS,IARN)
+     *                   IRREG,ADJUST,EST,PSDS,PSDT,AVABIC,IPARA,PARA,
+     *                   ARFT,ARFS,ARFN,IART,IARS,IARN)
 C                                                                      
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     ---      --       -                                               
 C     BAYESIAN SEASONAL ADJUSTMENT PROCEDURE                            
@@ -382,26 +382,26 @@ cxx      DIMENSION  FTRN(IPARA(4)+3),FSEA((IPARA(5)+3)*IPARA(1)+3)
 cxx      DIMENSION  F(NDATA+FOCAST+1),WEEK(7,NDATA+FOCAST)
 cxx      DIMENSION  YS(NDATA),YS1(NDATA),YO(NDATA)
 c
-      INTEGER :: NDATA, FOCAST, IPARA(12), IART, IARS, IARN
-      REAL(8) :: Y(NDATA), CDATA(NDATA), DMOI(NDATA),
-     1           TREND(NDATA+FOCAST), SEASON(NDATA+FOCAST),
-     2           TDCMP(NDATA+FOCAST), IRREG(NDATA), ADJUST(NDATA),
-     3           EST(NDATA+FOCAST), PSDS(NDATA+FOCAST),
-     4           PSDT(NDATA+FOCAST), AVABIC, PARA(8), ARFT(3),
-     5           ARFS(3), ARFN(3)
-c
-      INTEGER :: ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD, SHIFT,
-     1           TAIL, YEAR, SPEC
-      REAL(8) :: TREND0(NDATA+FOCAST), SEAS0(NDATA+FOCAST),
-     1           TDCMP0(NDATA+FOCAST), IRREG0(NDATA+FOCAST),
-     2           ADJ0(NDATA+FOCAST), EST0(NDATA+FOCAST),
-     3           PSDS0(NDATA+FOCAST), PSDT0(NDATA+FOCAST),
-     4           FTRN(IPARA(4)+3), FSEA((IPARA(5)+3)*IPARA(1)+3),
-     5           F(NDATA+FOCAST+1), WEEK(7,NDATA+FOCAST),
-     6           YS(NDATA), YS1(NDATA), YO(NDATA), RLIM, RIGID,
-     7           WTRD, DD, ZERSUM, DELTA, ALPHA, BETA, GAMMA, 
-     8           AP, ZER, SMTH, SMTH2, ROUT, SY, YTEM, COUNT,
-     9           ABIC
+      INTEGER NDATA, FOCAST, IPARA(12), IART, IARS, IARN
+      DOUBLE PRECISION Y(NDATA), CDATA(NDATA), DMOI(NDATA),
+     1                 TREND(NDATA+FOCAST), SEASON(NDATA+FOCAST),
+     2                 TDCMP(NDATA+FOCAST), IRREG(NDATA), ADJUST(NDATA),
+     3                 EST(NDATA+FOCAST), PSDS(NDATA+FOCAST),
+     4                 PSDT(NDATA+FOCAST), AVABIC, PARA(8), ARFT(3),
+     5                 ARFS(3), ARFN(3)
+c local
+      INTEGER ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD, SHIFT, TAIL,
+     1        YEAR, SPEC
+      DOUBLE PRECISION TREND0(NDATA+FOCAST), SEAS0(NDATA+FOCAST),
+     1                 TDCMP0(NDATA+FOCAST), IRREG0(NDATA+FOCAST),
+     2                 ADJ0(NDATA+FOCAST), EST0(NDATA+FOCAST),
+     3                 PSDS0(NDATA+FOCAST), PSDT0(NDATA+FOCAST),
+     4                 FTRN(IPARA(4)+3), FSEA((IPARA(5)+3)*IPARA(1)+3),
+     5                 F(NDATA+FOCAST+1), WEEK(7,NDATA+FOCAST),
+     6                 YS(NDATA), YS1(NDATA), YO(NDATA), RLIM, RIGID,
+     7                 WTRD, DD, ZERSUM, DELTA, ALPHA, BETA, GAMMA,
+     8                 AP, ZER, SMTH, SMTH2, ROUT, SY, YTEM, COUNT,
+     9                 ABIC
 cc      CHARACTER*80   TITLE
 cc      COMMON /ILOGT/ LOGT,ISHRNK,PUNCH,IOUTD,ROUT                       
 cc      COMMON /IDATA/ PERIOD,ORDER,SORDER,YEAR,NDAY,IFIX                 
@@ -1037,8 +1037,8 @@ C
 cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cc      DIMENSION X(1), Y(1), Z(1)                                        
 cxx      DIMENSION X(MX), Y(MY), Z(MZ)                                        
-      INTEGER :: MX, MY, MZ
-      REAL(8) :: X(MX), Y(MY), Z(MZ), TEM
+      INTEGER MX, MY, MZ
+      DOUBLE PRECISION X(MX), Y(MY), Z(MZ), TEM
       DO 100 I=1,MX                                                     
       TEM = 0.D0                              
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1060,8 +1060,8 @@ C
 cxx      IMPLICIT REAL*8 (A-H,O-Z )                                        
 cx      DIMENSION X(MJ,1)                                                 
 cxx      DIMENSION X(MJ, I0+N-1)                                                 
-      INTEGER :: N, MJ, I0, J0
-      REAL(8) :: X(MJ, I0+N-1)
+      INTEGER N, MJ, I0, J0
+      DOUBLE PRECISION X(MJ, I0+N-1)
       I0M1 = I0 - 1                                                     
       J0M1 = J0 - 1                                                     
 cxx      DO 10 J=1,N
@@ -1091,8 +1091,8 @@ cxx      IMPLICIT  REAL*8 ( A-H,O-Z )
 cx      DIMENSION X(MMX,1), Y(MMY,1)
 cxx      DIMENSION X(MMX,JX+NX-1), Y(MMY,JY+NY-1)
 cxx      DIMENSION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1)
-      INTEGER :: MX, NX, IX, JX, MY, NY, IY, JY
-      REAL(8) :: X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1), TEM
+      INTEGER MX, NX, IX, JX, MY, NY, IY, JY
+      DOUBLE PRECISION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1), TEM
       IXM1 = IX-1                                                       
       JXM1 = JX - 1                                                     
       IYM1 = IY - 1                                                     
@@ -1129,12 +1129,12 @@ cx     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(8),WEEK(7,1),
 cxx      DIMENSION A(2*(NN+NF)+NDAY+6),Y(NN),SEAS0(NN+NF),TREND0(NN+NF),
 cxx     * EST0(NN+NF),ADJ0(NN+NF),IRREG0(NN+NF),W(NDAY+6),WEEK(7,NN+NF),
 cxx     * TDC0(NN+NF), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
-      INTEGER :: NN, NF, IP, YEAR, NDAY
-      REAL(8) :: SEAS0(NN+NF), TREND0(NN+NF), EST0(NN+NF),
-     1             ADJ0(NN+NF), IRREG0(NN+NF), TDC0(NN+NF), 
-     2             W(NDAY+6), A(2*(NN+NF)+NDAY+6), Y(NN), 
-     3             WEEK(7,NN+NF), ERR(2*(NN+NF)), PSDS(NN+NF),
-     4             PSDT(NN+NF), SQE, SD2
+      INTEGER NN, NF, IP, YEAR, NDAY
+      DOUBLE PRECISION SEAS0(NN+NF), TREND0(NN+NF), EST0(NN+NF),
+     1                 ADJ0(NN+NF), IRREG0(NN+NF), TDC0(NN+NF),
+     2                 W(NDAY+6), A(2*(NN+NF)+NDAY+6), Y(NN),
+     3                 WEEK(7,NN+NF), ERR(2*(NN+NF)), PSDS(NN+NF),
+     4                 PSDT(NN+NF), SQE, SD2
 cc      COMMON /IDATA/ IP,IDUMMY(2),YEAR,NDAY                             
 C                                                                       
       N=NN+NF                                                           
@@ -1197,9 +1197,10 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cc      DIMENSION  X(MJ1,1) , D(1000)                                     
 cx      DIMENSION  X(MJ1,1) , D(N)                                     
 cxx      DIMENSION  X(MJ1,K) , D(N)
-      INTEGER :: N, K, MJ1, ICNT
-      REAL(8) :: X(MJ1,K)
-      REAL(8) :: D(N), TOL, DIIO, H, ABSLD, F, G, S
+      INTEGER N, K, MJ1, ICNT
+      DOUBLE PRECISION X(MJ1,K)
+c local
+      DOUBLE PRECISION D(N), TOL, DIIO, H, ABSLD, F, G, S
 C                                                                       
       TOL=1.0D-38                                                       
       DIIO=0.0D00
@@ -1284,8 +1285,8 @@ C
 cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cx      DIMENSION X(MMX,1), Y(MMY,1), Z(MMZ,1)                            
 cxx      DIMENSION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ)
-      INTEGER :: MX, NX, MMX, MY, NY, MMY, MZ, NZ, MMZ
-      REAL(8) :: X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ), SUM
+      INTEGER MX, NX, MMX, MY, NY, MMY, MZ, NZ, MMZ
+      DOUBLE PRECISION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ), SUM
       KK = NY                                                           
       IF( KK .GT. MZ ) KK = MZ                                          
       DO 100 J=1,NX                                                     
@@ -1314,8 +1315,8 @@ C
 cxx      IMPLICIT REAL*8 ( A-H,O-Z )                                       
 cc      DIMENSION X(1), Y(1), Z(1)                                        
 cxx      DIMENSION X(MX), Y(MY), Z(MZ)
-      INTEGER :: MX, MY, MZ
-      REAL(8) :: X(MX), Y(MY), Z(MZ), TEM
+      INTEGER MX, MY, MZ
+      DOUBLE PRECISION X(MX), Y(MY), Z(MZ), TEM
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1354,18 +1355,21 @@ cx     *   WEEK1(8),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
 cxx      DIMENSION  DC(IDC,2*NPF+N2),H(NH,NPF),H2(N2,2*NPF+N2),WEEK0(7),
 cxx     *   WEEK1(7),ERR(2*(N+NF)+NDAY+7),A(2*(N+NF)+NDAY+7),DTRN(NPF),
 cxx     *  DSEAS(NPF)
-      INTEGER :: LFSEA, N, NF, IDC, NH, N2, ITRN, IARS, IART, IARN, NPF,
-     1           PERIOD, IORD, ISOD, YEAR, NDAY, LOGT
-      REAL(8) :: ABICM, SEASON(NPF), TREND(NPF), EST(NPF), ADJ(NPF),
-     1           IRREG(NPF), TDC(NPF), FSEA(LFSEA), FTRN(IORD+3),
-     2           YS(N), RLIM, WEEK(7,1),  F(NPF+1), ARFS(3), ARFT(3),
-     3           ARFN(3), PSDT(NPF), PSDS(NPF), ALPHA, BETA, GAMMA,
-     4           ZER, SMTH, SMTH2, DD, WTRD, DELTA
-      REAL(8) :: DC(IDC,2*NPF+N2), H(NH,NPF),H2(N2,2*NPF+N2), WEEK0(7),
-     1           WEEK1(7), ERR(2*(N+NF)+NDAY+7), A(2*(N+NF)+NDAY+7),
-     2           DTRN(NPF), DSEAS(NPF), DMAX0, DMIN0, RO, DMIN,
-     3           AN, ANN, ALNDTD, ALNDT0, WT, TEM, ALNDN, ALSQE,
-     4           SQE, ABIC, AJACOB, SSTR, SSEA, SSIR, SSAS, SAS
+      INTEGER LFSEA, N, NF, IDC, NH, N2, ITRN, IARS, IART, IARN, NPF,
+     1        PERIOD, IORD, ISOD, YEAR, NDAY, LOGT
+      DOUBLE PRECISION ABICM, SEASON(NPF), TREND(NPF), EST(NPF),
+     1                 ADJ(NPF), IRREG(NPF), TDC(NPF), FSEA(LFSEA),
+     2                 FTRN(IORD+3), YS(N), RLIM, WEEK(7,1),  F(NPF+1),
+     3                 ARFS(3), ARFT(3), ARFN(3), PSDT(NPF), PSDS(NPF),
+     4                 ALPHA, BETA, GAMMA, ZER, SMTH, SMTH2, DD, WTRD,
+     5                 DELTA
+c local
+      DOUBLE PRECISION DC(IDC,2*NPF+N2), H(NH,NPF),H2(N2,2*NPF+N2),
+     1                 WEEK0(7), WEEK1(7), ERR(2*(N+NF)+NDAY+7),
+     2                 A(2*(N+NF)+NDAY+7), DTRN(NPF), DSEAS(NPF), DMAX0,
+     3                 DMIN0, RO, DMIN, AN, ANN, ALNDTD, ALNDT0, WT,
+     4                 TEM, ALNDN, ALSQE, SQE, ABIC, AJACOB, SSTR, SSEA,
+     5                 SSIR, SSAS, SAS
 cc      COMMON /IDATA/ PERIOD,IORD,ISOD,YEAR,NDAY,IFIX                    
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA      
 cc      COMMON /ILOGT/ LOGT,ISHRNK                                        
@@ -1605,10 +1609,11 @@ C
 cxx      IMPLICIT INTEGER*4 (A-Z)                                          
 cx      REAL*8 WEEK(7,1),W0(8)                                            
 cxx      REAL*8 WEEK(7,N),W0(8)
-      INTEGER :: YEAR0, MONTH0, N
-      REAL(8) :: WEEK(7,N)
-      INTEGER :: DYEAR, YEAR, LEAP, Y, L, D, DAY, MONTH, DIFF, WDAY
-      REAL(8) :: W0(8)
+      INTEGER YEAR0, MONTH0, N
+      DOUBLE PRECISION WEEK(7,N)
+c local
+      INTEGER DYEAR, YEAR, LEAP, Y, L, D, DAY, MONTH, DIFF, WDAY
+      DOUBLE PRECISION W0(8)
 C                                                                       
       DYEAR=(MONTH0-1)/12                                               
       IF(MONTH0 .GE. 1) GO TO 20                                        
@@ -1706,8 +1711,8 @@ CC      FUNCTION AMAX(A,N)
       DOUBLE PRECISION FUNCTION AMAX(A,N)
 C     COMMON SUBROUTINE                                                 
 C     MAXIMUM OF A(I)(I=1,N) SEARCH                                     
-      DOUBLE PRECISION A
-      DIMENSION A(N)                                                    
+      INTEGER N
+      DOUBLE PRECISION A(N)
       AMAX=A(1)                                                         
       DO 10 I=2,N                                                       
       IF(AMAX.LT.A(I)) AMAX=A(I)                                        
@@ -1719,8 +1724,8 @@ CC      FUNCTION AMIN(A,N)
       DOUBLE PRECISION FUNCTION AMIN(A,N)
 C     COMMON SUBROUTINE                                                 
 C     MINIMUM OF A(I)(I=1,N) SEARCH                                     
-      DOUBLE PRECISION A
-      DIMENSION A(N)                                                    
+      INTEGER N
+      DOUBLE PRECISION A(N)
       AMIN=A(1)                                                         
       DO 10 I=2,N                                                       
       IF(AMIN.GT.A(I)) AMIN=A(I)                                        
@@ -1745,9 +1750,10 @@ C
 cxx      IMPLICIT  REAL*8( A-H,O-Z )                                       
 cc      DIMENSION  Z(K), X(K), Y(20)                                      
 cxx      DIMENSION  Z(K), X(K), Y(K)                                      
-      INTEGER :: K
-      REAL(8) :: Z(K), X(K), SD1
-      REAL(8) :: Y(K), SUM
+      INTEGER K
+      DOUBLE PRECISION Z(K), X(K), SD1
+c local
+      DOUBLE PRECISION Y(K), SUM
       DO 10  I=1,K                                                      
 cxx   10 X(I) = Z(I)                                                       
       X(I) = Z(I)
@@ -1833,10 +1839,11 @@ C
 cxx      IMPLICIT REAL*8  ( A-H,O-Z )                                      
 cc      DIMENSION  X(N), Y(10), Z(10), ZE(10), IND(N), JND(10)            
 cxx      DIMENSION  X(N), Y(N), Z(N), ZE(N), IND(N), JND(N)            
-      INTEGER :: N, IND(N), JSW
-      REAL(8) :: X(N), F, W
-      INTEGER :: JND(N)
-      REAL(8) :: Y(N), Z(N), ZE(N), SUM, XMEAN, SIG2, SD
+      INTEGER N, IND(N), JSW
+      DOUBLE PRECISION X(N), F, W
+c local
+      INTEGER JND(N)
+      DOUBLE PRECISION Y(N), Z(N), ZE(N), SUM, XMEAN, SIG2, SD
 C                                                                       
       L = 0                                                             
       SUM = 0.D0                                                        
@@ -1845,7 +1852,8 @@ C
       L = L + 1                                                         
       SUM = SUM+X(I)                                                    
    10 CONTINUE                                                          
-      XMEAN = SUM/DFLOAT(L)                                             
+cc      XMEAN = SUM/DFLOAT(L)                                             
+      XMEAN = SUM/DBLE(L)                                             
       K = N-L                                                           
 C                                                                       
       SUM = 0.D0                                                        
@@ -1914,9 +1922,10 @@ C
 cxx      REAL*8  POST, X(N)                                                
 cc      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(10)               
 cxx      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(N)
-      INTEGER :: IND(N), JND(IC), KND(IC), IC, N, L
-      REAL(8) :: POST(IC), X(N)
-      REAL(8) :: Y(N), PMAX
+      INTEGER  IC, N, L, IND(N), JND(IC), KND(IC)
+      DOUBLE PRECISION POST(IC), X(N)
+c local
+      DOUBLE PRECISION Y(N), PMAX
 cc      COMMON /CSPRSS/ ISPRSS                                            
 C                                                                       
       DO 20  I=1,IC                                                     
@@ -1979,7 +1988,7 @@ C        IFG:            = 0 ; IF THE NEW CONFIGURATION IS OBTAINED
 C                        = 1 ; SEARCH FOR THE CONFIGURATION COMPLETED.  
 C                                                                       
 cxx      DIMENSION  IND(K)
-      INTEGER ::  IND(K), K, IFG
+      INTEGER  K, IFG, IND(K)
 C                                                                       
       I1 = 1                                                            
       I2 = 2                                                            
@@ -2033,7 +2042,7 @@ C     OUTPUT:
 C        (IND(I),I=1,N): REORDERED DATA                                 
 C                                                                       
 cxx      DIMENSION  IND(N)                                                 
-      INTEGER :: IND(N), N                                                 
+      INTEGER N, IND(N)
 C                                                                       
       NM1 = N-1                                                         
       DO 20  II=1,NM1                                                   
@@ -2064,7 +2073,7 @@ C          MB:    NUMBER IN BINARY REPRESENTATION
 C                                                                       
 cx      DIMENSION  MB(1)
 cxx      DIMENSION  MB(K)
-      INTEGER :: M, K, MB(K)
+      INTEGER M, K, MB(K)
 C                                                                       
       N = M                                                             
       DO 10  I=1,K                                                      
@@ -2092,8 +2101,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(1) , IX(1)                                           
 cxx      DIMENSION  X(N) , IX(N)
-      INTEGER :: N, IX(N)
-      REAL(8) :: X(N), XMIN, XT
+      INTEGER N, IX(N)
+      DOUBLE PRECISION X(N), XMIN, XT
 C                                                                       
       NM1 = N - 1                                                       
       DO  20     II=1,NM1                                               
@@ -2153,11 +2162,12 @@ cc      DIMENSION  Y(500)
 cxx      DIMENSION  X(NN), F(NN+1), PM(NN), Z(NN), C(K+1)                 
 cxx      DIMENSION  IX(NN) , IND(NN) , JND(2**K) , KND(2**K) , POST(2**K)
 cxx      DIMENSION  Y(NN)                     
-      INTEGER :: NN, K, ISW, JSW, IOUTD
-      REAL(8) :: Z(NN), Y(NN), RLIM, ROUT
-      INTEGER :: IX(NN), IND(NN), JND(2**K), KND(2**K)
-      REAL(8) :: X(NN), F(NN+1), PM(NN), C(K+1), POST(2**K), EPS,
-     1           DI, SUMF, DLK0, F0, TEM, FF, EXPF, W
+      INTEGER NN, K, ISW, JSW, IOUTD
+      DOUBLE PRECISION Z(NN), Y(NN), RLIM, ROUT
+c local
+      INTEGER IX(NN), IND(NN), JND(2**K), KND(2**K)
+      DOUBLE PRECISION X(NN), F(NN+1), PM(NN), C(K+1), POST(2**K), EPS,
+     1                 DI, SUMF, DLK0, F0, TEM, FF, EXPF, W
 
 cc      COMMON /CSPRSS/ ISPRSS                                            
       ISPRSS = 1                                                        
@@ -2187,10 +2197,12 @@ cc      CALL  SRTMIN( X,N,IX )
 cxx   10 F(I+1) = F(I)+DLOG(DI)                                            
       F(I+1) = F(I)+DLOG(DI)
    10 CONTINUE
-      C(1) = DFLOAT(N*2)/DFLOAT(N-3)                                    
+cc      C(1) = DFLOAT(N*2)/DFLOAT(N-3)                                    
+      C(1) = DBLE(N*2)/DBLE(N-3)    
       DO 20  I=1,K                                                      
 cxx   20 C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)            
-      C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)
+cc      C(I+1) = DFLOAT(N*(I+2))/DFLOAT(N-I-3)+F(N+1)-F(N-I+1)
+      C(I+1) = DBLE(N*(I+2))/DBLE(N-I-3)+F(N+1)-F(N-I+1)
    20 CONTINUE
 C                                                                       
       IL = 2**L                                                         
@@ -2313,9 +2325,10 @@ cx      DIMENSION   IX(N),  POST(1), JND(1), KND(1), Y(N)
 cc      DIMENSION  IND(500)                                               
 cxx      DIMENSION   IX(N),  POST(N), JND(IC), KND(IC), Y(N)                 
 cxx      DIMENSION  IND(N)              
-      INTEGER :: N, L, IX(N), JND(IC), KND(IC), IC ,IOUTD
-      REAL(8) :: POST(N), Y(N), CONST 
-      INTEGER :: IND(N)              
+      INTEGER N, L, IX(N), JND(IC), KND(IC), IC ,IOUTD
+      DOUBLE PRECISION POST(N), Y(N), CONST 
+c local
+      INTEGER IND(N)              
 cc      COMMON /CSPRSS/ ISPRSS                                            
 cc      COMMON /ILOGT/ IDUMMY(3),IOUTD,CONST                              
       ICTEM = IC                                                        
@@ -2349,8 +2362,8 @@ cxx  605 FORMAT( 1H ,'LOCATION PARAMETER;   XM =',F13.5 )
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION W(IP,10), WW(10), AR(10)                                
 cxx      DIMENSION W(IP,ID+IAR+1), WW(ID+IAR+1), AR(1)
-      INTEGER :: IP, ID, IAR
-      REAL(8) :: W(IP,ID+IAR+1), C, AR(1), WW(ID+IAR+1)
+      INTEGER IP, ID, IAR
+      DOUBLE PRECISION W(IP,ID+IAR+1), C, AR(1), WW(ID+IAR+1)
       IDAR = ID + IAR                                                   
       IDP1 = IDAR + 1                                                   
       W(1,IDP1) = C                                                     
@@ -2389,9 +2402,10 @@ cxx  400 W(1,J) = W(1,J) - AR(JY)*WW(J+JY)
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION  W(100), DDOP(100), DOP(100)                            
 cxx      DIMENSION  W(LENGTH), DDOP(LENGTH), DOP((LENGTH-1)*ISTEP+1)
-      INTEGER :: LENGTH, ISTEP
-      REAL(8) :: W(LENGTH), DOP((LENGTH-1)*ISTEP+1)
-      REAL(8) :: DDOP(LENGTH), SUM
+      INTEGER LENGTH, ISTEP
+      DOUBLE PRECISION W(LENGTH), DOP((LENGTH-1)*ISTEP+1)
+c local
+      DOUBLE PRECISION DDOP(LENGTH), SUM
       J=1                                                               
       DO 1 I=1,LENGTH                                                   
       DDOP(I)=DOP(J)                                                    
@@ -2418,9 +2432,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cx      DIMENSION  H1(N1,1),H2(N2,1),H3(1),H4(1)                          
 cxx      DIMENSION  H1(N1,IPOS),H2(N2,N2+IPOS),H3(N3),H4(N2)                          
-      INTEGER :: N1, N2, N3, M1, IPOS
-      REAL(8) :: H1(N1,IPOS), H2(N2,N2+IPOS), H3(N3), H4(N2)
-      REAL(8) :: EPS, SQD, C, D, F
+      INTEGER N1, N2, N3, M1, IPOS
+      DOUBLE PRECISION H1(N1,IPOS), H2(N2,N2+IPOS), H3(N3), H4(N2)
+c local
+      DOUBLE PRECISION EPS, SQD, C, D, F
       DATA EPS/1.D-30/                                                  
       IF(IPOS .LE. M1) GO TO 30                                         
       M1 = IPOS                                                         
@@ -2501,12 +2516,13 @@ cx      DIMENSION H1(N1,1),H2(N2,1),Y(NDATA),WEEK(IY,1),H3(N1),H4(N2)
 cxx      DIMENSION H1(N1,1),H2(N2,N+8),Y(NDATA),WEEK(IY,N),H3(N1),H4(N2)
 cxx      DIMENSION FTRN(ID+3),H(NH,N),TI(ID+IART),T0(2*(ID+IART+1)),
 cxx     *           F(NPF+1),ARFT(3)
-      INTEGER :: N1, N2, M1, ICOUNT, N, NH, NDATA, IY, IART,
-     1           IP, ID, YEAR, NPF
-      REAL(8) :: H1(N1,1), H2(N2,N+8), FTRN(ID+3), H(NH,N),TI(ID+IART),
-     1           WT, Y(NDATA), RLIM, WEEK(IY,N), ALNDTD, F(NPF+1),
-     2           DD, ARFT(3), ALPHA, WTRD, DELTA
-      REAL(8) :: H3(N1), H4(N2), T0(2*(ID+IART+1)), TEM, TEMO
+      INTEGER N1, N2, M1, ICOUNT, N, NH, NDATA, IY, IART, IP, ID,
+     1        YEAR, NPF
+      DOUBLE PRECISION H1(N1,1), H2(N2,N+8), FTRN(ID+3), H(NH,N),
+     1                 TI(ID+IART), WT, Y(NDATA), RLIM, WEEK(IY,N),
+     2                 ALNDTD, F(NPF+1), DD, ARFT(3), ALPHA, WTRD, DELTA
+c local
+      DOUBLE PRECISION H3(N1), H4(N2), T0(2*(ID+IART+1)), TEM, TEMO
 cc      COMMON/IDATA/IP,ID,IS,YEAR                                        
 cc      COMMON/ RDATA/ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA                
 cxx      DO 600 I=1,N2                                                     
@@ -2648,11 +2664,13 @@ cx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),H4(1)
 cxx      DIMENSION  H1(N1,1),H2(NPF+1),H3((IS+IARS)*IP+IARN+1),h4(1)
 cxx      DIMENSION  FSEAS((IS+IARS)*IP + IARN),S0((IS+IARS+1)*IP+IARN+1)
 cxx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),ARFS(3),ARFN(3)
-      INTEGER :: N1, M1, N, IARS, IARN, IP, IS, NPF
-      REAL(8) :: H1(N1,1), H2(NPF+1), FSEAS((IS+IARS)*IP + IARN), WS,
-     1           WZ, ARFS(3), ARFN(3), BETA, GAMMA
-      REAL(8) :: H3((IS+IARS)*IP+IARN+1), h4(1), Z0(IP),  ZI(IP), SUM,
-     1           S0((IS+IARS+1)*IP+IARN+1), SI((IS+IARS)*IP+IARN), DT
+      INTEGER N1, M1, N, IARS, IARN, IP, IS, NPF
+      DOUBLE PRECISION H1(N1,1), H2(NPF+1), FSEAS((IS+IARS)*IP + IARN),
+     1                 WS, WZ, ARFS(3), ARFN(3), BETA, GAMMA
+c local
+      DOUBLE PRECISION H3((IS+IARS)*IP+IARN+1), h4(1), Z0(IP),  ZI(IP),
+     1                 SUM, S0((IS+IARS+1)*IP+IARN+1),
+     2                 SI((IS+IARS)*IP+IARN), DT
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA               
 cc      COMMON /IDATA/ IP,ID,IS,YEAR                                      
       IPIS = (IS+IARS)*IP + IARN                                        
@@ -2752,8 +2770,8 @@ cxx  161 H3(J)=H3(J)*GAMMA
 C **** PARCOR R TO AR ********                                          
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cxx      DIMENSION R(M),A(M,M)                                             
-      INTEGER :: M
-      REAL(8) :: R(M), A(M,M)
+      INTEGER M
+      DOUBLE PRECISION R(M), A(M,M)
 cxx      DO 10 I=1,M                                                       
       DO 20 I=1,M
       DO 10 J=1,I                                                       
@@ -2778,9 +2796,11 @@ cc      SUBROUTINE SOLVE(H1,N1,H2,N2,A,M1,SQE,NANS,ERR)
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cx      DIMENSION  H1(N1,1), H2(N2,1), A(1), ERR(1)                       
 cxx      DIMENSION  H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), ERR(NANS)
-      INTEGER :: N1, N2, M1 ,NANS
-      REAL(8) :: H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), SQE, ERR(NANS)
-      REAL(8) :: AKA
+      INTEGER N1, N2, M1 ,NANS
+      DOUBLE PRECISION H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), SQE,
+     1                 ERR(NANS)
+c local
+      DOUBLE PRECISION AKA
 C                                                                       
 cxx      DO 30 I=1,NANS                                                    
 cxx   30 ERR(I)=0.D0

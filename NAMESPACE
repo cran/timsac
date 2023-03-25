@@ -1,8 +1,9 @@
-useDynLib(timsac, .registration=TRUE)
+useDynLib(timsac, .registration=TRUE, .fixes = "C_")
 
 importFrom("grDevices", "dev.new")
-importFrom("graphics", "abline", "hist", "lines", "matplot", "par", "plot")
-importFrom("stats", "as.ts", "sd", "tsp", "tsp<-")
+importFrom("graphics", "abline", "hist", "lines", "matplot", "par", "plot",
+ "points", "legend")
+importFrom("stats", "ts", "as.ts", "sd", "tsp", "tsp<-", "start")
 
 export(autcor, mulcor, fftcor, auspec, mulspe, sglfre, mulfrf, fpeaut, fpec,
  mulnos, raspec, mulrsp, optdes, optsim, wnoise, autoarmafit, armafit, canarm,

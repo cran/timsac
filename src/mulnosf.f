@@ -1,6 +1,6 @@
       SUBROUTINE MULNOSF(H,L,IP,SD,A,RS1,RS2,R)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.3.3   MULTIPLE UNOISE
 C-----------------------------------------------------------------------
@@ -20,9 +20,6 @@ C     THE PROGRAM OPERATES ON THE OUTPUT OF PROGRAM 5.3.2 FPEC WITH
 C     IL=0.
 C     THE RESULTS ARE GIVEN AT FREQUIENCIES I/(2*H).
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULNOSF
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-W)
 cxx      IMPLICIT COMPLEX*16(X-Z)
 cxx      INTEGER H,H1
@@ -31,11 +28,12 @@ c      DIMENSION SD(10,10),A(30,10,10),X(10,10)
 c      DIMENSION G(31),RS(10,10),R(10,10)
 cxx      DIMENSION SD(IP,IP),A(L,IP,IP),X(IP,IP)
 cxx      DIMENSION G(L+1),RS1(IP,IP),RS2(IP,IP,H+1),R(IP,IP,H+1)
-      INTEGER :: H, L, IP
-      REAL(8) :: SD(IP,IP), A(L,IP,IP), RS1(IP,IP), RS2(IP,IP,H+1),
-     1           R(IP,IP,H+1)
-      INTEGER :: H1
-      REAL(8) :: G(L+1), GR, GI, CST0, CST1
+      INTEGER H, L, IP
+      DOUBLE PRECISION SD(IP,IP), A(L,IP,IP), RS1(IP,IP),
+     1                 RS2(IP,IP,H+1), R(IP,IP,H+1)
+      INTEGER H1
+c local
+      DOUBLE PRECISION G(L+1), GR, GI, CST0, CST1
       COMPLEX(kind(0d0)) :: X(IP,IP), XDET
 C     INPUT / OUTPUT DATA FILE OPEN
 c	CALL SETWND

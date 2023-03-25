@@ -1,7 +1,7 @@
       SUBROUTINE XSARMAF( YS,N,IQ,IP,P01,G1,TL1,P02,G2,ALPHB,ALPHA,TL2,
      *                    SIGMA2 )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM XSARMA                                                    
 C.......................................................................
@@ -62,8 +62,6 @@ C          IP:  MA-ORDER
 C          (A(I),I=1,IP):  MA COEFFICIENTS                              
 C          SIGMA2:  WHITE NOISE VARIANCE                                
 C-----------------------------------------------------------------------
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: XSARMAF
 C
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      REAL*4 TITL(20)                                                   
@@ -71,10 +69,11 @@ cc      DIMENSION Y(2000),P0(50)
 cxx      DIMENSION YS(N), Y(N), P01(IP+IQ)
 cxx      DIMENSION P02(IP+IQ), G1(IP+IQ), G2(IP+IQ)
 cxx      DIMENSION ALPHB(IQ), ALPHA(IP)
-      INTEGER :: N, IQ, IP
-      REAL(8) :: YS(N), P01(IP+IQ), G1(IP+IQ), TL1, P02(IP+IQ),
-     1           G2(IP+IQ), ALPHB(IQ), ALPHA(IP), TL2, SIGMA2
-      REAL(8) :: Y(N)
+      INTEGER N, IQ, IP
+      DOUBLE PRECISION YS(N), P01(IP+IQ), G1(IP+IQ), TL1, P02(IP+IQ),
+     1                 G2(IP+IQ), ALPHB(IQ), ALPHA(IP), TL2, SIGMA2
+c local
+      DOUBLE PRECISION Y(N)
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM,MFLNAM
 cc      CALL FLNAM3( IFLNAM,OFLNAM,MFLNAM,NFL )
@@ -191,9 +190,9 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION A(50),B(50),ALPH(50)                                    
 cc      COMMON /CMALPH/ALPH                                               
 cxx      DIMENSION A(M),B(M),ALPH(M)                                    
-      INTEGER :: M, ICOND 
-      REAL(8) :: A(M), ALPH(M)
-      REAL(8) :: B(M), CST0, CST1, CST099, AT, CT, D
+      INTEGER M, ICOND 
+      DOUBLE PRECISION A(M), ALPH(M)
+      DOUBLE PRECISION B(M), CST0, CST1, CST099, AT, CT, D
       DATA CST0,CST1,CST099/0.0D-00,1.0D-00,0.99999D-00/                
 C                                                                       
 C                                                                       
@@ -273,12 +272,12 @@ cc      DIMENSION P1(51),AKI(51),YY(51),PY(51),Z(51),PZ(51)
 cxx      DIMENSION Y(N)                                                 
 cxx      DIMENSION A(IR),B(IR),P(IR,IR),P0(IP+IQ)                             
 cxx      DIMENSION P1(IR),AKI(IR),YY(IR),PY(IR),Z(IR),PZ(IR)
-      INTEGER :: N,  IQ, IP, IR
-      REAL(8) :: F ,SD, Y(N), P0(IP+IQ)
-      REAL(8) :: A(IR), B(IR), P(IR,IR), P1(IR), AKI(IR), YY(IR),
-     1           PY(IR), Z(IR), PZ(IR), CST0, CST1, CSTA, REM,
-     2           SUM, AMI, EM, SERI, SLR, Y2, REW, ERI, AMY,
-     3           AMRI, YRI, EW, AN
+      INTEGER N,  IQ, IP, IR
+      DOUBLE PRECISION F ,SD, Y(N), P0(IP+IQ)
+      DOUBLE PRECISION A(IR), B(IR), P(IR,IR), P1(IR), AKI(IR), YY(IR),
+     1                 PY(IR), Z(IR), PZ(IR), CST0, CST1, CSTA, REM,
+     2                 SUM, AMI, EM, SERI, SLR, Y2, REW, ERI, AMY,
+     3                 AMRI, YRI, EW, AN
 cc      DATA A,B,AKI/151*0.0D-00/                                         
       DATA CST0,CST1,CSTA/0.0D-00,1.0D-00,0.1D-05/                      
 C                                                                       
@@ -498,14 +497,14 @@ cc      COMMON /COM50/VD
 cxx      DIMENSION G(IP+IQ),C(IP+IQ),Y(N),X(IP+IQ),VD(IP+IQ,IP+IQ)
 cxx      DIMENSION SX(IP+IQ),SG(IP+IQ),SR(IP+IQ),SSX(IP+IQ)                                         
 cxx      DIMENSION ALPH(IP+IQ)
-      INTEGER :: N, IQ, IP, ISWRO
-      REAL(8) :: PHAI, SIGMA2, G(IP+IQ), C(IP+IQ), Y(N), X(IP+IQ),
-     1           VD(IP+IQ,IP+IQ)
-      REAL(8) :: MAXVD, SX(IP+IQ), SG(IP+IQ), SR(IP+IQ), SSX(IP+IQ),
-     1           ALPH(IP+IQ),  CST0, CST1, CST4, CST10,
-     2           CONSTA, CONSTB, EPS3, EPS4, VDN, SCI, SUM,
-     3           SRO, GSR, DGAM, DGAM1, RAM, RAMSRO, RAMT,
-     4           SPHAI, RAM1, CONSDR, SD                                                         
+      INTEGER N, IQ, IP, ISWRO
+      DOUBLE PRECISION PHAI, SIGMA2, G(IP+IQ), C(IP+IQ), Y(N), X(IP+IQ),
+     1                 VD(IP+IQ,IP+IQ)
+      DOUBLE PRECISION MAXVD, SX(IP+IQ), SG(IP+IQ), SR(IP+IQ),
+     1                 SSX(IP+IQ), ALPH(IP+IQ), CST0, CST1, CST4, CST10,
+     2                 CONSTA, CONSTB, EPS3, EPS4, VDN, SCI, SUM,
+     3                 SRO, GSR, DGAM, DGAM1, RAM, RAMSRO, RAMT,
+     4                 SPHAI, RAM1, CONSDR, SD                                                         
       DATA CST0,CST1,CST4,CST10/0.0D-00,1.0D-00,4.0D-00,10.0D-00/       
       DATA CONSTA,CONSTB,EPS3,EPS4/0.5D-00,2.0D-00,0.1D-05,0.1D-05/     
 cc      DATA SSX/50*0.0D-00/                                              
@@ -735,9 +734,9 @@ cc      REAL*4 DFORM(20),TITL(20)
 cc      DIMENSION Y(2000),A(50),B(50),P0(50)                              
 cc      DATA A,B/100*0.0D-00/                                             
 cxx      DIMENSION YS(N), Y(N), P0(IP+IQ)
-      INTEGER :: N
-      REAL(8) :: YS(N), Y(N)
-      REAL(8) :: CST0, AN, SUM, YMEAN
+      INTEGER N
+      DOUBLE PRECISION YS(N), Y(N)
+      DOUBLE PRECISION CST0, AN, SUM, YMEAN
       DATA CST0/0.0D-00/                                                
 C                                                                       
 C-----  INITIAL CONDITION LOADING FOR AR-MA(IQ,IP)  -----               
@@ -855,10 +854,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION P0(50),P1(50),Y(2000),G(50),PP0(50)                     
 cxx      DIMENSION P0(IP+IQ),P1(IP+IQ),Y(N),G(IP+IQ),PP0(IP+IQ)                     
 cxx      DIMENSION ALPH(IP+IQ)
-      INTEGER :: N, IQ, IP
-      REAL(8) :: F0, SD, G(IP+IQ), Y(N), P0(IP+IQ)
-      REAL(8) :: P1(IP+IQ), PP0(IP+IQ), ALPH(IP+IQ), CST07, 
-     1           EPSA, EPSAS, F1, SDN
+      INTEGER N, IQ, IP
+      DOUBLE PRECISION F0, SD, G(IP+IQ), Y(N), P0(IP+IQ)
+      DOUBLE PRECISION P1(IP+IQ), PP0(IP+IQ), ALPH(IP+IQ), CST07,
+     1                 EPSA, EPSAS, F1, SDN
       DATA EPSA,CST07/0.1D-03,0.7D-00/                                  
 C                                                                       
 cc      CALL FUNCT2(F0,SD,Y,N,P0,IQ,IP)                                   
@@ -959,11 +958,12 @@ cc      DIMENSION Y(2000),P0(50),G(50),HS(50,50),CR(50),PP0(50),ALPH(50)
 cxx      DIMENSION Y(N),P0(IP+IQ),P02(IP+IQ)
 cxx      DIMENSION G(IP+IQ),G2(IP+IQ),HS(IP+IQ,IP+IQ),CR(IP+IQ)
 cxx      DIMENSION PP0(IP+IQ),ALPH(IP+IQ),ALPHB(IQ),ALPHA(IP)
-      INTEGER :: N, IQ, IP
-      REAL(8) :: TL, TL2, SIGMA2, Y(N), P0(IP+IQ), G(IP+IQ), P02(IP+IQ),
-     1           G2(IP+IQ), ALPHB(IQ), ALPHA(IP)
-      REAL(8) :: MAXAB, HS(IP+IQ,IP+IQ), CR(IP+IQ), PP0(IP+IQ),
-     1           ALPH(IP+IQ), CST0, CST10, CST05, CST005, PAB, BN, SUM
+      INTEGER N, IQ, IP
+      DOUBLE PRECISION TL, TL2, SIGMA2, Y(N), P0(IP+IQ), G(IP+IQ),
+     1                 P02(IP+IQ), G2(IP+IQ), ALPHB(IQ), ALPHA(IP)
+      DOUBLE PRECISION MAXAB, HS(IP+IQ,IP+IQ), CR(IP+IQ), PP0(IP+IQ),
+     1                 ALPH(IP+IQ), CST0, CST10, CST05, CST005, PAB,
+     2                 BN, SUM
 cc      COMMON /COM50/HS /CMALPH/ALPH                                     
 cc      DATA PP0/50*0.0D-00/                                              
       DATA CST0,CST10,CST05,CST005/0.0D-00,10.0D-00,0.1D-03,0.00005D-00/
@@ -1177,9 +1177,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION P(51,51),A(50),B(50),WS(51),R(51),DB(1300)              
 cxx      DIMENSION P(IR,IR),A(IR),B(IR),WS(IR),R(IR+1),DB(IQ*2)
-      INTEGER :: IQ, IP, IR              
-      REAL(8) :: P(IR,IR), B(IR), A(IR)
-      REAL(8) :: WS(IR), R(IR+1), DB(IQ*2), CST0, CST1, SUM, CKB, CKI
+      INTEGER IQ, IP, IR              
+      DOUBLE PRECISION P(IR,IR), B(IR), A(IR)
+      DOUBLE PRECISION WS(IR), R(IR+1), DB(IQ*2), CST0, CST1, SUM,
+     1                 CKB, CKI
       DATA CST0,CST1/0.0D-00,1.0D-00/                                   
 C                                                                       
 C                                                                       

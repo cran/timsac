@@ -1,7 +1,7 @@
       SUBROUTINE MULBARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD,AIC,DIC,IMIN,
      *                    AICM,SDMIN,BW1,BW2,A,B,G,H,E,AICB )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  MULBAR                                                   
 C.......................................................................
@@ -85,8 +85,6 @@ C                  -- FOR EXAMPLE --     (8F10.5)
 C           C(I):  CALIBRATION OF CHANNEL I (I=1,ID)                    
 C           Z:     ORIGINAL DATA; Z(K,I) (K=1,N) REPRESENTS THE I-TH CHA
 C                  RECORD                                               
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULBARF
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
@@ -102,12 +100,13 @@ cxx      DIMENSION  E(ID,ID)
 C
 cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
 cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
-      INTEGER :: N, ID, LAG, IMIN
-      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), SD(LAG+1),
-     1           AIC(LAG+1), DIC(LAG+1), AICM, SDMIN, BW1(LAG+1),
-     2           BW2(LAG), A(ID,ID,LAG), B(ID,ID,LAG), G(ID,ID,LAG),
-     3           H(ID,ID,LAG), E(ID,ID), AICB
-      REAL(8) :: Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), EK
+      INTEGER N, ID, LAG, IMIN
+      DOUBLE PRECISION ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), SD(LAG+1),
+     1                 AIC(LAG+1), DIC(LAG+1), AICM, SDMIN, BW1(LAG+1),
+     2                 BW2(LAG), A(ID,ID,LAG), B(ID,ID,LAG),
+     3                 G(ID,ID,LAG), H(ID,ID,LAG), E(ID,ID), AICB
+c local
+      DOUBLE PRECISION Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), EK
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )

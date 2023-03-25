@@ -3,7 +3,7 @@ cxx      SUBROUTINE BSUBSTF( ZS,N,IMODEL,LAG,K,IL,LG1,LG2,F,CNST,ZMEAN,SUM,
      *M,AICM,SDM,A1,SD,AIC,DIC,AICB,SDB,EK,A2,IND,C,C1,C2,B,OEIC,ESUM,
      *OMEAN,OM,E,EMEAN,VARI,SKEW,PEAK,COV,SXX )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM BSUBST
 C.......................................................................
@@ -64,8 +64,6 @@ C                   -- EXAMPLE --  (8F10.5 )
 C          X(I) (I=1,N):   ORIGINAL DATA                                
 C       ----------------------------------------------------------------
 C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: BSUBSTF
-C
       PARAMETER  ( MJ2 = 101 )
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
@@ -86,13 +84,14 @@ cxx      DIMENSION  SXX(121), FA(N-LAG,IL)
 cc      CHARACTER*4 F(20,K+1)
 cxx      INTEGER*1  F(80,K+1)
 cxx      CHARACTER(4) G
-      INTEGER :: N, IMODEL, LAG, K, IL, LG1(3,K), LG2(5), M, IND(K) 
-      REAL(8) :: ZS(N), ZMEAN, SUM, AICM, SDM, A1(K), SD(K+1), AIC(K+1),
-     1           DIC(K+1), AICB, SDB, EK, A2(K), C(K), C1(K+1), C2(K),
-     2           B(K), OEIC, ESUM(K+1), OMEAN, OM, E(N,IL),
-     3           EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2),
-     4           SXX(121)
-      REAL(8) :: Z(N), X(N,K+1), FA(N-LAG,IL), SD0, CONST
+      INTEGER N, IMODEL, LAG, K, IL, LG1(3,K), LG2(5), M, IND(K) 
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, AICM, SDM, A1(K), SD(K+1),
+     1                 AIC(K+1), DIC(K+1), AICB, SDB, EK, A2(K), C(K),
+     2                 C1(K+1), C2(K), B(K), OEIC, ESUM(K+1), OMEAN,
+     3                 OM, E(N,IL), EMEAN(IL), VARI(IL), SKEW(IL),
+     4                 PEAK(IL), COV(MJ2), SXX(121)
+c local
+      DOUBLE PRECISION Z(N), X(N,K+1), FA(N-LAG,IL), SD0, CONST
       CHARACTER(4) G
 C
       COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
@@ -336,7 +335,7 @@ C          F:     NUMBER OF COMBINATIONS OF SELECTING J OBJECTS FROM
 C                 A SET OF K OBJECTS                                    
 C                                                                       
 cxx      IMPLICIT REAL * 8 ( A-H , O-Z )
-      REAL(8) :: SUM, DI
+      DOUBLE PRECISION SUM, DI
 C                                                                       
       KMJ = K-J                                                         
       SUM = 0.D0                                                        
@@ -409,10 +408,10 @@ cxx      DIMENSION  A(K) , COV(MJ2)
 cxx      DIMENSION  EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL)
 cc      COMMON  /COMXX/ F(2000)                                           
 cxx      DIMENSION  F(NPE-NPS+1,IL)
-      INTEGER :: K, L, IL, NPS, NPE, MJ, MJ2 
-      REAL(8) :: X(NPE), A(K), E(MJ,IL), F(NPE-NPS+1,IL), EMEAN(IL),
-     1           VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
-      REAL(8) :: SUM, COV1, SD
+      INTEGER K, L, IL, NPS, NPE, MJ, MJ2 
+      DOUBLE PRECISION X(NPE), A(K), E(MJ,IL), F(NPE-NPS+1,IL),
+     1                 EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
+      DOUBLE PRECISION SUM, COV1, SD
 C                                                                       
 C                                                                       
       ISTEP = 1                                                         
@@ -566,9 +565,9 @@ cxx      IMPLICIT  REAL * 8  ( F )
 CC      DIMENSION  X(1)                                                   
 cx	REAL*8  X(1)
 cxx      REAL*8  X(N)
-      INTEGER :: N
-      REAL(8) :: X(N), F1, F2, F3, F4
-      REAL(8) :: FN, FSUM, FF
+      INTEGER N
+      DOUBLE PRECISION X(N), F1, F2, F3, F4
+      DOUBLE PRECISION FN, FSUM, FF
 C                                                                       
       FN = N                                                            
       FSUM = 0.D0                                                       
@@ -620,9 +619,9 @@ cx      DIMENSION  Z(1) , EZ(MJ,1)
 cx	DIMENSION  A(1)
 cxx      DIMENSION  Z(NPE) , EZ(MJ,IL)
 cxx      DIMENSION  A(M)                                                   
-      INTEGER :: M, L, IL, NPS, NPE, MJ
-      REAL(8) :: Z(NPE), A(M), EZ(MJ,IL)
-      REAL(8) :: SUM
+      INTEGER M, L, IL, NPS, NPE, MJ
+      DOUBLE PRECISION Z(NPE), A(M), EZ(MJ,IL)
+      DOUBLE PRECISION SUM
 C                                                                       
 C                                                                       
       DO  100     II=NPS,NPE                                            
@@ -682,10 +681,10 @@ cc      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(20)
 cx      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
 cxx      DIMENSION Z(NPE) , A(K) , EZ(MJ1,IL) , Y(IL)
 cc      REAL * 4   CSTDMY, SD0DMY
-      INTEGER :: K, IL, NPS, NPE, MJ1
-      REAL(8) :: Z(NPE), A(K), EZ(MJ1,IL)
-      REAL(8) :: Y(IL), CSTDMY, SD0DMY, SUM, XX, X
-      COMMON     / BBB /  LAG1(50) , LAG2(50) , LAG3(50), CSTDMY, SD0DMY
+      INTEGER K, IL, NPS, NPE, MJ1
+      DOUBLE PRECISION Z(NPE), A(K), EZ(MJ1,IL)
+      DOUBLE PRECISION Y(IL), CSTDMY, SD0DMY, SUM, XX, X
+      COMMON  / BBB /  LAG1(50) , LAG2(50) , LAG3(50), CSTDMY, SD0DMY
 CC      INTEGER  RETURN                                                   
 C                                                                       
 cxx      DO 100  II=NPS,NPE                                                
@@ -799,9 +798,9 @@ C              ......................................................
 C                                                                       
 cc      REAL * 4   CSTDMY,SD0DMY
 cxx      REAL * 8   CSTDMY,SD0DMY
-      INTEGER :: K, LAG1, LAG2, LAG3, LAG4, LAG5
-      REAL(8) :: CSTDMY, SD0DMY
-      COMMON     / BBB /  L1(50),L2(50),L3(50),CSTDMY,SD0DMY
+      INTEGER K, LAG1, LAG2, LAG3, LAG4, LAG5
+      DOUBLE PRECISION CSTDMY, SD0DMY
+      COMMON  / BBB /  L1(50), L2(50), L3(50), CSTDMY, SD0DMY
 C                                                                       
 cc      READ( 5,1 )     LAG1,LAG2,LAG3,LAG4,LAG5                          
 cc      WRITE( 6,2 )    LAG1,LAG2,LAG3,LAG4,LAG5                          
@@ -931,10 +930,10 @@ cc      REAL * 4   CSTDMY, SD0DMY
 cx      REAL * 8  X(MJ1,1) ,  Z(1) , ZTEM
 cxx      REAL * 8  X(MJ1,K+1) ,  Z(N0+LAG+L) , ZTEM
 cxx      REAL * 8  CSTDMY, SD0DMY
-      INTEGER :: N0, L, K, MJ1, JSW, LAG 
-      REAL(8) :: Z(N0+LAG+L), X(MJ1,K+1)
-      REAL(8) :: CSTDMY, SD0DMY, ZTEM
-      COMMON     / BBB /  L1(50) , L2(50) , L3(50), CSTDMY, SD0DMY  
+      INTEGER N0, L, K, MJ1, JSW, LAG 
+      DOUBLE PRECISION Z(N0+LAG+L), X(MJ1,K+1)
+      DOUBLE PRECISION CSTDMY, SD0DMY, ZTEM
+      COMMON  / BBB /  L1(50) , L2(50) , L3(50), CSTDMY, SD0DMY  
 C                                                                       
       K1 = K + 1                                                        
       I0 = K1*JSW                                                       
@@ -997,11 +996,11 @@ CC      REAL * 4 Z(1)
 cx      DIMENSION  Z(1)
 cx      DIMENSION  X(MJ1,1)                                               
 cxx      DIMENSION  X(MJ1,K+1) ,  Z(NO+LAG+L)
-      INTEGER :: NO, L, K, MJ1, JSW, LAG                       
-      REAL(8) :: Z(NO+LAG+L), X(MJ1,K+1)
-      REAL(8) :: BN, Y, XX
+      INTEGER NO, L, K, MJ1, JSW, LAG                       
+      DOUBLE PRECISION Z(NO+LAG+L), X(MJ1,K+1)
+      DOUBLE PRECISION BN, Y, XX
 cc      COMMON     / AAA /  N , M                                         
-      COMMON     / AAA /  N
+      COMMON  / AAA /  N
 C                                                                       
 C          M:      ORDER OF POLYNOMIAL OF MEAN VALUE FUNCTION           
 C                                                                       
@@ -1054,8 +1053,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cx      DIMENSION  X(1) , IX(1)                                           
 cxx      DIMENSION  X(N) , IX(N)
-      INTEGER :: N, IX(N)
-      REAL(8) :: X(N), XMIN, XT
+      INTEGER N, IX(N)
+      DOUBLE PRECISION X(N), XMIN, XT
 C                                                                       
       NM1 = N - 1                                                       
       DO  30     I=1,N                                                  
@@ -1112,12 +1111,12 @@ cx      DIMENSION  B(1) , C(K) , D(K+1,K+1)
 cxx      DIMENSION  B(K) , C(K) , D(K+1,K+1)                                
 cxx      DIMENSION  IND(K) , KND(K+1) , ESUM(K+1)                           
 cxx      DIMENSION  C1(K+1), C2(K), ESUM1(K+1)
-      INTEGER :: K, N, IND(K)
-      REAL(8) :: B(K), EK, C(K), C1(K+1), C2(K), OEIC, ESUM1(K+1),
-     1           OMEAN, OM
-      INTEGER :: KND(K+1)
-      REAL(8) :: BICOEF, D(K+1,K+1), ESUM(K+1), CC, DN, SUM, EIC,
-     1           SUMC, EXIC, OSUM
+      INTEGER K, N, IND(K)
+      DOUBLE PRECISION B(K), EK, C(K), C1(K+1), C2(K), OEIC, ESUM1(K+1),
+     1                 OMEAN, OM
+      INTEGER KND(K+1)
+      DOUBLE PRECISION BICOEF, D(K+1,K+1), ESUM(K+1), CC, DN, SUM, EIC,
+     1                 SUMC, EXIC, OSUM
 C                                                                       
       CC = 1.D0 + DLOG(2.D0)                                            
       K1 = K + 1                                                        
@@ -1378,10 +1377,10 @@ cx      DIMENSION  X(MJ1,1) , A(1) , D(K)
 cxx      DIMENSION  X(MJ1,K+1) , A(K) , D(K)                                 
 cxx      DIMENSION  B(K) , G(K)
 cxx      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
-      INTEGER :: K, N, IPR, MJ1, IND(K)
-      REAL(8) :: X(MJ1,K+1), A(K), SD, EK, AIC, C(K), C1(K+1), C2(K),
-     1           B(K), OEIC, ESUM(K+1), OMEAN, OM
-      REAL(8) :: D(K), G(K), FN, SUM, BB
+      INTEGER K, N, IPR, MJ1, IND(K)
+      DOUBLE PRECISION X(MJ1,K+1), A(K), SD, EK, AIC, C(K), C1(K+1),
+     1                 C2(K), B(K), OEIC, ESUM(K+1), OMEAN, OM
+      DOUBLE PRECISION D(K), G(K), FN, SUM, BB
       K1 = K + 1                                                        
       FN = N                                                            
 cc      IF( IPR .GE. 2 )     WRITE( 6,3 )                                 

@@ -3,7 +3,7 @@ cx     *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,TMP,
 cx     *MJ1,MJ2,IER)
      *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,MJ1,MJ2)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc	PROGRAM CANARM
 C     PROGRAM 74.1.1. CANONICAL CORRELATION ANALYSIS OF SCALAR TIME SERI
@@ -43,8 +43,6 @@ C     THE AR-MA MODEL IS GIVEN BY
 C     Y(N)+BETA(1)Y(N-1)+...+BETA(M1M)Y(N-M1M) = X(N)+ALPHA(1)X(N-1)+...
 C                                                                      ...+ALPHA(M1N)X(N-M1N)
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: CANARMF
-C
 cc      PARAMETER (MJ1=50,MJ2=101)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION X(50),Y(50),Z(50)
@@ -71,16 +69,16 @@ cxx      DIMENSION VC(MJ2),VT(MJ2)
 cxx      DIMENSION ST(MJ2,MJ1),T(MJ2,MJ1)
 cxx      DIMENSION AST1((MJ2-1)*MJ2/2)
 cxx      DIMENSION VV(MJ1,MJ1)
-      INTEGER :: N, LAGH3, IFPL1, MO, NC, MM1(MJ1), MM2(MJ1),
-     1           NDT(MJ1,MJ1), MIN3(MJ1), M1M, M1N, MJ1, MJ2
-      REAL(8) :: CYY(LAGH3), COEF(MJ2), SD(0:MJ1), AIC(0:MJ1), OAIC,
-     1           A(MJ1), V(MJ1,MJ1,MJ1), Z(MJ1,MJ1), Y(MJ1,MJ1), 
-     2           XX(MJ1,MJ1), X3(MJ1,MJ1), X3MIN(MJ1), BETA(MJ1),
-     3           ALPHA(MJ1)
-c
-      REAL(8) :: WL(MJ1), VC(MJ2), VT(MJ2), ST(MJ2,MJ1), T(MJ2,MJ1),
-     1           AST1((MJ2-1)*MJ2/2), VV(MJ1,MJ1), CST0, CST1, CST2,
-     2           CST9, AN, EM, EN, ANDT, AII
+      INTEGER N, LAGH3, IFPL1, MO, NC, MM1(MJ1), MM2(MJ1), NDT(MJ1,MJ1),
+     1        MIN3(MJ1), M1M, M1N, MJ1, MJ2
+      DOUBLE PRECISION CYY(LAGH3), COEF(MJ2), SD(0:MJ1), AIC(0:MJ1),
+     1                 OAIC, A(MJ1), V(MJ1,MJ1,MJ1), Z(MJ1,MJ1),
+     2                 Y(MJ1,MJ1),  XX(MJ1,MJ1), X3(MJ1,MJ1),
+     3                 X3MIN(MJ1), BETA(MJ1), ALPHA(MJ1)
+c local
+      DOUBLE PRECISION WL(MJ1), VC(MJ2), VT(MJ2), ST(MJ2,MJ1),
+     1                 T(MJ2,MJ1), AST1((MJ2-1)*MJ2/2), VV(MJ1,MJ1),
+     2                 CST0, CST1, CST2, CST9, AN, EM, EN, ANDT, AII
 c
 cx      INTEGER*1 TMP(1)
 cx      CHARACTER CNAME*80
@@ -341,8 +339,8 @@ cc      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION A(101)
 cxx      DIMENSION A(M1M)
 cxx      DIMENSION BETA(M1M),ALPHA(M1M)
-      INTEGER :: M1M
-      REAL(8) :: A(M1M), BETA(M1M), ALPHA(M1M), SUM
+      INTEGER M1M
+      DOUBLE PRECISION A(M1M), BETA(M1M), ALPHA(M1M), SUM
       ALPHA(M1M)=0.0D-00
       IF  (M1M.LE.1) GO TO 20
       ALPHA(1)=BETA(1)-A(1)
@@ -397,11 +395,12 @@ cxx      DIMENSION CYY(L3),COEF(L1)
 cxx      DIMENSION AST1(NA)
 cxx      DIMENSION A(L1),B(L1)
 cxx      DIMENSION AIC(0:L1),SD(0:L1),AA(L1)
-      INTEGER :: L3, L1, N, NA, MO
-      REAL(8) :: CYY(L3), AST1(NA), COEF(L1), SD(0:L1), AIC(0:L1),
-     1           AA(L1), OAIC
-      REAL(8) :: A(L1), B(L1), CST0, CST1, CST2, CST20, CST05, CST01,
-     1           AM, AN, RAN, SCALH, SE, SDR, D, D2, CONST, DLSD
+      INTEGER L3, L1, N, NA, MO
+      DOUBLE PRECISION CYY(L3), AST1(NA), COEF(L1), SD(0:L1), AIC(0:L1),
+     1                 AA(L1), OAIC
+      DOUBLE PRECISION A(L1), B(L1), CST0, CST1, CST2, CST20, CST01,
+     1                 CST05, AM, AN, RAN, SCALH, SE, SDR, D, D2, CONST,
+     2                 DLSD
 cc      REAL*4 AX,BL,STA,DASH,PLUS
 cc      REAL*4 FFFF
 cc      REAL*4  F(41) / 41*1H  /, AMES(41) / 41*1H- /
@@ -599,9 +598,9 @@ cc      COMMON /COM9/AST1
 cc      DIMENSION AST1(5200)
 cxx      DIMENSION AST1(NA)
 cxx      DIMENSION VC(M9),VT(M9)
-      INTEGER :: M9, NA
-      REAL(8) :: VC(M9), VT(M9), AST1(NA)
-      REAL(8) :: CST0, SUM
+      INTEGER M9, NA
+      DOUBLE PRECISION VC(M9), VT(M9), AST1(NA)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       INX=0
       DO  10 I=1,M9
@@ -626,10 +625,10 @@ cc      DIMENSION AST1(5200),ISUM1(50)
 cxx      DIMENSION VV(MJ1,MJ1)
 cxx      DIMENSION AST1(NA),ISUM1(M1)
 cxx      DIMENSION V(MJ1,MJ1)
-      INTEGER :: NA, M1, MJ1
-      REAL(8) :: VV(MJ1,MJ1), V(MJ1,MJ1), AST1(NA)
-      INTEGER :: ISUM1(M1)
-      REAL(8) :: CST0, SUM
+      INTEGER NA, M1, MJ1
+      DOUBLE PRECISION VV(MJ1,MJ1), V(MJ1,MJ1), AST1(NA)
+      INTEGER ISUM1(M1)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       ISUM=0
       DO 15 I=1,M1
@@ -662,8 +661,8 @@ cc      DIMENSION AST1(5200)
 cc      DIMENSION CYY(1001),VC(M9)
 cxx      DIMENSION AST1(NA)
 cxx      DIMENSION CYY(L3),VC(M9)
-      INTEGER :: L3, NA, M9, M1, INDX
-      REAL(8) :: CYY(L3), AST1(NA), VC(M9), CST0
+      INTEGER L3, NA, M9, M1, INDX
+      DOUBLE PRECISION CYY(L3), AST1(NA), VC(M9), CST0
       CST0=0.0D-00
 cxx      DO  10 I=1,M9
 cxx   10 VC(I)=CST0

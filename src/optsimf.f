@@ -1,7 +1,7 @@
       SUBROUTINE OPTSIMF(NS,M,IR,L,A,B,G,W,X,Y,XMEAN,YMEAN,XS2,YS2,
      * XS2MEA,YS2MEA,XVAR,YVAR)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM OPTSIM
 C     PROGRAM 5.5.2   OPTIMAL CONTROL SIMULATION
@@ -26,9 +26,6 @@ C     INTP=2: TO PRINT OUT THE HISTORY
 C     THE SEQUENCE OF NS IR-DIMENSIONAL VECTORS W, REPRESENTING WHITE
 C     NOISE (OR IMPULSE) IS ALSO REQUIRED AS INPUT.
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: OPTSIMF
-cc      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	DIMENSION A(75,5),B(75,5),Q1(5,5),R(5,5),G(5,75)
 cc	DIMENSION X(5),XS(5),XS2(5)
@@ -42,12 +39,13 @@ cxx      DIMENSION Y(L,NS),YS(L),YS2(L)
 cxx      DIMENSION W(IR,NS),Z(IR*M),C(IR*M)
 cxx      DIMENSION XMEAN(IR),XS2MEA(IR),XVAR(IR)
 cxx      DIMENSION YMEAN(L),YS2MEA(L),YVAR(L)
-      INTEGER :: NS, M, IR, L
-      REAL(8) :: A(IR*M,IR), B(IR*M,L), G(L,IR*M), W(IR,NS), X(IR,NS),
-     1           Y(L,NS), XMEAN(IR), YMEAN(L), XS2(IR), YS2(L),
-     2           XS2MEA(IR), YS2MEA(L), XVAR(IR), YVAR(L)
-      REAL(8) :: XS(IR), YS(L), Z(IR*M), C(IR*M), CST0, CST1,
-     1           ANS, BNS
+      INTEGER NS, M, IR, L
+      DOUBLE PRECISION A(IR*M,IR), B(IR*M,L), G(L,IR*M), W(IR,NS),
+     1                 X(IR,NS), Y(L,NS), XMEAN(IR), YMEAN(L), XS2(IR),
+     2                 YS2(L), XS2MEA(IR), YS2MEA(L), XVAR(IR), YVAR(L)
+c local
+      DOUBLE PRECISION XS(IR), YS(L), Z(IR*M), C(IR*M), CST0, CST1,
+     1                 ANS, BNS
 C     INPUT / OUTPUT DATA FILE OPEN
 cc	CALL SETWND
 cc	CALL FLOPN2(NFL)
@@ -206,8 +204,8 @@ C
 C     X=X+Y (X,Y: VECTORS)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION X(MM),Y(MM)
-      INTEGER :: MM
-      REAL(8) :: X(MM), Y(MM)
+      INTEGER MM
+      DOUBLE PRECISION X(MM), Y(MM)
       DO 10 I=1,MM
 cxx   10 X(I)=X(I)+Y(I)
       X(I)=X(I)+Y(I)

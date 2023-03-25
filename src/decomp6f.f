@@ -1,10 +1,7 @@
-      SUBROUTINE  DECOMPF(DATA,N,IPAR,TREND,SEASNL,AR,
-cx     *                    TRAD,NOISE,para,imiss,omaxx )
-     *                    TRAD,NOISE,para,imiss,omaxx,ier )
+      SUBROUTINE  DECOMPF(DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
+     *                    para,imiss,omaxx,ier )
 C
-      INCLUDE 'timsac_f.h'
-C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: DECOMPF
+      INCLUDE 'timsac.h'
 C
       PARAMETER (IOPT=1)
       PARAMETER (NIP=9, NPA=26)
@@ -12,10 +9,11 @@ cxx      REAL*8    DATA(N), para(NPA), omaxx
 cxx      INTEGER   IPAR(NIP)
 cxx      REAL*8    TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
 cxx      INTEGER   PERIOD, SORDER
-      INTEGER :: N,  IPAR(NIP), imiss, ier
-      REAL(8) :: DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N), NOISE(N),
-     1           para(NPA), omaxx
-      INTEGER :: PERIOD, SORDER
+      INTEGER N,  IPAR(NIP), imiss, ier
+      DOUBLE PRECISION DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N),
+     1                 NOISE(N), para(NPA), omaxx
+c local
+      INTEGER PERIOD, SORDER
       COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
      *                    NYEAR, nmonth
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
@@ -172,11 +170,12 @@ cxx      REAL*8     TREND(N),SEASNL(N),AR(N),TRAD(N),NOISE(N)
 cxx      INTEGER    IMIS(N), PERIOD, SORDER
 cc      COMMON     /COMSM1/  WORK(300000)
 cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7)
-      INTEGER :: N, iopt, imiss, LM1, ier 
-      REAL(8) :: DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N), NOISE(N),
-     1           para(NPA), omaxx
-      INTEGER :: IMIS(N), PERIOD, SORDER
-      REAL(8) :: A(L+M2), YMEAN, Z(N), E(L,LM1,N), TDAY(N,7), FF
+      INTEGER N, iopt, imiss, LM1, ier 
+      DOUBLE PRECISION DATA(N), TREND(N), SEASNL(N), AR(N), TRAD(N),
+     1                 NOISE(N), para(NPA), omaxx
+c local
+      INTEGER IMIS(N), PERIOD, SORDER
+      DOUBLE PRECISION A(L+M2), YMEAN, Z(N), E(L,LM1,N), TDAY(N,7), FF
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,
 cc     *               NS, NI, MISING, IOUT, LL, NN, NYEAR,nmonth, 
 cc     *                     NPREDS, NPREDE, IPRED 
@@ -229,7 +228,7 @@ cx      CALL  LOGTRF( Z,IMIS,N,LOG )
       if(ier .ne. 0) return
 C                                                                       
 C           ...  prepare calender for trading day adjustment  ...       
-C                                                                       
+C
       IF( M4 .NE. 0)  then
 cc      if( isea .eq. 12 )  CALL  TRADE( NYEAR,nmonth,N,WORK(NP2) )
 cc      if( isea .eq. 4 )  CALL  TRADE2( NYEAR,nmonth,N,WORK(NP2) )
@@ -287,8 +286,8 @@ C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cc      DIMENSION  AR(K) , PAC(K) , W(100)
 cxx      DIMENSION  AR(K) , PAC(K) , W(K)
-      INTEGER :: K
-      REAL(8) :: PAC(K), AR(K), W(K)
+      INTEGER K
+      DOUBLE PRECISION PAC(K), AR(K), W(K)
 C                                                                       
       DO  30     II=1,K                                                 
       AR(II) = PAC(II)                                                  
@@ -320,12 +319,11 @@ cc      DIMENSION  A(40), AI(20)
 cxx      DIMENSION  A(L+M2), AI(L+M2)
 cxx      DIMENSION  Z(N), E(L,L+M+1,N), TDAY(N,7), IMIS(N)
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: IMIS(N), N, iopt
-      REAL(8) :: Z(N), E(L,L+M+1,N), TDAY(N,7), A(L+M2)
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: AI(L+M2), 
-     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF,
-     2           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
+      INTEGER IMIS(N), N, iopt
+      DOUBLE PRECISION Z(N), E(L,L+M+1,N), TDAY(N,7), A(L+M2)
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION AI(L+M2), F1, F2, F3, A1, A2, A3, DI, UI, TDF,
+     1                 DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
 cc      REAL*4     CPUS, CPUE, TITLE(20), TIME(3)
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *                  NS, NI, MISING, IOUT,LL,N,NYEAR,nmonth,NPREDS,      
@@ -335,12 +333,12 @@ cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG                   
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)                            
-      COMMON /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
-      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH
+      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                  NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10),
+     *                  A3(300) ,DI, UI(3), TDF(7)                            
+      COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
+      COMMON  /CCC/     ISW, ISMT, IDIF, LOG, MESH
       EXTERNAL   FUNCSA                                                 
 C                                                                       
       LM = L + M2                                                       
@@ -406,16 +404,16 @@ cxx      IMPLICIT   REAL*8( A-H,O-Z )
 cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
 cc      DIMENSION  A(M) , G(M) , B(20)
 cxx      DIMENSION  A(M) , G(M) , B(M)
-      INTEGER :: IMIS(N), N, M, IFG, L, LM1
-      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), A(M), F, G(M)
-      REAL(8) :: B(M), CONST, FB, FF,
-     1           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
+      INTEGER IMIS(N), N, M, IFG, L, LM1
+      DOUBLE PRECISION Z(N), E(L,LM1,N), TDAY(N,7), A(M), F, G(M)
+      DOUBLE PRECISION B(M), CONST, FB, FF,
+     1                 DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
 c      COMMON     / CCC /  ISW , IPR, ISMT, IDIF, log
 cxx      COMMON     /CCC/    ISW, IPR, ISMT, IDIF, LOG, MESH              
 ccx      COMMON     /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
-      COMMON     /CCC/    ISW, ISMT, IDIF, LOG, MESH              
+      COMMON   /CCC/    ISW, ISMT, IDIF, LOG, MESH              
       COMMON   /CMFUNC/ DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
-
+C
       DATA       ICNT /0/                                               
       CONST = 0.0001D0                                                  
 C
@@ -479,11 +477,11 @@ cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N), A(KK)
 C
 cxx      DIMENSION  IMISR(N), ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1)
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: IMIS(N), N, LM1, KK, IFG 
-      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), A(KK), FF
-      INTEGER :: PERIOD, SORDER, IMISR(N)
-      REAL(8) :: ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1),
-     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF, TAU2, SUM
+      INTEGER IMIS(N), N, LM1, KK, IFG 
+      DOUBLE PRECISION Z(N), E(L,LM1,N), TDAY(N,7), A(KK), FF
+      INTEGER PERIOD, SORDER, IMISR(N)
+      DOUBLE PRECISION ZZ(N), Y(M), R(LM1+1,LM1), S(M+1,M+1),
+     1                 F1, F2, F3, A1, A2, A3, DI, UI, TDF, TAU2, SUM
 cc      COMMON    /COMSM1/  WORK(300000)
 cc      COMMON    /COMSM2/  K1, K2, K3, K4, K5, M, L, ISEA, KSEA,
 cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,  
@@ -493,11 +491,11 @@ cc      COMMON    /COMSM4/  NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8
 c      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG       
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 cc      common    /cccout/  IMIS(3000)      
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)
-      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
+      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                  NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), 
+     *                  A3(300), DI, UI(3), TDF(7)
+      COMMON  /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
       IFG = 0                                                           
 cc      K = K1 + K2 + K3 + K4 + K5                                        
@@ -609,9 +607,9 @@ C
 cxx      IMPLICIT  REAL*8( A-H,O-Z )                                       
 cc      DIMENSION  X(MJ1,K), D(50)                                        
 cxx      DIMENSION  X(MJ1,K), D(K)
-      INTEGER :: MJ1, N, K, M, ISW
-      REAL(8) :: X(MJ1,K)
-      REAL(8) :: D(K), TOL, D0, D1, H, G, S
+      INTEGER MJ1, N, K, M, ISW
+      DOUBLE PRECISION X(MJ1,K)
+      DOUBLE PRECISION D(K), TOL, D0, D1, H, G, S
       DATA     TOL /1.0D-30/                                            
 C                                                                       
       IF( ISW .EQ. 1 )   GO TO 110                                      
@@ -658,9 +656,9 @@ C     Householder Transformation,  TYPE 7
 C                                                                       
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 cxx      DIMENSION  X(MJ1,K) , D(MJ1)                                      
-      INTEGER :: MJ1, K, M, KE
-      REAL(8) :: X(MJ1,K), D(MJ1)
-      REAL(8) :: TOL, H, G, F, S
+      INTEGER MJ1, K, M, KE
+      DOUBLE PRECISION X(MJ1,K), D(MJ1)
+      DOUBLE PRECISION TOL, H, G, F, S
 C                                                                       
            TOL = 1.0D-30                                                
 C                                                                       
@@ -730,13 +728,13 @@ cc      DIMENSION  X(K) , H(K) , X1(20)
 cc      DIMENSION  G(20)                                                  
 cxx      DIMENSION  Z(N), E(L,LM1,N), TDAY(N,7), IMIS(N)
 cxx      DIMENSION  X(K) , H(K) , G(K), X1(K)
-      INTEGER :: IMIS(N), N, L, LM1, K, IG
-      REAL(8) :: Z(N), E(L,LM1,N), TDAY(N,7), X(K), H(K), RAM,
-     1           EE, G(K)
-      INTEGER :: RETURN, SUB
-      REAL(8) :: X1(K), C1, C2, F0, SUM0, CONST2, HNORM,
-     1           RAM1, RAM2, RAM3, A1, A2, A3, B1, B2, E1, E2,
-     2           E3, H1, H2, SUM
+      INTEGER IMIS(N), N, L, LM1, K, IG
+      DOUBLE PRECISION Z(N), E(L,LM1,N), TDAY(N,7), X(K), H(K), RAM,
+     1                 EE, G(K)
+      INTEGER RETURN, SUB
+      DOUBLE PRECISION X1(K), C1, C2, F0, SUM0, CONST2, HNORM,
+     1                 RAM1, RAM2, RAM3, A1, A2, A3, B1, B2, E1, E2,
+     2                 E3, H1, H2, SUM
 c      COMMON     / CCC /  ISW , IPR                          
 c      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG
 cxx      COMMON     /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH
@@ -1000,8 +998,9 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cxx      REAL*8   Z(N)
 cxx      DIMENSION   IMIS(N)                                               
-      INTEGER :: IMIS(N), N, ilog, ier
-      REAL(8) :: Z(N), DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC
+      INTEGER IMIS(N), N, ilog, ier
+      DOUBLE PRECISION Z(N), DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI,
+     1                 GI, GC
 C      COMMON     /CMFUNC/  DJACOB                                       
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 cc      common     /cccout/  IMIS(3000)
@@ -1044,19 +1043,19 @@ cc      DIMENSION  X(20) , DX(20) , G(20) , G0(20) , Y(20)
 cc      DIMENSION  H(20,20) , WRK(20) , S(20)
 cxx      DIMENSION  Z(NN), E(L,LM1,NN), TDAY(NN,7), IMIS(NN), X(N)
 cxx      DIMENSION  DX(N) ,G(N) ,G0(N) ,Y(N) ,H(N,N), WRK(N), S(N)
-      INTEGER :: IMIS(NN), NN, N, L, LM1
-      REAL(8) :: Z(NN), E(L,LM1,NN), TDAY(NN,7), X(N)
-      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
-     1           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
-     2           TAU2, EPS1, EPS2, CONST1, XM, SUM, S1, S2, STEM,
-     3           SS, DS2, GTEM, ED, RAMDA, XMB
+      INTEGER IMIS(NN), NN, N, L, LM1
+      DOUBLE PRECISION Z(NN), E(L,LM1,NN), TDAY(NN,7), X(N)
+      DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1                 DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     2                 TAU2, EPS1, EPS2, CONST1, XM, SUM, S1, S2, STEM,
+     3                 SS, DS2, GTEM, ED, RAMDA, XMB
 c      COMMON     / CCC /  ISW, IPR                                      
 c      COMMON     /CMFUNC/  DJACOB, F, SD, AIC                           
 cc      COMMON     /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,
 cc     *                   GI(20),GDUM(20) 
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
-      COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
+      COMMON  /CCC/     ISW, ISMT, IDIF, LOG, MESH              
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
       EXTERNAL   FUNCT
 cc      DATA  TAU1 , TAU2  /  1.0D-1 , 1.0D-1  /             
@@ -1225,11 +1224,11 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 C  ...  PLOT ESTIMATED PARAMETRS, ORIGINAL DATA AND ESTIMATED PARAMETERS
 C
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: N, LM1
-      REAL(8) :: Z(N), E(L,LM1,N), TRADE(N,7),  COMP1(N), COMP2(N),
-     1           COMP3(N), COMP4(N), COMP5(N)
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: REG(N,M5), SUM, tmp
+      INTEGER N, LM1
+      DOUBLE PRECISION Z(N), E(L,LM1,N), TRADE(N,7), COMP1(N), COMP2(N),
+     1                 COMP3(N), COMP4(N), COMP5(N)
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION REG(N,M5), SUM, tmp
 C      COMMON   /COMSM1/  nwww, WORK                                        
 cc      COMMON     /COMSM1/  WORK(300000)
 cc      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,                  
@@ -1465,9 +1464,9 @@ cxx      IMPLICIT REAL*8( A-H,O-Z )
 cc      REAL * 4     FORM(20), TITLE(20)
 cx      REAL*8       X(1) ,DATA(1)         
 cxx      REAL*8       X(N) ,DATA(N)
-      INTEGER :: ISW, N         
-      REAL(8) :: DATA(N), X(N), XM
-      REAL(8) :: FN, S1, S2, S3, S4, XX
+      INTEGER ISW, N         
+      DOUBLE PRECISION DATA(N), X(N), XM
+      DOUBLE PRECISION FN, S1, S2, S3, S4, XX
 C                                                                       
 C       LOADING OF TITLE, DATA LENGTH, FORMAT SPECIFICATION AND DATA    
 C                                                                       
@@ -1548,17 +1547,17 @@ C  ...  SET F, G AND H MATRICES OF STATE SPACE MODEL  ...
 C                                                                       
 cxx      IMPLICIT  REAL*8(A-H,O-Z)                                         
 cxx      INTEGER   PERIOD, SORDER
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: F1, F2, F3, A1, A2, A3, DI, UI, TDF
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION F1, F2, F3, A1, A2, A3, DI, UI, TDF
 cc      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *              NS, NI, MISING, IOUT, LL, N, NYEAR, nmonth,NPREDS,  
 cc     *                    NPREDE, NPRED
-ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)
-C     *                   ,DI, TAU(3)                                   
+cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
+cc     *                   ,DI, TAU(3)                                   
+      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                  NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), 
+     *                  A3(300), DI, UI(3), TDF(7)
 C                                                                       
       DI = 1.0D0                                                        
 C                                                                       
@@ -1637,14 +1636,14 @@ cxx      REAL*8     Z(N), T(L,LM1,N), REG(N,M5)
 cxx      DIMENSION  S(M+1,M+1), R(LM1+1,LM1), IMIS(N), TRADE(N,7)            
 cxx      DIMENSION  D(LM1+1), WI(3,3), X(LM1), TT(L), E(M)                
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: IMIS(N), N, LM1, ILKF, ISMT
-      REAL(8) :: Z(N), R(LM1+1,LM1), S(M+1,M+1), T(L,LM1,N),
-     1           TRADE(N,7), F
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: REG(N,M5), D(LM1+1), WI(3,3), X(LM1), TT(L), E(M),
-     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF,
-     2           DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
-     3           PAI, SDET, SUM, tmpp, tmp
+      INTEGER IMIS(N), N, LM1, ILKF, ISMT
+      DOUBLE PRECISION Z(N), R(LM1+1,LM1), S(M+1,M+1), T(L,LM1,N),
+     1                 TRADE(N,7), F
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION REG(N,M5), D(LM1+1), WI(3,3), X(LM1), TT(L),
+     1                 E(M), F1, F2, F3, A1, A2, A3, DI, UI, TDF,
+     2                 DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     3                 PAI, SDET, SUM, tmpp, tmp
 cc      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,        
 cc     *             NS, NI, MISING, IOUT, LL, NN, NYEAR,nmonth, NPREDS, 
 cc     *                    NPREDE, IPRED
@@ -1653,10 +1652,10 @@ c      COMMON    /CMFUNC/  DJACOB, FF, SIG2, AIC
 cc      COMMON    /CMFUNC/  DJACOB,FF,
 cc     *            SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20) 
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)                            
+      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                  NYEAR, nmonth
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), 
+     *                  A3(300), DI, UI(3), TDF(7)                            
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
 
       DATA  PAI/3.1415926535D0/                                         
@@ -2059,10 +2058,10 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION  IPAR(NIP), para(NPA)
 cxx      INTEGER    PERIOD, SORDER, TRADE
-      INTEGER :: IPAR(NIP), NIP
-      INTEGER :: PERIOD, SORDER, TRADE
-      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
-     *                     NYEAR, nmonth
+      INTEGER IPAR(NIP), NIP
+      INTEGER PERIOD, SORDER, TRADE
+      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
+     *                    NYEAR, nmonth
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
       COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
@@ -2109,20 +2108,20 @@ cc      DIMENSION  TAU2(3), PAC(10), ARCC(10)
 cxx      DIMENSION  A(NA), IPAR(NIP), para(NPA)
 cxx      DIMENSION  TAU2(3), PAC(M2), ARCC(M2)
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: NA, NPA, iopt
-      REAL(8) :: A(NA), para(NPA)
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: TAU2(3), PAC(M2), ARCC(M2),
-     1           F1, F2, F3, A1, A2, A3, DI, UI, TDF
-      COMMON     /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
-     *                     NYEAR, nmonth
+      INTEGER NA, NPA, iopt
+      DOUBLE PRECISION A(NA), para(NPA)
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION TAU2(3), PAC(M2), ARCC(M2),
+     1                 F1, F2, F3, A1, A2, A3, DI, UI, TDF
+      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,    
+     *                    NYEAR, nmonth
 cc     *              BSPAN, ISPAN, MISING, OUTLIR, LL, N, YEAR, month,
 cc     *                    PREDS, PREDE, PRED
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)    
 cxx      COMMON    /CCC/     ISW, IPR, ISMT, IDIF, LOG, MESH              
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)    
-     *                   ,DI, UI(3), TDF(7)
+      COMMON    /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10),     
+     *                    A3(300), DI, UI(3), TDF(7)
       COMMON    /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C      NAMELIST  /PARAM/  M1, M2, M5, PERIOD, SORDER, TRADE, MT, BSPAN,  
 C     *                   ISPAN, MISING, OUTLIR, TAU2, PAC, IPR, IDIF,   
@@ -2231,8 +2230,8 @@ C
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      DIMENSION  X(K), A(K), Y(30)                                      
 cxx      DIMENSION  X(K), A(K), Y(K)
-      INTEGER :: K
-      REAL(8) :: X(K), A(K), Y(K), SUM
+      INTEGER K
+      DOUBLE PRECISION X(K), A(K), Y(K), SUM
 C                                                                       
       IF( K .EQ. 0 )  RETURN                                            
 cxx      DO 20  I=1,K
@@ -2273,9 +2272,9 @@ C    modified at '96 by S.S.
 C    This subroutine should not be used after 2099.
 C
 cxx      DIMENSION  TDAY(N,7), IX(12)
-      INTEGER :: JSYEAR, nmonth, N
-      REAL(8) :: TDAY(N,7)
-      INTEGER :: IX(12)
+      INTEGER JSYEAR, nmonth, N
+      DOUBLE PRECISION TDAY(N,7)
+      INTEGER IX(12)
       DATA   IX  /3,0,3,2,3,2,3,3,2,3,2,3/
 C
 c      open(1,file='tmp.dat')
@@ -2332,9 +2331,9 @@ C    modified at '96 by S.S.
 C    This subroutine should not be used after 2099.
 C
 cxx      DIMENSION  TDAY(N,7), IX(4)
-      INTEGER :: JSYEAR, nquart, N
-      REAL(8) :: TDAY(N,7)
-      INTEGER :: IX(4)
+      INTEGER JSYEAR, nquart, N
+      DOUBLE PRECISION TDAY(N,7)
+      INTEGER IX(4)
       DATA   IX  /6,7,8,8/
 C
 c      write(6,*) nquart, jsyear
@@ -2388,12 +2387,12 @@ c      REAL*4     TITLE(20), DAY(2), TIME(3)
 cc      DIMENSION  A(40),para(26),a2(10),atmp(10)
 cxx      DIMENSION  A(na),para(npa),ar(M2),atmp(M2)
 cxx      INTEGER    PERIOD, SORDER
-      INTEGER :: na, npa
-      REAL(8) :: A(na), para(npa)
-      INTEGER :: PERIOD, SORDER
-      REAL(8) :: ar(M2), atmp(M2), tau1, tau2, tau3,
-     1             DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
-     2             F1, F2, F3, A1, A2, A3, DI, UI, TDF
+      INTEGER na, npa
+      DOUBLE PRECISION A(na), para(npa)
+      INTEGER PERIOD, SORDER
+      DOUBLE PRECISION ar(M2), atmp(M2), tau1, tau2, tau3,
+     1                 DJACOB, FC, SIG2, AIC, FI, SIG2I, AICI, GI, GC,
+     2                 F1, F2, F3, A1, A2, A3, DI, UI, TDF
 cc      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, ISEA, KSEA,                  
 cc     *         NS,NI,MISING,IOUT,LL,N,NYEAR,nmonth,NPS,NPE,NPRED    
 c      COMMON  /CMFUNC/  DJACOB, F, SIG2, AIC                           
@@ -2401,11 +2400,11 @@ cc      COMMON    /CMFUNC/  DJACOB,F,SIG2,AIC,FI,SIG2I,AICI,GI(20),G(20)
 cc      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), AR(10), A3(30)    
 ccx      COMMON    /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(20),GC(20)
 ccx      COMMON    /COMSM3/  F1(10), F2(10), F3(30), A1(10), A2(10), A3(30)
-      COMMON    /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
-     *                    NYEAR, nmonth
+      COMMON  /COMSM2/  M1, M2, M3, M4, M5, M, L, PERIOD, SORDER,
+     *                  NYEAR, nmonth
       COMMON  /CMFUNC/  DJACOB,FC,SIG2,AIC,FI,SIG2I,AICI,GI(200),GC(200)
-      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10), A3(300)
-     *                   ,DI, UI(3), TDF(7)
+      COMMON  /COMSM3/  F1(10), F2(10), F3(300), A1(10), A2(10),
+     *                  A3(300), DI, UI(3), TDF(7)
 C                                                                       
        tau1 = 0.0D00
        tau2 = 0.0D00

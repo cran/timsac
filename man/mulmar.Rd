@@ -34,6 +34,7 @@ mulmar(y, max.order = NULL, plot = FALSE)
   \item{rvar}{residual variance.}
   \item{aicf}{final estimate of AIC (\eqn{=n\log}{=nlog}(\code{rvar})\eqn{+2}\code{np}).}
   \item{respns}{instantaneous response.}
+  \item{regcoef}{regression coefficients matrix.}
   \item{matv}{innovation variance matrix.}
   \item{morder}{order of the MAICE model.}
   \item{arcoef}{AR coefficients. \code{arcoef[i,j,k]} shows the value of

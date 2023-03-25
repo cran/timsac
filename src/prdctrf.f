@@ -1,8 +1,7 @@
       SUBROUTINE PRDCTRF(N,P,Q,H,D,K,L,JSW,YY,B,A,WW,S,Y,YORI,YD,X,Z1,
-cx     *Z2,Z3,ZZ1,ZZ2,ZZ3,TMP,IER)
-     *Z2,Z3,ZZ1,ZZ2,ZZ3)
+     * Z2,Z3,ZZ1,ZZ2,ZZ3)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM PRDCTR
 C     PROGRAM 74.3.1.  PREDICTION PROGRAM
@@ -54,8 +53,6 @@ C
 C     THE OUTPUTS OF THIS PROGRAM ARE THE REAL
 C     AND PREDICTED VALUES OF Y(I).
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: PRDCTRF
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      INTEGER H,H1,P,Q,D
 cc      INTEGER DFORM(20),XX(121)
@@ -74,15 +71,16 @@ cc      EQUIVALENCE(W(1,1,1),X(1,1))
 cxx      DIMENSION Y(Q+H,D),YD(Q+H,D)
 cxx      DIMENSION Z1(Q+H,D),Z2(Q+H,D),Z3(Q+H,D)
 cxx      DIMENSION ZZ1(Q+H,D),ZZ2(Q+H,D),ZZ3(Q+H,D)
-      INTEGER :: N, P, Q ,H, D, K, L, JSW
-      REAL(8) :: YY(N,D), B(D,D,K), A(D,D,L), WW(D,D,L), S(D,D),
-     1           Y(Q+H,D), YORI(H+1,D), YD(Q+H,D), X(N,D), Z1(Q+H,D),
-     2           Z2(Q+H,D), Z3(Q+H,D), ZZ1(Q+H,D), ZZ2(Q+H,D),
-     3           ZZ3(Q+H,D)
+      INTEGER N, P, Q ,H, D, K, L, JSW
+      DOUBLE PRECISION YY(N,D), B(D,D,K), A(D,D,L), WW(D,D,L), S(D,D),
+     1                 Y(Q+H,D), YORI(H+1,D), YD(Q+H,D), X(N,D),
+     2                 Z1(Q+H,D), Z2(Q+H,D), Z3(Q+H,D), ZZ1(Q+H,D),
+     3                 ZZ2(Q+H,D), ZZ3(Q+H,D)
+c local
       INTEGER H1
-      REAL(8) :: W(D,D,H+1), C(D,D),SD(D,H+1), CX(D), EY(D), DMXT(D),
-     1           DMIT(D), AV(D), CST0, CST1, Z, CCC, AN, AVE, DMAX,
-     2           DMIN, YYD
+      DOUBLE PRECISION W(D,D,H+1), C(D,D),SD(D,H+1), CX(D), EY(D),
+     1                 DMXT(D), DMIT(D), AV(D), CST0, CST1, Z, CCC, AN,
+     2                 AVE, DMAX, DMIN, YYD
 C
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
@@ -649,7 +647,7 @@ C
 C
       SUBROUTINE MAXMIN(DMAX,DMIN,YD)
 cxx      REAL*8 DMAX,DMIN,YD
-      REAL(8) :: DMAX, DMIN, YD
+      DOUBLE PRECISION DMAX, DMIN, YD
 cc 1014 IF(DMAX-YD) 1001,1002,1002
 cxx 1014 IF(DMAX-YD.GE.0) GO TO 1002
 cxx 1001 DMAX=YD

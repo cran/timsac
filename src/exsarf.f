@@ -1,11 +1,11 @@
       SUBROUTINE  EXSARF( Z1,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M1,AMIN,SDM1,A1,
 cx     *                    SDM2,A2,TMP,IER,JER )
-     *                    SDM2,A2,JER )
+     *                   SDM2,A2,JER )
 c----------------   for  isw = 2   --------------------
 cxc     *                    SDM22,A22,TMP )
 c     *                    SDM22,A22,JER )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  EXSAR                                                    
 C.......................................................................
@@ -54,8 +54,6 @@ C                  -- EXAMPLE --     (8F10.5)
 C          (Z(I),I=1,N):  ORIGINAL DATA                                 
 C     ---------------------------------------------------------------   
 C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: EXSARF
-C
 cxx      IMPLICIT  REAL *8  ( A-H , O-Z )                                  
 CC      REAL * 4  Z(10000) , TITLE(20)                                    
 cc      REAL * 4   TITLE(20)
@@ -66,13 +64,12 @@ cxx      DIMENSION  X(N-LAG,LAG+1), A1(LAG), A2(LAG)
 c----------------    isw = 2   -----------------
 cxx      DIMENSION  A22(LAG,LAG), SDM22(LAG)
 c-----------------------------------------------
-
-      INTEGER :: N, LAG, M1, JER
-      REAL(8) :: Z1(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
-     1           AMIN, SDM1, A1(LAG), SDM2, A2(LAG)
-      REAL(8) :: Z(N), X(N-LAG,LAG+1)
+      INTEGER N, LAG, M1, JER
+      DOUBLE PRECISION Z1(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1),
+     1                 DIC(LAG+1), AMIN, SDM1, A1(LAG), SDM2, A2(LAG)
+      DOUBLE PRECISION Z(N), X(N-LAG,LAG+1)
 c----------------    isw = 2   -----------------
-      REAL(8) :: A22(LAG,LAG), SDM22(LAG)
+      DOUBLE PRECISION A22(LAG,LAG), SDM22(LAG)
 c-----------------------------------------------
 
 CC      COMMON     / AAA /  N , Z                                         
@@ -265,9 +262,9 @@ cc      DIMENSION  Z(1) , A(1) , TITLE(1)
 cc      DIMENSION  R(31,31) , C(31)                                       
 cxx      DIMENSION  Z(N), A(K)
 cxx      DIMENSION  R(K+1,K+1), C(L+1)                                       
-      INTEGER :: N, K, L, ISW, JER 
-      REAL(8) :: Z(N), A(K), SDM
-      REAL(8) :: R(K+1,K+1), C(L+1), SUM, F0, AIC, SD
+      INTEGER N, K, L, ISW, JER 
+      DOUBLE PRECISION Z(N), A(K), SDM
+      DOUBLE PRECISION R(K+1,K+1), C(L+1), SUM, F0, AIC, SD
 CC      DIMENSION  TTL(4)                                                 
 cc      REAL * 4 TTL(8)
 cc      COMMON     / DDD /  R , F , AIC , SD                              
@@ -392,11 +389,11 @@ cxx      DIMENSION  Z(NZ)
 cxx      DIMENSION  X(N) , DX(N) , G(N) , G0(N) , Y(N)                
 cxx      DIMENSION  H(N,N) , WRK(N) , S(N)                             
 cxx      DIMENSION  R(N+1,N+1)
-      INTEGER :: NZ, N, IHES, ISW, JER
-      REAL(8) :: Z(NZ), X(N), R(N+1,N+1), AIC, SD
-      REAL(8) :: DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
-     1           TAU1, TAU2, EPS1, EPS2, RAMDA, CONST1, SUM,
-     2           S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB                                                           
+      INTEGER NZ, N, IHES, ISW, JER
+      DOUBLE PRECISION Z(NZ), X(N), R(N+1,N+1), AIC, SD
+      DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
+     1                 TAU1, TAU2, EPS1, EPS2, RAMDA, CONST1, SUM,
+     2                 S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB                                              
 C
 cc      COMMON     / CCC /  ISW, IPR                                      
 cc      COMMON     / DDD /  R , F , AIC , SD                              
@@ -628,10 +625,10 @@ cc      DIMENSION   A(20) , B(30) , G(30)
 cxx      DIMENSION   Z(N)
 cxx      DIMENSION   R(M+1,M+1) , T(M+1,M+1) , U(M+1,M+1) , S(M+1,M+1)              
 cxx      DIMENSION   A(M) , B(M) , G(M)                                  
-      INTEGER :: N, M, ISW, IFG, JER
-      REAL(8) :: Z(N), A(M), R(M+1,M+1), F, G(M), AIC, SD, FF
-      REAL(8) :: T(M+1,M+1), U(M+1,M+1), S(M+1,M+1), B(M),
-     1           DN, DN1, SUM, DSD, USUM, DETT, UDET
+      INTEGER N, M, ISW, IFG, JER
+      DOUBLE PRECISION Z(N), A(M), R(M+1,M+1), F, G(M), AIC, SD, FF
+      DOUBLE PRECISION T(M+1,M+1), U(M+1,M+1), S(M+1,M+1), B(M),
+     1                 DN, DN1, SUM, DSD, USUM, DETT, UDET
 cc      MJ = 31                                                           
       MJ = M+1                                                           
 C                                                                       
@@ -896,9 +893,9 @@ cc      DIMENSION  H(50,50) , S(50)
 cxx      DIMENSION  R(K+1,K+1)                                               
 cxx      DIMENSION  X(K)                                                   
 cxx      DIMENSION  H(K,K) , S(K)
-      INTEGER :: K, N
-      REAL(8) :: X(K), R(K+1,K+1), SD, H(K,K)
-      REAL(8) :: S(K), SUM, HDET
+      INTEGER K, N
+      DOUBLE PRECISION X(K), R(K+1,K+1), SD, H(K,K)
+      DOUBLE PRECISION S(K), SUM, HDET
       DO 10  I=1,K                                                      
       SUM = R(1,I+1)                                                    
       DO 20  II=1,K                                                     
@@ -955,11 +952,11 @@ cxx      DIMENSION  G(K)
 cxx      DIMENSION  Z(N)
 cxx      DIMENSION  R(K+1,K+1)
 
-      INTEGER :: N, K, ISW, IG, JER
-      REAL(8) :: Z(N), X(K), H(K), RAM, EE, R(K+1,K+1), AIC, SD, F
-      INTEGER :: RETURN, SUB
-      REAL(8) :: X1(K), G(K), CONST2, HNORM, E1, E2, E3,
-     1           RAM1, RAM2, RAM3, A1, A2, A3, B1, B2
+      INTEGER N, K, ISW, IG, JER
+      DOUBLE PRECISION Z(N), X(K), H(K), RAM, EE, R(K+1,K+1), AIC, SD, F
+      INTEGER RETURN, SUB
+      DOUBLE PRECISION X1(K), G(K), CONST2, HNORM, E1, E2, E3,
+     1                 RAM1, RAM2, RAM3, A1, A2, A3, B1, B2
 C                                                                       
       ISW = 1                                                           
       IF( RAM .LE. 1.0D-30 )  RAM = 0.01D0                              

@@ -1,6 +1,6 @@
       SUBROUTINE SIMCONF(D,K,H,L,R,B0,BX0,S0,Q0,BC,BD,G,AVY,SI,S2)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM SIMCON                                                    
 C     PROGRAM 74.3.2.  OPTIMAL CONTROLLER DESIGN AND SIMULATION         
@@ -92,8 +92,6 @@ C     V:  (K*D)*1     VECTOR
 C     SI: (D-R)*1     VECTOR                                            
 C     CI: R*1         VECTOR                                            
 C     Y:  D*1         VECTOR                                            
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: SIMCONF
 C
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      REAL*4 RANDOM                                                     
@@ -116,16 +114,18 @@ cxx      DIMENSION SI(D),CI(R),V(K*D),AV(K*D),AVY(D),BCN(K*D),BDN(K*D)
 cxx      DIMENSION W31(R,R),W32(D,D),W41(D,D),W42(R,D),S2(D)
 cxx      DIMENSION R1(R,K*D),R3(R,K*D)
 cxx      DIMENSION BX0((K-1)*D,D),BX(K*D,D)
-      INTEGER :: D, K, H, L, R
-      REAL(8) :: B0(D,D,K), BX0((K-1)*D,D), S0(D,D), Q0(D,D), BC(K*D,R),
-     1           BD(K*D,D-R), G(R,K*D), AVY(D), SI(D), S2(D)
+      INTEGER D, K, H, L, R
+      DOUBLE PRECISION B0(D,D,K), BX0((K-1)*D,D), S0(D,D), Q0(D,D),
+     1                 BC(K*D,R), BD(K*D,D-R), G(R,K*D), AVY(D),
+     2                 SI(D), S2(D)
+c local
       INTEGER H1
-      REAL(8) :: RANDM, B(D,D,K), Q(K*D,K*D),Z(K*D,K*D), W1(D),
-     1           S(D-R,D-R), WIN1(D,D), WIN2(R,D), Y(D,L),
-     2           W2(K*D,K*D), CI(R), V(K*D), AV(K*D), BCN(K*D),
-     3           BDN(K*D), W31(R,R), W32(D,D), W41(D,D), W42(R,D),
-     4           R1(R,K*D), R3(R,K*D), BX(K*D,D), CST0, CST1, CSTM6,
-     5           BDMN, AL, SUM, WDET
+      DOUBLE PRECISION RANDM, B(D,D,K), Q(K*D,K*D),Z(K*D,K*D), W1(D),
+     1                 S(D-R,D-R), WIN1(D,D), WIN2(R,D), Y(D,L),
+     2                 W2(K*D,K*D), CI(R), V(K*D), AV(K*D), BCN(K*D),
+     3                 BDN(K*D), W31(R,R), W32(D,D), W41(D,D), W42(R,D),
+     4                 R1(R,K*D), R3(R,K*D), BX(K*D,D), CST0, CST1,
+     5                 CSTM6, BDMN, AL, SUM, WDET
 cc      EQUIVALENCE(Q0(1,1),BCN(1))                                       
 cc      EQUIVALENCE(WIN(1,1),W1(1),SI(1),CI(1))                           
 cc      EQUIVALENCE(V(1),S2(1))                                           
@@ -710,9 +710,9 @@ C     IS=3: Z=X*Y'
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION X(MJ1,MJ2),Y(MJ3,MJ4),Z(MJ5,MJ6)                        
 cxx      DIMENSION X(MX,NX),Y(MY,NY),Z(MZ,NZ)
-      INTEGER :: MX, NX, MY, NY, MZ, NZ, IS
-      REAL(8) :: X(MX,NX), Y(MY,NY), Z(MZ,NZ)
-      REAL(8) :: CST0
+      INTEGER MX, NX, MY, NY, MZ, NZ, IS
+      DOUBLE PRECISION X(MX,NX), Y(MY,NY), Z(MZ,NZ)
+      DOUBLE PRECISION CST0
       CST0=0.0D-00                                                      
       IF  (IS.EQ.2) GO TO 3050                                          
       IF  (IS.EQ.3) GO TO 3100                                          
@@ -774,10 +774,10 @@ cc      DIMENSION X(MJ,MJ)
 cc      DIMENSION IDS(10)                                                 
 cxx      DIMENSION X(MM,MM)
 cxx      DIMENSION IDS(MM)
-      INTEGER :: MM
-      REAL(8) :: X(MM,MM), XDET
-      INTEGER :: IDS(MM)
-      REAL(8) :: CST0, CST1, XMAXP, XC
+      INTEGER MM
+      DOUBLE PRECISION X(MM,MM), XDET
+      INTEGER IDS(MM)
+      DOUBLE PRECISION CST0, CST1, XMAXP, XC
       CST0=0.0D-00                                                      
       CST1=1.0D-00                                                      
       XDET=CST1                                                         

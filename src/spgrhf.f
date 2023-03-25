@@ -1,9 +1,7 @@
-cc      SUBROUTINE SPGRH(Y,N,MODE)
-      SUBROUTINE SPGRHF(Y,N,LAGH1,IFPL1,MODE,PERIOD,CXX,CN,XMEAN,SD,AIC,
-     *                   PARCOR,PXX,IER)
+      SUBROUTINE SPGRH(Y,N,LAGH1,IFPL1,MODE,PERIOD,CXX,CN,XMEAN,SD,AIC,
+     *                 PARCOR,PXX,IER)
 c
-      INCLUDE 'timsac_f.h'
-cc      !DEC$ ATTRIBUTES DLLEXPORT::SPGRHF
+      INCLUDE 'timsac.h'
 c
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      INTEGER H,H1                                                      
@@ -18,10 +16,11 @@ cxx      DIMENSION CXX(LAGH1),CN(LAGH1)
 cxx      DIMENSION A(IFPL1),B(IFPL1)
 cxx      DIMENSION PXX(LAGH1)
 cxx      DIMENSION SD(IFPL1),AIC(IFPL1),PARCOR(IFPL1-1)
-      INTEGER :: N, LAGH1, IFPL1, MODE, PERIOD, IER
-      REAL(8) :: Y(N), CXX(LAGH1), CN(LAGH1), XMEAN, SD(IFPL1),
-     1           AIC(IFPL1), PARCOR(IFPL1-1), PXX(LAGH1)
-      REAL(8) :: A(IFPL1), B(IFPL1), SGME2, OAIC
+      INTEGER N, LAGH1, IFPL1, MODE, PERIOD, IER
+      DOUBLE PRECISION Y(N), CXX(LAGH1), CN(LAGH1), XMEAN, SD(IFPL1),
+     1                 AIC(IFPL1), PARCOR(IFPL1-1), PXX(LAGH1)
+c local
+      DOUBLE PRECISION A(IFPL1), B(IFPL1), SGME2, OAIC
 C
 cc      H=60                                                              
 cc      H1=H+1                                                            
@@ -73,11 +72,13 @@ cxx      DIMENSION CYY(L1),COEF(L1)
 cc      DIMENSION A(101),B(101)                                           
 cxx      DIMENSION A(L1),B(L1)
 cxx      DIMENSION SD1(L1),AIC1(L1),PARCOR(L1-1)
-      INTEGER :: L1, N, MO, IER
-      REAL(8) :: CYY(L1), COEF(L1), OSD, OAIC, SD1(L1), AIC1(L1),
-     1           PARCOR(L1-1)
-      REAL(8) :: A(L1), B(L1), CST0, CST1, CST2, CST20, CST05, CST01,
-     1           SD, AN, RAN, SCALH, AIC, SE, SDR, D, D2, AM, ANFC
+      INTEGER L1, N, MO, IER
+      DOUBLE PRECISION CYY(L1), COEF(L1), OSD, OAIC, SD1(L1), AIC1(L1),
+     1                 PARCOR(L1-1)
+      DOUBLE PRECISION A(L1), B(L1), CST0, CST1, CST2, CST20, CST05,
+     1                 CST01, SD, AN, RAN, SCALH, AIC, SE, SDR, D, D2,
+     2                 AM, ANFC
+
 cc      REAL*4 AX,BL,STA,DASH,PLUS                                        
 cc      REAL*4 FFFF                                                       
 cc      REAL*4  F(41) / 41*1H  /, AMES(41) / 41*1H- /                     
@@ -263,10 +264,10 @@ cc      DIMENSION PXX(501),SXX(501)
 cxx      DIMENSION A(L),B(K)                                           
 cxx      DIMENSION G(L+K+1),GR1(H1),GI1(H1),GR2(H1),GI2(H1)
 cxx      DIMENSION PXX(H1)
-      INTEGER :: L, K, H1, IPPP
-      REAL(8) :: A(L), B(K), PXX(H1), SGME2
-      REAL(8) :: G(L+K+1), GR1(H1), GI1(H1), GR2(H1), GI2(H1),
-     1           CST0, CST1, T0
+      INTEGER L, K, H1, IPPP
+      DOUBLE PRECISION A(L), B(K), PXX(H1), SGME2
+      DOUBLE PRECISION G(L+K+1), GR1(H1), GI1(H1), GR2(H1), GI2(H1),
+     1                 CST0, CST1, T0
 cc      COMMON /ILOGT/IDUMMY(2),IPUNC                                     
 cc      COMMON /IDATA/IPPP                                                
 cc      DATA AX/1H!/                                                      

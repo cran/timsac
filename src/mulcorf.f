@@ -1,6 +1,6 @@
       SUBROUTINE MULCORF(X1,N,K,LAGH1,SM,C,CN)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.1.2   MULTIPLE CORRELATION
 C-----------------------------------------------------------------------
@@ -27,9 +27,6 @@ C     THE OUTPUTS ARE (CIJ(L): L=0,1,...,LAGH) (I=1,...,K; J=1,...,K),
 C     WHERE CIJ(L)=COVARIANCE(XI(S+L),XJ(S)),
 C     AND THEIR NORMALIZED (CORRELATION) VALUES.
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULCORF
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8 (A-H,O-Z)
 c      DIMENSION X1(2000,10)
 c      DIMENSION X(2000),Y(2000)
@@ -42,11 +39,11 @@ cxx      DIMENSION X(N),Y(N)
 cxx      DIMENSION C(LAGH1,K,K),CN(LAGH1,K,K)
 cxx      DIMENSION C1(LAGH1),C2(LAGH1),CN1(LAGH1),CN2(LAGH1)
 cxx      DIMENSION SM(K),C0(K)
-
-      INTEGER :: N, K, LAGH1
-      REAL(8) :: X1(N,K), SM(K), C(LAGH1,K,K), CN(LAGH1,K,K)
-      REAL(8) :: X2(N,K), X(N), Y(N), C1(LAGH1), C2(LAGH1),
-     1           CN1(LAGH1), CN2(LAGH1), C0(K), CX0, CY0, XMEAN
+      INTEGER N, K, LAGH1
+      DOUBLE PRECISION X1(N,K), SM(K), C(LAGH1,K,K), CN(LAGH1,K,K)
+c local
+      DOUBLE PRECISION X2(N,K), X(N), Y(N), C1(LAGH1), C2(LAGH1),
+     1                 CN1(LAGH1), CN2(LAGH1), C0(K), CX0, CY0, XMEAN
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 c      CHARACTER(100) DFNAM

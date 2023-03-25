@@ -1,9 +1,9 @@
-      SUBROUTINE AUTARMF(N,LAGH01,CYY1,NEWL1,IQI1,B1,IPI1,A1,
+      SUBROUTINE AUTARM(N,LAGH01,CYY1,NEWL1,IQI1,B1,IPI1,A1,
 cx     *	          NEWN,IQ,B2,IP,A2,STD,CXX2,G,SAIC,AICM,KQ,KP,TMP,IER,
      *          NEWN,IQ,B2,IP,A2,STD,CXX2,G,SAIC,AICM,KQ,KP,
      *          LMAX,MMAX,NMAX)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM AUTARM
 C     PROGRAM 74.1.2. AUTOMATIC AR-MA MODEL FITTING; SCALAR CASE.
@@ -56,8 +56,6 @@ C     IP: MA ORDER
 C     A(I)(I=1,IP): MAXIMUM LIKELIHOOD ESTIMATES OF MA COEFFICIENTS
 C     CXX0: INNOVATION VARIANCE
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: AUTARMF
-C
 cc      PARAMETER (LMAX=500)
 cc      PARAMETER (MMAX=50)
 cc      PARAMETER (NMAX=25)
@@ -95,20 +93,18 @@ cxx      DIMENSION A1(IPI1(1)),B1(IQI1(1))
 cxx      DIMENSION IP(NMAX),IQ(NMAX),IPO(NMAX),IQO(NMAX)
 cxx      DIMENSION A2(MMAX,NMAX),B2(MMAX,NMAX)
 cxx      DIMENSION SMAIC2(NMAX),CXX2(NMAX)
-
-      INTEGER :: N, LAGH01, NEWL1, IQI1(NEWL1), IPI1(NEWL1),
-     1           NEWN, IQ(NMAX), IP(NMAX), KQ, KP, LMAX,
-     2           MMAX, NMAX
-      REAL(8) :: CYY1(LAGH01), A1(IPI1(1)), B1(IQI1(1)), A2(MMAX,NMAX),
-     1           B2(MMAX,NMAX), STD(MMAX,NMAX), CXX2(NMAX),
-     2           G(MMAX,NMAX), SAIC(NMAX), AICM 
-c
-      INTEGER :: IQI(NMAX), IPI(NMAX), IPO(NMAX), IQO(NMAX)
-      REAL(8) :: CYY(LMAX*2+1), A(MMAX), B(MMAX), OA(MMAX),
-     1           OB(MMAX), X(MMAX), C(MMAX), CC(ICST),
-     2           VD(MMAX,MMAX), CN(MMAX+1), SMAIC2(NMAX),
-     3           CST0, CST1, CST2, CST05, SMAIC, AN, CXX0, SUM,
-     4           AIPQ, DMAIC, CONST1, SAN
+      INTEGER N, LAGH01, NEWL1, IQI1(NEWL1), IPI1(NEWL1), NEWN,
+     1        IQ(NMAX), IP(NMAX), KQ, KP, LMAX, MMAX, NMAX
+      DOUBLE PRECISION CYY1(LAGH01), A1(IPI1(1)), B1(IQI1(1)),
+     1                 A2(MMAX,NMAX), B2(MMAX,NMAX), STD(MMAX,NMAX),
+     2                 CXX2(NMAX), G(MMAX,NMAX), SAIC(NMAX), AICM
+c local
+      INTEGER IQI(NMAX), IPI(NMAX), IPO(NMAX), IQO(NMAX)
+      DOUBLE PRECISION CYY(LMAX*2+1), A(MMAX), B(MMAX), OA(MMAX),
+     1                 OB(MMAX), X(MMAX), C(MMAX), CC(ICST),
+     2                 VD(MMAX,MMAX), CN(MMAX+1), SMAIC2(NMAX), CST0,
+     3                 CST1, CST2, CST05, SMAIC, AN, CXX0, SUM, AIPQ,
+     4                 DMAIC, CONST1, SAN
 C
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
@@ -682,14 +678,14 @@ cc      EQUIVALENCE (CUZ(1),CUY(1))
 cc      EQUIVALENCE (CZY(1),CZZ(1))
 cc      EQUIVALENCE (CYU(1),CYZ(1),CZX(1))
 c
-      INTEGER :: IP, IQ, MM, LL, ICST
-      REAL(8) :: X(IP+IQ), CYY(LL*2+1), G(IP+I Q), CN(MM+1),
-     1           CXX0, AL(MM,MM)
-c
-      REAL(8) :: A(IP), B(IQ), AI(ICST), A2(IP*2), A2B(ICST), AIB(ICST),
-     1           Y(LL*2+1), CXX(LL*2+1), CXY(LL*2+1), CYX(LL*2+1),
-     2           CUZ(LL*2+1), CYU(LL*2+1), CZY(LL*2+1), CST0, CST1,
-     3           DSR2, CAI1
+      INTEGER IP, IQ, MM, LL, ICST
+      DOUBLE PRECISION X(IP+IQ), CYY(LL*2+1), G(IP+I Q), CN(MM+1),
+     1                 CXX0, AL(MM,MM)
+c local
+      DOUBLE PRECISION A(IP), B(IQ), AI(ICST), A2(IP*2), A2B(ICST),
+     1                 AIB(ICST), Y(LL*2+1), CXX(LL*2+1), CXY(LL*2+1),
+     2                 CYX(LL*2+1), CUZ(LL*2+1), CYU(LL*2+1),
+     3                 CZY(LL*2+1), CST0, CST1, DSR2, CAI1
 c
       CST0=0.0D-00
       CST1=1.0D-00
@@ -965,12 +961,12 @@ cxx      DIMENSION CUY(LL*2+1),CYU(LL*2+1),CZY(LL*2+1)
 cc      EQUIVALENCE (CXX(1),CXY(1))
 cc      EQUIVALENCE (CYX(1),CUX(1))
 cc      EQUIVALENCE (CYU(1),CYZ(1),CZX(1))
-      INTEGER :: IP, IQ, IG, LL, ICST
-      REAL(8) :: X(IP+IQ), CYY(LL*2+1), G(IP+IQ), CXX0
-      REAL(8) :: A(IP), B(IQ), AI(ICST), A2(IP*2), A2B(ICST),
-     1           AIB(ICST), Y(LL*2+1), CXX(LL*2+1), CYX(LL*2+1),
-     2           CUY(LL*2+1), CYU(LL*2+1), CZY(LL*2+1),
-     3           CST0, CST1
+      INTEGER IP, IQ, IG, LL, ICST
+      DOUBLE PRECISION X(IP+IQ), CYY(LL*2+1), G(IP+IQ), CXX0
+c local
+      DOUBLE PRECISION A(IP), B(IQ), AI(ICST), A2(IP*2), A2B(ICST),
+     1                 AIB(ICST), Y(LL*2+1), CXX(LL*2+1), CYX(LL*2+1),
+     2                 CUY(LL*2+1), CYU(LL*2+1), CZY(LL*2+1), CST0, CST1
 c
       CST0=0.0D-00
       CST1=1.0D-00
@@ -1130,14 +1126,16 @@ cc      DIMENSION C(50)
 cxx      DIMENSION X(IP+IQ),CYY(LL*2+1)
 cxx      DIMENSION G(IP+IQ),C(IP+IQ),VD(NN,NN)
 cxx      DIMENSION SX(IP+IQ),SG(IP+IQ),SR(IP+IQ)
-      INTEGER :: IP, IQ, N, NN, LL, ICST
-      REAL(8) :: X(IP+IQ), CYY(LL*2+1), CXX0, G(IP+IQ), C(IP+IQ),
-     1           VD(NN,NN)
-      REAL(8) :: SX(IP+IQ), SG(IP+IQ), SR(IP+IQ), CST0, CST1, CST2,
-     1           CST05, CONSTA, CONSTB, EPS1, EPS3, EPS4,
-     2           AIPQ, AN, PHAI, EPHAI1, T1, RO, RAM, RAMRO, RAMROT,
-     3           SUM, SRO, SROD, DGAM, DGAM1, GSR, RAMT, RAMSRO,
-     4           RAM1, CONSDR, SPHAI, OAIC, OPHAI, AIC, DAIC
+      INTEGER IP, IQ, N, NN, LL, ICST
+      DOUBLE PRECISION X(IP+IQ), CYY(LL*2+1), CXX0, G(IP+IQ), C(IP+IQ),
+     1                 VD(NN,NN)
+c local
+      DOUBLE PRECISION SX(IP+IQ), SG(IP+IQ), SR(IP+IQ), CST0, CST1,
+     1                 CST2, CST05, CONSTA, CONSTB, EPS1, EPS3, EPS4,
+     2                 AIPQ, AN, PHAI, EPHAI1, T1, RO, RAM, RAMRO,
+     3                 RAMROT, SUM, SRO, SROD, DGAM, DGAM1, GSR, RAMT,
+     4                 RAMSRO, RAM1, CONSDR, SPHAI, OAIC, OPHAI, AIC,
+     5                 DAIC
 C
 C     CONSTANT
       CST0=0.0D-00
@@ -1307,9 +1305,10 @@ C     Z(I)=Y(I)+Y(I+1)A(1)+...+Y(I+K)A(K) (I=L,M)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION Y(1001),A(190),Z(1001)
 cxx      DIMENSION
-      INTEGER :: K, L, M, LL
-      REAL(8) :: Y(LL*2+1), A(K), Z(LL*2+1)
-      REAL(8) :: SUM
+      INTEGER K, L, M, LL
+      DOUBLE PRECISION Y(LL*2+1), A(K), Z(LL*2+1)
+c local
+      DOUBLE PRECISION SUM
 cc      IORIG=501
       IORIG=LL+1
       IST=IORIG+L
@@ -1333,8 +1332,8 @@ C     Z(IORIG+I)=Y(IORIG-I) (I=1,M)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      DIMENSION Z(1001),Y(1001)
 cxx      DIMENSION Z(LL-L+1),Y(LL+M+1)
-      INTEGER :: L, M, LL
-      REAL(8) :: Y(LL+M+1), Z(LL-L+1)
+      INTEGER L, M, LL
+      DOUBLE PRECISION Y(LL+M+1), Z(LL-L+1)
 cc      IORIG=501
       IORIG=LL+1
       IST=IORIG+L
@@ -1358,9 +1357,10 @@ C     OUTPUT X(I) (I=1,IX)
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cx      DIMENSION A(1),B(1),X(1)
 cxx      DIMENSION A(IP),B(IQ),X(ICST)
-      INTEGER :: IP, IQ, IX, ICST, IG
-      REAL(8) :: A(IP), B(IQ), X(ICST)
-      REAL(8) :: CST0, GCONST, GAMMAX, SUM, GAM2
+      INTEGER IP, IQ, IX, ICST, IG
+      DOUBLE PRECISION A(IP), B(IQ), X(ICST)
+c local
+      DOUBLE PRECISION CST0, GCONST, GAMMAX, SUM, GAM2
       CST0=0.0D-00
       IPQ=IP+IQ
       IF(IPQ.LE.0) GO TO 999

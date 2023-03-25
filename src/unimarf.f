@@ -1,8 +1,6 @@
-cx      SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A,
-cx     *                     TMP,IER )
       SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  UNIMAR                                                   
 C.......................................................................
@@ -55,8 +53,6 @@ C             DFORM: INPUT DATA FORMAT SPECIFICATION STATEMENT
 C                    -- FOR EXAMPLE --     (8F10.5)                     
 C             (Z(I),I=1,N):  ORIGINAL DATA                              
 C       --------------------------------------------------------------- 
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: UNIMARF
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
@@ -66,10 +62,11 @@ cc      DIMENSION  X(200,101) , D(200) , A(100)
 cxx      DIMENSION  ZS(N), Z(N)
 cxx      DIMENSION  X(N+1,LAG+1), A(LAG)
 cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
-      INTEGER :: N, LAG, M
-      REAL(8) :: ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
-     1           AICM, SDM, A(LAG)
-      REAL(8) :: Z(N), X(N+1,LAG+1)
+      INTEGER N, LAG, M
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1),
+     1                 DIC(LAG+1), AICM, SDM, A(LAG)
+c local
+      DOUBLE PRECISION Z(N), X(N+1,LAG+1)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
 C                                                                       

@@ -1,8 +1,7 @@
       SUBROUTINE  MULMARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD1,AIC1,DIC1,IM,
-cx     * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS,TMP,IER )
      * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  MULMAR                                                   
 C.......................................................................
@@ -63,8 +62,6 @@ C          C(I):  CALIBRATION OF CHANNEL I (I=1,ID)
 C           Z:    ORIGINAL DATA; Z(K,I) (K=1,N) REPRESENTS THE I-TH CHAN
 C                 RECORD                                                
 C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MULMARF
-C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4  Z                                                       
 cc      DIMENSION  Z(1500,5)                                              
@@ -80,12 +77,14 @@ cxx      DIMENSION  SD1(LAG+1,ID), AIC1(LAG+1,ID), DIC1(LAG+1,ID)
 cxx      DIMENSION  AICM(ID), SDM(ID), IM(ID)
 cxx      DIMENSION  JNDF((LAG+1)*ID,ID), AF((LAG+1)*ID,ID)
 cxx      DIMENSION  NPR(ID), AIC(ID)
-      INTEGER :: N, ID, LAG, IM(ID), NPR(ID), JNDF((LAG+1)*ID,ID), LMAX
-      REAL(8) :: ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), SD1(LAG+1,ID),
-     1           AIC1(LAG+1,ID), DIC1(LAG+1,ID), AICM(ID), SDM(ID),
-     2           AF((LAG+1)*ID,ID), EX(ID), AIC(ID), EI(ID,ID),
-     3           BI(ID,ID,LAG), E(ID,ID), B(ID,ID,LAG), AICS
-      REAL(8) :: Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), CV(ID)
+      INTEGER N, ID, LAG, IM(ID), NPR(ID), JNDF((LAG+1)*ID,ID), LMAX
+      DOUBLE PRECISION ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID),
+     1                 SD1(LAG+1,ID), AIC1(LAG+1,ID), DIC1(LAG+1,ID),
+     2                 AICM(ID), SDM(ID), AF((LAG+1)*ID,ID), EX(ID),
+     3                 AIC(ID), EI(ID,ID), BI(ID,ID,LAG), E(ID,ID),
+     4                 B(ID,ID,LAG), AICS
+c local
+      DOUBLE PRECISION Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), CV(ID)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
 C

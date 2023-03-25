@@ -1,7 +1,7 @@
       SUBROUTINE FPEAUTF(L,N,SD,CXX,SSD,FPE,RFPE,D,CHI2,
      & OFPE1,OFPE2,ORFPE,MO,OSD,A,AO)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.3.1   FPE AUTO
 C-----------------------------------------------------------------------
@@ -26,17 +26,15 @@ C     AND THE VARIANCE SIGMA**2 OF E(N).
 C     CHI**2 SHOWS THE SIGNIFICANCE OF PARCOR=A(M) AS A CHI-SQUARED
 C     VARIABLE WITH D.F.=1.
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: FPEAUTF
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      DIMENSION CXX(501),A(501),B(501),AO(501)
 cxx      DIMENSION CXX(L),A(L,L),B(L),AO(L)
 cxx      DIMENSION SSD(L),FPE(L),RFPE(L),D(L),CHI2(L)
-      INTEGER :: L, N, MO
-      REAL(8) :: SD, CXX(L), SSD(L), FPE(L), RFPE(L), D(L), CHI2(L),
-     1           OFPE1, OFPE2, ORFPE, OSD, A(L,L), AO(L)
-      REAL(8) :: B(L), AN, ANP1, ANM1, CST1, OOFPE, SE, SD0, D2
+      INTEGER L, N, MO
+      DOUBLE PRECISION SD, CXX(L), SSD(L), FPE(L), RFPE(L), D(L),
+     1                 CHI2(L),OFPE1, OFPE2, ORFPE, OSD, A(L,L), AO(L)
+c local
+      DOUBLE PRECISION B(L), AN, ANP1, ANM1, CST1, OOFPE, SE, SD0, D2
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 c      CHARACTER(100) DFNAM

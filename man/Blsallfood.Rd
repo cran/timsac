@@ -1,9 +1,9 @@
 \name{Blsallfood}
 \docType{data}
 \alias{Blsallfood}
-\title{Blsallfood data}
+\title{Blsallfood Data}
 \description{
-  A blsallfood data for testing \code{\link{decomp}}.
+  The BLSALLFOOD data. (the Bureau of Labor Statistics, all employees in food industries, January 1967 - December 1979)
 }
 \usage{
   data(Blsallfood)

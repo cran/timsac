@@ -1,101 +1,82 @@
-#include <R.h>
-#include <Rinternals.h>
-#include <stdlib.h> // for NULL
-#include <R_ext/Rdynload.h>
-
-/* FIXME: 
-   Check these declarations against the C/Fortran source code.
+/*
+*  Timsac : Time Series Analysis and ControlProgram Package
+*  Copyright (C) 2005    The Institute of Statistical Mathematics
+*
+*    This program is free software; you can redistribute it and/or modify
+*    it under the terms of the GNU General Public License as published by
+*    the Free Software Foundation; either version 2 of the License, or
+*    (at your option) any later version.
+*
+*    This program is distributed in the hope that it will be useful,
+*    but WITHOUT ANY WARRANTY; without even the implied warranty of
+*    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*    GNU General Public License for more details.
+*
+*    You should have received a copy of the GNU General Public License
+*    along with this program; if not, write to the Free Software
+*    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA.
+*
+*
+*  ismrp at grp.ism.ac.jp
 */
 
-/* .Call calls */
-extern SEXP AuspecC(SEXP, SEXP, SEXP);
-extern SEXP AutarmC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP AutcorC(SEXP, SEXP, SEXP);
-extern SEXP BayseaC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP BispecC(SEXP, SEXP, SEXP, SEXP);
-extern SEXP BlocarC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP BlomarC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP BsubstC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP CanarmC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP CanocaC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP CovgenC(SEXP, SEXP, SEXP, SEXP);
-extern SEXP DecompC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP ExsarC(SEXP, SEXP, SEXP);
-extern SEXP FftcorC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP FpeautC(SEXP, SEXP, SEXP, SEXP);
-extern SEXP Fpec7C(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MarkovC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MlocarC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MlomarC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulbarC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulcorC(SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulfrfC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulmarC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulnosC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulrspC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP MulspeC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP NonstC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP OptdesC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP OptsimC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP PerarsC(SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP PrdctrC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP RaspecC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP SglfreC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP SimconC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP SpgrhC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
-extern SEXP ThirmoC(SEXP, SEXP, SEXP);
-extern SEXP UnibarC(SEXP, SEXP, SEXP);
-extern SEXP UnimarC(SEXP, SEXP, SEXP);
-extern SEXP WnoiseC(SEXP, SEXP, SEXP);
-extern SEXP XsarmaC(SEXP, SEXP, SEXP, SEXP, SEXP);
+#include "regF77.h"
+#include <R.h>
+#include <Rinternals.h>
+#include <R_ext/Rdynload.h>
+#include <R_ext/Visibility.h>
 
-static const R_CallMethodDef CallEntries[] = {
-    {"AuspecC", (DL_FUNC) &AuspecC,  3},
-    {"AutarmC", (DL_FUNC) &AutarmC, 11},
-    {"AutcorC", (DL_FUNC) &AutcorC,  3},
-    {"BayseaC", (DL_FUNC) &BayseaC, 11},
-    {"BispecC", (DL_FUNC) &BispecC,  4},
-    {"BlocarC", (DL_FUNC) &BlocarC,  5},
-    {"BlomarC", (DL_FUNC) &BlomarC,  7},
-    {"BsubstC", (DL_FUNC) &BsubstC,  8},
-    {"CanarmC", (DL_FUNC) &CanarmC,  6},
-    {"CanocaC", (DL_FUNC) &CanocaC,  9},
-    {"CovgenC", (DL_FUNC) &CovgenC,  4},
-    {"DecompC", (DL_FUNC) &DecompC,  5},
-    {"ExsarC",  (DL_FUNC) &ExsarC,   3},
-    {"FftcorC", (DL_FUNC) &FftcorC,  7},
-    {"FpeautC", (DL_FUNC) &FpeautC,  4},
-    {"Fpec7C",  (DL_FUNC) &Fpec7C,   7},
-    {"MarkovC", (DL_FUNC) &MarkovC, 14},
-    {"MlocarC", (DL_FUNC) &MlocarC,  6},
-    {"MlomarC", (DL_FUNC) &MlomarC,  8},
-    {"MulbarC", (DL_FUNC) &MulbarC,  5},
-    {"MulcorC", (DL_FUNC) &MulcorC,  4},
-    {"MulfrfC", (DL_FUNC) &MulfrfC,  6},
-    {"MulmarC", (DL_FUNC) &MulmarC,  5},
-    {"MulnosC", (DL_FUNC) &MulnosC,  5},
-    {"MulrspC", (DL_FUNC) &MulrspC,  7},
-    {"MulspeC", (DL_FUNC) &MulspeC,  5},
-    {"NonstC",  (DL_FUNC) &NonstC,   5},
-    {"OptdesC", (DL_FUNC) &OptdesC,  9},
-    {"OptsimC", (DL_FUNC) &OptsimC,  8},
-    {"PerarsC", (DL_FUNC) &PerarsC,  5},
-    {"PrdctrC", (DL_FUNC) &PrdctrC, 13},
-    {"RaspecC", (DL_FUNC) &RaspecC,  6},
-    {"SglfreC", (DL_FUNC) &SglfreC,  6},
-    {"SimconC", (DL_FUNC) &SimconC,  9},
-    {"SpgrhC",  (DL_FUNC) &SpgrhC,   6},
-    {"ThirmoC", (DL_FUNC) &ThirmoC,  3},
-    {"UnibarC", (DL_FUNC) &UnibarC,  3},
-    {"UnimarC", (DL_FUNC) &UnimarC,  3},
-    {"WnoiseC", (DL_FUNC) &WnoiseC,  3},
-    {"XsarmaC", (DL_FUNC) &XsarmaC,  5},
+/* .Fortran calls */
+
+static const R_FortranMethodDef FortEntries[] = {
+    {"auspecf",   (DL_FUNC) &F77_NAME(auspecf),    6},
+    {"autcorf",   (DL_FUNC) &F77_NAME(autcorf),    6},
+    {"fftcorf",   (DL_FUNC) &F77_NAME(fftcorf),   14},
+    {"fpeautf",   (DL_FUNC) &F77_NAME(fpeautf),   16},
+    {"fpec7",    (DL_FUNC) &F77_NAME(fpec7),    17},	
+    {"mulcorf",   (DL_FUNC) &F77_NAME(mulcorf),    7},
+    {"mulfrff",   (DL_FUNC) &F77_NAME(mulfrff),   14},
+    {"mulnosf",   (DL_FUNC) &F77_NAME(mulnosf),    8},
+    {"mulrspf",   (DL_FUNC) &F77_NAME(mulrspf),    9},
+    {"mulspef",   (DL_FUNC) &F77_NAME(mulspef),   10},
+    {"optdesf",   (DL_FUNC) &F77_NAME(optdesf),   10},
+    {"optsimf",   (DL_FUNC) &F77_NAME(optsimf),   18},
+    {"raspecf",   (DL_FUNC) &F77_NAME(raspecf),    7},
+    {"sglfref",   (DL_FUNC) &F77_NAME(sglfref),   16},
+    {"wnoisef",   (DL_FUNC) &F77_NAME(wnoisef),    4},
+	
+    {"autarm",   (DL_FUNC) &F77_NAME(autarm),   23},
+    {"bispecf",   (DL_FUNC) &F77_NAME(bispecf),   11},
+    {"canarmf",   (DL_FUNC) &F77_NAME(canarmf),   27},
+    {"canocaf",   (DL_FUNC) &F77_NAME(canocaf),   32},
+    {"covgenf",   (DL_FUNC) &F77_NAME(covgenf),    6},
+    {"markovf",   (DL_FUNC) &F77_NAME(markovf),   30},
+    {"nonstf",    (DL_FUNC) &F77_NAME(nonstf),    14},
+    {"prdctrf",   (DL_FUNC) &F77_NAME(prdctrf),   23},
+    {"simconf",   (DL_FUNC) &F77_NAME(simconf),   15},
+    {"thirmof",   (DL_FUNC) &F77_NAME(thirmof),    7},
+	
+    {"blocarf",   (DL_FUNC) &F77_NAME(blocarf),   15},
+    {"blomarf",   (DL_FUNC) &F77_NAME(blomarf),   17},
+    {"bsubstf",   (DL_FUNC) &F77_NAME(bsubstf),   37},
+	{"exsarf",    (DL_FUNC) &F77_NAME(exsarf),    15},
+    {"mlocarf",   (DL_FUNC) &F77_NAME(mlocarf),   22},
+    {"mlomarf",   (DL_FUNC) &F77_NAME(mlomarf),   23},
+    {"mulbarf",   (DL_FUNC) &F77_NAME(mulbarf),   21},
+    {"mulmarf",   (DL_FUNC) &F77_NAME(mulmarf),   24},
+    {"perarsf",   (DL_FUNC) &F77_NAME(perarsf),   16},
+    {"unibarf",   (DL_FUNC) &F77_NAME(unibarf),   20},
+    {"unimarf",   (DL_FUNC) &F77_NAME(unimarf),   12},
+    {"xsarmaf",   (DL_FUNC) &F77_NAME(xsarmaf),   13},
+	
+    {"bayseaf",   (DL_FUNC) &F77_NAME(bayseaf),   22},
+    {"decompf",   (DL_FUNC) &F77_NAME(decompf),   12},
+    {"spgrh",    (DL_FUNC) &F77_NAME(spgrh),    14},
     {NULL, NULL, 0}
 };
 
-void R_init_timsac(DllInfo *dll)
+void attribute_visible R_init_timsac(DllInfo *dll) 
 {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_registerRoutines(dll, NULL, NULL, FortEntries, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
-

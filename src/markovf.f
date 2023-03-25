@@ -1,9 +1,7 @@
-      SUBROUTINE MARKOVF(N,LAGH3,ID,CYY0,K,NH,JAW,AW1,B1,ICONT,
-cx     *IDD,IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD,TMP,IER,
-     *IDD,IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD,
-     *MJ3,MJ4,MJ6,MJ7)
+      SUBROUTINE MARKOVF(N,LAGH3,ID,CYY0,K,NH,JAW,AW1,B1,ICONT,IDD,
+     * IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD,MJ3,MJ4,MJ6,MJ7)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc       PROGRAM MARKOV
 C     PROGRAM 74.2.2. MAXIMUM LIKELIHOOD COMPUTATION OF MARKOVIAN MODEL
@@ -77,8 +75,6 @@ C     SHOULD BE SCALED SO THAT THE VARIANCES ARE NEARLY EQUAL TO EACH
 C     OTHER.
 C     *****
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: MARKOVF
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc      COMMON /COM10/CYY1
 cc      COMMON /COM50/VD
@@ -90,7 +86,7 @@ cc      COMMON /COM81/B
 cc      COMMON /COM82/AW
       COMMON /COM99/ISWR
 cc      COMMON /COM87/ICONT
-      REAL(8) :: AICO
+      DOUBLE PRECISION AICO
       COMMON /COM101/AICO
       COMMON /COM102/KSWR
 cc      COMMON /COM199/AICD
@@ -111,15 +107,18 @@ cxx      DIMENSION BM(ID,ID,MJ6),AU(ID,ID,MJ7),ZZ(ID,ID,MJ7)
 C
 cxx      DIMENSION O(50,ID,K),Q(50,K,ID),X1(50,K,K),X2(50,ID,ID)
 cxx      DIMENSION CXY1(100,ID,ID),CXX1(51,ID,ID),CXV1(51,ID,K)
-      INTEGER :: N, LAGH3, ID, K, NH(K), JAW, ICONT, IDD(K), IR(K),
-     1           IJ(ID), IK(ID), IPQ, IQM, MJ3, MJ4, MJ6, MJ7
-      REAL(8) :: CYY0(LAGH3,ID,ID), AW1(JAW), B1(K,ID), G(MJ4), A1(K,K),
-     1           A(K,K), B(K,ID), VD(MJ4,MJ4), BM(ID,ID,MJ6),
-     2           AU(ID,ID,MJ7), ZZ(ID,ID,MJ7), C0(ID,ID), AICD 
-      REAL(8) :: CYY1(MJ3,ID,ID), OB(K,ID), X(MJ4), R(MJ4), AW(JAW),
-     1           OAW(JAW), O(50,ID,K), Q(50,K,ID), X1(50,K,K),
-     2           X2(50,ID,ID), CXY1(100,ID,ID), CXX1(51,ID,ID),
-     3           CXV1(51,ID,K), CST0, CST1, CST05, AIPQ, SUM
+      INTEGER N, LAGH3, ID, K, NH(K), JAW, ICONT, IDD(K), IR(K), IJ(ID),
+     1        IK(ID), IPQ, IQM, MJ3, MJ4, MJ6, MJ7
+      DOUBLE PRECISION CYY0(LAGH3,ID,ID), AW1(JAW), B1(K,ID), G(MJ4),
+     1                 A1(K,K), A(K,K), B(K,ID), VD(MJ4,MJ4),
+     2                 BM(ID,ID,MJ6), AU(ID,ID,MJ7), ZZ(ID,ID,MJ7),
+     3                 C0(ID,ID), AICD 
+c local
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), OB(K,ID), X(MJ4), R(MJ4),
+     1                 AW(JAW), OAW(JAW), O(50,ID,K), Q(50,K,ID),
+     2                 X1(50,K,K), X2(50,ID,ID), CXY1(100,ID,ID),
+     3                 CXX1(51,ID,ID), CXV1(51,ID,K), CST0, CST1, CST05,
+     4                 AIPQ, SUM
 C
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80
@@ -520,12 +519,12 @@ cxx      DIMENSION NH(K),IDD(K),IR(K),IJ(ID),IK(ID)
 cxx      DIMENSION X(MJ4),C0(ID,ID),GR(MJ4)
 cxx      DIMENSION O(50,ID,K),Q(50,K,ID),X1(50,K,K),X2(50,ID,ID)
 cxx      DIMENSION CXY1(100,ID,ID),CXX1(51,ID,ID),CXV1(51,ID,K)
-      INTEGER :: MJ3, IAW, NH(K), IDD(K), IR(K), IJ(ID), IK(ID), M, L,
-     1           K, ID, MJ4, IG
-      REAL(8) :: CYY1(MJ3,ID,ID), B(K,ID), AW(IAW), X(MJ4), C0(ID,ID),
-     1           GR(MJ4), O(50,ID,K), Q(50,K,ID), X1(50,K,K),
-     2           X2(50,ID,ID), CXY1(100,ID,ID), CXX1(51,ID,ID),
-     3           CXV1(51,ID,K)
+      INTEGER MJ3, IAW, NH(K), IDD(K), IR(K), IJ(ID), IK(ID), M, L, K,
+     1        ID, MJ4, IG
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), B(K,ID), AW(IAW), X(MJ4),
+     1                 C0(ID,ID), GR(MJ4), O(50,ID,K), Q(50,K,ID),
+     2                 X1(50,K,K), X2(50,ID,ID), CXY1(100,ID,ID),
+     3                 CXX1(51,ID,ID), CXV1(51,ID,K)
 C
       DO 600 I=1,IAW
 cxx  600 AW(I)=X(I)
@@ -607,10 +606,10 @@ cxx      DIMENSION X1(50,K,K)
 cxx      DIMENSION V(K,K),AV(K,K)
 cxx      DIMENSION X(ID,K),Y(ID,K),U(K,K)
 cxx      DIMENSION AU(K,K)
-      INTEGER :: IAW,  NH(K), IDD(K), IR(K), K, ID, M, IG1
-      REAL(8) :: B(K,ID), AW(IAW), X1(50,K,K)
-      REAL(8) :: V(K,K), AV(K,K), X(ID,K), Y(ID,K), U(K,K), AU(K,K),
-     1           CST0, CST1, CONSTM, CONSTD, SUM, XMAX
+      INTEGER IAW,  NH(K), IDD(K), IR(K), K, ID, M, IG1
+      DOUBLE PRECISION B(K,ID), AW(IAW), X1(50,K,K)
+      DOUBLE PRECISION V(K,K), AV(K,K), X(ID,K), Y(ID,K), U(K,K),
+     1                 AU(K,K), CST0, CST1, CONSTM, CONSTD, SUM, XMAX
 C
 C
 C
@@ -796,10 +795,10 @@ cxx      DIMENSION X2(50,ID,ID)
 cxx      DIMENSION AW(IAW),B(K,ID)
 cxx      DIMENSION U(K,ID)
 cxx      DIMENSION XX(ID,ID),AU(K,ID)
-      INTEGER :: IAW, IDD(K), IR(K), K, ID, KK, IG2
-      REAL(8) :: B(K,ID), AW(IAW), Q(50,K,ID), X2(50,ID,ID)
-      REAL(8) :: U(K,ID), XX(ID,ID), XMAX, AU(K,ID), CST0, CST1,
-     1           CONSTD, SUM
+      INTEGER IAW, IDD(K), IR(K), K, ID, KK, IG2
+      DOUBLE PRECISION B(K,ID), AW(IAW), Q(50,K,ID), X2(50,ID,ID)
+      DOUBLE PRECISION U(K,ID), XX(ID,ID), XMAX, AU(K,ID), CST0, CST1,
+     1                 CONSTD, SUM
 C
 C     X(0)=I
 C     X:(ID,ID)
@@ -926,9 +925,9 @@ cc	DIMENSION X(5,10),OO(5,10)
 cxx      DIMENSION X1(50,K,K),O(50,ID,K)
 cxx      DIMENSION C0(ID,ID),C0I(ID,ID)
 cxx      DIMENSION X(ID,K),OO(ID,K)
-      INTEGER :: K, ID, M
-      REAL(8) :: C0(ID,ID), O(50,ID,K), X1(50,K,K)
-      REAL(8) :: C0I(ID,ID), X(ID,K), OO(ID,K), C0DET
+      INTEGER K, ID, M
+      DOUBLE PRECISION C0(ID,ID), O(50,ID,K), X1(50,K,K)
+      DOUBLE PRECISION C0I(ID,ID), X(ID,K), OO(ID,K), C0DET
 C
 C     INVERSE OF C0 COMPUTATION
 cxx      DO 600 I=1,ID
@@ -971,8 +970,8 @@ C     MAXIMUM ABSOLUTE VALUE OF XX(I,J) SEARCH
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	DIMENSION XX(MJ6,MJ7)
 cxx      DIMENSION XX(IA,IB)
-      INTEGER :: IA, IB
-      REAL(8) :: XX(IA,IB), XMAX, T
+      INTEGER IA, IB
+      DOUBLE PRECISION XX(IA,IB), XMAX, T
       XMAX=0.0D-00
       DO 709 I=1,IA
       DO 710 J=1,IB
@@ -1010,10 +1009,12 @@ cxx      DIMENSION OO(K,ID),CXX(ID,ID),CXV(ID,K)
 cxx      DIMENSION ZA(K,K),ZZA(K,K),ZB(K,ID),ZZB(K,ID)
 cxx      DIMENSION GR(MJ4),ZAW(MJ4)
 cxx      DIMENSION IJ(ID),IK(ID)
-      INTEGER :: IJ(ID), IK(ID), M, K, ID, IAW, MJ4
-      REAL(8) :: GR(MJ4), O(50,ID,K), CXX1(51,ID,ID), CXV1(51,ID,K)
-      REAL(8) :: OO(K,ID), CXX(ID,ID), CXV(ID,K), ZA(K,K), ZZA(K,K),
-     1           ZB(K,ID), ZZB(K,ID), ZAW(MJ4), CST0, CST1, CST2
+      INTEGER IJ(ID), IK(ID), M, K, ID, IAW, MJ4
+      DOUBLE PRECISION GR(MJ4), O(50,ID,K), CXX1(51,ID,ID),
+     1                 CXV1(51,ID,K)
+      DOUBLE PRECISION OO(K,ID), CXX(ID,ID), CXV(ID,K), ZA(K,K),
+     1                 ZZA(K,K), ZB(K,ID), ZZB(K,ID), ZAW(MJ4),
+     2                 CST0, CST1, CST2
 C
 C
 C     GA, GB COMPUTATION
@@ -1106,9 +1107,9 @@ cc	DIMENSION X2(50,5,5),CYY1(160,5,5),CXY1(100,5,5)
 cc	DIMENSION XX(5,5),CYY(5,5),Z(5,5),ZZ(5,5)
 cxx      DIMENSION X2(50,ID,ID),CYY1(MJ3,ID,ID),CXY1(100,ID,ID)
 cxx      DIMENSION XX(ID,ID),CYY(ID,ID),Z(ID,ID),ZZ(ID,ID)
-      INTEGER :: MJ3, M, L, ID
-      REAL(8) :: CYY1(MJ3,ID,ID), X2(50,ID,ID), CXY1(100,ID,ID)
-      REAL(8) :: XX(ID,ID), CYY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
+      INTEGER MJ3, M, L, ID
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), X2(50,ID,ID), CXY1(100,ID,ID)
+      DOUBLE PRECISION XX(ID,ID), CYY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
 C
 C
       CST0=0.0D-00
@@ -1181,10 +1182,10 @@ cc	DIMENSION C0(5,5)
 cxx      DIMENSION X2(50,ID,ID),CXY1(100,ID,ID),CXX1(51,ID,ID)
 cxx      DIMENSION XX(ID,ID),CXY(ID,ID),Z(ID,ID),ZZ(ID,ID)
 cxx      DIMENSION C0(ID,ID)
-      INTEGER :: M, KK, ID
-      REAL(8) :: C0(ID,ID), X2(50,ID,ID), CXY1(100,ID,ID),
-     1           CXX1(51,ID,ID)
-      REAL(8) :: XX(ID,ID), CXY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
+      INTEGER M, KK, ID
+      DOUBLE PRECISION C0(ID,ID), X2(50,ID,ID), CXY1(100,ID,ID),
+     1                 CXX1(51,ID,ID)
+      DOUBLE PRECISION XX(ID,ID), CXY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
 C
 C
       CST0=0.0D-00
@@ -1243,9 +1244,10 @@ cc      DIMENSION Q(50,10,5),CXY1(100,5,5),CXV1(51,5,10)
 cc	DIMENSION QQ(5,10),CXY(5,5),Z(5,10),ZZ(5,10)
 cxx      DIMENSION Q(50,K,ID),CXY1(100,ID,ID),CXV1(51,ID,K)
 cxx      DIMENSION QQ(ID,K-ID),CXY(ID,ID),Z(ID,K-ID),ZZ(ID,K-ID)
-      INTEGER :: M, L, K, ID
-      REAL(8) :: Q(50,K,ID), CXY1(100,ID,ID), CXV1(51,ID,K)
-      REAL(8) :: QQ(ID,K-ID), CXY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID), CST0
+      INTEGER M, L, K, ID
+      DOUBLE PRECISION Q(50,K,ID), CXY1(100,ID,ID), CXV1(51,ID,K)
+      DOUBLE PRECISION QQ(ID,K-ID), CXY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID),
+     1                 CST0
 C
 C
       CST0=0.0D-00
@@ -1306,7 +1308,7 @@ cc	DIMENSION NH(10),IDD(10),IR(10)
 cc	DIMENSION IJ(5),IK(5)
 cxx      DIMENSION NH(K),IDD(K),IR(K)
 cxx      DIMENSION IJ(ID),IK(ID)
-      INTEGER :: NH(K), IDD(K), IR(K), IJ(ID), IK(ID), K, ID, IAW
+      INTEGER NH(K), IDD(K), IR(K), IJ(ID), IK(ID), K, ID, IAW
       IAW = 0
       IFP = 0
       DO 100 I=1,K
@@ -1346,8 +1348,8 @@ cc	DIMENSION A(10,10),AW(50)
 cc	DIMENSION IJ(5),IK(5)
 cxx      DIMENSION A(K,K),AW(IAW)
 cxx      DIMENSION IJ(ID),IK(ID)
-      INTEGER :: IJ(ID), IK(ID), K, ID, IAW
-      REAL(8) :: A(K,K), AW(IAW)
+      INTEGER IJ(ID), IK(ID), K, ID, IAW
+      DOUBLE PRECISION A(K,K), AW(IAW)
 cc	IKSUM=0
       IKSJ=0
       DO 300 KS=1,ID
@@ -1375,9 +1377,9 @@ cc	DIMENSION AW(50),IDD(10),IR(10)
 cc	DIMENSION Z(MJ3,MJ4),ZP(MJ3,MJ4)
 cxx      DIMENSION AW(IAW),IDD(K),IR(K)
 cxx      DIMENSION Z(K,IC),ZP(K,IC)
-      INTEGER :: IAW, IDD(K), IR(K), K, IC
-      REAL(8) :: AW(IAW), Z(K,IC), ZP(K,IC)
-      REAL(8) :: CST0, SUM
+      INTEGER IAW, IDD(K), IR(K), K, IC
+      DOUBLE PRECISION AW(IAW), Z(K,IC), ZP(K,IC)
+      DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       NI=0
       DO 400 I=1,K
@@ -1416,9 +1418,9 @@ cc      DIMENSION O(50,5,10) , CM1(50,10,10)
 cc	DIMENSION OO(10,5),XX(5,10),Z(10,10),ZZ(10,10)
 cxx      DIMENSION O(50,ID,K),CM1(50,K,K)
 cxx      DIMENSION OO(K,ID),XX(ID,K),Z(K,K),ZZ(K,K)
-      INTEGER :: M, K, ID
-      REAL(8) :: O(50,ID,K), CM1(50,K,K)
-      REAL(8) :: OO(K,ID), XX(ID,K), Z(K,K), ZZ(K,K), CST0
+      INTEGER M, K, ID
+      DOUBLE PRECISION O(50,ID,K), CM1(50,K,K)
+      DOUBLE PRECISION OO(K,ID), XX(ID,K), Z(K,K), ZZ(K,K), CST0
 C
 C
 C     CM1(MS) COMPUTATION
@@ -1481,12 +1483,12 @@ cxx      DIMENSION CXV2(51,ID,K)
 cxx      DIMENSION HS(MJ4,MJ4)
 cxx      DIMENSION O(50,ID,K),Q(50,K,ID),X2(50,ID,ID)
 cxx      DIMENSION CXY1(100,ID,ID),CXY2(50,ID,ID)
-      INTEGER :: IJ(ID), IK(ID), M, L, K, ID, IAW, MJ3, MJ4
-      REAL(8) :: CYY1(MJ3,ID,ID), HS(MJ4,MJ4), O(50,ID,K), Q(50,K,ID), 
-     1           CM1(50,K,K), X2(50,ID,ID), CXY1(100,ID,ID),
-     2           CXX1(51,ID,ID), CXV1(51,ID,K)
-      REAL(8) :: CVV1(50,K,K), CXV2(51,ID,K), CXY2(50,ID,ID), CST2,
-     1           SUMBB, SUMAB, SUMAA
+      INTEGER IJ(ID), IK(ID), M, L, K, ID, IAW, MJ3, MJ4
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), HS(MJ4,MJ4), O(50,ID,K),
+     1                 Q(50,K,ID), CM1(50,K,K), X2(50,ID,ID),
+     2                 CXY1(100,ID,ID), CXX1(51,ID,ID), CXV1(51,ID,K)
+      DOUBLE PRECISION CVV1(50,K,K), CXV2(51,ID,K), CXY2(50,ID,ID),
+     1                 CST2, SUMBB, SUMAB, SUMAA
 C
       CST2=2.0D-00
 C     CXY2(MS) MS=0,M-1 COMPUTATION
@@ -1609,10 +1611,11 @@ cxx      DIMENSION Q(50,K,ID),CYV1(51,ID,K),CVV1(50,K,K)
 cxx      DIMENSION CYV2(51,ID,K)
 cc	DIMENSION QQ(10,5),CXV(5,10),Z(10,10),ZZ(10,10)
 cxx      DIMENSION QQ(K-ID,ID),CXV(ID,K),Z(K-ID,K),ZZ(K-ID,K)
-      INTEGER :: M, L, K, ID
-      REAL(8) :: Q(50,K,ID), CYV1(51,ID,K), CVV1(50,K,K), CYV2(51,ID,K)
-      REAL(8) :: QQ(K-ID,ID), CXV(ID,K), Z(K-ID,K), ZZ(K-ID,K),
-     1           CST0, CST1
+      INTEGER M, L, K, ID
+      DOUBLE PRECISION Q(50,K,ID), CYV1(51,ID,K), CVV1(50,K,K),
+     1                 CYV2(51,ID,K)
+      DOUBLE PRECISION QQ(K-ID,ID), CXV(ID,K), Z(K-ID,K), ZZ(K-ID,K),
+     1                 CST0, CST1
 C
 C
 C
@@ -1691,9 +1694,10 @@ cc	DIMENSION Q(50,10,5),CYY1(160,5,5),CYV1(51,5,10)
 cc	DIMENSION QQ(5,10),CYY(5,5),Z(5,10),ZZ(5,10)
 cxx      DIMENSION Q(50,K,ID),CYY1(MJ3,ID,ID),CYV1(51,ID,K)
 cxx      DIMENSION QQ(ID,K-ID),CYY(ID,ID),Z(ID,K-ID),ZZ(ID,K-ID)
-      INTEGER :: MJ3, M, L, K, ID
-      REAL(8) :: CYY1(MJ3,ID,ID), Q(50,K,ID), CYV1(51,ID,K)
-      REAL(8) :: QQ(ID,K-ID), CYY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID), CST0
+      INTEGER MJ3, M, L, K, ID
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), Q(50,K,ID), CYV1(51,ID,K)
+      DOUBLE PRECISION QQ(ID,K-ID), CYY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID),
+     1                 CST0
 C
       CST0=0.0D-00
       MP1=M+1
@@ -1757,9 +1761,10 @@ cc	DIMENSION Q(50,10,5),CYY1(160,5,5),CYV2(51,5,10)
 cc	DIMENSION QQ(5,10),CYY(5,5),Z(5,10),ZZ(5,10)
 cxx      DIMENSION Q(50,K,ID),CYY1(MJ3,ID,ID),CYV2(51,ID,K)
 cxx      DIMENSION QQ(ID,K-ID),CYY(ID,ID),Z(ID,K-ID),ZZ(ID,K-ID)
-      INTEGER :: MJ3, L, K, ID
-      REAL(8) :: CYY1(MJ3,ID,ID), Q(50,K,ID), CYV2(51,ID,K)
-      REAL(8) :: QQ(ID,K-ID), CYY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID), CST0
+      INTEGER MJ3, L, K, ID
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), Q(50,K,ID), CYV2(51,ID,K)
+      DOUBLE PRECISION QQ(ID,K-ID), CYY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID),
+     1                 CST0
 C
       CST0=0.0D-00
       LP1=L+1
@@ -1832,10 +1837,11 @@ cc      DIMENSION Q(50,10,5),CXY1(100,5,5),CXY2(50,5,5),CXV2(51,5,10)
 cc	DIMENSION QQ(5,10),CXY(5,5),Z(5,10),ZZ(5,10)
 cxx      DIMENSION Q(50,K,ID),CXY1(100,ID,ID),CXY2(50,ID,ID),CXV2(51,ID,K)
 cxx      DIMENSION QQ(ID,K-ID),CXY(ID,ID),Z(ID,K-ID),ZZ(ID,K-ID)
-      INTEGER :: M, L, K, ID
-      REAL(8) :: Q(50,K,ID), CXY1(100,ID,ID), CXY2(50,ID,ID),
-     1           CXV2(51,ID,K)
-      REAL(8) :: QQ(ID,K-ID), CXY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID), CST0
+      INTEGER M, L, K, ID
+      DOUBLE PRECISION Q(50,K,ID), CXY1(100,ID,ID), CXY2(50,ID,ID),
+     1                 CXV2(51,ID,K)
+      DOUBLE PRECISION QQ(ID,K-ID), CXY(ID,ID), Z(ID,K-ID), ZZ(ID,K-ID),
+     1                 CST0
 C
       CST0=0.0D-00
       LP1=L+1
@@ -1909,9 +1915,9 @@ cc	DIMENSION X2(50,5,5),CYY1(160,5,5),CXY2(50,5,5)
 cc	DIMENSION XX(5,5),CYY(5,5),Z(5,5),ZZ(5,5)
 cxx      DIMENSION X2(50,ID,ID),CYY1(MJ3,ID,ID),CXY2(50,ID,ID)
 cxx      DIMENSION XX(ID,ID),CYY(ID,ID),Z(ID,ID),ZZ(ID,ID)
-      INTEGER :: MJ3, M, L, ID
-      REAL(8) :: CYY1(MJ3,ID,ID), X2(50,ID,ID), CXY2(50,ID,ID)
-      REAL(8) :: XX(ID,ID), CYY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
+      INTEGER MJ3, M, L, ID
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), X2(50,ID,ID), CXY2(50,ID,ID)
+      DOUBLE PRECISION XX(ID,ID), CYY(ID,ID), Z(ID,ID), ZZ(ID,ID), CST0
 C
       CST0=0.0D-00
       LP1=L+1
@@ -1960,7 +1966,7 @@ cxx     *  N,K,ID,IPQ,AICD,MJ1,MJ4,ISWRO,O,Q,X1,X2,CXY1,CXX1,CXV1)
 C     DAVIDON'S (MINIMIZATION) PROCEDURE
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cc	COMMON /COM50/VD
-      REAL(8) :: AICO
+      DOUBLE PRECISION AICO
       COMMON /COM101/AICO
 cc	COMMON /COM199/AICD
 cc	DIMENSION CYY1(160,5,5),B(10,5)
@@ -1978,18 +1984,18 @@ cc      DIMENSION AW(IAW),IDD(K),IR(K)
 cxx      DIMENSION AW(IAW),NH(K),IDD(K),IR(K)
 cxx      DIMENSION O(50,ID,K),Q(50,K,ID),X1(50,K,K),X2(50,ID,ID)
 cxx      DIMENSION CXY1(100,ID,ID),CXX1(51,ID,ID),CXV1(51,ID,K)
-      INTEGER :: MJ3, IAW, NH(K), IDD(K), IR(K), IJ(ID), IK(ID), N, K,
-     1           ID, IPQ, MJ4, ISWRO
-      REAL(8) :: CYY1(MJ3,ID,ID), B(K,ID), AW(IAW), VD(MJ4,MJ4),
-     1           X(MJ4), C0(ID,ID), G(MJ4), R(MJ4), AICD, O(50,ID,K),
-     2           Q(50,K,ID), X1(50,K,K), X2(50,ID,ID),
-     3           CXY1(100,ID,ID), CXX1(51,ID,ID), CXV1(51,ID,K)
-      REAL(8) :: C0D(ID,ID), SX(MJ4), SC0(ID,ID), SC0D(ID,ID), SG(MJ4),
-     1           SR(MJ4), CST0, CST1, CST2, CST01, CST05,
-     2           CONSTA, CONSTB, EPS1, EPS3, EPS4, EPS5, AIPQ,
-     3           AN, PHAID, RO, PHAI, EPHAI1, T1, RAM, RAMRO,
-     4           RAMROT, SUM, SRO, SROD, DGAM, GSR, DGAM1, RAMSRO,
-     5           RAMT, SPHAI, RAM1, CONSDR, OPHAI, AICS, DAIC
+      INTEGER MJ3, IAW, NH(K), IDD(K), IR(K), IJ(ID), IK(ID), N, K,
+     1        ID, IPQ, MJ4, ISWRO
+      DOUBLE PRECISION CYY1(MJ3,ID,ID), B(K,ID), AW(IAW), VD(MJ4,MJ4),
+     1                 X(MJ4), C0(ID,ID), G(MJ4), R(MJ4), AICD,
+     2                 O(50,ID,K), Q(50,K,ID), X1(50,K,K), X2(50,ID,ID),
+     3                 CXY1(100,ID,ID), CXX1(51,ID,ID), CXV1(51,ID,K)
+      DOUBLE PRECISION C0D(ID,ID), SX(MJ4), SC0(ID,ID), SC0D(ID,ID),
+     1                 SG(MJ4), SR(MJ4), CST0, CST1, CST2, CST01, CST05,
+     2                 CONSTA, CONSTB, EPS1, EPS3, EPS4, EPS5, AIPQ,
+     3                 AN, PHAID, RO, PHAI, EPHAI1, T1, RAM, RAMRO,
+     4                 RAMROT, SUM, SRO, SROD, DGAM, GSR, DGAM1, RAMSRO,
+     5                 RAMT, SPHAI, RAM1, CONSDR, OPHAI, AICS, DAIC
 C
 C
 C     DAVIDON'S PROCEDURE
@@ -2272,13 +2278,13 @@ cc	DIMENSION W0(5,5),Z(5,5),ZZ(5,5)
 cxx      DIMENSION BA(ID,MJ6),B0(ID,ID),BM(ID,MJ6)
 cxx      DIMENSION U(K,ID),AU(K,ID,MJ7),AAU(ID,ID,MJ7)
 cxx      DIMENSION BBM(ID,ID,MJ6),W0(ID,ID),Z(ID,ID),ZZ(ID,ID,MJ7)
-      INTEGER :: IAW, IH(K), IDD(K), IR(K), IK(ID), ID, ICONT,
-     1           K, IQM, MJ6, MJ7
-      REAL(8) :: B(K,ID), AW(IAW), BBM(ID,ID,MJ6),
-     1           AAU(ID,ID,MJ7), ZZ(ID,ID,MJ7)
-      INTEGER :: IO(K)
-      REAL(8) :: BA(ID,MJ6), B0(ID,ID), BDET, BM(ID,MJ6), U(K,ID),
-     1           AU(K,ID,MJ7), W0(ID,ID), Z(ID,ID), CST0, CST1
+      INTEGER IAW, IH(K), IDD(K), IR(K), IK(ID), ID, ICONT, K,
+     1        IQM, MJ6, MJ7
+      DOUBLE PRECISION B(K,ID), AW(IAW), BBM(ID,ID,MJ6),
+     1                 AAU(ID,ID,MJ7), ZZ(ID,ID,MJ7)
+      INTEGER IO(K)
+      DOUBLE PRECISION BA(ID,MJ6), B0(ID,ID), BDET, BM(ID,MJ6), U(K,ID),
+     1                 AU(K,ID,MJ7), W0(ID,ID), Z(ID,ID), CST0, CST1
 C     BA COMPUTATION
 C     ORDER DETERMINATION
       CST0=0.0D-00
@@ -2489,10 +2495,10 @@ cxx      DIMENSION IJ(ID),NH(K),IR(K)
 cc      DIMENSION IDUMMY(ID)
 cxx      DIMENSION IDD(K)
 cxx      DIMENSION IO(K)
-      INTEGER :: IAW, NH(K), IDD(K), IR(K), K, ID 
-      REAL(8) :: B(K,ID), AW(IAW)
-      INTEGER :: IO(K)
-      REAL(8) :: RO9, SCALE
+      INTEGER IAW, NH(K), IDD(K), IR(K), K, ID 
+      DOUBLE PRECISION B(K,ID), AW(IAW)
+      INTEGER IO(K)
+      DOUBLE PRECISION RO9, SCALE
 C
       RO9=0.95D-00
       DO 10 I=1,K
@@ -2543,9 +2549,9 @@ C     MJ: ABSOLUTE DIMENSION OF X IN THE MAIN ROUTINE
 cxx      IMPLICIT REAL*8(X)
 cc	DIMENSION X(MJ,MJ)
 cxx      DIMENSION X(MM,MM)
-      INTEGER :: MM
-      REAL(8) :: X(MM,MM), XDETMI
-      REAL(8) :: CST0, CST1, XXC, XC
+      INTEGER MM
+      DOUBLE PRECISION X(MM,MM), XDETMI
+      DOUBLE PRECISION CST0, CST1, XXC, XC
       CST0=0.0D-00
       CST1=1.0D-00
       XDETMI=CST1
@@ -2583,4 +2589,3 @@ cxx   16 X(J,K)=X(J,K)-X(I,K)*XXC
    18 XDETMI=XDETMI*X(MM,MM)
    17 RETURN
       END
-

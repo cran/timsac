@@ -1,6 +1,6 @@
       SUBROUTINE RASPECF(H,L,K,SGME2,A,B,PXX)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.4.1   RATIONAL SPECTRUM
 C-----------------------------------------------------------------------
@@ -22,9 +22,6 @@ C     REQUIRED INPUTS ARE:
 C     L,K,H,SGME2,(A(I),I=1,L), AND (B(I),I=1,K).
 C     0 IS ALLOWABLE AS L AND/OR K.
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: RASPECF
-CC      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      INTEGER H,H1
 CC      DIMENSION A(501),B(501)
@@ -34,10 +31,11 @@ cxx      DIMENSION A(L),B(K)
 CC      DIMENSION G(MAX(L,K)+1),GR1(H+1),GI1(H+1),GR2(H+1),GI2(H+1)
 cxx      DIMENSION G(L+K+1),GR1(H+1),GI1(H+1),GR2(H+1),GI2(H+1)
 cxx      DIMENSION PXX(H+1)
-      INTEGER :: H, L, K
-      REAL(8) :: SGME2, A(L), B(K), PXX(H+1)
-      INTEGER :: H1
-      REAL(8) :: G(L+K+1), GR1(H+1), GI1(H+1), GR2(H+1), GI2(H+1)
+      INTEGER H, L, K
+      DOUBLE PRECISION SGME2, A(L), B(K), PXX(H+1)
+c local
+      INTEGER H1
+      DOUBLE PRECISION G(L+K+1), GR1(H+1), GI1(H+1), GR2(H+1), GI2(H+1)
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 CC      CALL SETWND

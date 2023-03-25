@@ -1,6 +1,6 @@
       SUBROUTINE COVGENF(L,K,F,G,C,CN)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc	PROGRAM COVGEN
 C     PROGRAM 74.1.3. COVARIANCE GENERATION FROM GAIN FUNCTION.
@@ -37,8 +37,6 @@ C     OUTPUTS:
 C     (N,LAGH): N=2048
 C     C(I)(I=0,LAGH):
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: COVGENF
-C
       PARAMETER (LMAX=1024)
 cxx      IMPLICIT REAL*8 (O-Y)
 cc      REAL*8 C(1025),CN(1025),CX0
@@ -48,9 +46,9 @@ cc      DATA F / 500*0.0 /, G / 500*0.0 /
 cxx      REAL*8  C(L+1),CN(L+1),CX0
 cxx      COMPLEX*16 A(LMAX*2)
 cxx      REAL*8  F(K),G(K)
-      INTEGER :: L, K
-      REAL(8) :: F(K), G(K), C(L+1), CN(L+1)
-      REAL(8) :: CX0, Q00, AN, BN, CM, Q1, Q2, Q3, Q4, Q25
+      INTEGER L, K
+      DOUBLE PRECISION F(K), G(K), C(L+1), CN(L+1)
+      DOUBLE PRECISION CX0, Q00, AN, BN, CM, Q1, Q2, Q3, Q4, Q25
       COMPLEX(kind(0d0)) :: A(LMAX*2)
 C
 C     INPUT / OUTPUT DATA FILE OPEN

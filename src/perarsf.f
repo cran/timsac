@@ -1,7 +1,7 @@
       SUBROUTINE PERARSF( ZS,N,IP,LAG,KSW,ZMEAN,SUM,NPR,JNDF,AF,AICF,
      *                    B,E,C,EX,LMAX)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  PERARS                                                   
 C.......................................................................
@@ -73,8 +73,6 @@ C             DFORM: INPUT DATA FORMAT SPECIFICATION STATEMENT
 C                    -- EXAMPLE --    (8F10.5)                          
 C             (Z(I),I=1,N):  ORIGINAL DATA                              
 C       --------------------------------------------------------------- 
-C                                                                       
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: PERARSF
 C
 cxx      IMPLICIT  REAL * 8 ( A-H,O-Z )                                    
 CC      REAL  * 4   Z , Y                                                 
@@ -94,15 +92,15 @@ cxx      DIMENSION  AICM(IP), SDM(IP), IM(IP)
 cxx      DIMENSION  JNDF((LAG+1)*IP+KSW,IP), AF((LAG+1)*IP+KSW,IP)
 cxx      DIMENSION  NPR(IP), AICF(IP)
 C
-      INTEGER :: N, IP, LAG, KSW, NPR(IP), JNDF((LAG+1)*IP+KSW,IP),
-     1           LMAX
-      REAL(8) :: ZS(N), ZMEAN, SUM, AF((LAG+1)*IP+KSW,IP), AICF(IP),
-     1           B(IP,IP,LAG), E(IP,IP), C(IP), EX(IP)
-      INTEGER :: IM(IP)
-      REAL(8) :: X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW), Y(N/IP,IP), 
-     1           Z(N), BI(IP,IP,LAG), EI(IP,IP), AIC(LAG+1,IP),
-     2           SD(LAG+1,IP), DIC(LAG+1,IP), AICM(IP), SDM(IP),
-     3           AICS
+      INTEGER N, IP, LAG, KSW, NPR(IP), JNDF((LAG+1)*IP+KSW,IP), LMAX
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, AF((LAG+1)*IP+KSW,IP),
+     1                 AICF(IP), B(IP,IP,LAG), E(IP,IP), C(IP), EX(IP)
+c local
+      INTEGER IM(IP)
+      DOUBLE PRECISION X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW), Y(N/IP,IP),
+     1                 Z(N), BI(IP,IP,LAG), EI(IP,IP), AIC(LAG+1,IP),
+     2                 SD(LAG+1,IP), DIC(LAG+1,IP), AICM(IP), SDM(IP),
+     3                 AICS
 C
 cc      CHARACTER(100) IFLNAM,OFLNAM
 cc      CALL FLNAM2( IFLNAM,OFLNAM,NFL )
@@ -224,8 +222,8 @@ C
 CC      DIMENSION  Z(1) , Y(MJ,1)                                         
 cx      REAL * 8  Z(1) , Y(MJ,1)
 cxx      REAL * 8  Z(N) , Y(MJ,IP)
-      INTEGER :: N, IP, MJ, ND
-      REAL(8) :: Z(N), Y(MJ,IP)
+      INTEGER N, IP, MJ, ND
+      DOUBLE PRECISION Z(N), Y(MJ,IP)
       ND = N / IP                                                       
 cxx      DO 10  I=1,ND
       DO 20  I=1,ND

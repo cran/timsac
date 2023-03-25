@@ -1,7 +1,7 @@
-      SUBROUTINE FPEC7F(N,L,IR,IP,IP0,INW,R1,R2,FPEC,RFPEC,AIC,
+      SUBROUTINE FPEC7(N,L,IR,IP,IP0,INW,R1,R2,FPEC,RFPEC,AIC,
      & IFPEC,OFPEC,ORFPEC,OAIC,OSD,AO)
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 C     PROGRAM 5.3.2   FPEC(AR-MODEL FITTING FOR CONTROL)
 C-----------------------------------------------------------------------
@@ -32,9 +32,6 @@ C     THE OUTPUTS ARE THE PREDICTION ERROR COVARIANCE MATRIX OSD AND
 C     THE SET OF COEFFICIENT MATRICES A AND B TO BE USED IN
 C     PROGRAM 5.5.1   OPTIMAL CONTROLLER DESIGN.
 C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: FPEC7F
-c      USE DFLIB
-C
 cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      DIMENSION R1(30,10,10),A1(30,10,10),B1(30,10,10),AO(30,10,10)
 c      DIMENSION SD(10,10),SE(10,10),SF(10,10),OSD(10,10)
@@ -46,12 +43,15 @@ cxx      DIMENSION OSD(IR,IR),AO(L,IR,IP)
 cxx      DIMENSION A1(L,IP,IP),B1(L,IP,IP),C1(IP0,IP0)
 cxx      DIMENSION SD(IP,IP),SE(IP,IP),SF(IP,IP)
 cxx      DIMENSION XSD(IP,IP),XSF(IP,IP),D(IP,IP),E(IP,IP),Z1(IP,IP)
-      INTEGER :: N, L, IR, IP, IP0, INW(IP), IFPEC
-      REAL(8) :: R1(L+1,IP0,IP0), R2(L+1,IP,IP), FPEC(0:L), RFPEC(0:L),
-     1           AIC(0:L), OFPEC, ORFPEC, OAIC, OSD(IR,IR), AO(L,IR,IP)
-      REAL(8) :: A1(L,IP,IP), B1(L,IP,IP), C1(IP0,IP0), SD(IP,IP),
-     1           SE(IP,IP), SF(IP,IP), XSD(IP,IP), XSF(IP,IP),
-     2           D(IP,IP), E(IP,IP), Z1(IP,IP), OOFPEC, SDDET, SFDET
+      INTEGER N, L, IR, IP, IP0, INW(IP), IFPEC
+      DOUBLE PRECISION R1(L+1,IP0,IP0), R2(L+1,IP,IP), FPEC(0:L),
+     1                 RFPEC(0:L), AIC(0:L), OFPEC, ORFPEC, OAIC,
+     2                 OSD(IR,IR), AO(L,IR,IP)
+c local
+      DOUBLE PRECISION A1(L,IP,IP), B1(L,IP,IP), C1(IP0,IP0), SD(IP,IP),
+     1                 SE(IP,IP), SF(IP,IP), XSD(IP,IP), XSF(IP,IP),
+     2                 D(IP,IP), E(IP,IP), Z1(IP,IP), OOFPEC, SDDET,
+     3                 SFDET
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 c      CHARACTER(100) DFNAM
@@ -232,9 +232,10 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 c      COMMON /COMA/AIC
 cxx      DIMENSION SD(K,K)
 cxx      DIMENSION SD1(IR,IR)
-      INTEGER :: N, K, IR, MS
-      REAL(8) :: SD(K,K), Z, RZ, OOZ, AIC
-      REAL(8) :: SD1(IR,IR), AN, ANP, ANM, AP, APR, CST1, SDRM, ARM2
+      INTEGER N, K, IR, MS
+      DOUBLE PRECISION SD(K,K), Z, RZ, OOZ, AIC
+      DOUBLE PRECISION SD1(IR,IR), AN, ANP, ANM, AP, APR, CST1, SDRM,
+     1                 ARM2
       AN=N
       KM=K*MS
       ANP=N+1+KM

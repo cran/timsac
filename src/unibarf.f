@@ -1,7 +1,7 @@
       SUBROUTINE UNIBARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,IMIN,AICM,SDMIN,
      *                    B1,C,D,B2,AICB,SDB,PN,A,SXX )
 C
-      INCLUDE 'timsac_f.h'
+      INCLUDE 'timsac.h'
 C
 cc      PROGRAM  UNIBAR                                                   
 C.......................................................................
@@ -74,8 +74,6 @@ C             DFORM:    INPUT DATA FORMAT SPECIFICATION STATEMENT.
 C                       -- FOR EXAMPLE --     (8F10.5)                  
 C             (Z(I),I=1,N):  ORIGINAL DATA                              
 C               --------------------------------------------------------
-C
-cc      !DEC$ ATTRIBUTES DLLEXPORT :: UNIBARF
 C                                                                       
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL * 4   Z(10000) , TITLE(20)                                   
@@ -86,11 +84,12 @@ cxx      DIMENSION  ZS(N), Z(N)
 cxx      DIMENSION  X(N-LAG,LAG+1), D(LAG), A(LAG), B1(LAG), B2(LAG)
 cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1), C(LAG+1)
 cxx      DIMENSION  SXX(121)
-      INTEGER :: N, LAG, IMIN
-      REAL(8) :: ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1), DIC(LAG+1),
-     1           AICM, SDMIN, B1(LAG), C(LAG+1), D(LAG), B2(LAG),
-     2           AICB, SDB, PN, A(LAG), SXX(121)
-      REAL(8) :: Z(N), X(N-LAG,LAG+1), B
+      INTEGER N, LAG, IMIN
+      DOUBLE PRECISION ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1),
+     1                 DIC(LAG+1), AICM, SDMIN, B1(LAG), C(LAG+1),
+     2                 D(LAG), B2(LAG), AICB, SDB, PN, A(LAG), SXX(121)
+c local
+      DOUBLE PRECISION Z(N), X(N-LAG,LAG+1), B
 C                                                                       
 C        EXTERNAL SUBROUTINE DECLARATION:                               
 C                                                                       

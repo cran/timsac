@@ -231,7 +231,7 @@ function (y, lag=NULL, window = "Akaike", log = FALSE, plot = TRUE)
 
 
 mulspe <- 
-function (y, lag = NULL, window = "Akaike", plot = TRUE, plot.scale = FALSE) 
+function (y, lag = NULL, window = "Akaike", plot = TRUE, ...) 
 {
     if (window != "Akaike" && window != "Hanning")
         stop("allowed windows are 'Akaike' or 'Hanning'")
@@ -264,22 +264,21 @@ function (y, lag = NULL, window = "Akaike", plot = TRUE, plot.scale = FALSE)
         spec <- array(z$spec1, dim = c(lag1, d, d))
         coh <- array(z$coh1, dim = c(lag1, d, d))
     }
-    cspec <- array(0, dim = c(d, d, lag1))
 
-    mulspe.out <- list(spec = spec, stat = array(z$stat, dim = c(lag1, d)),
-                       coh = coh)
-    class(mulspe.out) <- "mulspe"
+    specmx <- array(0, dim = c(d, d, lag1))
+    for(j in 1:d)
+        for(k in 1:j)
+            for(l in 1:lag1) {
+              specmx[j, k, l] <- spec[l, j, k] + (0 + 1i) * spec[l, k, j]
+              specmx[k, j, l] <- spec[l, j, k] - (0 + 1i) * spec[l, k, j]
+            }
+
+    mulspe.out <- list(spec = spec, specmx = specmx,
+                       stat = array(z$stat, dim = c(lag1, d)), coh = coh)
+    class(mulspe.out$specmx) <- "specmx"
 
     if (plot == TRUE) {
-        for(j in 1:d) {
-            for(k in 1:j) {
-                for(l in 1:lag1) {
-                  cspec[j, k, l] <- spec[l, j, k] + (0 + 1i) * spec[l, k, j]
-                  cspec[k, j, l] <- spec[l, j, k] - (0 + 1i) * spec[l, k, j]
-                }
-            }
-        }
-        plot.mulspec(cspec, d, lag, plot.scale)
+        plot.specmx(mulspe.out$specmx, ...)
         return(invisible(mulspe.out))
     } else {
         return(mulspe.out)
@@ -308,14 +307,27 @@ print.mulspe <- function(x, ...)
 }
 
 
-plot.mulspec <- function(spec, d, lag, plot.scale)
+plot.specmx <- function(x, plot.scale = TRUE, ...)
 {
+    spec <- x
+    lag1 <- dim(spec)[3]
+    lag <- lag1 - 1
+    d <- dim(spec)[1]
+
     par(mfrow = c(d, d))
-    lag1 <- lag + 1
-    x <- rep(0, lag1)
+    xx <- rep(0, lag1)
     for(i in 1:lag1)
-        x[i] <- (i - 1) / (2 * lag)
+        xx[i] <- (i - 1) / (2 * lag)
+
     dspec <- array(0, dim = c(d, d, lag1))
+    for(j in 1:d)
+        for(k in 1:d) {
+            if (j >= k) {
+                dspec[j, k, ] = Mod(spec[j, k, ])
+            } else {
+                dspec[j, k, ] = Arg(spec[j, k, ])
+            }
+        }
     for(j in 1:d)
         for(k in 1:d) {
             if (j >= k) {
@@ -335,24 +347,24 @@ plot.mulspec <- function(spec, d, lag, plot.scale)
             for(k in 1:d)
                 if (j >= k) {
                     ylabs = paste("AmpSp (", j, ",", k, ")")
-                    plot(x, dspec[j, k, ], type = "l", xlab = "Frequency",
-                         ylab = ylabs, ylim=c(0,mx))
+                    plot(xx, dspec[j, k, ], type = "l", xlab = "Frequency",
+                         ylab = ylabs, ylim=c(0,mx), ...)
                 } else {
                     ylabs = paste("PhaseSp (", j, ",", k, ")")
-                    plot(x, dspec[j, k, ], type = "l", xlab = "Frequency",
-                         ylab = ylabs, ylim=c(-pi,pi))
+                    plot(xx, dspec[j, k, ], type = "l", xlab = "Frequency",
+                         ylab = ylabs, ylim=c(-pi,pi), ...)
                 }
     } else {
         for(j in 1:d)
             for(k in 1:d)
                 if (j >= k) {
                     ylabs = paste("AmpSp (", j, ",", k, ")")
-                    plot(x, dspec[j, k, ], type = "l", xlab = "Frequency",
-                         ylab = ylabs)
+                    plot(xx, dspec[j, k, ], type = "l", xlab = "Frequency",
+                         ylab = ylabs, ...)
                 } else {
                     ylabs = paste("PhaseSp (", j, ",", k, ")")
-                    plot(x, dspec[j, k, ], type = "l", xlab = "Frequency",
-                         ylab = ylabs)
+                    plot(xx, dspec[j, k, ], type = "l", xlab = "Frequency",
+                         ylab = ylabs, ...)
                 }
     }
     par(mfrow = c(1, 1))
@@ -697,8 +709,7 @@ function (h, var, arcoef = NULL, macoef = NULL, log = FALSE, plot = TRUE)
 }
 
 mulrsp <-
-function (h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE, 
-          plot.scale = FALSE) 
+function (h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE, ...)
 {
     if (is.null(ar)) {
         l <- 0
@@ -732,11 +743,12 @@ function (h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE,
                   rspec = complex(d*d*h1),
                   scoh = double(d*d*h1))
 
-    mulrsp.out <- list(rspec = array(z$rspec, dim = c(d, d, h1)),
-                       scoh = array(z$scoh, dim = c(d, d, h1)))
+    rspec <- array(z$rspec, dim = c(d, d, h1))
+    mulrsp.out <- list(rspec = rspec, scoh = array(z$scoh, dim = c(d, d, h1)))
+    class(mulrsp.out$rspec) <- "specmx"
 
     if (plot == TRUE) {
-        plot.mulspec(mulrsp.out$rspec, d, h, plot.scale)
+        plot.specmx(mulrsp.out$rspec, ...)
         return(invisible(mulrsp.out))
     } else {
         return(mulrsp.out)

@@ -118,7 +118,8 @@ cxx   24 LG=K
       LG=K
 c      CALL FGER1
       CALL FGER1(G,GR,GI,LG,H,JJF)
-      X(II,JJ)=DCMPLX(GR,GI)
+cxx      X(II,JJ)=DCMPLX(GR,GI)
+      X(II,JJ)=CMPLX(GR,GI,KIND=8)
    21 CONTINUE
    20 CONTINUE
 C     BF*SD*CONJG(BF') COMPUTATION
@@ -150,7 +151,8 @@ cxx   44 LG=L
       LG=L
 c      CALL FGER1
       CALL FGER1(G,GR,GI,LG,H,JJF)
-      X(II,JJ)=DCMPLX(GR,GI)
+cxx      X(II,JJ)=DCMPLX(GR,GI)
+      X(II,JJ)=CMPLX(GR,GI,KIND=8)
    41 CONTINUE
    40 CONTINUE
 C     INVERSE OF AF (COMPLEX) COMPUTATION
@@ -168,7 +170,8 @@ cc      IF(IP.EQ.1) GO TO 260
       DO 50 II=2,IP
       IM1=II-1
 c      RYI=DREAL(Y(II,II))
-      RYI=DREAL(Y(II,II,JF))
+cxx      RYI=DREAL(Y(II,II,JF))
+      RYI=REAL(Y(II,II,JF))
       DO 51 JJ=1,IM1
 c      RYJ=DREAL(Y(JJ,JJ))
 c      RRYIJ=DREAL(Y(II,JJ))
@@ -176,9 +179,12 @@ c      RIYIJ=DIMAG(Y(II,JJ))
 c      CH(II,JJ)=(RRYIJ**2+RIYIJ**2)/(RYI*RYJ)
 c   51 CH(JJ,II)=CH(II,JJ)
 c   50 CH(II,II)=CST1
-      RYJ=DREAL(Y(JJ,JJ,JF))
-      RRYIJ=DREAL(Y(II,JJ,JF))
-      RIYIJ=DIMAG(Y(II,JJ,JF))
+cxx      RYJ=DREAL(Y(JJ,JJ,JF))
+cxx      RRYIJ=DREAL(Y(II,JJ,JF))
+cxx      RIYIJ=DIMAG(Y(II,JJ,JF))
+      RYJ=REAL(Y(JJ,JJ,JF))
+      RRYIJ=REAL(Y(II,JJ,JF))
+      RIYIJ=AIMAG(Y(II,JJ,JF))
       CH(II,JJ,JF)=(RRYIJ**2+RIYIJ**2)/(RYI*RYJ)
 cxx   51 CH(JJ,II,JF)=CH(II,JJ,JF)
 cxx   50 CH(II,II,JF)=CST1
@@ -251,11 +257,13 @@ cxx      DO 110 J=1,I
       XSUM=CST0
       DO 112 K=1,NN
 cxx  112 XSUM=XSUM+Y1(I,K)*DCONJG(X(J,K))
-      XSUM=XSUM+Y1(I,K)*DCONJG(X(J,K))
+cxx      XSUM=XSUM+Y1(I,K)*DCONJG(X(J,K))
+      XSUM=XSUM+Y1(I,K)*CONJG(X(J,K))
   112 CONTINUE
       Z(I,J)=XSUM
 cxx  110 Z(J,I)=DCONJG(Z(I,J))
-      Z(J,I)=DCONJG(Z(I,J))
+cxx      Z(J,I)=DCONJG(Z(I,J))
+      Z(J,I)=CONJG(Z(I,J))
   111 CONTINUE
   110 CONTINUE
       RETURN

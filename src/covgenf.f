@@ -90,22 +90,26 @@ cxx  107 J=J-1
       Q4=(Q1+Q2)/Q3
       I1=I+1
       Q1=Q4
-      A(I1)=DCMPLX(Q1,Q00)
+cxx      A(I1)=DCMPLX(Q1,Q00)
+      A(I1)=CMPLX(Q1,Q00,KIND=8)
       I2=N-I+1
 cxx  200 A(I2)=A(I1)
       A(I2)=A(I1)
   200 CONTINUE
       Q25=G(1)
-      A(1)=DCMPLX(Q25,Q00)
+cxx      A(1)=DCMPLX(Q25,Q00)
+      A(1)=CMPLX(Q25,Q00,KIND=8)
       Q25=G(K)
-      A(NN+2)=DCMPLX(Q25,Q00)
+cxx      A(NN+2)=DCMPLX(Q25,Q00)
+      A(NN+2)=CMPLX(Q25,Q00,KIND=8)
 C     FAST FOURIER TRANSFORM OF A
 C     COMMON SUBROUTINE CALL
       CALL MIXRAD(A,N,N2P,+1)
       LAGH1=L+1
       DO  201 I=1,LAGH1
 cxx  201 C(I)=DREAL(A(I))
-      C(I)=DREAL(A(I))
+cxx      C(I)=DREAL(A(I)) 
+      C(I)=REAL(A(I)) 
   201 CONTINUE
 C     C(I+1),I=0,L     ARE THE DESIRED AUTOCOVARIANCES.
 C     NORMARIZED COVARIANCES ARE GIVEN AS CN(I+1),I=0,L.

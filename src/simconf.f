@@ -788,7 +788,7 @@ C     PIVOTING AT L-TH STAGE
       DO 110 I=L,MM                                                     
 C     FOR COMPLEX VERSION NEXT STATEMENT SHOULD BE REPLACED BY          
 C     IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110                       
-cxx    1 IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110                         
+cxx    1 IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110                 
       IF(DABS(XMAXP).GE.DABS(X(I,L))) GO TO 110
       XMAXP=X(I,L)                                                      
       MAXI=I                                                            

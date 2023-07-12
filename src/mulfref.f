@@ -81,9 +81,11 @@ c      X(I,I)=P(I,I)
       DO 402 J=1,IM1
 c      X(I,J)=DCMPLX(P(I,J),P(J,I))
 c  402 X(J,I)=DCONJG(X(I,J))
-      X(I,J,JF)=DCMPLX(P(JF,I,J),P(JF,J,I))
+cxx      X(I,J,JF)=DCMPLX(P(JF,I,J),P(JF,J,I))
+      X(I,J,JF)=CMPLX(P(JF,I,J),P(JF,J,I),KIND=8)
 cxx  402 X(J,I,JF)=DCONJG(X(I,J,JF))
-      X(J,I,JF)=DCONJG(X(I,J,JF))
+cxx      X(J,I,JF)=DCONJG(X(I,J,JF))
+      X(J,I,JF)=CONJG(X(I,J,JF))
   402 CONTINUE
   401 CONTINUE
 C     MATRIX REARRANGEMENT AND PRINT OUT (COMPLEX)
@@ -94,7 +96,8 @@ c      CALL PRCPMA(X,K1,K1,MJ,MJ)
 C     FREQUENCY RESPONSE FUNCTION COMPUTATION
 c      P00=DREAL(X(K1,K1))
 c      CALL FQCPIV(X,XDET,K,MJ)
-      P00=DREAL(X(K1,K1,JF))
+cxx      P00=DREAL(X(K1,K1,JF))
+      P00=REAL(X(K1,K1,JF))
 c      CALL FQCPIV(X(1,1,JF),XDET,K,MJ)
       DO 31 I=1,IP0
       DO 30 II=1,IP0
@@ -105,9 +108,11 @@ c      CALL FQCPIV(X(1,1,JF),XDET,K,MJ)
       DO 20 I=1,K
 c      C(I)=DREAL(X(I,K1))
 c   20 S(I)=-DIMAG(X(I,K1))
-      C(I,JF)=DREAL(XFR(I,K1,JF))
+cxx      C(I,JF)=DREAL(XFR(I,K1,JF))
+      C(I,JF)=REAL(XFR(I,K1,JF))
 cxx   20 S(I,JF)=-DIMAG(XFR(I,K1,JF))
-      S(I,JF)=-DIMAG(XFR(I,K1,JF))
+cxx      S(I,JF)=-DIMAG(XFR(I,K1,JF))
+      S(I,JF)=-AIMAG(XFR(I,K1,JF))
    20 CONTINUE
 C     GAIN COMPUTATION
       DO 21 I=1,K
@@ -126,13 +131,15 @@ cxx   24    PH(I,JF)=PH(I,JF-1)
       CALL MPHASE(C(1,JF),S(1,JF),OARC,PH(1,JF),K,JJF)
 C     PARTIAL COHERENCY AND MULTIPLE COHERENCY COMPUTATION
 c      EP=DREAL(X(K1,K1))
-      EP=DREAL(XFR(K1,K1,JF))
+cxx      EP=DREAL(XFR(K1,K1,JF))
+      EP=REAL(XFR(K1,K1,JF))
       DO 22 I=1,K
 c      G2=G(I)**2
 c      G3=G2+EP*X(I,I)
       G2=G(I,JF)**2
 cxx      G3=G2+EP*XFR(I,I,JF)
-      G3=G2+EP*DREAL(XFR(I,I,JF))
+cxx      G3=G2+EP*DREAL(XFR(I,I,JF))
+      G3=G2+EP*REAL(XFR(I,I,JF))
       IF(G3.NE.0.0) GO TO 23
 c      PCH(I)=100.0D-00
       PCH(I,JF)=100.0D-00
@@ -191,7 +198,8 @@ C     PIVOTING AT L-TH STAGE
       XMAXP=0.10000D-10
       MAXI=0
       DO 110 I=L,MM
-      IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110
+cxx      IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110
+      IF(ABS(XMAXP).GE.ABS(X(I,L))) GO TO 110
       XMAXP=X(I,L)
       MAXI=I
   110 CONTINUE

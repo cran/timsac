@@ -23,3 +23,5 @@ S3method(print, perars)
 S3method(print, nonst)
 S3method(print, prdctr)
 
+S3method(plot, specmx)
+S3method(plot, decomp)

@@ -117,7 +117,8 @@ cxx  202 CALL DMEADL(X,LD,XMEAN)
 C     DOUBLE PRECISION COMPLEX REPRESENTATION
   203 DO 31 I=1,N
 cxx   31 Z(I)=DCMPLX(X(I),Y(I))
-      Z(I)=DCMPLX(X(I),Y(I))
+cxx      Z(I)=DCMPLX(X(I),Y(I))
+      Z(I)=CMPLX(X(I),Y(I),KIND=8)
    31 CONTINUE
 C     FOURIER TRANSFORM OF Z
       ISG=-1
@@ -125,38 +126,51 @@ C     FOURIER TRANSFORM OF Z
       IF(ISW.NE.1) GO TO 204
 C     RAW SPECTRUM COMPUTATION
       DO 32 I=2,M
-      X(I)=DREAL(Z(I))**2+DIMAG(Z(I))**2
+cxx      X(I)=DREAL(Z(I))**2+DIMAG(Z(I))**2
+      X(I)=REAL(Z(I))**2+AIMAG(Z(I))**2
       NI=NP2-I
 cxx   32 X(NI)=X(I)
       X(NI)=X(I)
    32 CONTINUE
-      X(1)=DREAL(Z(1))**2
-      X(M1)=DREAL(Z(M1))**2
+cxx      X(1)=DREAL(Z(1))**2
+cxx      X(M1)=DREAL(Z(M1))**2
+      X(1)=REAL(Z(1))**2
+      X(M1)=REAL(Z(M1))**2
       GO TO 205
 C     DECOMPOSITION AND RAW SPECTRUM COMPUTATION
   204 DO 125 I=2,M
       NI=NP2-I
       ZI=Z(I)
       ZNI=Z(NI)
-      RF=DREAL(ZI)
-      SF=DIMAG(ZI)
-      RG=DREAL(ZNI)
-      SG=DIMAG(ZNI)
+cxx      RF=DREAL(ZI)
+cxx      SF=DIMAG(ZI)
+cxx      RG=DREAL(ZNI)
+cxx      SG=DIMAG(ZNI)
+      RF=REAL(ZI)
+      SF=AIMAG(ZI)
+      RG=REAL(ZNI)
+      SG=AIMAG(ZNI)
       XI=RF+RG
       XNI=SF-SG
-      Z(I)=DCMPLX(XI,XNI)
+cxx      Z(I)=DCMPLX(XI,XNI)
+      Z(I)=CMPLX(XI,XNI,KIND=8)
       X(I)=CST2*(XI**2+XNI**2)
       X(NI)=X(I)
       YI=SF+SG
       YNI=RF-RG
-      Z(NI)=DCMPLX(YI,YNI)
+cxx      Z(NI)=DCMPLX(YI,YNI)
+      Z(NI)=CMPLX(YI,YNI,KIND=8)
       Y(I)=CST2*(YI**2+YNI**2)
       Y(NI)=Y(I)
   125 CONTINUE
-      X(1)=DREAL(Z(1))**2
-      Y(1)=DIMAG(Z(1))**2
-      X(M1)=DREAL(Z(M1))**2
-      Y(M1)=DIMAG(Z(M1))**2
+cxx      X(1)=DREAL(Z(1))**2
+cxx      Y(1)=DIMAG(Z(1))**2
+cxx      X(M1)=DREAL(Z(M1))**2
+cxx      Y(M1)=DIMAG(Z(M1))**2
+      X(1)=REAL(Z(1))**2
+      Y(1)=AIMAG(Z(1))**2
+      X(M1)=REAL(Z(M1))**2
+      Y(M1)=AIMAG(Z(M1))**2
       IF(ISW.NE.4) GO TO 205
 C     RAW CROSS SPECTRUM COMPUTATION
       DO 126 I=2,M
@@ -164,19 +178,23 @@ C     RAW CROSS SPECTRUM COMPUTATION
 cxx  126 ZS(I)=CST2*Z(I)*Z(NI)
       ZS(I)=CST2*Z(I)*Z(NI)
   126 CONTINUE
-      ZS(1)=DREAL(Z(1))*DIMAG(Z(1))
-      ZS(M1)=DREAL(Z(M1))*DIMAG(Z(M1))
+cxx      ZS(1)=DREAL(Z(1))*DIMAG(Z(1))
+cxx      ZS(M1)=DREAL(Z(M1))*DIMAG(Z(M1))
+      ZS(1)=REAL(Z(1))*AIMAG(Z(1))
+      ZS(M1)=REAL(Z(M1))*AIMAG(Z(M1))
 C     AUTO COVARIANCE COMPUTATION
   205 DO 33 I=1,N
 cxx   33 Z(I)=DCMPLX(X(I),Y(I))
-      Z(I)=DCMPLX(X(I),Y(I))
+cxx      Z(I)=DCMPLX(X(I),Y(I))
+      Z(I)=CMPLX(X(I),Y(I),KIND=8)
    33 CONTINUE
 C     FOURIER TRANSFORM
 cxx  215 CALL MIXRAD(Z,N,N2P,ISG)
       CALL MIXRAD(Z,N,N2P,ISG)
       II=1
       DO 34 I=1,LAGH1
-      X(I)=DREAL(Z(I))*ALD1
+cxx      X(I)=DREAL(Z(I))*ALD1
+      X(I)=REAL(Z(I))*ALD1
 cxx   34 XA(I,II)=X(I)
       XA(I,II)=X(I)
    34 CONTINUE
@@ -198,7 +216,8 @@ c      WRITE(7,2) (X(I),I=1,LAGH1)
       IF(II.EQ.2) GO TO 216
       II=2
       DO 35 I=1,LAGH1
-      X(I)=DIMAG(Z(I))*ALD1
+cxx      X(I)=DIMAG(Z(I))*ALD1
+      X(I)=AIMAG(Z(I))*ALD1
 cxx   35 XA(I,II)=X(I)
       XA(I,II)=X(I)
    35 CONTINUE
@@ -212,7 +231,8 @@ C     CROSS COVARIANCE COMPUTATION
       NI=NP2-I
       Z(I)=ZS(I)
 cxx  127 Z(NI)=DCONJG(ZS(I))
-      Z(NI)=DCONJG(ZS(I))
+cxx      Z(NI)=DCONJG(ZS(I))
+      Z(NI)=CONJG(ZS(I))
   127 CONTINUE
       Z(1)=ZS(1)
       Z(M1)=ZS(M1)
@@ -221,11 +241,14 @@ C     FOURIER TRANSFORM
       DO 41 I=1,LAGH
       I1=I+1
       J1=NP1-I
-      X(I1)=DREAL(Z(I1))*ALD1
+cxx      X(I1)=DREAL(Z(I1))*ALD1
+      X(I1)=REAL(Z(I1))*ALD1
 cxx   41 Y(I1)=DREAL(Z(J1))*ALD1
-      Y(I1)=DREAL(Z(J1))*ALD1
+cxx      Y(I1)=DREAL(Z(J1))*ALD1
+      Y(I1)=REAL(Z(J1))*ALD1
    41 CONTINUE
-      X(1)=DREAL(Z(1))*ALD1
+cxx      X(1)=DREAL(Z(1))*ALD1
+      X(1)=REAL(Z(1))*ALD1
       Y(1)=X(1)
 C     NORMALIZATION
       CALL CORNOM(X,CN1,LAGH1,X0,Y0)

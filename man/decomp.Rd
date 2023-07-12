@@ -8,11 +8,11 @@
 \usage{
   decomp(y, trend.order = 2, ar.order = 2, seasonal.order = 1, 
          period = 1, log = FALSE, trade = FALSE, diff = 1,
-         miss = 0, omax = 99999.9, plot = TRUE)
+         miss = 0, omax = 99999.9, plot = TRUE, ...)
 }
 \arguments{
   \item{y}{a univariate time series with or without the tsp attribute.}
-  \item{trend.order}{trend order (0, 1, 2 or 3).}
+  \item{trend.order}{trend order (1, 2 or 3).}
   \item{ar.order}{AR order (less than 11, try 2 first).}
   \item{seasonal.order}{seasonal order (0, 1 or 2).}
   \item{period}{number of seasons in one period. If the tsp attribute of
@@ -22,7 +22,7 @@
               component is concidered, where \code{tsp(y)} is not null and 
               \code{frequency(y)} is 4 or 12.}
   \item{diff}{numerical differencing (1 sided or 2 sided).}
-  \item{miss}{missing data flag.
+  \item{miss}{missing value flag.
     \tabular{rl}{
       = 0 : \tab no consideration\cr
       > 0 : \tab values which are greater than \code{omax} are treated as
@@ -34,6 +34,7 @@
     0).}
   \item{plot}{logical. If \code{TRUE} (default), \code{trend}, \code{seasonal},
     \code{ar} and \code{trad} are plotted.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.decomp}}.}
 }
 
 \details{
@@ -76,6 +77,8 @@
 }
 
 \value{
+  An object of class \code{"decomp"}, which is a list with the following
+   components:
   \item{trend}{trend component.}
   \item{seasonal}{seasonal component.}
   \item{ar}{AR process.}
@@ -90,6 +93,8 @@
   \item{arcoef}{vector of AR coefficients.}
   \item{tdf}{trading day factor. \code{tdf(i)} (i=1,7) are from Sunday to
     Saturday sequentially.}
+  \item{conv.y}{Missing values are replaced by NA after the specified
+    logarithmic transformation..}
 }
 
 \references{

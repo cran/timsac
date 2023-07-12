@@ -5,8 +5,7 @@
   Compute rational spectrum for d-dimensional ARMA process.
 }
 \usage{
-mulrsp(h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE,
-       plot.scale = FALSE)
+mulrsp(h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE, ...)
 }
 \arguments{
   \item{h}{specify frequencies \eqn{i/2}\code{h} (\eqn{i=0,1,...,}\code{h}).}
@@ -20,11 +19,10 @@ mulrsp(h, d, cov, ar = NULL, ma = NULL, log = FALSE, plot = TRUE,
     plotted as \eqn{log(}\code{rspec}\eqn{)}.}
   \item{plot}{logical. If \code{TRUE}, rational spectrums \code{rspec} are
     plotted.}
-  \item{plot.scale}{logical. IF \code{TRUE}, the common range of the
-    \eqn{y}-axis is used.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.specmx}}.}
 }
 \value{
-  \item{rspec}{rational spectrum.}
+  \item{rspec}{rational spectrum. An object of class \code{"specmx"}.}
   \item{scoh}{simple coherence.}
 }
 \details{
@@ -46,8 +44,7 @@ x <- matrix(0, nrow = 1000, ncol = 2)
 x[, 1] <- xorg[1:1000]
 x[, 2] <- xorg[4:1003] + 0.5*rnorm(1000)
 aaa <- ar(x)
-mulrsp(h = 20, d = 2, cov = aaa$var.pred, ar = aaa$ar, plot = TRUE,
-       plot.scale = TRUE)
+mulrsp(h = 20, d = 2, cov = aaa$var.pred, ar = aaa$ar)
 
 # Example 2 for the AR model
 ar <- array(0, dim = c(3,3,2))

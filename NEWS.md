@@ -1,3 +1,15 @@
+# timsac 1.3.8-2
+
+* Fixed an issue with the S3 method that was reported as NOTE in the pre-test.
+
+  Defined method for S3 classes 'decomp' and 'specmx'.
+
+
+# timsac 1.3.8-1
+
+* Collected legacy Fortran code (DCMPLX, DREAL, DIMAG, DCABS, DCONJG).
+
+
 # timsac 1.3.8
 
 * Removed C wrapper functions and registered entry points for the routines accessed by the `.Fortran` interface to call Fortran subroutines.

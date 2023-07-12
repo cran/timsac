@@ -497,6 +497,7 @@ cc      common    /cccout/  IMIS(3000)
      *                  A3(300), DI, UI(3), TDF(7)
       COMMON  /CCC/     ISW, ISMT, IDIF, LOG, MESH              
 C                                                                       
+      Y(1:M) = 0.0D0
       IFG = 0                                                           
 cc      K = K1 + K2 + K3 + K4 + K5                                        
 cc      K12 = K1 + K2
@@ -572,9 +573,12 @@ cc      CALL  STATE( Y,A1,K1 )
 cc      CALL  STATE( Y(K1+1),A2,K2 )                                      
 cc      CALL  STATE( Y(K12+1),A3,K3 )                                     
       CALL  RECOEF( S,M,M,M+1,Y )
-      CALL  STATE( Y,A1,M1 )
-      CALL  STATE( Y(M1+1),A2,M2 )
-      CALL  STATE( Y(M12+1),A3,M3 )
+cxxx      CALL  STATE( Y,A1,M1 )
+cxxx      CALL  STATE( Y(M1+1),A2,M2 )
+cxxx      CALL  STATE( Y(M12+1),A3,M3 )
+      IF(M1 .NE. 0) CALL  STATE( Y,A1,M1 )
+      IF(M2 .NE. 0) CALL  STATE( Y(M1+1),A2,M2 )
+      IF(M3 .NE. 0) CALL  STATE( Y(M12+1),A3,M3 )
 C                                                                       
 cc      DO 210  I=1,K                                                     
       DO 210  I=1,M
@@ -2232,8 +2236,11 @@ cc      DIMENSION  X(K), A(K), Y(30)
 cxx      DIMENSION  X(K), A(K), Y(K)
       INTEGER K
       DOUBLE PRECISION X(K), A(K), Y(K), SUM
-C                                                                       
-      IF( K .EQ. 0 )  RETURN                                            
+C                                              
+      Y(1) = A(1)*X(1)
+      Y(2:K) = 0.0D0
+      IF( K .EQ. 0 )  RETURN
+      SUM = 0.0D0
 cxx      DO 20  I=1,K
       DO 21  I=1,K
       SUM = A(I)*X(1)                                                   

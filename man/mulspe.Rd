@@ -6,7 +6,7 @@
   Compute multiple spectrum estimates using Akaike window or Hanning window.
 }
 \usage{
-  mulspe(y, lag = NULL, window = "Akaike", plot = TRUE, plot.scale = FALSE)
+  mulspe(y, lag = NULL, window = "Akaike", plot = TRUE, ...)
 }
 \arguments{
   \item{y}{a multivariate time series with \eqn{d} variables and \eqn{n}
@@ -22,8 +22,7 @@
       Lower triangular parts : \tab Amplitude spectrums.\cr
       Upper triangular part : \tab Phase spectrums.
     }}
-  \item{plot.scale}{logical. IF \code{TRUE}, the common range of the
-    \eqn{y}-axis is used.}
+  \item{\dots}{graphical arguments passed to \code{\link{plot.specmx}}.}
 }
 \details{
   \tabular{rlll}{
@@ -34,10 +33,11 @@
   }
 }
 \value{
-  \item{spec}{spectrum smoothing by '\code{window}'.
+  \item{spec}{spectrum smoothing by '\code{window}'.}
+  \item{specmx}{spectrum matrix. An object of class \code{"specmx"}.
     \tabular{ll}{
-      Lower triangular parts : \tab Real parts\cr
-      Upper triangular parts : \tab Imaginary parts
+      On and lower diagonal : \tab Real parts\cr
+      Upper diagonal : \tab Imaginary parts
     }}
   \item{stat}{test statistics.}
   \item{coh}{simple coherence by '\code{window}'.}
@@ -54,7 +54,7 @@ x <- matrix(0, nrow = 1000, ncol = 2)
 x[, 1] <- sgnl[4:1003]
 # x[i,2] = 0.9*x[i-3,1] + 0.2*N(0,1)
 x[, 2] <- 0.9*sgnl[1:1000] + 0.2*rnorm(1000)
-mulspe(x, lag = 100, window = "Hanning", plot.scale = TRUE)
+mulspe(x, lag = 100, window = "Hanning")
 }
 
 \keyword{ts}

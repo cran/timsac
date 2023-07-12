@@ -118,51 +118,50 @@ baysea <- function(y, period = 12, span = 4, shift = 1, forecast = 0,
                        aveABIC = abic)
 
     if (spec == TRUE) {
-        z1 <- spec.baysea(y, period, tre, trend.order, sea, seasonal.order, irr,
-                          adj)
-        spec1 <- z1$irregular.spec
-        spec2 <- z1$adjusted.spec
-        spec3 <- z1$differenced.trend
-        spec4 <- z1$differenced.season
+       z1 <- bayspec(y, period, tre, trend.order, sea, seasonal.order, irr, adj)
+       spec1 <- z1$irregular.spec
+       spec2 <- z1$adjusted.spec
+       spec3 <- z1$differenced.trend
+       spec4 <- z1$differenced.season
 
-        if (plot == TRUE)
-            plot.baysea(y, period, outlier, tre, trend.order, sea,
-                        seasonal.order, tday, irr, adj, est, psdt, psds, spec1,
-                        spec2, spec3, spec4, spec, separate.graphics)
+       if (plot == TRUE)
+          plotCompSpec(y, period, outlier, tre, trend.order, sea,
+                       seasonal.order, tday, irr, adj, est, psdt, psds, spec1,
+                       spec2, spec3, spec4, spec, separate.graphics)
 
-        ir.spec <- list(acov = spec1$acov, acor = spec1$acor, mean = spec1$mean,
-                        v = spec1$v, aic = spec1$aic, parcor = spec1$parcor,
-                        rspec = spec1$rspec) 
-        ad.spec <- list(acov = spec2$acov, acor = spec2$acor, mean = spec2$mean,
-                        v = spec2$v, aic = spec2$aic, parcor = spec2$parcor,
-                        rspec = spec2$rspec) 
-        diff.trend <- list(acov = spec3$acov, acor = spec3$acor,
-                           mean = spec3$mean, v = spec3$v, aic = spec3$aic,
-                           parcor = spec3$parcor)
-        diff.season <- list(acov = spec4$acov, acor = spec4$acor,
-                            mean = spec4$mean, v = spec4$v, aic = spec4$aic,
-                            parcor = spec4$parcor)
+       ir.spec <- list(acov = spec1$acov, acor = spec1$acor, mean = spec1$mean,
+                       v = spec1$v, aic = spec1$aic, parcor = spec1$parcor,
+                       rspec = spec1$rspec) 
+       ad.spec <- list(acov = spec2$acov, acor = spec2$acor, mean = spec2$mean,
+                       v = spec2$v, aic = spec2$aic, parcor = spec2$parcor,
+                       rspec = spec2$rspec) 
+       diff.trend <- list(acov = spec3$acov, acor = spec3$acor,
+                          mean = spec3$mean, v = spec3$v, aic = spec3$aic,
+                          parcor = spec3$parcor)
+       diff.season <- list(acov = spec4$acov, acor = spec4$acor,
+                           mean = spec4$mean, v = spec4$v, aic = spec4$aic,
+                           parcor = spec4$parcor)
 
-        baysea.out <- c(baysea.out, irregular.spec = ir.spec,
-                        adjusted.spec = ad.spec, differenced.trend = diff.trend,
-                        differenced.season = diff.season)
+       baysea.out <- c(baysea.out, irregular.spec = ir.spec,
+                       adjusted.spec = ad.spec, differenced.trend = diff.trend,
+                       differenced.season = diff.season)
     } else {
-        if (plot == TRUE) {
-            ir.spec <- NULL
-            ad.spec <- NULL
-            diff.trend <- NULL
-            diff.season <- NULL
-            plot.baysea(y, period, outlier, tre, trend.order, sea,
-                        seasonal.order, tday, irr, adj, est, psdt, psds, ir.spec,
-                        ad.spec, diff.trend, diff.season, spec,
-                        separate.graphics)
-        }
+       if (plot == TRUE) {
+           ir.spec <- NULL
+           ad.spec <- NULL
+           diff.trend <- NULL
+           diff.season <- NULL
+           plotCompSpec(y, period, outlier, tre, trend.order, sea,
+                       seasonal.order, tday, irr, adj, est, psdt, psds, ir.spec,
+                       ad.spec, diff.trend, diff.season, spec,
+                       separate.graphics)
+       }
     }
 
     return(baysea.out)
 }
 
-spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order,
+bayspec <- function(y, period, trend, trend.order, season, seasonal.order,
                         irregular, adjust)
 {
     ndata <- length(y)
@@ -317,14 +316,14 @@ spec.baysea <- function(y, period, trend, trend.order, season, seasonal.order,
                                mean = z$xmean, v = z$sd, aic = z$aic,
                                parcor = z$parcor)
 
-    spec.baysea.out <- list(irregular.spec = irregular.spec,
-                            adjusted.spec = adjusted.spec,
-                            differenced.trend = differenced.trend,
-                            differenced.season = differenced.season)
+    bayspec.out <- list(irregular.spec = irregular.spec,
+                        adjusted.spec = adjusted.spec,
+                        differenced.trend = differenced.trend,
+                        differenced.season = differenced.season)
 }
 
 
-plot.baysea <- function(y, period, outlier, trend, trend.order, season,
+plotCompSpec <- function(y, period, outlier, trend, trend.order, season,
                         seasonal.order, tday, irregular, adjust, smoothed, psdt,
                         psds, irregular.spec, adjusted.spec, differenced.trend,
                         differenced.season, spec, separate.graphics)
@@ -497,8 +496,11 @@ plot.baysea <- function(y, period, outlier, trend, trend.order, season,
 
 decomp <- function(y, trend.order = 2, ar.order = 2, seasonal.order = 1,
                    period = 1, log = FALSE, trade = FALSE, diff = 1, miss = 0, 
-                   omax = 99999.9, plot = TRUE)
+                   omax = 99999.9, plot = TRUE, ...)
 {
+    if (trend.order < 1)
+        stop("trend.order is greater than or equal to 1")
+
     m1 <- trend.order
     m2 <- ar.order
     ilog <- 0
@@ -516,7 +518,9 @@ decomp <- function(y, trend.order = 2, ar.order = 2, seasonal.order = 1,
 	  month <- start(y)[2]
 	  period <- tsp(y)[3]
     }
-	
+    if (is.null(tsp(y)[3]) == TRUE)
+      y <- ts(y, start = 1, frequency = period)
+
     sorder <- seasonal.order
     if (sorder != 0)
       if (period < 2) {
@@ -560,10 +564,13 @@ decomp <- function(y, trend.order = 2, ar.order = 2, seasonal.order = 1,
     if (ier != 0)
       stop("log-transformation cannot be applied to zeros and nagative numbers")
 
+    trend <- z$trend
+    trend <- ts(trend, start = tsp(y)[1], frequency = tsp(y)[3])
     season = z$seasonal
     ar = z$ar
     trading = z$trad
     noise = z$noise
+    noise <- ts(noise, start = tsp(y)[1], frequency = tsp(y)[3])
     aic = z$para[1]
     lkhd = z$para[2]
     sigma2 = z$para[3]
@@ -590,23 +597,32 @@ decomp <- function(y, trend.order = 2, ar.order = 2, seasonal.order = 1,
     if (itrade == 0)
        trading <- NULL
 		    
+    conv.y <- y
+    if (log == TRUE)
+      conv.y <- log(conv.y)
+
     if (miss > 0) {
       for (i in 1:n)
-        if (y[i] > omax) 
+        if (y[i] > omax) {
+          conv.y[i] <- NA
           noise[i] <- NA
+        }
     } else if (miss < 0) {
       for (i in 1:n)
-	    if (y[i] < omax)
+	    if (y[i] < omax) {
+          conv.y[i] <- NA
           noise[i] <- NA
+        }
     }
 
-    out <- list(trend = z$trend, seasonal = season, ar = ar, trad = trading, 
+    out <- list(trend = trend, seasonal = season, ar = ar, trad = trading,
                 noise = noise, aic = aic, lkhd = lkhd, sigma2 = sigma2, 
 				tau1 = tau1, tau2 = tau2, tau3 = tau3, arcoef = arcoef, 
-				tdf = tdf)
-					   
-    if (plot == TRUE) 
-       plot.decomp(y, log, miss, omax, out)
+				tdf = tdf, conv.y = conv.y)
+
+    class(out) <- "decomp"
+    if (plot == TRUE)
+      eval(parse(text=paste("plot.decomp(out, ...)")))
 
     return(out)
 }
@@ -614,18 +630,26 @@ decomp <- function(y, trend.order = 2, ar.order = 2, seasonal.order = 1,
 
 #======================================================
 
-plot.decomp <- function(tsdata, log, miss, omax, x, ...)
+plot.decomp <- function(x, ...)
 
 #======================================================
 
 {
-    ts.atr <- tsp(tsdata)
-    n <- length(tsdata)
+    y <- x$conv.y
+    ts.atr <- tsp(y)
     trend <- x$trend
     noise <- x$noise
-    if (is.null(ts.atr) == FALSE) {
-      trend <- ts(trend, start = ts.atr[1], frequency = ts.atr[3])
-      noise <- ts(noise, start = ts.atr[1], frequency = ts.atr[3])
+    n <- length(y)
+
+    period <- tsp(y)[3]
+    if (period == 4 || period == 12) {
+      xtime <- "year"
+    } else if (period == 24) {
+      xtime <- "day"
+    } else if (period == 5 || period == 7) {
+      xtime <- "week"
+    } else {
+      xtime <- "time"
     }
 
     oldpar <- par(no.readonly = TRUE)
@@ -641,98 +665,66 @@ plot.decomp <- function(tsdata, log, miss, omax, x, ...)
     if (nc <= 3)
       par(mfrow = c(nc, 1))
 
-    y0 <- NULL
-    missing <- rep(0, n)
-    if (miss == 0) {
-      y0 <- tsdata
-    } else {
-      for (i in 1:n)
-        if (miss > 0) {
-          if (tsdata[i] > omax) {
-            missing[i] <- 1
-          } else {
-            y0 <- c(y0, tsdata[i])
-          }
-        } else {
-          if (tsdata[i] < omax) {
-            missing[i] <- -1
-          } else {
-            y0 <- c(y0, tsdata[i])
-          }
-        }
-    }
+    nmiss <- length(y) - length(y[!is.na(y)])
 	
-    y0max <- max(y0)
-    y0min <- min(y0)
+    ymax <- max(y, na.rm = TRUE)
+    ymin <- min(y, na.rm = TRUE)
     noise.nna <- noise[!is.na(noise)]
 
-    if(log == FALSE) {
-      ymax <- max(trend, y0max)
-      ymin <- min(trend, y0min)
-      yy <- tsdata
-    } else {
-      ymax <- max(trend, log(y0max)) 
-      ymin <- min(trend, log(y0min))
-      yy <- log(tsdata)
-    }
+    ymax <- max(trend, ymax)
+    ymin <- min(trend, ymin)
+
 	yd <- (ymax - ymin) / 10
     ymax <- ymax + yd
 	ymin <- ymin - yd
 	
 ###   Original and Trend
 		 
-    if (miss == 0) {
+    if (nmiss == 0) {
       plot(trend, type = 'l', col = 2, ylim = c(ymin, ymax), 
-           main = "Original and Trend", xlab = "", ylab = "")
+           main = "Original and Trend", xlab = "", ylab = "", ...)
       par(new=TRUE)
-      plot(yy, type = "l", ylim = c(ymin, ymax),
-           main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+      plot(y, type = "l", ylim = c(ymin, ymax),
+           main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
 
     } else {
       yy1 <- rep(NA, n)
       ymiss <- rep(NA, n)
-      if (is.null(ts.atr) == FALSE) {
-        ymiss <- ts(ymiss, start = ts.atr[1], frequency = ts.atr[3])
-        yy1 <- ts(yy1, start = ts.atr[1], frequency = ts.atr[3])
-      }
+      ymiss <- ts(ymiss, start = ts.atr[1], frequency = ts.atr[3])
+      yy1 <- ts(yy1, start = ts.atr[1], frequency = ts.atr[3])
       for (i in 1:n)
-        if (missing[i] != 0) {
-          yy[i] <- NA
+        if (is.na(y[i]) == TRUE) {
           ymiss[i] <- ymin
         } 
-      if ((missing[1] == 0) && (missing[2]) != 0)
-        yy1[1] <- yy[1]
-      if ((missing[n-1] != 0) && (missing[n]) == 0)
-        yy1[n] <- yy[n]
+      if ((is.na(y[1]) == FALSE) && (is.na(y[2]) = TRUE))
+        yy1[1] <- y[1]
+      if ((is.na(y[n-1]) == TRUE) && (is.na(y[n]) == FALSE))
+        yy1[n] <- y[n]
       for(i in 2:(n-1)) {
-        if (missing[i] == 0)
-          if ((missing[i-1] != 0) && (missing[i+1]) != 0)
-            yy1[i] <- yy[i]
+        if (is.na(y[i]) == FALSE)
+          if ((is.na(y[i-1]) == TRUE) && (is.na(y[i+1]) == TRUE))
+            yy1[i] <- y[i]
       }
-      nmiss <- sum(ymiss, na.rm = TRUE)
-      if (nmiss == 0) {
-        message("\n There are no missing values")
-      } else if (nmiss != 0) {
-        ymax <- ymax + 0.5 * yd
-        ymin <- ymin - 0.5 * yd
-        ymiss <- ymiss - 0.5 * yd
-	  }
+      ymax <- ymax + 0.5 * yd
+      ymin <- ymin - 0.5 * yd
+      ymiss <- ymiss - 0.5 * yd
 
       plot(trend, type = 'l', col = 2, ylim = c(ymin, ymax), 
-           main = "Original and Trend", xlab = "", ylab = "")
+           main = "Original and Trend", xlab = "", ylab = "", ...)
       par(new=TRUE)
 
-      plot(yy, type = "l", ylim = c(ymin, ymax),
-           main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n")
+      plot(y, type = "l", ylim = c(ymin, ymax),
+           main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n", ...)
 
       if (nmiss != 0) {
         par(new = TRUE)
-        plot(yy1, type = "p", pch = 20, ylim = c(ymin, ymax),
-             main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n", cex=0.6)
+        plot(yy1, type = "p", pch = 20, ylim = c(ymin, ymax), main = "",
+             xlab = "", ylab = "", xaxt = "n", yaxt = "n", cex=0.6, ...)
 
         par(new = TRUE)
         plot(ymiss, type="p", pch = 20, col = 4, ylim = c(ymin, ymax),
-             main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n", cex=0.6)
+             main = "", xlab = "", ylab = "", xaxt = "n", yaxt = "n", cex=0.6,
+             ...)
         legend("topright", legend = "missing", col = 4, pch=20, bty = "n")
 	  }
     }
@@ -745,53 +737,49 @@ plot.decomp <- function(tsdata, log, miss, omax, x, ...)
     my <- max(ymax, abs(ymin)) * 1.5
     if (is.null(x$seasonal) == FALSE) {
       season <- x$seasonal
-      if (is.null(ts.atr) == FALSE)
-        season <- ts(season, start = ts.atr[1], frequency = ts.atr[3])
+      season <- ts(season, start = ts.atr[1], frequency = ts.atr[3])
       plot(season, type = "l", main = "Seasonal", xlab = "", ylab = "",
-           ylim = c(-my, my))
+           ylim = c(-my, my), ...)
     }
 
 ###   Noise
 	
-    if (miss != 0) {
+    if (nmiss != 0) {
       noise1 <- rep(NA, n)
-      if (is.null(ts.atr) == FALSE)
-        noise1 <- ts(noise1, start = ts.atr[1], frequency = ts.atr[3])
-      if ((missing[1] == 0) && (missing[2]) != 0)
+      noise1 <- ts(noise1, start = ts.atr[1], frequency = ts.atr[3])
+      if ((is.na(noise[1]) == FALSE) && (is.na(noise[2]) == TRUE))
         noise1[1] <- noise[1]
-      if ((missing[n-1] != 0) && (missing[n]) == 0)
+      if ((is.na(noise[n-1]) == TRUE) && (is.na(noise[n]) == FALSE))
         noise1[n] <- noise[n]
       for(i in 2:(n-1)) {
-        if (missing[i] == 0)
-          if ((missing[i-1] != 0) && (missing[i+1]) != 0)
+        if (is.na(noise[i]) == FALSE)
+          if ((is.na(noise[i-1]) == TRUE) && (is.na(noise[i+1]) == TRUE))
             noise1[i] <- noise[i]
       }
       plot(noise1, type = "p", pch = 20, main = "", xlab = "", ylab = "",
-           ylim = c(-my, my), cex=0.6)
+           ylim = c(-my, my), cex=0.6, ...)
       par(new = TRUE)
     }
 
     plot(noise, type = "l", main = "Noise", xlab = "", ylab = "",
-         ylim = c(-my, my))
+         ylim = c(-my, my), ...)
 
 ###   AR
 
     if (is.null(x$ar) == FALSE) {
       ar <- x$ar
-      if (is.null(ts.atr) == FALSE)
-        ar <- ts(ar, start = ts.atr[1], frequency = ts.atr[3])
+      ar <- ts(ar, start = ts.atr[1], frequency = ts.atr[3])
       plot(ar, type = "l", main = "AR component", xlab = "", ylab = "",
-           ylim = c(-my, my))
+           ylim = c(-my, my), ...)
     }
 
 ### Trading Day Effect
 	
     if (is.null(x$trad) == FALSE) {
       trad <- x$trad
-      if (is.null(ts.atr) == FALSE)
-        trad <- ts(trad, start = ts.atr[1], frequency = ts.atr[3])
+      trad <- ts(trad, start = ts.atr[1], frequency = ts.atr[3])
       plot(trad, type = "l", main = "Trading Day Effect", xlab = "",
-           ylab = "", ylim = c(-my, my))
+           ylab = "", ylim = c(-my, my), ...)
     }
 
     par(mfrow=oldpar$mfrow, new = oldpar$new)

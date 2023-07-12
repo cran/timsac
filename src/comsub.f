@@ -451,7 +451,8 @@ C     PIVOTING AT L-TH STAGE
       XMAXP=0.10000D-10
       MAXI=0
       DO 110 I=L,MM
-      IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110
+cxx      IF(CDABS(XMAXP).GE.CDABS(X(I,L))) GO TO 110
+      IF(ABS(XMAXP).GE.ABS(X(I,L))) GO TO 110
       XMAXP=X(I,L)
       MAXI=I
   110 CONTINUE
@@ -605,7 +606,8 @@ cxx      DIMENSION MS(N2P)
       PI=3.1415926536
       PI2=PI+PI
       SG=ISG
-      ZCI=SG*DCMPLX(CST0,CST1)
+cxx      ZCI=SG*DCMPLX(CST0,CST1)
+      ZCI=SG*CMPLX(CST0,CST1,KIND=8)
       DO 10 I=1,N2P
 cxx   10 MS(I)=2**(N2P-I)
       MS(I)=2**(N2P-I)
@@ -628,9 +630,12 @@ cxx   10 MS(I)=2**(N2P-I)
       S2=C1*S1+C1*S1
       C3=C1*C2-S1*S2
       S3=C1*S2+C2*S1
-      ZW1=DCMPLX(C1,S1)
-      ZW2=DCMPLX(C2,S2)
-      ZW3=DCMPLX(C3,S3)
+cxx      ZW1=DCMPLX(C1,S1)
+cxx      ZW2=DCMPLX(C2,S2)
+cxx      ZW3=DCMPLX(C3,S3)
+      ZW1=CMPLX(C1,S1,KIND=8)
+      ZW2=CMPLX(C2,S2,KIND=8)
+      ZW3=CMPLX(C3,S3,KIND=8)
       DO 13 I=1,LM4,M4
       J1=I+JM1
       J2=J1+M
@@ -1046,8 +1051,10 @@ cxx      DIMENSION RS1(MJ),RL(MJ)
       DO 10 II=1,IP
       SUM=CST0
       DO 11 JJ=1,IP
-      RX=DREAL(X(II,JJ))
-      RIX=DIMAG(X(II,JJ))
+cxx      RX=DREAL(X(II,JJ))
+cxx      RIX=DIMAG(X(II,JJ))
+      RX=REAL(X(II,JJ))
+      RIX=AIMAG(X(II,JJ))
       RS1(JJ)=(RX**2+RIX**2)*SD(JJ,JJ)
       SUM=SUM+RS1(JJ)
 cxx   11 RL(JJ)=SUM

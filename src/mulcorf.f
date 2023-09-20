@@ -42,6 +42,7 @@ cxx      DIMENSION SM(K),C0(K)
       INTEGER N, K, LAGH1
       DOUBLE PRECISION X1(N,K), SM(K), C(LAGH1,K,K), CN(LAGH1,K,K)
 c local
+      INTEGER I, II, IM1, JJ
       DOUBLE PRECISION X2(N,K), X(N), Y(N), C1(LAGH1), C2(LAGH1),
      1                 CN1(LAGH1), CN2(LAGH1), C0(K), CX0, CY0, XMEAN
 C

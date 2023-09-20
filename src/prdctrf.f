@@ -77,7 +77,8 @@ cxx      DIMENSION ZZ1(Q+H,D),ZZ2(Q+H,D),ZZ3(Q+H,D)
      2                 Z1(Q+H,D), Z2(Q+H,D), Z3(Q+H,D), ZZ1(Q+H,D),
      3                 ZZ2(Q+H,D), ZZ3(Q+H,D)
 c local
-      INTEGER H1
+      INTEGER I, I2, II, IJ, IM1, IQH, ISR, ISW, IX, IY, J, JJ, JX, JY,
+     1        JZ, KK, H1
       DOUBLE PRECISION W(D,D,H+1), C(D,D),SD(D,H+1), CX(D), EY(D),
      1                 DMXT(D), DMIT(D), AV(D), CST0, CST1, Z, CCC, AN,
      2                 AVE, DMAX, DMIN, YYD
@@ -98,11 +99,7 @@ cc      INTEGER XX(121)
 cc      DATA XX/121*1H /
 cc      DATA K1 / 1H* /, K2 / 1HX /, K3 / 1H+ /, K4 / 1HY /, K5 / 1H  /
 cc      DATA K6/1H!/
-      CHARACTER XX(121)
-      CHARACTER K1, K2, K3, K4, K5, K6
 cxx      CHARACTER KSTOR
-      DATA XX/121*' '/
-      DATA K1,K2,K3,K4,K5,K6 / '*', 'X', '+', 'Y', ' ', '!' /
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 cc      CALL SETWND
@@ -137,22 +134,24 @@ cc      MJ2=10
       CST0=0.0D-00
       CST1=1.0D-00
       ISW=1
+      H1=H+1
+      IQH=Q+H
 C
 C      DATA INITIALIZE
 C
-      IF (JSW.NE.0) CALL DINIT(A,D*D*L,CST0)
-      IF (JSW.EQ.0) CALL DINIT(WW,D*D*L,CST0)
-      CALL DINIT(W,D*D*(H+1),CST0)
-      CALL DINIT(C,D*D,CST0)
-      CALL DINIT(CX,D,CST0)
-      CALL DINIT(X,N*D,CST0)
-      CALL DINIT(SD,D*(H+1),CST0)
-      CALL DINIT(EY,D,CST0)
-      CALL DINIT(Y,(Q+H)*D,CST0)
-      CALL DINIT(YORI,(H+1)*D,CST0)
-      CALL DINIT(DMXT,D,CST0)
-      CALL DINIT(DMIT,D,CST0)
-      CALL DINIT(AV,D,CST0)
+      IF (JSW.NE.0) A(1:D,1:D,1:L) = CST0
+      IF (JSW.EQ.0) WW(1:D,1:D,1:L) = CST0
+      W(1:D,1:D,1:H1) = CST0
+      C(1:D,1:D) = CST0
+      CX(1:D) = CST0
+      X(1:N,1:D) = CST0
+      SD(1:D,1:H1) = CST0
+      EY(1:D) = CST0
+      Y(1:IQH,1:D) = CST0
+      YORI(1:H1,1:D) = CST0
+      DMXT(1:D) = CST0
+      DMIT(1:D) = CST0
+      AV(1:D) = CST0
 C
 C     INITIAL CONDITION INPUT
 cc      READ(5,800) N,D,P,Q,H
@@ -262,7 +261,6 @@ C     W(M) =-B(1)W(M-1)-...-B(K)W(M-K) (FOR M GREATER THAN L)
 cxx  101 W(I,I,1)=CST1
       W(I,I,1)=CST1
   101 CONTINUE
-      H1=H+1
       DO 120 I=2,H1
       DO  115 J=1,K
       IJ=I-J
@@ -348,7 +346,6 @@ C
 C     PREDICTIONS AND INNOVATIONS (X(I)) COMPUTATION OF Y(I) (I=1,Q+H)
 C     FOR I GREATER THAN OR EQUAL TO Q, X(I) IS SET EQUAL TO 0.
 C
-      IQH=Q+H
 C
       DO 6300 J=1,D
       DMXT(J)=Y(1,J)

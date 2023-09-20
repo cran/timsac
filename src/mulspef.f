@@ -44,6 +44,8 @@ cxx      DIMENSION P(LAGH1*2*K)
       DOUBLE PRECISION CV(LAGH3,K,K), P1(LAGH1,K,K), P2(LAGH1,K,K),
      1                 PS(LAGH1,K), PCH1(LAGH1,K,K), PCH2(LAGH1,K,K)
 c local
+      INTEGER I, I1, I2, II, II1, IM1, ISW, IWD, JJ, JJ1, LAG2, MLA1,
+     1        MLA2
       DOUBLE PRECISION C(LAGH1), S(LAGH1), G(LAGH1), FC(LAGH1),
      1                 FS(LAGH1), A1(2), A2(3), P(LAGH1*2*K), CT5
 C
@@ -266,6 +268,8 @@ cxx      DIMENSION FC1(521),FS1(521)
       INTEGER LAGH1, LA1
       DOUBLE PRECISION FC(LAGH1), FS(LAGH1), P1(LAGH1), P2(LAGH1),
      1                 A(LA1)
+c local
+      INTEGER LA, LAGSHF
       DOUBLE PRECISION FC1(521), FS1(521)
       LA=LA1-1
       LAGSHF=LAGH1+2*LA
@@ -286,6 +290,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION FS(LAGH1),FS1(LAGSHF)
       INTEGER LAGH1, LAGSHF, LA1
       DOUBLE PRECISION FS(LAGH1), FS1(LAGSHF)
+c local
+      INTEGER I, I1, I2, I3, I4, LA, LA2, LAGH2
       LAGH2=LAGH1+1
       LA=LA1-1
       DO 100 I=1,LAGH1
@@ -316,6 +322,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION G(LGP1),FS(LF1)
       INTEGER LGP1 ,LF1
       DOUBLE PRECISION G(LGP1), FS(LF1)
+c local
+      INTEGER I, I2, K, LF, LG, LG3, LG4
       DOUBLE PRECISION T, PI, ALF, AK, TK, CK, SK, CK2, UM0, UM1, UM2
       LG=LGP1-1
       LF=LF1-1
@@ -360,6 +368,8 @@ cxx      DIMENSION P1(LAGH1),P2(LAGH1),C(LAGH1),S(LAGH1),P3(LAGH1)
       INTEGER LAGH1
       DOUBLE PRECISION P1(LAGH1), P2(LAGH1), C(LAGH1), S(LAGH1),
      1                 P3(LAGH1)
+c local
+      INTEGER I
       DO 10 I=1,LAGH1
 cxx   10 P3(I)=(P1(I)**2+P2(I)**2)/(C(I)*S(I))
       P3(I)=(P1(I)**2+P2(I)**2)/(C(I)*S(I))

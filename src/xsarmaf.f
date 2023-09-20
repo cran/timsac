@@ -192,6 +192,8 @@ cc      COMMON /CMALPH/ALPH
 cxx      DIMENSION A(M),B(M),ALPH(M)                                    
       INTEGER M, ICOND 
       DOUBLE PRECISION A(M), ALPH(M)
+c local
+      INTEGER I, IK, IM1, IP1, J, K, KI, MI, MIP1
       DOUBLE PRECISION B(M), CST0, CST1, CST099, AT, CT, D
       DATA CST0,CST1,CST099/0.0D-00,1.0D-00,0.99999D-00/                
 C                                                                       
@@ -274,6 +276,8 @@ cxx      DIMENSION A(IR),B(IR),P(IR,IR),P0(IP+IQ)
 cxx      DIMENSION P1(IR),AKI(IR),YY(IR),PY(IR),Z(IR),PZ(IR)
       INTEGER N,  IQ, IP, IR
       DOUBLE PRECISION F ,SD, Y(N), P0(IP+IQ)
+c local
+      INTEGER I, I1, II, INDX, INDX1, IRM1, IRP1, NS
       DOUBLE PRECISION A(IR), B(IR), P(IR,IR), P1(IR), AKI(IR), YY(IR),
      1                 PY(IR), Z(IR), PZ(IR), CST0, CST1, CSTA, REM,
      2                 SUM, AMI, EM, SERI, SLR, Y2, REW, ERI, AMY,
@@ -500,11 +504,14 @@ cxx      DIMENSION ALPH(IP+IQ)
       INTEGER N, IQ, IP, ISWRO
       DOUBLE PRECISION PHAI, SIGMA2, G(IP+IQ), C(IP+IQ), Y(N), X(IP+IQ),
      1                 VD(IP+IQ,IP+IQ)
+c local
+      INTEGER I, ICOND, II, IPHAI, IPQ, IPQ2, IRAM, ISPHAI, ITN, ITNS,
+     1        J
       DOUBLE PRECISION MAXVD, SX(IP+IQ), SG(IP+IQ), SR(IP+IQ),
      1                 SSX(IP+IQ), ALPH(IP+IQ), CST0, CST1, CST4, CST10,
      2                 CONSTA, CONSTB, EPS3, EPS4, VDN, SCI, SUM,
      3                 SRO, GSR, DGAM, DGAM1, RAM, RAMSRO, RAMT,
-     4                 SPHAI, RAM1, CONSDR, SD                                                         
+     4                 SPHAI, RAM1, CONSDR, SD
       DATA CST0,CST1,CST4,CST10/0.0D-00,1.0D-00,4.0D-00,10.0D-00/       
       DATA CONSTA,CONSTB,EPS3,EPS4/0.5D-00,2.0D-00,0.1D-05,0.1D-05/     
 cc      DATA SSX/50*0.0D-00/                                              
@@ -736,6 +743,8 @@ cc      DATA A,B/100*0.0D-00/
 cxx      DIMENSION YS(N), Y(N), P0(IP+IQ)
       INTEGER N
       DOUBLE PRECISION YS(N), Y(N)
+c local
+      INTEGER I
       DOUBLE PRECISION CST0, AN, SUM, YMEAN
       DATA CST0/0.0D-00/                                                
 C                                                                       
@@ -856,6 +865,8 @@ cxx      DIMENSION P0(IP+IQ),P1(IP+IQ),Y(N),G(IP+IQ),PP0(IP+IQ)
 cxx      DIMENSION ALPH(IP+IQ)
       INTEGER N, IQ, IP
       DOUBLE PRECISION F0, SD, G(IP+IQ), Y(N), P0(IP+IQ)
+c local
+      INTEGER I, ICOND, II, III, IP1, IPQ, IR, ITR, J
       DOUBLE PRECISION P1(IP+IQ), PP0(IP+IQ), ALPH(IP+IQ), CST07,
      1                 EPSA, EPSAS, F1, SDN
       DATA EPSA,CST07/0.1D-03,0.7D-00/                                  
@@ -863,7 +874,7 @@ C
 cc      CALL FUNCT2(F0,SD,Y,N,P0,IQ,IP)                                   
       IP1=IP+1                                                          
       IR=MAX0(IQ,IP1)                                                   
-      CALL FUNCT2(F0,SD,Y,N,P0,IQ,IP,IR)                                   
+      CALL FUNCT2(F0,SD,Y,N,P0,IQ,IP,IR)
       IPQ=IP+IQ                                                         
       DO 9 J=1,IPQ                                                      
       P1(J)=P0(J)                                                       
@@ -961,6 +972,8 @@ cxx      DIMENSION PP0(IP+IQ),ALPH(IP+IQ),ALPHB(IQ),ALPHA(IP)
       INTEGER N, IQ, IP
       DOUBLE PRECISION TL, TL2, SIGMA2, Y(N), P0(IP+IQ), G(IP+IQ),
      1                 P02(IP+IQ), G2(IP+IQ), ALPHB(IQ), ALPHA(IP)
+c local
+      INTEGER I, ICOND, II, IPQ, ISWRO, J
       DOUBLE PRECISION MAXAB, HS(IP+IQ,IP+IQ), CR(IP+IQ), PP0(IP+IQ),
      1                 ALPH(IP+IQ), CST0, CST10, CST05, CST005, PAB,
      2                 BN, SUM
@@ -977,7 +990,7 @@ cxx      G(I)=CST0
 cxx      PP0(I)=CST0
 cxx      DO 310 J=1,IPQ                                                    
 cxx  310 HS(I,J)=CST0                                                      
-      G(1:IPQ)=CST0                                                         
+      G(1:IPQ)=CST0
       PP0(1:IPQ)=CST0
       HS(1:IPQ,1:IPQ)=CST0 
 C                                                                       
@@ -1179,6 +1192,10 @@ cc      DIMENSION P(51,51),A(50),B(50),WS(51),R(51),DB(1300)
 cxx      DIMENSION P(IR,IR),A(IR),B(IR),WS(IR),R(IR+1),DB(IQ*2)
       INTEGER IQ, IP, IR              
       DOUBLE PRECISION P(IR,IR), B(IR), A(IR)
+c local
+      INTEGER I, IH, IHP1, IJ1, IJK, IM1, IMIK, IMJ, IMPR, IP1, IP2,
+     1        IPK, IPMI, IPP1, IQP1, IRM1, IRP1, IT, ITMK, ITP1, ITPK,
+     2        J, JI, K, L
       DOUBLE PRECISION WS(IR), R(IR+1), DB(IQ*2), CST0, CST1, SUM,
      1                 CKB, CKI
       DATA CST0,CST1/0.0D-00,1.0D-00/                                   

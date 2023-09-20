@@ -33,6 +33,7 @@ cxx      DIMENSION XX(N)
       INTEGER N, MH
       DOUBLE PRECISION XX(N), XMEAN, CC(MH+1), CN(MH+1), C(MH+1,MH+1)
 c local
+      INTEGER I, J, K, KI, KJ, KL1, KL2, L1 
       DOUBLE PRECISION X(N), X1(N), CST0, CST1, AN, BN, SUM, T1, T2, CX0
 cc	DATA IIND / 7*4HJ=   /
 C

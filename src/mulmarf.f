@@ -84,6 +84,7 @@ cxx      DIMENSION  NPR(ID), AIC(ID)
      3                 AIC(ID), EI(ID,ID), BI(ID,ID,LAG), E(ID,ID),
      4                 B(ID,ID,LAG), AICS
 c local
+      INTEGER IPR, KSW, MJ, MJ1, MJ2, MJ3, MJ4, N0, NMK
       DOUBLE PRECISION Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), CV(ID)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80

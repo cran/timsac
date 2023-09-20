@@ -20,6 +20,7 @@ cxx      DIMENSION SD(IFPL1),AIC(IFPL1),PARCOR(IFPL1-1)
       DOUBLE PRECISION Y(N), CXX(LAGH1), CN(LAGH1), XMEAN, SD(IFPL1),
      1                 AIC(IFPL1), PARCOR(IFPL1-1), PXX(LAGH1)
 c local
+      INTEGER K, L
       DOUBLE PRECISION A(IFPL1), B(IFPL1), SGME2, OAIC
 C
 cc      H=60                                                              
@@ -75,6 +76,9 @@ cxx      DIMENSION SD1(L1),AIC1(L1),PARCOR(L1-1)
       INTEGER L1, N, MO, IER
       DOUBLE PRECISION CYY(L1), COEF(L1), OSD, OAIC, SD1(L1), AIC1(L1),
      1                 PARCOR(L1-1)
+c local
+      INTEGER I, IAN, IAN1, IAN2, IM, JJ, JJ0, JJL, L, LAN1, LAN2, LM,
+     1        M, MP1, NFC
       DOUBLE PRECISION A(L1), B(L1), CST0, CST1, CST2, CST20, CST05,
      1                 CST01, SD, AN, RAN, SCALH, AIC, SE, SDR, D, D2,
      2                 AM, ANFC
@@ -266,6 +270,8 @@ cxx      DIMENSION G(L+K+1),GR1(H1),GI1(H1),GR2(H1),GI2(H1)
 cxx      DIMENSION PXX(H1)
       INTEGER L, K, H1, IPPP
       DOUBLE PRECISION A(L), B(K), PXX(H1), SGME2
+c local
+      INTEGER I, I1, IPPP0, K1, L1
       DOUBLE PRECISION G(L+K+1), GR1(H1), GI1(H1), GR2(H1), GI2(H1),
      1                 CST0, CST1, T0
 cc      COMMON /ILOGT/IDUMMY(2),IPUNC                                     

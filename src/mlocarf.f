@@ -88,6 +88,8 @@ cxx      DIMENSION  SXX(121,NML)
       DOUBLE PRECISION ZS(N), ZMEAN, SUM, A(LAG+KSW,NML), SDF(NML),
      1                 SXX(121,NML), SDMS(NML), AICS(NML), SDMP(NML),
      2                 AICP(NML)
+c local
+      INTEGER I, IF, ISW, K, L, LK, LK1, MJ1, MJ2, MX, NF, NJ, NS
       DOUBLE PRECISION Z(N), X(N,LAG+KSW+1), U(LAG+KSW+1,LAG+KSW+1),
      1                 AA(LAG+KSW), B
 C                                                                       
@@ -115,7 +117,7 @@ C
 cc      MJ1 = 200                                                         
 cc      MJ2 = 51                                                          
       MJ1 = N
-      MJ2 = LAG+1                                                          
+      MJ2 = LAG+1
       ISW = 0
 C
       MF(1:NML) = 0
@@ -172,7 +174,7 @@ cc     1SDF )
 C                                                                       
       L = L + NS                                                        
 cc      IF( IF .EQ. 2 )     LK0 = LK1                                     
-      IF( IF .EQ. 2 )     LK0(NJ) = LK1                                     
+      IF( IF .EQ. 2 )     LK0(NJ) = LK1
       IF( IF .NE. 2 )     LK0(NJ) = LK0(NJ-1)
 C
 C          -----------------------                                      
@@ -316,6 +318,8 @@ cxx      DIMENSION  SDP(K+1), AP(K+1), DICP(K+1)
      1        MS, MP
       DOUBLE PRECISION Z(MJ1), X(MJ1,K+1), U(K+1,K+1), A(K), SDF, SDMS,
      1                 AICS, SDMP, AICP
+c local
+      INTEGER I, K1, K2, NP
       DOUBLE PRECISION B(K), SDS(K+1), AS(K+1), DICS(K+1), SDP(K+1),
      1                 AP(K+1), DICP(K+1), AICMS, AICMP
       EXTERNAL  SETX

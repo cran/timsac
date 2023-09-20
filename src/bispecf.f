@@ -43,6 +43,9 @@ cxx      DIMENSION A(MH+1,MH+1),BR(MH+1,MH+1),BI(MH+1,MH+1)
      1                 Q(MH+1), A(MH+1,MH+1), BR(MH+1,MH+1),
      2                 BI(MH+1,MH+1), RAT
 c local
+      INTEGER I, I2H, ID, ID1, IR, IR1, IRL, IS, IS1, J, L1, MC1, MC2,
+     1        MC3, MD, MDR, MDS, MH1, MMS, MMS1, MR, MRD, MRS, MS, MSD,
+     2        MSR, NS, NS1
       DOUBLE PRECISION C(MH+1,MH+1), C1((MH+1)*2), S1((MH+1)*2),
      1                 CL(MH+1,MH+1), SL(MH+1,MH+1), CA1(MH+1,MH+1),
      2                 CA2(MH+1,MH+1), CC(MH+1), CST0, CST1, CST2,
@@ -270,6 +273,7 @@ cxx      DIMENSION CL(MH+1,MH+1),CA(MH+1,MH+1)
       INTEGER MH, ISW
       DOUBLE PRECISION CL(MH+1,MH+1), CA(MH+1,MH+1)
 c local
+      INTEGER I, I3, II, IJ, IL, J, J1, J2, JJ, JJL, L1
       DOUBLE PRECISION CST2, CST4, CST4I
       CST2=2.0D-00
       CST4=4.0D-00
@@ -319,6 +323,7 @@ cxx      DIMENSION CA(MH+1,MH+1),CB(MH+1,MH+1)
       INTEGER MH
       DOUBLE PRECISION CA(MH+1,MH+1), CB(MH+1,MH+1)
 c local
+      INTEGER I, IM1, J, JC, JJ, JJ1, JM1, L1, MH1, MHI, MHJ
       DOUBLE PRECISION CST2, CST4, CST4I
 C     ON AND ABOVE 1-AXIS
       CST2=2.0D-00
@@ -368,6 +373,7 @@ cxx      DIMENSION B(0:MH,0:MH)
       INTEGER MH
       DOUBLE PRECISION CB(MH+1,MH+1), CD(MH+1,MH+1), B(0:MH,0:MH)
 c local
+      INTEGER I, IL, IM1, J, JC, JJ1, JL, JM1, L1, MH3, MH4
       DOUBLE PRECISION CST2, CST4, CST4I, CZ
       CST2=2.0D-00
       CST4=4.0D-00
@@ -429,6 +435,7 @@ cxx      DIMENSION A(0:MH,0:MH)
       DOUBLE PRECISION CL(MH+1,MH+1), SL(MH+1,MH+1), P(MH+1),
      1                 A(0:MH,0:MH), RAT
 c local
+      INTEGER I, I4, IL, IM1, J, JC, JJ1, JL, JM1, L1, MH3, MH4
       DOUBLE PRECISION H, CZ, AN, AS3, CST075
 c
       L1=MH+1
@@ -497,6 +504,7 @@ cxx      DIMENSION A1(2),A2(3)
       INTEGER N, LAGH3, LAGH1
       DOUBLE PRECISION CXX(LAGH1), P1(LAGH1), P2(LAGH1), Q(LAGH1)
 c local
+      INTEGER I, LAGH, LAGH0, MLA1, MLA2
       DOUBLE PRECISION FC(LAGH1), A1(2), A2(3)
 C     WINDOW W1 DEFINITION
       MLA1=2

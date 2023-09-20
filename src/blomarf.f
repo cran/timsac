@@ -76,6 +76,7 @@ cxx      DIMENSION  X((LAG+1)*ID*2,(LAG+1)*ID)
      1                 BW(KMAX,KMAX), AIC(KMAX,KMAX), A(ID,ID,LAG,KMAX),
      2                 E(ID,ID,KMAX), AICB(KMAX)
 c local
+      INTEGER KC, KD, KSW, L, LK, LK1, MF, MJ, MJ1, MJ3, MX, NS
       DOUBLE PRECISION Z(N,ID), B(ID,ID,LAG), G(ID,ID,LAG),
      1                 H(ID,ID,LAG), F1(LAG*ID,ID,KMAX),
      2                 F2(LAG*ID,ID,KMAX), X((LAG+1)*ID*2,(LAG+1)*ID)
@@ -283,6 +284,8 @@ cxx      DIMENSION  AIC(KMAX1) , C(KMAX1)
      3                 F1(LAG*ID,ID,KMAX1), F2(LAG*ID,ID,KMAX1)
 cc      DATA     KC  / 0 /                                                
 C
+c local
+      INTEGER I, II, IM, IMIN, IPR, J, JJ, KC1, KD, KMAX
 cxx      DIMENSION  SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1)
 cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
       DOUBLE PRECISION SD1(LAG+1), AIC1(LAG+1), DIC1(LAG+1),

@@ -67,6 +67,8 @@ c-----------------------------------------------
       INTEGER N, LAG, M1, JER
       DOUBLE PRECISION Z1(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1),
      1                 DIC(LAG+1), AMIN, SDM1, A1(LAG), SDM2, A2(LAG)
+c local
+      INTEGER I, IPR, ISW, K, M, MJ1, NMK
       DOUBLE PRECISION Z(N), X(N-LAG,LAG+1)
 c----------------    isw = 2   -----------------
       DOUBLE PRECISION A22(LAG,LAG), SDM22(LAG)
@@ -264,6 +266,9 @@ cxx      DIMENSION  Z(N), A(K)
 cxx      DIMENSION  R(K+1,K+1), C(L+1)                                       
       INTEGER N, K, L, ISW, JER 
       DOUBLE PRECISION Z(N), A(K), SDM
+c local
+      INTEGER I, IHES, II, IMJ, J, JJ, JMI, K1, KI, KK, KMI, L1, N1,
+     1        NMI, NML, NMLP1
       DOUBLE PRECISION R(K+1,K+1), C(L+1), SUM, F0, AIC, SD
 CC      DIMENSION  TTL(4)                                                 
 cc      REAL * 4 TTL(8)
@@ -391,9 +396,11 @@ cxx      DIMENSION  H(N,N) , WRK(N) , S(N)
 cxx      DIMENSION  R(N+1,N+1)
       INTEGER NZ, N, IHES, ISW, JER
       DOUBLE PRECISION Z(NZ), X(N), R(N+1,N+1), AIC, SD
+c local
+      INTEGER I, IC, ICC, IG, J
       DOUBLE PRECISION DX(N), G(N), G0(N), Y(N), H(N,N), WRK(N), S(N),
      1                 TAU1, TAU2, EPS1, EPS2, RAMDA, CONST1, SUM,
-     2                 S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB                                              
+     2                 S1, S2, STEM, SS, DS2, GTEM, ED, F, XM, XMB
 C
 cc      COMMON     / CCC /  ISW, IPR                                      
 cc      COMMON     / DDD /  R , F , AIC , SD                              
@@ -407,8 +414,8 @@ C
 C          INITIAL ESTIMATE OF INVERSE OF HESSIAN                       
 C
       H(1:N,1:N) = 0.0D00
-      S(1:N) = 0.0D00                                                     
-      DX(1:N) = 0.0D00                                                    
+      S(1:N) = 0.0D00
+      DX(1:N) = 0.0D00
       DO  20   I=1,N                                                    
 cxx      DO  10   J=1,N                                                    
 cxx   10 H(I,J) = 0.0D00
@@ -627,10 +634,13 @@ cxx      DIMENSION   R(M+1,M+1) , T(M+1,M+1) , U(M+1,M+1) , S(M+1,M+1)
 cxx      DIMENSION   A(M) , B(M) , G(M)                                  
       INTEGER N, M, ISW, IFG, JER
       DOUBLE PRECISION Z(N), A(M), R(M+1,M+1), F, G(M), AIC, SD, FF
+c local
+      INTEGER I, II, IM1, J, J1, JC, JE, JE1, JJ, JM1, K, KK, KM1,
+     1        M1, MJ, MP1
       DOUBLE PRECISION T(M+1,M+1), U(M+1,M+1), S(M+1,M+1), B(M),
      1                 DN, DN1, SUM, DSD, USUM, DETT, UDET
 cc      MJ = 31                                                           
-      MJ = M+1                                                           
+      MJ = M+1
 C                                                                       
   280 IFG = 0                                                           
 C                                                                       
@@ -895,6 +905,8 @@ cxx      DIMENSION  X(K)
 cxx      DIMENSION  H(K,K) , S(K)
       INTEGER K, N
       DOUBLE PRECISION X(K), R(K+1,K+1), SD, H(K,K)
+c local
+      INTEGER I, II, J
       DOUBLE PRECISION S(K), SUM, HDET
       DO 10  I=1,K                                                      
       SUM = R(1,I+1)                                                    
@@ -954,7 +966,8 @@ cxx      DIMENSION  R(K+1,K+1)
 
       INTEGER N, K, ISW, IG, JER
       DOUBLE PRECISION Z(N), X(K), H(K), RAM, EE, R(K+1,K+1), AIC, SD, F
-      INTEGER RETURN, SUB
+c local
+      INTEGER I, IFG, RETURN, SUB
       DOUBLE PRECISION X1(K), G(K), CONST2, HNORM, E1, E2, E3,
      1                 RAM1, RAM2, RAM3, A1, A2, A3, B1, B2
 C                                                                       

@@ -31,8 +31,8 @@ cxx      DIMENSION G(L+1),RS1(IP,IP),RS2(IP,IP,H+1),R(IP,IP,H+1)
       INTEGER H, L, IP
       DOUBLE PRECISION SD(IP,IP), A(L,IP,IP), RS1(IP,IP),
      1                 RS2(IP,IP,H+1), R(IP,IP,H+1)
-      INTEGER H1
 c local
+      INTEGER I, I1, II, J, JF, JJ, JJF, LG, H1
       DOUBLE PRECISION G(L+1), GR, GI, CST0, CST1
       COMPLEX(kind(0d0)) :: X(IP,IP), XDET
 C     INPUT / OUTPUT DATA FILE OPEN

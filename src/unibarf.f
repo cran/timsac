@@ -89,6 +89,7 @@ cxx      DIMENSION  SXX(121)
      1                 DIC(LAG+1), AICM, SDMIN, B1(LAG), C(LAG+1),
      2                 D(LAG), B2(LAG), AICB, SDB, PN, A(LAG), SXX(121)
 c local
+      INTEGER ISW, K, MJ1, N1, NMK
       DOUBLE PRECISION Z(N), X(N-LAG,LAG+1), B
 C                                                                       
 C        EXTERNAL SUBROUTINE DECLARATION:                               

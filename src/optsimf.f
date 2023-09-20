@@ -44,6 +44,7 @@ cxx      DIMENSION YMEAN(L),YS2MEA(L),YVAR(L)
      1                 X(IR,NS), Y(L,NS), XMEAN(IR), YMEAN(L), XS2(IR),
      2                 YS2(L), XS2MEA(IR), YS2MEA(L), XVAR(IR), YVAR(L)
 c local
+      INTEGER I, INS, IPR, MR, MR1
       DOUBLE PRECISION XS(IR), YS(L), Z(IR*M), C(IR*M), CST0, CST1,
      1                 ANS, BNS
 C     INPUT / OUTPUT DATA FILE OPEN
@@ -206,6 +207,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION X(MM),Y(MM)
       INTEGER MM
       DOUBLE PRECISION X(MM), Y(MM)
+c local
+      INTEGER I
       DO 10 I=1,MM
 cxx   10 X(I)=X(I)+Y(I)
       X(I)=X(I)+Y(I)

@@ -101,6 +101,8 @@ cc     1 ,4HBAYE,4HSIAN,4H WEI,4HGHTS,4H)    /
 C
 cxx      DIMENSION    SXX(121,KMAX)
 cxx      DIMENSION    F(LAG,KMAX)
+c local
+      INTEGER ISW, K, K3, KC, KSW, LAG1, MJ1, N0, NR, NS
       DOUBLE PRECISION Z(N), X(NS0,LAG+1), F(LAG,KMAX), BB
 C
       EXTERNAL  SETX1
@@ -276,6 +278,7 @@ cxx      DIMENSION  B1(LAG+KSW), W(LAG+KSW+1)
       DOUBLE PRECISION Z(N), X(MJ1,1), F(LAG+KSW,KMAX1), AIC(KMAX1),
      1                 C(KMAX1), B(LAG+KSW), A(LAG+KSW), SD
 c local
+      INTEGER I, II, IMIN, J, K, KC1, KMAX
       DOUBLE PRECISION D(LAG+KSW+1), SDD(LAG+KSW+1), AICC(LAG+KSW+1),
      1                 DIC(LAG+KSW+1), B1(LAG+KSW), W(LAG+KSW+1), AICB,
      2                 AICM, SDMIN, PN

@@ -86,6 +86,7 @@ cxx      DIMENSION  U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
       DOUBLE PRECISION ZS(N,ID), C(ID), ZMEAN(ID), ZVARI(ID), AIC(K),
      1                 AICP(K), AICF(K), A(ID,ID,LAG,K), E(ID,ID,K)
 c local
+      INTEGER IF, KD, L, LK, LK1, MJ1, MJ2, MJ3, MX, NNF
       DOUBLE PRECISION Z(N,ID), B(ID,ID,LAG),
      1                 X(((LAG+1)*ID+KSW)*4,((LAG+1)*ID+KSW)*2),
      2                 U(((LAG+1)*ID+KSW)*2,((LAG+1)*ID+KSW)*2)
@@ -326,7 +327,8 @@ cxx      DIMENSION  JNDF(MJ2,ID), AF(MJ2,ID), NPR(ID), AAIC(ID)
       DOUBLE PRECISION Z(MJ,ID), X(MJ1,MJ2), U(MJ2,MJ2), A(ID,ID,LAG),
      1                 B(ID,ID,LAG), E(ID,ID), AICFS, AICP, AICF
 c local
-      INTEGER M(ID), JNDF(MJ2,ID), NPR(ID)
+      INTEGER I, II, IPR, J, K1, KD1, KD2, MJ4, NP, M(ID), JNDF(MJ2,ID),
+     1        NPR(ID)
       DOUBLE PRECISION AI(ID,ID,LAG), BI(ID,ID,LAG), EI(ID,ID), C(ID),
      1                 EX(ID), AIC(LAG+1,ID), SD(LAG+1,ID),
      2                 DIC(LAG+1,ID), AICM(ID), SDM(ID), AF(MJ2,ID),

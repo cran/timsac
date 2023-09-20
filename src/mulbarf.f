@@ -106,6 +106,7 @@ cxx      DIMENSION  BW1(LAG+1), BW2(LAG)
      2                 BW2(LAG), A(ID,ID,LAG), B(ID,ID,LAG),
      3                 G(ID,ID,LAG), H(ID,ID,LAG), E(ID,ID), AICB
 c local
+      INTEGER IPR, KSW, MJ, MJ1, MJ2, N0, NMK
       DOUBLE PRECISION Z(N,ID), X((LAG+1)*ID*2,(LAG+1)*ID), EK
 C
 cc      CHARACTER(100)  IFLNAM,OFLNAM

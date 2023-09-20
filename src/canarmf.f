@@ -69,13 +69,15 @@ cxx      DIMENSION VC(MJ2),VT(MJ2)
 cxx      DIMENSION ST(MJ2,MJ1),T(MJ2,MJ1)
 cxx      DIMENSION AST1((MJ2-1)*MJ2/2)
 cxx      DIMENSION VV(MJ1,MJ1)
-      INTEGER N, LAGH3, IFPL1, MO, NC, MM1(MJ1), MM2(MJ1), NDT(MJ1,MJ1),
-     1        MIN3(MJ1), M1M, M1N, MJ1, MJ2
+      INTEGER N, LAGH3, IFPL1, MO, NC, M1M, M1N, MJ1, MJ2, MM1(MJ1),
+     1        MM2(MJ1), NDT(MJ1,MJ1), MIN3(MJ1)
       DOUBLE PRECISION CYY(LAGH3), COEF(MJ2), SD(0:MJ1), AIC(0:MJ1),
      1                 OAIC, A(MJ1), V(MJ1,MJ1,MJ1), Z(MJ1,MJ1),
      2                 Y(MJ1,MJ1),  XX(MJ1,MJ1), X3(MJ1,MJ1),
      3                 X3MIN(MJ1), BETA(MJ1), ALPHA(MJ1)
 c local
+      INTEGER I, II, INDX, J, J1, LAGH0, M, M1, M2, M9, NA, NEWL, NINEW,
+     1        NINEW0
       DOUBLE PRECISION WL(MJ1), VC(MJ2), VT(MJ2), ST(MJ2,MJ1),
      1                 T(MJ2,MJ1), AST1((MJ2-1)*MJ2/2), VV(MJ1,MJ1),
      2                 CST0, CST1, CST2, CST9, AN, EM, EN, ANDT, AII
@@ -340,7 +342,10 @@ cc      DIMENSION A(101)
 cxx      DIMENSION A(M1M)
 cxx      DIMENSION BETA(M1M),ALPHA(M1M)
       INTEGER M1M
-      DOUBLE PRECISION A(M1M), BETA(M1M), ALPHA(M1M), SUM
+      DOUBLE PRECISION A(M1M), BETA(M1M), ALPHA(M1M)
+c local
+      INTEGER I, IPM, K, KM1, KMI
+      DOUBLE PRECISION SUM
       ALPHA(M1M)=0.0D-00
       IF  (M1M.LE.1) GO TO 20
       ALPHA(1)=BETA(1)-A(1)
@@ -398,17 +403,18 @@ cxx      DIMENSION AIC(0:L1),SD(0:L1),AA(L1)
       INTEGER L3, L1, N, NA, MO
       DOUBLE PRECISION CYY(L3), AST1(NA), COEF(L1), SD(0:L1), AIC(0:L1),
      1                 AA(L1), OAIC
+c local
+      INTEGER I, IAN, IAN1, IAN2, II, IM, INX, JJ, JJ0, JJL, JJL1, L,
+     1        LAN1, LAN2, LM, M, MP1, NFC
       DOUBLE PRECISION A(L1), B(L1), CST0, CST1, CST2, CST20, CST01,
-     1                 CST05, AM, AN, RAN, SCALH, SE, SDR, D, D2, CONST,
-     2                 DLSD
+     1                 CST05, AM, AN, ANFC, RAN, SCALH, SE, SDR, D, D2,
+     2                 CONST, DLSD
 cc      REAL*4 AX,BL,STA,DASH,PLUS
 cc      REAL*4 FFFF
 cc      REAL*4  F(41) / 41*1H  /, AMES(41) / 41*1H- /
-      CHARACTER AX,BL,STA,DASH,PLUS
 cxx      CHARACTER FFFF
 cxx      CHARACTER F(41),AMES(41)
 cc      DATA AX,BL,STA,DASH,PLUS/1H!,1H ,1H*,1H-,1H+/
-      DATA AX,BL,STA,DASH,PLUS/'!',' ','*','-','+'/
 cxx      DATA F,AMES/ 41*' ', 41*'-' /
       CST0=0.0D-00
       CST1=1.0D-00
@@ -600,6 +606,8 @@ cxx      DIMENSION AST1(NA)
 cxx      DIMENSION VC(M9),VT(M9)
       INTEGER M9, NA
       DOUBLE PRECISION VC(M9), VT(M9), AST1(NA)
+c local
+      INTEGER I, INX, K
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       INX=0
@@ -627,7 +635,8 @@ cxx      DIMENSION AST1(NA),ISUM1(M1)
 cxx      DIMENSION V(MJ1,MJ1)
       INTEGER NA, M1, MJ1
       DOUBLE PRECISION VV(MJ1,MJ1), V(MJ1,MJ1), AST1(NA)
-      INTEGER ISUM1(M1)
+c local
+      INTEGER I, IJK, INX, ISUM, ISUM1(M1), J, K, LL
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       ISUM=0
@@ -663,6 +672,8 @@ cxx      DIMENSION AST1(NA)
 cxx      DIMENSION CYY(L3),VC(M9)
       INTEGER L3, NA, M9, M1, INDX
       DOUBLE PRECISION CYY(L3), AST1(NA), VC(M9), CST0
+c local
+      INTEGER I, II, IS, ISM
       CST0=0.0D-00
 cxx      DO  10 I=1,M9
 cxx   10 VC(I)=CST0

@@ -66,6 +66,7 @@ cxx      DIMENSION  SD(LAG+1), AIC(LAG+1), DIC(LAG+1)
       DOUBLE PRECISION ZS(N), ZMEAN, SUM, SD(LAG+1), AIC(LAG+1),
      1                 DIC(LAG+1), AICM, SDM, A(LAG)
 c local
+      INTEGER ISW, K, MJ1, NMK
       DOUBLE PRECISION Z(N), X(N+1,LAG+1)
 cx      INTEGER*1  TMP(1)
 cx      CHARACTER  CNAME*80

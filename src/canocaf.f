@@ -87,15 +87,17 @@ cxx      DIMENSION CCV(LAGH1,IP0,IP0)
 cxx      DIMENSION AIC(MJ0)
 cxx      DIMENSION N1(MJ1),N2(MJ1),NDT(MJ1,MJ1)
 cxx      DIMENSION X3MIN(MJ0*IR),MIN3(MJ0*IR)
-      INTEGER IR,  INW(IR), N, LAGH1, IP0, L, MO, NC, N1(MJ1), N2(MJ1),
-     1        NDT(MJ1,MJ1), MIN3(MJ0*IR), M1NH, NH(MJ1), IAW, LMAX,
-     2        MJ0, MJ1
+      INTEGER IR, N, LAGH1, IP0, L, MO, NC, M1NH, IAW, LMAX, MJ0, MJ1,
+     1        INW(IR), N1(MJ1), N2(MJ1), NDT(MJ1,MJ1), MIN3(MJ0*IR),
+     2        NH(MJ1)
       DOUBLE PRECISION CCV(LAGH1,IP0,IP0), AIC(MJ0), OAIC, OSD(IR,IR),
      1                 AAO(MJ0,IR,IR), VV(MJ1,MJ1,MJ1), Z(MJ1,MJ1),
      2                 Y(MJ1,MJ1), XX(MJ1,MJ1), X3(MJ1,MJ1),
      3                 X3MIN(MJ0*IR), F(MJ1,MJ1), G(MJ1,IR), VF(MJ1*MJ1)
-c
-      INTEGER IH(MJ1)
+c local
+      INTEGER I, ID, IDB, II, IJDB, IJDB1, IL, IP, IRES, ISW, J, J1,
+     1        JDB, JJ, JRES, K, L1, LCV, LCV1, LMAX2, M, M1, M1M, M2,
+     2        MM1, MMMH, MP1, NINEW, NINEW0, NINEWI, IH(MJ1)
       DOUBLE PRECISION WL(MJ1), CV(LMAX*2+1,IR,IR), U(MJ1,MJ1),
      1                 V(MJ1,MJ1), AST1((LMAX+1)*LMAX,IR,IR),
      2                 FL(MJ1,MJ1), RGT(MJ1,MJ1), FRG(MJ1,MJ1),
@@ -516,6 +518,8 @@ cc      COMMON /COM25/FL
 cxx      DIMENSION FL(MJ1,MJ1)
       INTEGER MM ,MJ1
       DOUBLE PRECISION Y(MM), Z(MM), FL(MJ1,MJ1)
+c local
+      INTEGER I, J
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
@@ -541,6 +545,8 @@ cc      COMMON /COM25/FL
 cxx      DIMENSION FL(MJ1,MJ1)
       INTEGER MM, MJ1
       DOUBLE PRECISION Y(MM), Z(MM), FL(MJ1,MJ1)
+c local
+      INTEGER I, J
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
@@ -565,6 +571,8 @@ cc      DIMENSION V(46,46),VV(46,46),FL(46,46)
 cxx      DIMENSION V(MJ1,MJ1),VV(MJ1,MJ1),FL(MJ1,MJ1)
       INTEGER MM, MJ1
       DOUBLE PRECISION V(MJ1,MJ1), VV(MJ1,MJ1), FL(MJ1,MJ1)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
@@ -595,6 +603,8 @@ cc      DIMENSION R(MJ,MJ),RIN(K)
 cxx      DIMENSION R(K,K),RIN(K)
       INTEGER K
       DOUBLE PRECISION R(K,K), RIN(K), DET
+c local
+      INTEGER I, KM1, L, L1, M
       DOUBLE PRECISION CST0, CST1, ABC0, RR, RPIVOT, RIL
       CST0=0.0D-00
       CST1=1.0D-00
@@ -651,13 +661,14 @@ cxx      DIMENSION AAIC(0:MJ0-1)
       DOUBLE PRECISION AAIC(0:MJ0-1), OAIC, CV(LCV1,IR+IL,IR+IL),
      1                 AST1(LMAX2,IR+IL,IR+IL), OSD(IR,IR),
      2                 AO(MJ0,IR,IR+IL), AAO(MJ0,IR,IR+IL)
-c
+c local
+      INTEGER I, II, IMI, INX, IP, JJ, L1, M, MS
       DOUBLE PRECISION A1(L,IR+IL,IR+IL), B1(L,IR+IL,IR+IL),
      1                 SD(IR+IL,IR+IL), SE(IR+IL,IR+IL),
      2                 SF(IR+IL,IR+IL), XSD(IR+IL,IR+IL),
      3                 XSF(IR+IL,IR+IL), D(IR+IL,IR+IL), E(IR+IL,IR+IL),
      4                 Z1(IR+IL,IR+IL), SFL(IR+IL,IR+IL), RIN(IR+IL),
-     5                 B(IR+IL,IR+IL), AIC, SFDT, SDDET, SFDET
+     5                 B(IR+IL,IR+IL), AIC, SFDT, SDDET, SFDET, CST0
 cc      COMMON /COM9/AST1
 cc      COMMON /COM10/CV
 c
@@ -851,6 +862,8 @@ cxx      DIMENSION SD(K,K)
 cxx      DIMENSION SD1(K,K)
       INTEGER N, K, MS
       DOUBLE PRECISION SD(K,K), AIC
+c local
+      INTEGER I, J
       DOUBLE PRECISION SD1(K,K), AN, SDRM, ARM2
       AN=N
 cxx      DO 9 I=1,K
@@ -906,6 +919,9 @@ cxx      DIMENSION RGT(MJ1,MJ1)
 cxx      DIMENSION X(ID,ID),Y(ID,ID)
       INTEGER MO, ID, MJ1, MJ, LMAX2, LCV1
       DOUBLE PRECISION AST1(LMAX2,MJ,MJ), CV(LCV1,ID,ID), RGT(MJ1,MJ1)
+c local
+      INTEGER I, IB, II, IM1, IN, INC, INX, IRG, J, JB, JJ, JN, JNC, K,
+     1        KK, MJ7, MP1
       DOUBLE PRECISION X(ID,ID), Y(ID,ID), CST0, SUM
 c      COMMON /COM9/AST1
 cc      COMMON /COM10/CV
@@ -975,8 +991,10 @@ cxx      DIMENSION XX(ID,ID),AA(ID,ID),C(ID,ID)
 cxx      DIMENSION W(100,ID),B(MJ1,ID)
 cxx      DIMENSION NH(M1)
 
-      INTEGER NH(M1), M1, ID, IQ, MJ1, MJ0
+      INTEGER M1, ID, IQ, MJ1, MJ0, NH(M1)
       DOUBLE PRECISION AO(MJ0,ID,ID), B(MJ1,ID)
+c local
+      INTEGER I, IC, II, IIM1, IJ, J, JJ, MQ1, NHC
       DOUBLE PRECISION X(IQ,ID,ID), XX(ID,ID), AA(ID,ID), C(ID,ID),
      1                 W(100,ID), CST0, CST1
       CST0=0.0D-00
@@ -1055,8 +1073,10 @@ cc      DIMENSION RGT(91,91)
 cc      DIMENSION NH(91)
 cxx      DIMENSION RGT(MJ1,MJ1)
 cxx      DIMENSION NH(MM)
-      INTEGER NH(MM), MM, NN, MJ1
+      INTEGER MM, NN, MJ1, NH(MM)
       DOUBLE PRECISION X(MM), Z(NN), RGT(MJ1,MJ1)
+c local
+      INTEGER I, J, JJ
       DOUBLE PRECISION CST0, SUM
 cc      COMMON /COM11/RGT
       CST0=0.0D-00
@@ -1082,6 +1102,8 @@ cc      DIMENSION X(MJ1,MJ1),Y(MJ1,MJ2),Z(MJ1,MJ2)
 cxx      DIMENSION X(MM,MM),Y(MM,NN),Z(MM,NN)
       INTEGER MM, NN
       DOUBLE PRECISION X(MM,MM), Y(MM,NN), Z(MM,NN)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
       DO 10 I=1,MM
@@ -1111,6 +1133,8 @@ cc      DIMENSION X(MJ,MJ)
 cxx      DIMENSION X(MM,MM)
       INTEGER MM
       DOUBLE PRECISION X(MM,MM), XDETMI
+c local
+      INTEGER I, I1, J, K, MM1
       DOUBLE PRECISION CST0, CST1, XC, XXC
       CST0=0.0D-00
       CST1=1.0D-00

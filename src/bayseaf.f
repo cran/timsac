@@ -390,8 +390,11 @@ c
      4                 PSDT(NDATA+FOCAST), AVABIC, PARA(8), ARFT(3),
      5                 ARFS(3), ARFN(3)
 c local
-      INTEGER ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD, SHIFT, TAIL,
-     1        YEAR, SPEC
+      INTEGER I, IS, IQ, IEND, ICNT, ICNT1, IOUT, IOUTD, IDC, ISTEM,
+     1        ITRN, I1, I2, N, N2, NPF, NH, NDAY, NEXT, NTEM,
+     2        L, LOGT, LF, LFTRN, LFSEA, LIMIT, LINKT, LINKS, MONTH, NF,
+     3        ORDER, SORDER, PERIOD, SPAN, OVLAP, HEAD,
+     4        SHIFT, TAIL, YEAR, SPEC
       DOUBLE PRECISION TREND0(NDATA+FOCAST), SEAS0(NDATA+FOCAST),
      1                 TDCMP0(NDATA+FOCAST), IRREG0(NDATA+FOCAST),
      2                 ADJ0(NDATA+FOCAST), EST0(NDATA+FOCAST),
@@ -400,7 +403,7 @@ c local
      5                 F(NDATA+FOCAST+1), WEEK(7,NDATA+FOCAST),
      6                 YS(NDATA), YS1(NDATA), YO(NDATA), RLIM, RIGID,
      7                 WTRD, DD, ZERSUM, DELTA, ALPHA, BETA, GAMMA,
-     8                 AP, ZER, SMTH, SMTH2, ROUT, SY, YTEM, COUNT,
+     8                 AN, AP, ZER, SMTH, SMTH2, ROUT, SY, YTEM, COUNT,
      9                 ABIC
 cc      CHARACTER*80   TITLE
 cc      COMMON /ILOGT/ LOGT,ISHRNK,PUNCH,IOUTD,ROUT                       
@@ -599,8 +602,8 @@ cxx    8 FTRN(I) = YTEM
       IF(LFSEA .EQ. 0) GO TO 998                                        
 cxx      DO 9  I=1,LFSEA                                                   
 cxx    9 FSEA(I) = 0.D0
-      FSEA(1:LFSEA) = 0.D0                                                    
-  998 CONTINUE                                                          
+      FSEA(1:LFSEA) = 0.D0
+  998 CONTINUE 
       N = (SPAN*2-1)*PERIOD                                             
       AVABIC = 0.D0                                                     
       COUNT = 0.D0                                                      
@@ -739,7 +742,7 @@ C
 cc      CALL  COPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,            
 cxx      CALL  BCOPY( FTRN,LFTRN,1,LFTRN,1,1,TREND,LFTRN,1,IOUT,
 cxx     * LINKT,1)                                                         
-      CALL  BCOPY( FTRN,LFTRN,1,1,1,TREND,LFTRN,1,LINKT,1)                                                         
+      CALL  BCOPY( FTRN,LFTRN,1,1,1,TREND,LFTRN,1,LINKT,1)
       ISTEM = LFSEA                                                     
       IF(LINKS .GE. 1) GO TO 1111                                       
       LINKS=1-LINKS                                                     
@@ -1039,6 +1042,8 @@ cc      DIMENSION X(1), Y(1), Z(1)
 cxx      DIMENSION X(MX), Y(MY), Z(MZ)                                        
       INTEGER MX, MY, MZ
       DOUBLE PRECISION X(MX), Y(MY), Z(MZ), TEM
+c local
+      INTEGER I
       DO 100 I=1,MX                                                     
       TEM = 0.D0                              
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1060,8 +1065,11 @@ C
 cxx      IMPLICIT REAL*8 (A-H,O-Z )                                        
 cx      DIMENSION X(MJ,1)                                                 
 cxx      DIMENSION X(MJ, I0+N-1)                                                 
-      INTEGER N, MJ, I0, J0
+      INTEGER M, N, MJ, I0, J0
       DOUBLE PRECISION X(MJ, I0+N-1)
+c local
+      INTEGER I, I0M1, J, J0M1
+c
       I0M1 = I0 - 1                                                     
       J0M1 = J0 - 1                                                     
 cxx      DO 10 J=1,N
@@ -1093,6 +1101,9 @@ cxx      DIMENSION X(MMX,JX+NX-1), Y(MMY,JY+NY-1)
 cxx      DIMENSION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1)
       INTEGER MX, NX, IX, JX, MY, NY, IY, JY
       DOUBLE PRECISION X(MX+IX-1,JX+NX-1), Y(MY+IY-1,NY+JY-1), TEM
+c local
+      INTEGER I, IXM1, IYM1, J, JXM1, JYM1
+c
       IXM1 = IX-1                                                       
       JXM1 = JX - 1                                                     
       IYM1 = IY - 1                                                     
@@ -1135,7 +1146,9 @@ cxx     * TDC0(NN+NF), PSDT(NN+NF),PSDS(NN+NF),ERR(2*(NN+NF))
      2                 W(NDAY+6), A(2*(NN+NF)+NDAY+6), Y(NN),
      3                 WEEK(7,NN+NF), ERR(2*(NN+NF)), PSDS(NN+NF),
      4                 PSDT(NN+NF), SQE, SD2
-cc      COMMON /IDATA/ IP,IDUMMY(2),YEAR,NDAY                             
+cc      COMMON /IDATA/ IP,IDUMMY(2),YEAR,NDAY 
+c local
+      INTEGER I, I1, I2, N, NR, NTEM, N7
 C                                                                       
       N=NN+NF                                                           
       NR = 2                                                            
@@ -1168,7 +1181,7 @@ cxx      CALL SBTRCT(ADJ0,N,Y,N,SEAS0,N)
       CALL SBTRCT(ADJ0,N,Y,NN,SEAS0,N)
       IF(YEAR .NE. 0) CALL SBTRCT(ADJ0,N,ADJ0,N,TDC0,N)                 
 cxx      CALL SBTRCT(IRREG0,N,Y,N,EST0,N)                                  
-      CALL SBTRCT(IRREG0,N,Y,NN,EST0,N)                                  
+      CALL SBTRCT(IRREG0,N,Y,NN,EST0,N) 
       RETURN                                                            
       END                                                               
 cc      SUBROUTINE  HUSHLD( X,N,K,MJ1,ICNT )                              
@@ -1200,6 +1213,7 @@ cxx      DIMENSION  X(MJ1,K) , D(N)
       INTEGER N, K, MJ1, ICNT
       DOUBLE PRECISION X(MJ1,K)
 c local
+      INTEGER I, II, II1, II10, IIOTEM, IITEM, J, JTEM, KTEM, MNK
       DOUBLE PRECISION D(N), TOL, DIIO, H, ABSLD, F, G, S
 C                                                                       
       TOL=1.0D-38                                                       
@@ -1287,14 +1301,17 @@ cx      DIMENSION X(MMX,1), Y(MMY,1), Z(MMZ,1)
 cxx      DIMENSION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ)
       INTEGER MX, NX, MMX, MY, NY, MMY, MZ, NZ, MMZ
       DOUBLE PRECISION X(MMX,NX), Y(MMY,NY), Z(MMZ,NZ), SUM
+c local
+      INTEGER I, J, K, KK
+c
       KK = NY                                                           
       IF( KK .GT. MZ ) KK = MZ                                          
       DO 100 J=1,NX                                                     
 cxx      DO 50 I=1,MX
       DO 51 I=1,MX
       SUM = 0.D0                                                        
-      IF(I .GT. MY) GO TO 50                                            
-      IF( J .GT. NZ ) GO TO 50                                          
+      IF( I .GT. MY ) GO TO 50
+      IF( J .GT. NZ ) GO TO 50
       DO 20 K=1,KK                                                      
 cxx   20 SUM = SUM + Y(I,K)*Z(K,J)
       SUM = SUM + Y(I,K)*Z(K,J)                             
@@ -1317,6 +1334,9 @@ cc      DIMENSION X(1), Y(1), Z(1)
 cxx      DIMENSION X(MX), Y(MY), Z(MZ)
       INTEGER MX, MY, MZ
       DOUBLE PRECISION X(MX), Y(MY), Z(MZ), TEM
+c local
+      INTEGER I
+c
       DO 100 I=1,MX                                                     
       TEM = 0.D0                                                        
       IF( I .LE. MY )  TEM = Y(I)                                       
@@ -1364,12 +1384,14 @@ cxx     *  DSEAS(NPF)
      4                 ALPHA, BETA, GAMMA, ZER, SMTH, SMTH2, DD, WTRD,
      5                 DELTA
 c local
+      INTEGER I, IIII, ICOUNT, IFLAG, ITRN0, IPM1, J, K, M1, MODE, ND,
+     1        N7, N2M1, NDTEM, NMJ
       DOUBLE PRECISION DC(IDC,2*NPF+N2), H(NH,NPF),H2(N2,2*NPF+N2),
      1                 WEEK0(7), WEEK1(7), ERR(2*(N+NF)+NDAY+7),
      2                 A(2*(N+NF)+NDAY+7), DTRN(NPF), DSEAS(NPF), DMAX0,
      3                 DMIN0, RO, DMIN, AN, ANN, ALNDTD, ALNDT0, WT,
-     4                 TEM, ALNDN, ALSQE, SQE, ABIC, AJACOB, SSTR, SSEA,
-     5                 SSIR, SSAS, SAS
+     4                 TEM, ALNDN, ALSQE, SQE, ABIC, AJACOB, APRD, SSTR,
+     5                 SSEA, SSIR, SSAS, SAS
 cc      COMMON /IDATA/ PERIOD,IORD,ISOD,YEAR,NDAY,IFIX                    
 cc      COMMON /RDATA/ ALPHA,BETA,GAMMA,ZER,SMTH,SMTH2,DD,WTRD,DELTA      
 cc      COMMON /ILOGT/ LOGT,ISHRNK                                        
@@ -1612,7 +1634,7 @@ cxx      REAL*8 WEEK(7,N),W0(8)
       INTEGER YEAR0, MONTH0, N
       DOUBLE PRECISION WEEK(7,N)
 c local
-      INTEGER DYEAR, YEAR, LEAP, Y, L, D, DAY, MONTH, DIFF, WDAY
+      INTEGER I, J, DYEAR, YEAR, LEAP, Y, L, D, DAY, MONTH, DIFF, WDAY
       DOUBLE PRECISION W0(8)
 C                                                                       
       DYEAR=(MONTH0-1)/12                                               
@@ -1644,18 +1666,18 @@ cxx      GO TO 200
 cxx  206 DAY=DAY+6                                                         
       IF (MONTH .EQ. 1 .OR. MONTH .EQ. 10) GO TO 200
       IF (MONTH .EQ. 5) THEN
-         DAY=DAY+1                                                         
+         DAY=DAY+1
       ELSE IF (MONTH .EQ. 8) THEN
-         DAY=DAY+2                                                         
+         DAY=DAY+2
       ELSE IF (MONTH .EQ. 6) THEN
-         DAY=DAY+4                                                         
+         DAY=DAY+4
       ELSE IF (MONTH .EQ. 9 .OR. MONTH .EQ. 12) THEN
-         DAY=DAY+5                                                         
+         DAY=DAY+5
       ELSE IF (MONTH .EQ. 7 .OR. MONTH .EQ. 4) THEN
-         DAY=DAY+6                                                         
+         DAY=DAY+6
       ELSE
 C       IF(MONTH .EQ. 2 .OR. MONTH .EQ. 3 .OR. MONTH .EQ. 11)
-         DAY=DAY+3                                                         
+         DAY=DAY+3
       END IF
   200 IF(LEAP .EQ. 0 .AND. MONTH .GE. 3) DAY=DAY+1                      
       IF(DAY .GT. 7) DAY=DAY-7                                          
@@ -1713,6 +1735,9 @@ C     COMMON SUBROUTINE
 C     MAXIMUM OF A(I)(I=1,N) SEARCH                                     
       INTEGER N
       DOUBLE PRECISION A(N)
+c local
+      INTEGER I
+c
       AMAX=A(1)                                                         
       DO 10 I=2,N                                                       
       IF(AMAX.LT.A(I)) AMAX=A(I)                                        
@@ -1726,6 +1751,9 @@ C     COMMON SUBROUTINE
 C     MINIMUM OF A(I)(I=1,N) SEARCH                                     
       INTEGER N
       DOUBLE PRECISION A(N)
+c local
+      INTEGER I
+c
       AMIN=A(1)                                                         
       DO 10 I=2,N                                                       
       IF(AMIN.GT.A(I)) AMIN=A(I)                                        
@@ -1753,6 +1781,7 @@ cxx      DIMENSION  Z(K), X(K), Y(K)
       INTEGER K
       DOUBLE PRECISION Z(K), X(K), SD1
 c local
+      INTEGER I, I0, IFG, J, N0
       DOUBLE PRECISION Y(K), SUM
       DO 10  I=1,K                                                      
 cxx   10 X(I) = Z(I)                                                       
@@ -1771,7 +1800,7 @@ cxx   40 Y(I) = X(I)
       Y(I) = X(I)
    40 CONTINUE
 C
-      N0=1                                                                       
+      N0=1 
       DO 200  I=1,K-1
       I0 = I
 C                                                                       
@@ -1842,7 +1871,7 @@ cxx      DIMENSION  X(N), Y(N), Z(N), ZE(N), IND(N), JND(N)
       INTEGER N, IND(N), JSW
       DOUBLE PRECISION X(N), F, W
 c local
-      INTEGER JND(N)
+      INTEGER I, IFG, J, K, L, JND(N)
       DOUBLE PRECISION Y(N), Z(N), ZE(N), SUM, XMEAN, SIG2, SD
 C                                                                       
       L = 0                                                             
@@ -1922,9 +1951,10 @@ C
 cxx      REAL*8  POST, X(N)                                                
 cc      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(10)               
 cxx      DIMENSION  POST(IC), JND(IC),KND(IC), IND(N), Y(N)
-      INTEGER  IC, N, L, IND(N), JND(IC), KND(IC)
+      INTEGER IC, N, L, IND(N), JND(IC), KND(IC)
       DOUBLE PRECISION POST(IC), X(N)
 c local
+      INTEGER I, IC1, ID, IMAX, J, JJ, KK, NML1
       DOUBLE PRECISION Y(N), PMAX
 cc      COMMON /CSPRSS/ ISPRSS                                            
 C                                                                       
@@ -1947,8 +1977,8 @@ C
       KND(IMAX) = KK                                                    
    20 CONTINUE                                                          
 cxx   30 IC1 = IC                                                          
-       IC1 = IC                                                          
-      NML1 = N-L+1                                                      
+       IC1 = IC
+      NML1 = N-L+1
       DO 40  I=1,N                                                      
 cxx   40 IND(I) = 0                                                        
       IND(I) = 0
@@ -1989,6 +2019,8 @@ C                        = 1 ; SEARCH FOR THE CONFIGURATION COMPLETED.
 C                                                                       
 cxx      DIMENSION  IND(K)
       INTEGER  K, IFG, IND(K)
+c local
+      INTEGER  I, I0, I1, I2, I2M1, IMAX
 C                                                                       
       I1 = 1                                                            
       I2 = 2                                                            
@@ -2043,12 +2075,14 @@ C        (IND(I),I=1,N): REORDERED DATA
 C                                                                       
 cxx      DIMENSION  IND(N)                                                 
       INTEGER N, IND(N)
+c local
+      INTEGER I, II, IMIN, J, MINI, NM1
 C                                                                       
-      NM1 = N-1                                                         
-      DO 20  II=1,NM1                                                   
-      MINI = IND(II)                                                    
-      IMIN = II                                                         
-      DO 10  I=II,N                                                     
+      NM1 = N-1              
+      DO 20  II=1,NM1       
+      MINI = IND(II)       
+      IMIN = II           
+      DO 10  I=II,N      
       IF( MINI .LE. IND(I) )   GO TO 10                                 
       MINI = IND(I)                                                     
       IMIN = I                                                          
@@ -2074,6 +2108,8 @@ C
 cx      DIMENSION  MB(1)
 cxx      DIMENSION  MB(K)
       INTEGER M, K, MB(K)
+c local
+      INTEGER I, L, N
 C                                                                       
       N = M                                                             
       DO 10  I=1,K                                                      
@@ -2081,7 +2117,7 @@ C
         MB(I) = N - L*2                                                 
 cxx   10 N = L
         N = L
-   10 CONTINUE                                                             
+   10 CONTINUE
       RETURN                                                            
 C                                                                       
       E N D                                                             
@@ -2103,6 +2139,8 @@ cx      DIMENSION  X(1) , IX(1)
 cxx      DIMENSION  X(N) , IX(N)
       INTEGER N, IX(N)
       DOUBLE PRECISION X(N), XMIN, XT
+c local
+      INTEGER I, II, IT, MIN, NM1
 C                                                                       
       NM1 = N - 1                                                       
       DO  20     II=1,NM1                                               
@@ -2165,12 +2203,13 @@ cxx      DIMENSION  Y(NN)
       INTEGER NN, K, ISW, JSW, IOUTD
       DOUBLE PRECISION Z(NN), Y(NN), RLIM, ROUT
 c local
-      INTEGER IX(NN), IND(NN), JND(2**K), KND(2**K)
+      INTEGER I, II, II1, IC, IL, ISPRSS, JJ, JJ1, K1, K2, 
+     1        IX(NN), IND(NN), JND(2**K), KND(2**K), N, NML1, L 
       DOUBLE PRECISION X(NN), F(NN+1), PM(NN), C(K+1), POST(2**K), EPS,
      1                 DI, SUMF, DLK0, F0, TEM, FF, EXPF, W
 
 cc      COMMON /CSPRSS/ ISPRSS                                            
-      ISPRSS = 1                                                        
+      ISPRSS = 1        
 C                                                                       
       N=0                                                               
       DO 5 I=1,NN                                                       
@@ -2325,10 +2364,10 @@ cx      DIMENSION   IX(N),  POST(1), JND(1), KND(1), Y(N)
 cc      DIMENSION  IND(500)                                               
 cxx      DIMENSION   IX(N),  POST(N), JND(IC), KND(IC), Y(N)                 
 cxx      DIMENSION  IND(N)              
-      INTEGER N, L, IX(N), JND(IC), KND(IC), IC ,IOUTD
+      INTEGER N, L, IC ,IOUTD, IX(N), JND(IC), KND(IC)
       DOUBLE PRECISION POST(N), Y(N), CONST 
 c local
-      INTEGER IND(N)              
+      INTEGER I, ICTEM, ICHK, J, K, NML1, IND(N) 
 cc      COMMON /CSPRSS/ ISPRSS                                            
 cc      COMMON /ILOGT/ IDUMMY(3),IOUTD,CONST                              
       ICTEM = IC                                                        
@@ -2362,8 +2401,11 @@ cxx  605 FORMAT( 1H ,'LOCATION PARAMETER;   XM =',F13.5 )
 cxx      IMPLICIT REAL*8 (A-H,O-Z)                                         
 cc      DIMENSION W(IP,10), WW(10), AR(10)                                
 cxx      DIMENSION W(IP,ID+IAR+1), WW(ID+IAR+1), AR(1)
-      INTEGER IP, ID, IAR
+      INTEGER IP, ID, IAR, JLX
       DOUBLE PRECISION W(IP,ID+IAR+1), C, AR(1), WW(ID+IAR+1)
+c local
+      INTEGER I, IDAR, IDP1, J, JY, K 
+c
       IDAR = ID + IAR                                                   
       IDP1 = IDAR + 1                                                   
       W(1,IDP1) = C                                                     
@@ -2405,6 +2447,7 @@ cxx      DIMENSION  W(LENGTH), DDOP(LENGTH), DOP((LENGTH-1)*ISTEP+1)
       INTEGER LENGTH, ISTEP
       DOUBLE PRECISION W(LENGTH), DOP((LENGTH-1)*ISTEP+1)
 c local
+      INTEGER I, ITEM, J, K
       DOUBLE PRECISION DDOP(LENGTH), SUM
       J=1                                                               
       DO 1 I=1,LENGTH                                                   
@@ -2435,6 +2478,7 @@ cxx      DIMENSION  H1(N1,IPOS),H2(N2,N2+IPOS),H3(N3),H4(N2)
       INTEGER N1, N2, N3, M1, IPOS
       DOUBLE PRECISION H1(N1,IPOS), H2(N2,N2+IPOS), H3(N3), H4(N2)
 c local
+      INTEGER J, JP1, K, M, M0, MM
       DOUBLE PRECISION EPS, SQD, C, D, F
       DATA EPS/1.D-30/                                                  
       IF(IPOS .LE. M1) GO TO 30                                         
@@ -2522,6 +2566,8 @@ cxx     *           F(NPF+1),ARFT(3)
      1                 TI(ID+IART), WT, Y(NDATA), RLIM, WEEK(IY,N),
      2                 ALNDTD, F(NPF+1), DD, ARFT(3), ALPHA, WTRD, DELTA
 c local
+      INTEGER I, ITEM, ID0, IDAR, IPOS, J, J0, JTEM, K, KP1, N2M1,
+     1        N3, NMK
       DOUBLE PRECISION H3(N1), H4(N2), T0(2*(ID+IART+1)), TEM, TEMO
 cc      COMMON/IDATA/IP,ID,IS,YEAR                                        
 cc      COMMON/ RDATA/ALPHA,BETA,GAMMA,DUMMY(4),WTRD,DELTA                
@@ -2668,6 +2714,7 @@ cxx      DIMENSION  Z0(IP),SI((IS+IARS)*IP+IARN),ZI(IP),ARFS(3),ARFN(3)
       DOUBLE PRECISION H1(N1,1), H2(NPF+1), FSEAS((IS+IARS)*IP + IARN),
      1                 WS, WZ, ARFS(3), ARFN(3), BETA, GAMMA
 c local
+      INTEGER I, IPIS, IPM1, IS0, IPOS, ITEM, IZ0, J, LTEM, LENGTH, N3
       DOUBLE PRECISION H3((IS+IARS)*IP+IARN+1), h4(1), Z0(IP),  ZI(IP),
      1                 SUM, S0((IS+IARS+1)*IP+IARN+1),
      2                 SI((IS+IARS)*IP+IARN), DT
@@ -2772,6 +2819,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION R(M),A(M,M)                                             
       INTEGER M
       DOUBLE PRECISION R(M), A(M,M)
+c local
+      INTEGER I, IM1, J
 cxx      DO 10 I=1,M                                                       
       DO 20 I=1,M
       DO 10 J=1,I                                                       
@@ -2800,6 +2849,8 @@ cxx      DIMENSION  H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), ERR(NANS)
       DOUBLE PRECISION H1(N1,N2+M1), H2(N2,N2+M1), A(NANS), SQE,
      1                 ERR(NANS)
 c local
+      INTEGER I, J, JJ, K, KK, KA, KAM1, KKA, KM1, KCOPY, KATEM,
+     1        L, LER, LTEM, N2MJ
       DOUBLE PRECISION AKA
 C                                                                       
 cxx      DO 30 I=1,NANS                                                    
@@ -2814,7 +2865,7 @@ cxx   30 ERR(I)=0.D0
             KAM1 = KA - 1                                               
 cxx            DO 40 KKA = 1, KAM1                                         
 cxx   40       A(KKA) = 0.D0
-            A(1:KAM1) = 0.D0                                                
+            A(1:KAM1) = 0.D0
             A(LER) = 1.D0                                               
             GO TO 48                                                    
    44    CONTINUE                                                       

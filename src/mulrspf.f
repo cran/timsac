@@ -35,7 +35,7 @@ cxx      DIMENSION Z(IP,IP),G(L+K+1),CH(IP,IP,H+1)
       DOUBLE PRECISION SD(IP,IP), A(L,IP,IP), B(K,IP,IP), CH(IP,IP,H+1)
       COMPLEX(kind(0d0)) :: Y(IP,IP,H+1)
 c local
-      INTEGER H1
+      INTEGER I, I1, II, IM1, JF, JJ, JJF, LG, H1
       DOUBLE PRECISION G(L+K+1), CST0,  CST1, GR, GI, RYI, RYJ, RRYIJ,
      1                 RIYIJ
       COMPLEX(kind(0d0)) :: X(IP,IP), Z(IP,IP), XDET
@@ -236,6 +236,8 @@ cxx      DIMENSION Y1(MM,NN)
 cxx      DOUBLE PRECISION CST0
       INTEGER MM, NN
       COMPLEX(kind(0d0)) :: X(MM,NN), Y(NN,NN), Z(MM,MM)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0
       COMPLEX(kind(0d0)) :: Y1(MM,NN), XSUM
       CST0=0.0D-00

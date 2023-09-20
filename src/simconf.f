@@ -119,7 +119,9 @@ cxx      DIMENSION BX0((K-1)*D,D),BX(K*D,D)
      1                 BC(K*D,R), BD(K*D,D-R), G(R,K*D), AVY(D),
      2                 SI(D), S2(D)
 c local
-      INTEGER H1
+      INTEGER I, I1, I2, II1, IM1, ISW, IX, IY, IYY, IZ, J, J1, J2, JRN,
+     1        JY, JYY, K1, K2, KD, KDR, KIX, KIZ, KJX, KJY, KJZ, KK1,
+     2        KK2, KK3, KK4, KX, H1
       DOUBLE PRECISION RANDM, B(D,D,K), Q(K*D,K*D),Z(K*D,K*D), W1(D),
      1                 S(D-R,D-R), WIN1(D,D), WIN2(R,D), Y(D,L),
      2                 W2(K*D,K*D), CI(R), V(K*D), AV(K*D), BCN(K*D),
@@ -172,18 +174,19 @@ C
       CSTM6=-6.0D-00                                                    
 c
 c     initialize data area
-      CALL DINIT(Q,KD*KD,CST0)
-      CALL DINIT(Z,KD*KD,CST0)
-      CALL DINIT(SI,D,CST0)
-      CALL DINIT(CI,R,CST0)
-      CALL DINIT(W1,D,CST0)
-      CALL DINIT(W2,KD*KD,CST0)
-      CALL DINIT(R1,R*KD,CST0)
-      CALL DINIT(WIN1,D*D,CST0)
-      CALL DINIT(WIN2,R*D,CST0)
-      CALL DINIT(W31,R*R,CST0)
-      CALL DINIT(W32,D*D,CST0)
-      CALL DINIT(BX,KD*D,CST0)
+c
+      Q(1:KD,1:KD) = CST0
+      Z(1:KD,1:KD) = CST0
+      SI(1:D) = CST0
+      CI(1:R) = CST0
+      W1(1:D) = CST0
+      W2(1:KD,1:KD) = CST0
+      R1(1:R,1:KD) = CST0
+      WIN1(1:D,1:D) = CST0
+      WIN2(1:R,1:D) = CST0
+      W31(1:R,1:R) = CST0
+      W32(1:D,1:D) = CST0
+      BX(1:KD,1:D) = CST0
 c
 C     MATRIX BX SET                                                     
       K1=K-1                                                            
@@ -712,6 +715,8 @@ cc      DIMENSION X(MJ1,MJ2),Y(MJ3,MJ4),Z(MJ5,MJ6)
 cxx      DIMENSION X(MX,NX),Y(MY,NY),Z(MZ,NZ)
       INTEGER MX, NX, MY, NY, MZ, NZ, IS
       DOUBLE PRECISION X(MX,NX), Y(MY,NY), Z(MZ,NZ)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0
       CST0=0.0D-00                                                      
       IF  (IS.EQ.2) GO TO 3050                                          
@@ -776,7 +781,8 @@ cxx      DIMENSION X(MM,MM)
 cxx      DIMENSION IDS(MM)
       INTEGER MM
       DOUBLE PRECISION X(MM,MM), XDET
-      INTEGER IDS(MM)
+c local
+      INTEGER I, J, JJ, L, MAXI, MM1, MMJ, IDS(MM)
       DOUBLE PRECISION CST0, CST1, XMAXP, XC
       CST0=0.0D-00                                                      
       CST1=1.0D-00                                                      

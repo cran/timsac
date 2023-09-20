@@ -64,7 +64,8 @@ C                   -- EXAMPLE --  (8F10.5 )
 C          X(I) (I=1,N):   ORIGINAL DATA                                
 C       ----------------------------------------------------------------
 C                                                                       
-      PARAMETER  ( MJ2 = 101 )
+cxx      PARAMETER  ( MJ2 = 101 )
+      INTEGER, PARAMETER :: MJ2 = 101
 C
 cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )                                 
 CC      REAL*4     Z(10000) , TITLE(20) , TTL(5) , E(20000)               
@@ -91,12 +92,14 @@ cxx      CHARACTER(4) G
      3                 OM, E(N,IL), EMEAN(IL), VARI(IL), SKEW(IL),
      4                 PEAK(IL), COV(MJ2), SXX(121)
 c local
+      INTEGER I, IPR, ISW, KK, LAG1, MJ, MJ1, NMK
       DOUBLE PRECISION Z(N), X(N,K+1), FA(N-LAG,IL), SD0, CONST
       CHARACTER(4) G
 C
+      INTEGER L1, L2, L3, NN, NPS
       COMMON     / BBB / L1(50) , L2(50) , L3(50) , SD0 , CONST         
-      COMMON     / EEE /  G(20,31)                                      
-      COMMON     / AAA /  NN
+      COMMON     / EEE / G(20,31)                                      
+      COMMON     / AAA / NN
 C                                                                       
 C        EXTERNAL SUBROUTINE DECLARATION:                               
 C                                                                       
@@ -335,6 +338,9 @@ C          F:     NUMBER OF COMBINATIONS OF SELECTING J OBJECTS FROM
 C                 A SET OF K OBJECTS                                    
 C                                                                       
 cxx      IMPLICIT REAL * 8 ( A-H , O-Z )
+      INTEGER K, J
+c local
+      INTEGER I, KMJ
       DOUBLE PRECISION SUM, DI
 C                                                                       
       KMJ = K-J                                                         
@@ -411,6 +417,8 @@ cxx      DIMENSION  F(NPE-NPS+1,IL)
       INTEGER K, L, IL, NPS, NPE, MJ, MJ2 
       DOUBLE PRECISION X(NPE), A(K), E(MJ,IL), F(NPE-NPS+1,IL),
      1                 EMEAN(IL), VARI(IL), SKEW(IL), PEAK(IL), COV(MJ2)
+c local
+      INTEGER I, IE, II, ISTEP, ISW, J, JJ, KK, LAG1, LAGH, N, NMK
       DOUBLE PRECISION SUM, COV1, SD
 C                                                                       
 C                                                                       
@@ -567,6 +575,8 @@ cx	REAL*8  X(1)
 cxx      REAL*8  X(N)
       INTEGER N
       DOUBLE PRECISION X(N), F1, F2, F3, F4
+c local
+      INTEGER I
       DOUBLE PRECISION FN, FSUM, FF
 C                                                                       
       FN = N                                                            
@@ -621,6 +631,8 @@ cxx      DIMENSION  Z(NPE) , EZ(MJ,IL)
 cxx      DIMENSION  A(M)                                                   
       INTEGER M, L, IL, NPS, NPE, MJ
       DOUBLE PRECISION Z(NPE), A(M), EZ(MJ,IL)
+c local
+      INTEGER I, I1, I2, II, KI, KK, KKM1
       DOUBLE PRECISION SUM
 C                                                                       
 C                                                                       
@@ -681,9 +693,13 @@ cc      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(20)
 cx      DIMENSION  Z(1) , A(1) , EZ(MJ1,1) , Y(IL)                        
 cxx      DIMENSION Z(NPE) , A(K) , EZ(MJ1,IL) , Y(IL)
 cc      REAL * 4   CSTDMY, SD0DMY
-      INTEGER K, IL, NPS, NPE, MJ1
+      INTEGER K, L, IL, NPS, NPE, MJ1
       DOUBLE PRECISION Z(NPE), A(K), EZ(MJ1,IL)
-      DOUBLE PRECISION Y(IL), CSTDMY, SD0DMY, SUM, XX, X
+c local
+      INTEGER I, II, J, J1, JJ,  LAG
+      DOUBLE PRECISION Y(IL), SUM, XX, X
+      INTEGER LAG1, LAG2, LAG3
+      DOUBLE PRECISION CSTDMY, SD0DMY
       COMMON  / BBB /  LAG1(50) , LAG2(50) , LAG3(50), CSTDMY, SD0DMY
 CC      INTEGER  RETURN                                                   
 C                                                                       
@@ -773,7 +789,7 @@ C    L : DUMMY
       RETURN
       END                                                               
 cc      SUBROUTINE  SETLAG( K )                                           
-      SUBROUTINE  SETLAG( K,LAG1,LAG2,LAG3,LAG4,LAG5 )                                           
+      SUBROUTINE  SETLAG( K,LAG1,LAG2,LAG3,LAG4,LAG5 )
 C                                                                       
 C     THIS SUBROUTINE  PREPARES SPECIFICATION OF REGRESSORS (L1(I),L2(I)
 C     (I=1,...,K) FOR THE FITTING OF (POLYNOMIAL TYPE) NON-LINEAR MODEL.
@@ -799,6 +815,9 @@ C
 cc      REAL * 4   CSTDMY,SD0DMY
 cxx      REAL * 8   CSTDMY,SD0DMY
       INTEGER K, LAG1, LAG2, LAG3, LAG4, LAG5
+c local
+      INTEGER I, I1, J, L, LL, M
+      INTEGER L1, L2, L3
       DOUBLE PRECISION CSTDMY, SD0DMY
       COMMON  / BBB /  L1(50), L2(50), L3(50), CSTDMY, SD0DMY
 C                                                                       
@@ -932,7 +951,11 @@ cxx      REAL * 8  X(MJ1,K+1) ,  Z(N0+LAG+L) , ZTEM
 cxx      REAL * 8  CSTDMY, SD0DMY
       INTEGER N0, L, K, MJ1, JSW, LAG 
       DOUBLE PRECISION Z(N0+LAG+L), X(MJ1,K+1)
-      DOUBLE PRECISION CSTDMY, SD0DMY, ZTEM
+c local
+      INTEGER I, I0, I1, II, J1, K1, LL1, LL2, LL3, M1, M2, M3
+      DOUBLE PRECISION ZTEM
+      INTEGER L1, L2, L3
+      DOUBLE PRECISION CSTDMY, SD0DMY
       COMMON  / BBB /  L1(50) , L2(50) , L3(50), CSTDMY, SD0DMY  
 C                                                                       
       K1 = K + 1                                                        
@@ -998,7 +1021,10 @@ cx      DIMENSION  X(MJ1,1)
 cxx      DIMENSION  X(MJ1,K+1) ,  Z(NO+LAG+L)
       INTEGER NO, L, K, MJ1, JSW, LAG                       
       DOUBLE PRECISION Z(NO+LAG+L), X(MJ1,K+1)
+c local
+      INTEGER I, I0, II, J, JJ, K1, M, M1, NN
       DOUBLE PRECISION BN, Y, XX
+      INTEGER N
 cc      COMMON     / AAA /  N , M                                         
       COMMON  / AAA /  N
 C                                                                       
@@ -1054,7 +1080,10 @@ cxx      IMPLICIT  REAL * 8  ( A-H , O-Z )
 cx      DIMENSION  X(1) , IX(1)                                           
 cxx      DIMENSION  X(N) , IX(N)
       INTEGER N, IX(N)
-      DOUBLE PRECISION X(N), XMIN, XT
+      DOUBLE PRECISION X(N)
+c local
+      INTEGER I, II, IT, MIN, NM1
+      DOUBLE PRECISION XMIN, XT
 C                                                                       
       NM1 = N - 1                                                       
       DO  30     I=1,N                                                  
@@ -1114,7 +1143,8 @@ cxx      DIMENSION  C1(K+1), C2(K), ESUM1(K+1)
       INTEGER K, N, IND(K)
       DOUBLE PRECISION B(K), EK, C(K), C1(K+1), C2(K), OEIC, ESUM1(K+1),
      1                 OMEAN, OM
-      INTEGER KND(K+1)
+c local
+      INTEGER I, IP, IQ, J, K1, KND(K+1), KMJ, M 
       DOUBLE PRECISION BICOEF, D(K+1,K+1), ESUM(K+1), CC, DN, SUM, EIC,
      1                 SUMC, EXIC, OSUM
 C                                                                       
@@ -1263,7 +1293,7 @@ cc      C(1) = 1.D0 / (1.D0 + K)
 cxx  220 C1(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)                       
       C1(I) = BICOEF(K,J)*(OM**J)*((1.D0-OM)**KMJ)
   220 CONTINUE
-      C1(1) = 1.D0 / (1.D0 + K)                                          
+      C1(1) = 1.D0 / (1.D0 + K)
       DO 221  I=1,K                                                     
 cc  221 C(I+1) = C(I) * I / (1.D0 + K - I)                                
 cxx  221 C1(I+1) = C1(I) * I / (1.D0 + K - I)                                
@@ -1380,6 +1410,8 @@ cxx      DIMENSION  IND(K), C(K), C1(K+1), C2(K), ESUM(K+1)
       INTEGER K, N, IPR, MJ1, IND(K)
       DOUBLE PRECISION X(MJ1,K+1), A(K), SD, EK, AIC, C(K), C1(K+1),
      1                 C2(K), B(K), OEIC, ESUM(K+1), OMEAN, OM
+c local
+      INTEGER I, J, K1
       DOUBLE PRECISION D(K), G(K), FN, SUM, BB
       K1 = K + 1                                                        
       FN = N                                                            

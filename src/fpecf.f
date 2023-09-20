@@ -48,6 +48,7 @@ cxx      DIMENSION XSD(IP,IP),XSF(IP,IP),D(IP,IP),E(IP,IP),Z1(IP,IP)
      1                 RFPEC(0:L), AIC(0:L), OFPEC, ORFPEC, OAIC,
      2                 OSD(IR,IR), AO(L,IR,IP)
 c local
+      INTEGER I, II, J, JJ, L1, M, MS
       DOUBLE PRECISION A1(L,IP,IP), B1(L,IP,IP), C1(IP0,IP0), SD(IP,IP),
      1                 SE(IP,IP), SF(IP,IP), XSD(IP,IP), XSF(IP,IP),
      2                 D(IP,IP), E(IP,IP), Z1(IP,IP), OOFPEC, SDDET,
@@ -234,6 +235,8 @@ cxx      DIMENSION SD(K,K)
 cxx      DIMENSION SD1(IR,IR)
       INTEGER N, K, IR, MS
       DOUBLE PRECISION SD(K,K), Z, RZ, OOZ, AIC
+c local
+      INTEGER I, J, KM
       DOUBLE PRECISION SD1(IR,IR), AN, ANP, ANM, AP, APR, CST1, SDRM,
      1                 ARM2
       AN=N

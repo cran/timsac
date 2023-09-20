@@ -37,7 +37,8 @@ C     OUTPUTS:
 C     (N,LAGH): N=2048
 C     C(I)(I=0,LAGH):
 C
-      PARAMETER (LMAX=1024)
+cxx      PARAMETER (LMAX=1024)
+      INTEGER, PARAMETER :: LMAX=1024
 cxx      IMPLICIT REAL*8 (O-Y)
 cc      REAL*8 C(1025),CN(1025),CX0
 cc      COMPLEX*16 A(2048)
@@ -48,6 +49,8 @@ cxx      COMPLEX*16 A(LMAX*2)
 cxx      REAL*8  F(K),G(K)
       INTEGER L, K
       DOUBLE PRECISION F(K), G(K), C(L+1), CN(L+1)
+c local
+      INTEGER I, I1, I2, J, J1, LAGH1, N, N2P, NN
       DOUBLE PRECISION CX0, Q00, AN, BN, CM, Q1, Q2, Q3, Q4, Q25
       COMPLEX(kind(0d0)) :: A(LMAX*2)
 C

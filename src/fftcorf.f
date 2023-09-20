@@ -46,6 +46,7 @@ cxx      DIMENSION CNA1(LAGH1,2),CN1(LAGH1),CN2(LAGH1),AMEAN(2)
       DOUBLE PRECISION X1(LD), Y1(LD), XA(N,2), X(N), Y(N),
      1                 CNA1(LAGH1,2), CN1(LAGH1), CN2(LAGH1), AMEAN(2)
 c local
+      INTEGER I, I1, II, ISG, J1, LAGH, M, M1, ND, NI, NP1, NP2
       DOUBLE PRECISION CST0, CST1, CST2, AN, ALD, ALD1, RF, SF, RG,
      1                 SG, XI, XNI, YI, YNI, X0, XMEAN, YMEAN, CX0, Y0
       COMPLEX(kind(0d0)) :: Z(N), ZS(N/2+1), ZI, ZNI

@@ -96,7 +96,7 @@ C
       DOUBLE PRECISION ZS(N), ZMEAN, SUM, AF((LAG+1)*IP+KSW,IP),
      1                 AICF(IP), B(IP,IP,LAG), E(IP,IP), C(IP), EX(IP)
 c local
-      INTEGER IM(IP)
+      INTEGER ID, IPR, ISW, MJ, MJ1, MJ2, MJ3, MJ4, N0, ND, NMK, IM(IP)
       DOUBLE PRECISION X(((LAG+1)*IP+KSW)*2,(LAG+1)*IP+KSW), Y(N/IP,IP),
      1                 Z(N), BI(IP,IP,LAG), EI(IP,IP), AIC(LAG+1,IP),
      2                 SD(LAG+1,IP), DIC(LAG+1,IP), AICM(IP), SDM(IP),
@@ -139,7 +139,7 @@ C
 C          ORIGINAL DATA LOADING                                        
 C                                                                       
 cc      CALL  REDATA( Z,N,MT,TITLE )                                      
-      CALL  REDATA( ZS,Z,N,ZMEAN,SUM )                                      
+      CALL  REDATA( ZS,Z,N,ZMEAN,SUM )
 cc      CLOSE( MT )
 C                                                                       
 C          DATA MATRIX SET UP                                           
@@ -224,6 +224,8 @@ cx      REAL * 8  Z(1) , Y(MJ,1)
 cxx      REAL * 8  Z(N) , Y(MJ,IP)
       INTEGER N, IP, MJ, ND
       DOUBLE PRECISION Z(N), Y(MJ,IP)
+c local
+      INTEGER I, II, J
       ND = N / IP                                                       
 cxx      DO 10  I=1,ND
       DO 20  I=1,ND

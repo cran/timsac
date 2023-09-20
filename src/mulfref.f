@@ -44,6 +44,7 @@ cxx      DIMENSION XFR(IP0,IP0,LAGH1)
      2                 R(K,LAGH1), CHM(LAGH1)
       COMPLEX(kind(0d0)) :: X(IP0,IP0,LAGH1)
 c local
+      INTEGER I, II, IM1, J, JF, JJF, K1
       DOUBLE PRECISION OARC(K), P00, EP, G2, G3, D1, D2
       COMPLEX(kind(0d0)) :: XFR(IP0,IP0,LAGH1), XDET
 C
@@ -188,7 +189,8 @@ cx      DIMENSION IDS(10)
 cxx      DIMENSION IDS(MM)
       INTEGER MM, MJ
       COMPLEX(kind(0d0)) :: X(MJ,MJ), XDET
-      INTEGER IDS(MM)
+c local
+      INTEGER I, J, JJ, L, MAXI, MM1, MMJ, MP1, IDS(MM)
       COMPLEX(kind(0d0)) :: XMAXP, XC
 C
       XDET=1.0D-00
@@ -275,6 +277,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION C(K),S(K),ARC(K)
       INTEGER K
       DOUBLE PRECISION C(K), S(K), ARC(K)
+c local
+      INTEGER I
       DOUBLE PRECISION PI, CST5
       PI=3.1415926536
       CST5=0.5D-00
@@ -315,6 +319,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION PCH(K),R(K)
       INTEGER N, LAGH1, K,JJF
       DOUBLE PRECISION PCH(K), R(K), D1, D2
+c local
+      INTEGER I, LAGH
       DOUBLE PRECISION CST0, CST1, CST100, E1, ER
       CST0=0.0D-00
       CST1=1.0D-00
@@ -347,6 +353,8 @@ cxx      IMPLICIT REAL*8(A-H,O-Z)
 cxx      DIMENSION ARC(K),OARC(K),PH(K)
       INTEGER K, JJF
       DOUBLE PRECISION ARC(K), OARC(K), PH(K)
+c local
+      INTEGER I
       DOUBLE PRECISION PI, PI2, DK
       PI=3.1415926536
       PI2=PI+PI

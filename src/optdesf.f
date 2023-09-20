@@ -41,6 +41,8 @@ cxx      DIMENSION GR1(IR,IR)
       DOUBLE PRECISION Q1(IR,IR), R(L,L), GR1(IR,IR), A(M*IR,IR),
      1                 B(M*IR,L), GI(L,M*IR)
 c local
+      INTEGER I, I1, I2, IBA, II, II0, IIB, IM1, INS, J, J1, J2, JJ,
+     1        JJC, MM1, MM2, MR, MR1
       DOUBLE PRECISION GIT(M*IR,IR), GL(L,L), G3(L,M*IR), GR(IR,IR),
      1                 GLR(L,IR), P(M*IR,M*IR), D(M*IR), XDET, CST0
 C     INPUT / OUTPUT DATA FILE OPEN
@@ -280,6 +282,8 @@ cc      DIMENSION X(MJ1,MJ2),Y(MJ2,MJ1),Z(MJ1,MJ1)
 cxx      DIMENSION X(MM,NN),Y(NN,MM),Z(NN,NN)
       INTEGER MM, NN
       DOUBLE PRECISION X(MM,NN), Y(NN,MM), Z(NN,NN)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
 cxx      DO 10 I=1,MM
@@ -311,6 +315,8 @@ cc      DIMENSION X(MJ1,MJ2),Y(MJ1,MJ2),Z(MJ2,MJ2)
 cxx      DIMENSION X(MM,NN),Y(MM,NN),Z(NN,NN)
       INTEGER MM, NN
       DOUBLE PRECISION X(MM,NN), Y(MM,NN), Z(NN,NN)
+c local
+      INTEGER I, J, K
       DOUBLE PRECISION CST0, SUM
       CST0=0.0D-00
 cxx      DO 10 I=1,NN

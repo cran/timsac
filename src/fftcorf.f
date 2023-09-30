@@ -49,7 +49,7 @@ c local
       INTEGER I, I1, II, ISG, J1, LAGH, M, M1, ND, NI, NP1, NP2
       DOUBLE PRECISION CST0, CST1, CST2, AN, ALD, ALD1, RF, SF, RG,
      1                 SG, XI, XNI, YI, YNI, X0, XMEAN, YMEAN, CX0, Y0
-      COMPLEX(kind(0d0)) :: Z(N), ZS(N/2+1), ZI, ZNI
+      COMPLEX(KIND(0.0D0)) Z(N), ZS(N/2+1), ZI, ZNI
 C     INPUT / OUTPUT DATA FILE OPEN
 c	CHARACTER(100) DFNAM
 c	DFNAM='fftcor.out'
@@ -119,7 +119,7 @@ C     DOUBLE PRECISION COMPLEX REPRESENTATION
   203 DO 31 I=1,N
 cxx   31 Z(I)=DCMPLX(X(I),Y(I))
 cxx      Z(I)=DCMPLX(X(I),Y(I))
-      Z(I)=CMPLX(X(I),Y(I),KIND=8)
+      Z(I)=CMPLX(X(I),Y(I),KIND(0.0D0))
    31 CONTINUE
 C     FOURIER TRANSFORM OF Z
       ISG=-1
@@ -154,13 +154,13 @@ cxx      SG=DIMAG(ZNI)
       XI=RF+RG
       XNI=SF-SG
 cxx      Z(I)=DCMPLX(XI,XNI)
-      Z(I)=CMPLX(XI,XNI,KIND=8)
+      Z(I)=CMPLX(XI,XNI,KIND(0.0D0))
       X(I)=CST2*(XI**2+XNI**2)
       X(NI)=X(I)
       YI=SF+SG
       YNI=RF-RG
 cxx      Z(NI)=DCMPLX(YI,YNI)
-      Z(NI)=CMPLX(YI,YNI,KIND=8)
+      Z(NI)=CMPLX(YI,YNI,KIND(0.0D0))
       Y(I)=CST2*(YI**2+YNI**2)
       Y(NI)=Y(I)
   125 CONTINUE
@@ -187,7 +187,7 @@ C     AUTO COVARIANCE COMPUTATION
   205 DO 33 I=1,N
 cxx   33 Z(I)=DCMPLX(X(I),Y(I))
 cxx      Z(I)=DCMPLX(X(I),Y(I))
-      Z(I)=CMPLX(X(I),Y(I),KIND=8)
+      Z(I)=CMPLX(X(I),Y(I),KIND(0.0D0))
    33 CONTINUE
 C     FOURIER TRANSFORM
 cxx  215 CALL MIXRAD(Z,N,N2P,ISG)

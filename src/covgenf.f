@@ -52,7 +52,7 @@ cxx      REAL*8  F(K),G(K)
 c local
       INTEGER I, I1, I2, J, J1, LAGH1, N, N2P, NN
       DOUBLE PRECISION CX0, Q00, AN, BN, CM, Q1, Q2, Q3, Q4, Q25
-      COMPLEX(kind(0d0)) :: A(LMAX*2)
+      COMPLEX(KIND(0.0D0)) A(LMAX*2)
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 cc      CHARACTER(100) DFNAM
@@ -94,17 +94,17 @@ cxx  107 J=J-1
       I1=I+1
       Q1=Q4
 cxx      A(I1)=DCMPLX(Q1,Q00)
-      A(I1)=CMPLX(Q1,Q00,KIND=8)
+      A(I1)=CMPLX(Q1,Q00,KIND(0.0D0))
       I2=N-I+1
 cxx  200 A(I2)=A(I1)
       A(I2)=A(I1)
   200 CONTINUE
       Q25=G(1)
 cxx      A(1)=DCMPLX(Q25,Q00)
-      A(1)=CMPLX(Q25,Q00,KIND=8)
+      A(1)=CMPLX(Q25,Q00,KIND(0.0D0))
       Q25=G(K)
 cxx      A(NN+2)=DCMPLX(Q25,Q00)
-      A(NN+2)=CMPLX(Q25,Q00,KIND=8)
+      A(NN+2)=CMPLX(Q25,Q00,KIND(0.0D0))
 C     FAST FOURIER TRANSFORM OF A
 C     COMMON SUBROUTINE CALL
       CALL MIXRAD(A,N,N2P,+1)

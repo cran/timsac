@@ -42,11 +42,11 @@ cxx      DIMENSION XFR(IP0,IP0,LAGH1)
       DOUBLE PRECISION P(LAGH1,IP0,IP0), C(K,LAGH1), S(K,LAGH1),
      1                 G(K,LAGH1), PH(K,LAGH1), PCH(K,LAGH1),
      2                 R(K,LAGH1), CHM(LAGH1)
-      COMPLEX(kind(0d0)) :: X(IP0,IP0,LAGH1)
+      COMPLEX(KIND(0.0D0)) X(IP0,IP0,LAGH1)
 c local
       INTEGER I, II, IM1, J, JF, JJF, K1
       DOUBLE PRECISION OARC(K), P00, EP, G2, G3, D1, D2
-      COMPLEX(kind(0d0)) :: XFR(IP0,IP0,LAGH1), XDET
+      COMPLEX(KIND(0.0D0)) XFR(IP0,IP0,LAGH1), XDET
 C
 C     INPUT / OUTPUT DATA FILE OPEN
 c      CALL SETWND
@@ -83,7 +83,7 @@ c      X(I,I)=P(I,I)
 c      X(I,J)=DCMPLX(P(I,J),P(J,I))
 c  402 X(J,I)=DCONJG(X(I,J))
 cxx      X(I,J,JF)=DCMPLX(P(JF,I,J),P(JF,J,I))
-      X(I,J,JF)=CMPLX(P(JF,I,J),P(JF,J,I),KIND=8)
+      X(I,J,JF)=CMPLX(P(JF,I,J),P(JF,J,I),KIND(0.0D0))
 cxx  402 X(J,I,JF)=DCONJG(X(I,J,JF))
 cxx      X(J,I,JF)=DCONJG(X(I,J,JF))
       X(J,I,JF)=CONJG(X(I,J,JF))
@@ -188,10 +188,10 @@ cxx      DIMENSION X(MJ,MJ)
 cx      DIMENSION IDS(10)
 cxx      DIMENSION IDS(MM)
       INTEGER MM, MJ
-      COMPLEX(kind(0d0)) :: X(MJ,MJ), XDET
+      COMPLEX(KIND(0.0D0)) X(MJ,MJ), XDET
 c local
       INTEGER I, J, JJ, L, MAXI, MM1, MMJ, MP1, IDS(MM)
-      COMPLEX(kind(0d0)) :: XMAXP, XC
+      COMPLEX(KIND(0.0D0)) XMAXP, XC
 C
       XDET=1.0D-00
       MP1=MM+1

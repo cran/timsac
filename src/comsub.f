@@ -462,11 +462,11 @@ cxx      DIMENSION X(MM,MM)
 cxx      DIMENSION IDS(MM)
 cxx      DOUBLE PRECISION CST0, CST1
       INTEGER MM
-      COMPLEX(kind(0d0)) :: X(MM,MM), XDET
+      COMPLEX(KIND(0.0D0)) X(MM,MM), XDET
 c local
       INTEGER I, J, JJ, L, MM1, MMJ, MAXI, IDS(MM)
       DOUBLE PRECISION CST0, CST1
-      COMPLEX(kind(0d0)) :: XMAXP, XC
+      COMPLEX(KIND(0.0D0)) XMAXP, XC
 c
       CST0=0.0D-00
       CST1=1.0D-00
@@ -629,13 +629,13 @@ cxx      DIMENSION Z(N)
 cc	DIMENSION MS(11)
 cxx      DIMENSION MS(N2P)
       INTEGER N, N2P, ISG
-      COMPLEX(kind(0d0)) :: Z(N)
+      COMPLEX(KIND(0.0D0)) Z(N)
 c local
       INTEGER I, I1, J, J1, J2, J3, J4, JM1, JF, L, LL, LM4, M, N3, N5,
      1        M4, NM1, MS(N2P)
       DOUBLE PRECISION CST0, CST1, AN, PI, PI2, SG, AM4, AM5, AJM1, ARG,
      1                 C1, S1, C2, S2, C3, S3
-      COMPLEX(kind(0d0)) :: ZCI, ZW1, ZW2, ZW3, ZC1, ZC2, ZC3, ZC4, ZC
+      COMPLEX(KIND(0.0D0)) ZCI, ZW1, ZW2, ZW3, ZC1, ZC2, ZC3, ZC4, ZC
       CST0=0.0D-00
       CST1=1.0D-00
       AN=N
@@ -643,7 +643,7 @@ c local
       PI2=PI+PI
       SG=ISG
 cxx      ZCI=SG*DCMPLX(CST0,CST1)
-      ZCI=SG*CMPLX(CST0,CST1,KIND=8)
+      ZCI=SG*CMPLX(CST0,CST1,KIND(0.0D0))
       DO 10 I=1,N2P
 cxx   10 MS(I)=2**(N2P-I)
       MS(I)=2**(N2P-I)
@@ -669,9 +669,9 @@ cxx   10 MS(I)=2**(N2P-I)
 cxx      ZW1=DCMPLX(C1,S1)
 cxx      ZW2=DCMPLX(C2,S2)
 cxx      ZW3=DCMPLX(C3,S3)
-      ZW1=CMPLX(C1,S1,KIND=8)
-      ZW2=CMPLX(C2,S2,KIND=8)
-      ZW3=CMPLX(C3,S3,KIND=8)
+      ZW1=CMPLX(C1,S1,KIND(0.0D0))
+      ZW2=CMPLX(C2,S2,KIND(0.0D0))
+      ZW3=CMPLX(C3,S3,KIND(0.0D0))
       DO 13 I=1,LM4,M4
       J1=I+JM1
       J2=J1+M
@@ -901,10 +901,10 @@ c      DIMENSION IOD(10)
 cxx      DIMENSION X(IP0,IP0),INW(IP)
 cxx      DIMENSION IOD(IP0)
       INTEGER IP0, IP, INW(IP)
-      COMPLEX(kind(0d0)) :: X(IP0,IP0)
+      COMPLEX(KIND(0.0D0)) X(IP0,IP0)
 c local
       INTEGER I, I1, I2, II, ID, JJ, IOD(IP0)
-      COMPLEX(kind(0d0)) :: XC
+      COMPLEX(KIND(0.0D0)) XC
 C
       DO 300 I=1,IP0
 cxx  300 IOD(I)=I
@@ -1100,7 +1100,7 @@ c      DIMENSION RS1(10),RL(10)
 cxx      DIMENSION RS1(MJ),RL(MJ)
       INTEGER IP, MJ
       DOUBLE PRECISION SD(MJ,MJ), RS(MJ,MJ), R(MJ,MJ)
-      COMPLEX(kind(0d0)) :: X(MJ,MJ)
+      COMPLEX(KIND(0.0D0)) X(MJ,MJ)
 c local
       INTEGER II, JJ, LL
       DOUBLE PRECISION RS1(MJ), RL(MJ), CST0, CST1, SUM, RX, RIX, RCONST

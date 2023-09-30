@@ -1,3 +1,8 @@
+# timsac 1.3.8-4
+
+* Fixed usage of KIND in Fortran file for warning reported in CRAN package check results.
+
+
 # timsac 1.3.8-3
 
 * Specified all variable types explicitly instead of using implicit variable types.

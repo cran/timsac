@@ -1,8 +1,6 @@
       SUBROUTINE MULBARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD,AIC,DIC,IMIN,
      *                    AICM,SDMIN,BW1,BW2,A,B,G,H,E,AICB )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  MULBAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

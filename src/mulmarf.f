@@ -1,8 +1,6 @@
       SUBROUTINE  MULMARF( ZS,N,ID,C,LAG,ZMEAN,ZVARI,SD1,AIC1,DIC1,IM,
      * AICM,SDM,NPR,JNDF,AF,EX,AIC,EI,BI,E,B,LMAX,AICS )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  MULMAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

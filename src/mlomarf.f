@@ -1,8 +1,6 @@
       SUBROUTINE  MLOMARF( ZS,N,ID,C,LAG,NS0,KSW,K,ZMEAN,ZVARI,NF,NS,MS,
      *                     AIC,MP,AICP,MF,AICF,A,E,LK0,LKE,M )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  MLOMAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

@@ -1,8 +1,6 @@
       SUBROUTINE OPTSIMF(NS,M,IR,L,A,B,G,W,X,Y,XMEAN,YMEAN,XS2,YS2,
      * XS2MEA,YS2MEA,XVAR,YVAR)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM OPTSIM
 C     PROGRAM 5.5.2   OPTIMAL CONTROL SIMULATION
 C-----------------------------------------------------------------------

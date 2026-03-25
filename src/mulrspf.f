@@ -1,7 +1,5 @@
       SUBROUTINE MULRSPF(H,L,IP,K,SD,A,B,Y,CH)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.4.2   MULTIPLE RATIONAL SPECTRUM
 C-----------------------------------------------------------------------
 C      SUBROUTINE XYCTRX(X,Y,Z,MM,NN)

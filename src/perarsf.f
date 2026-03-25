@@ -1,8 +1,6 @@
       SUBROUTINE PERARSF( ZS,N,IP,LAG,KSW,ZMEAN,SUM,NPR,JNDF,AF,AICF,
      *                    B,E,C,EX,LMAX)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  PERARS                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

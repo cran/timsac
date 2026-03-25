@@ -1,7 +1,5 @@
       SUBROUTINE RASPECF(H,L,K,SGME2,A,B,PXX)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.4.1   RATIONAL SPECTRUM
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

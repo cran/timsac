@@ -1,7 +1,5 @@
       SUBROUTINE MULSPEF(N,K,LAGH1,LAGH3,CV,P1,P2,PS,PCH1,PCH2)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.2.2   MULTIPLE SPECTRUM
 C-----------------------------------------------------------------------
 C      SUBROUTINE MULSPEF(N,K,LAGH1,LAGH3,IR0,IR1,IR2,IC0,IC1,IC2,

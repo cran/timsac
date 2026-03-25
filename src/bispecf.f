@@ -1,7 +1,5 @@
       SUBROUTINE BISPECF(N,MH,CC0,C0,P1,P2,Q,A,BR,BI,RAT)
 C
-      INCLUDE 'timsac.h'
-C
 cc	PROGRAM BISPEC
 C     PROGRAM 74.6.2.
 C-----------------------------------------------------------------------

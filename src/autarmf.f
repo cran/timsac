@@ -3,8 +3,6 @@ cx     *	          NEWN,IQ,B2,IP,A2,STD,CXX2,G,SAIC,AICM,KQ,KP,TMP,IER,
      *          NEWN,IQ,B2,IP,A2,STD,CXX2,G,SAIC,AICM,KQ,KP,
      *          LMAX,MMAX,NMAX)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM AUTARM
 C     PROGRAM 74.1.2. AUTOMATIC AR-MA MODEL FITTING; SCALAR CASE.
 C-----------------------------------------------------------------------

@@ -1,10 +1,8 @@
-C Reviced	M.S C85-02-19-16:46:06 BAYSEAA PAIR                                         
+C Reviced	M.S C85-02-19-16:46:06 BAYSEAA PAIR                         
 CC      PROGRAM BAYSEA
       SUBROUTINE BAYSEAF(Y,NDATA,FOCAST,CDATA,DMOI,TREND,SEASON,TDCMP,
      *                   IRREG,ADJUST,EST,PSDS,PSDT,AVABIC,IPARA,PARA,
      *                   ARFT,ARFS,ARFN,IART,IARS,IARN)
-C                                                                      
-      INCLUDE 'timsac.h'
 C
 C     ---      --       -                                               
 C     BAYESIAN SEASONAL ADJUSTMENT PROCEDURE                            

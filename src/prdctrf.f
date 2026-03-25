@@ -1,8 +1,6 @@
       SUBROUTINE PRDCTRF(N,P,Q,H,D,K,L,JSW,YY,B,A,WW,S,Y,YORI,YD,X,Z1,
      * Z2,Z3,ZZ1,ZZ2,ZZ3)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM PRDCTR
 C     PROGRAM 74.3.1.  PREDICTION PROGRAM
 C-----------------------------------------------------------------------

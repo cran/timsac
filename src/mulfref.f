@@ -1,7 +1,5 @@
       SUBROUTINE MULFRFF(K,INW,N,LAGH1,IP0,P,X,C,S,G,PH,PCH,R,CHM)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.2.4   FREQUENCY RESPONSE FUNCTION (MULTIPLE CHANNEL)
 C-----------------------------------------------------------------------
 C      SUBROUTINE FQCPIV(X,XDET,MM,MJ)

@@ -1,8 +1,6 @@
       SUBROUTINE SGLFREF(INP,IOUT,N,LAGH1,IP,P,P11,P22,C,S,CP11,CP22,
      * CC,CS,R,PH)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.2.3   FREQUENCY RESPONSE FUNCTION (SINGLE CHANNEL)
 C-----------------------------------------------------------------------
 C      SUBROUTINE SGLARC(C,S,ARC,LAGH1)

@@ -1,8 +1,6 @@
       SUBROUTINE MLOCARF( ZS,N,LAG,NS0,KSW,NML,ZMEAN,SUM,A,MF,SDF,LK0,
      *                    LK2,SXX,NNF,NNS,MS,SDMS,AICS,MP,SDMP,AICP )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  MLOCAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

@@ -1,7 +1,5 @@
       SUBROUTINE OPTDESF(IR,L,NS,M,Q1,R,GR1,A,B,GI)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM OPTDES
 C     PROGRAM 5.5.1   OPTIMAL CONTROLLER DESIGN
 C-----------------------------------------------------------------------

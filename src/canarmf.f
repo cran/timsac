@@ -3,8 +3,6 @@ cx     *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,TMP,
 cx     *MJ1,MJ2,IER)
      *NC,MM1,MM2,V,Z,Y,XX,NDT,X3,X3MIN,MIN3,M1M,BETA,M1N,ALPHA,MJ1,MJ2)
 C
-      INCLUDE 'timsac.h'
-C
 cc	PROGRAM CANARM
 C     PROGRAM 74.1.1. CANONICAL CORRELATION ANALYSIS OF SCALAR TIME SERI
 C-----------------------------------------------------------------------

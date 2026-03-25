@@ -1,8 +1,6 @@
       SUBROUTINE MARKOVF(N,LAGH3,ID,CYY0,K,NH,JAW,AW1,B1,ICONT,IDD,
      * IR,IJ,IK,IPQ,G,A1,A,B,VD,IQM,BM,AU,ZZ,C0,AICD,MJ3,MJ4,MJ6,MJ7)
 C
-      INCLUDE 'timsac.h'
-C
 cc       PROGRAM MARKOV
 C     PROGRAM 74.2.2. MAXIMUM LIKELIHOOD COMPUTATION OF MARKOVIAN MODEL
 C-----------------------------------------------------------------------

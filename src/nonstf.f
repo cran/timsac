@@ -1,8 +1,6 @@
       SUBROUTINE NONSTF(N,ISTP,DATA0,NM,LAGH,JP0,COEF0,VA0,AIC0,DAIC21,
      *                  DAIC,K01,KOUNT2,SXX)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM NONST
 C     PROGRAM 74.4.1. NON-STATIONARY POWER SPECTRUM ANALYSIS
 C-----------------------------------------------------------------------

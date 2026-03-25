@@ -1,8 +1,6 @@
       SUBROUTINE SPGRH(Y,N,LAGH1,IFPL1,MODE,PERIOD,CXX,CN,XMEAN,SD,AIC,
      *                 PARCOR,PXX,IER)
 c
-      INCLUDE 'timsac.h'
-c
 cxx      IMPLICIT REAL*8(A-H,O-Z)                                          
 cc      INTEGER H,H1                                                      
 cxx      INTEGER PERIOD

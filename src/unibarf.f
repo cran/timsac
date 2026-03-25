@@ -1,8 +1,6 @@
       SUBROUTINE UNIBARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,IMIN,AICM,SDMIN,
      *                    B1,C,D,B2,AICB,SDB,PN,A,SXX )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  UNIBAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

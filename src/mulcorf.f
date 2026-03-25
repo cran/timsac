@@ -1,7 +1,5 @@
       SUBROUTINE MULCORF(X1,N,K,LAGH1,SM,C,CN)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.1.2   MULTIPLE CORRELATION
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

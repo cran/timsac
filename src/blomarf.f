@@ -1,8 +1,6 @@
       SUBROUTINE  BLOMARF( ZS,N,ID,C,LAG,NS0,KMAX,ZMEAN,ZVARI,BW,AIC,A,
      *                     E,AICB,LKS,LKE,M )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  BLOMAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

@@ -1,8 +1,6 @@
       SUBROUTINE FFTCORF(LD,LAGH1,N,N2P,ISW,X1,Y1,XA,X,Y,
      1 CNA1,CN1,CN2,AMEAN)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.1.3   AUTO AND/OR CROSS CORRELATIONS VIA FFT.
 C-----------------------------------------------------------------------
 C     ** THIS PROGRAM IS AN ADAPTED VERSION OF THE ALGOL PROCEDURE

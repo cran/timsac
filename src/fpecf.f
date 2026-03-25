@@ -1,8 +1,6 @@
       SUBROUTINE FPEC7(N,L,IR,IP,IP0,INW,R1,R2,FPEC,RFPEC,AIC,
      & IFPEC,OFPEC,ORFPEC,OAIC,OSD,AO)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.3.2   FPEC(AR-MODEL FITTING FOR CONTROL)
 C-----------------------------------------------------------------------
 C      SUBROUTINE FPEC7F(N,L,IR,IP,IP0,LAGH1,INW,MJ,MJ0,

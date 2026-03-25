@@ -1,8 +1,6 @@
       SUBROUTINE  DECOMPF(DATA,N,IPAR,TREND,SEASNL,AR,TRAD,NOISE,
      *                    para,imiss,omaxx,ier )
 C
-      INCLUDE 'timsac.h'
-C
 cxx      PARAMETER (IOPT=1)
 cxx      PARAMETER (NIP=9, NPA=26)
       INTEGER, PARAMETER :: IOPT=1

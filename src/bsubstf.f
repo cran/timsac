@@ -3,8 +3,6 @@ cxx      SUBROUTINE BSUBSTF( ZS,N,IMODEL,LAG,K,IL,LG1,LG2,F,CNST,ZMEAN,SUM,
      *M,AICM,SDM,A1,SD,AIC,DIC,AICB,SDB,EK,A2,IND,C,C1,C2,B,OEIC,ESUM,
      *OMEAN,OM,E,EMEAN,VARI,SKEW,PEAK,COV,SXX )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM BSUBST
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

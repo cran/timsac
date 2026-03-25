@@ -1,7 +1,5 @@
       SUBROUTINE WNOISEF(NRA,IR,SD1,X2)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM WNOISE
 C     PROGRAM 5.5.3   WHITE NOISE GENERATOR
 C-----------------------------------------------------------------------

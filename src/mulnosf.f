@@ -1,7 +1,5 @@
       SUBROUTINE MULNOSF(H,L,IP,SD,A,RS1,RS2,R)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.3.3   MULTIPLE UNOISE
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

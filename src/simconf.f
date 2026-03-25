@@ -1,7 +1,5 @@
       SUBROUTINE SIMCONF(D,K,H,L,R,B0,BX0,S0,Q0,BC,BD,G,AVY,SI,S2)
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM SIMCON                                                    
 C     PROGRAM 74.3.2.  OPTIMAL CONTROLLER DESIGN AND SIMULATION         
 C-----------------------------------------------------------------------

@@ -2,8 +2,6 @@
      *NC,N1,N2,VV,Z,Y,XX,NDT,X3,X3MIN,MIN3,F,M1NH,NH,G,IAW,VF,
      *LMAX,MJ0,MJ1)
 C
-      INCLUDE 'timsac.h'
-C
 cc	PROGRAM CANOCA
 C     PROGRAM 74.2.1. CANONICAL CORRELATION ANALYSIS OF VECTOR TIME SERI
 C-----------------------------------------------------------------------

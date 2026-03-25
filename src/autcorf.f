@@ -1,7 +1,5 @@
       SUBROUTINE AUTCORF(X,N,CXX,CN,LAGH1,XMEAN)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.1.1   AUTO CORRELATION
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

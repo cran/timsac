@@ -1,8 +1,6 @@
       SUBROUTINE XSARMAF( YS,N,IQ,IP,P01,G1,TL1,P02,G2,ALPHB,ALPHA,TL2,
      *                    SIGMA2 )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM XSARMA                                                    
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

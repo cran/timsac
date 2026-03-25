@@ -1,4 +1,3 @@
-      INCLUDE 'timsac.h'
 C------------------------------------------------- 
 C     AUSP	---  (72) auspec, mulspe
 C     COEFAB  ---  (72) fpec7 (74) canoca

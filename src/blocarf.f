@@ -1,9 +1,7 @@
       SUBROUTINE BLOCARF( ZS,N,LAG,NS0,KMAX,ZMEAN,SUM,AIC,C,B,A,SD,NP,
      *                    NE,SXX )
 C
-      INCLUDE 'timsac.h'
-C
-cc      PROGRAM  BLOCAR                                                   
+cc      PROGRAM  BLOCAR                                                 
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................
 C.....DESIGNED BY H.AKAIKE AND G.KITAGAWA...............................

@@ -1,7 +1,5 @@
       SUBROUTINE AUSPECF(N,LAGH1,CXX1,P1,P2,Q)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.2.1   POWER SPECTRUM
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

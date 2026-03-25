@@ -1,8 +1,6 @@
       SUBROUTINE FPEAUTF(L,N,SD,CXX,SSD,FPE,RFPE,D,CHI2,
      & OFPE1,OFPE2,ORFPE,MO,OSD,A,AO)
 C
-      INCLUDE 'timsac.h'
-C
 C     PROGRAM 5.3.1   FPE AUTO
 C-----------------------------------------------------------------------
 C     ** DESIGNED BY H. AKAIKE, THE INSTITUTE OF STATISTICAL MATHEMATICS

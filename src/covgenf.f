@@ -1,7 +1,5 @@
       SUBROUTINE COVGENF(L,K,F,G,C,CN)
 C
-      INCLUDE 'timsac.h'
-C
 cc	PROGRAM COVGEN
 C     PROGRAM 74.1.3. COVARIANCE GENERATION FROM GAIN FUNCTION.
 C-----------------------------------------------------------------------

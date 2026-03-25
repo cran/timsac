@@ -1,3 +1,8 @@
+# timsac 1.3.8-6
+
+* Changed package maintainer.
+
+
 # timsac 1.3.8-4
 
 * Fixed usage of KIND in Fortran file for warning reported in CRAN package check results.

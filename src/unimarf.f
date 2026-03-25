@@ -1,7 +1,5 @@
       SUBROUTINE  UNIMARF( ZS,N,LAG,ZMEAN,SUM,SD,AIC,DIC,M,AICM,SDM,A )
 C
-      INCLUDE 'timsac.h'
-C
 cc      PROGRAM  UNIMAR                                                   
 C.......................................................................
 C.....PLANNED BY H.AKAIKE...............................................

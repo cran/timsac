@@ -1,7 +1,5 @@
       SUBROUTINE THIRMOF(N,MH,XX,XMEAN,CC,CN,C)
 C
-      INCLUDE 'timsac.h'
-C
 cc	PROGRAM THIRMO
 C     PROGRAM 74.6.1.
 C-----------------------------------------------------------------------
